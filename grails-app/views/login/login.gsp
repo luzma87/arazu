@@ -14,6 +14,9 @@
     </head>
 
     <body>
+
+        <elm:message tipo="error" contenido="${flash.message}"/>
+
         <div class="row">
             <div class="col-md-3 col-md-offset-9">
                 <div class="lzm-tab lzm-tab-left lzm-tab-primary " style="background: none">

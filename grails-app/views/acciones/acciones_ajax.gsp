@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Modulo; arazu.seguridad.Tpac" %>
+<%@ page import="arazu.seguridad.Modulo; arazu.seguridad.TipoAccion" %>
 
 <script src="${resource(dir: 'js/plugins/fixed-header-table-1.3', file: 'jquery.fixedheadertable.js')}"></script>
 <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/plugins/fixed-header-table-1.3/css', file: 'defaultTheme.css')}"/>

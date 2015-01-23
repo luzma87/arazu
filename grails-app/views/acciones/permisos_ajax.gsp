@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Prms; arazu.seguridad.Modulo; arazu.seguridad.Tpac" %>
+<%@ page import="arazu.seguridad.Permiso; arazu.seguridad.Prms; arazu.seguridad.Modulo; arazu.seguridad.TipoAccion" %>
 
 <script src="${resource(dir: 'js/plugins/fixed-header-table-1.3', file: 'jquery.fixedheadertable.js')}"></script>
 <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/plugins/fixed-header-table-1.3/css', file: 'defaultTheme.css')}"/>
@@ -31,7 +31,7 @@
     <tbody>
         <g:each in="${acciones}" var="accion" status="i">
             <g:set var="esMenu" value="${accion.tipo.codigo == 'M'}"/>
-            <g:set var="cantPermisos" value="${Prms.countByAccionAndPerfil(accion, perfil)}"/>
+            <g:set var="cantPermisos" value="${arazu.seguridad.Permiso.countByAccionAndPerfil(accion, perfil)}"/>
             <tr class="${esMenu ? 'success' : 'info'}">
                 <td data-id="${accion.id}" class="text-center check ${cantPermisos > 0 ? 'checked' : ''}"
                     data-original="${cantPermisos > 0 ? 'checked' : 'unchecked'}">

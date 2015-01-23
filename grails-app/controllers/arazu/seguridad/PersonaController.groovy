@@ -1,9 +1,6 @@
 package arazu.seguridad
 
 import org.springframework.dao.DataIntegrityViolationException
-import sun.misc.Perf
-import arazu.seguridad.Shield
-
 
 /**
  * Controlador que muestra las pantallas de manejo de Persona
@@ -87,7 +84,7 @@ class PersonaController extends Shield {
                 render "ERROR*No se encontró Persona."
                 return
             }
-            def perfiles = Sesn.withCriteria {
+            def perfiles = Sesion.withCriteria {
                 eq("usuario", personaInstance)
                 perfil {
                     order("nombre", "asc")
@@ -113,7 +110,7 @@ class PersonaController extends Shield {
                 render "ERROR*No se encontró Persona."
                 return
             }
-            perfiles = Sesn.withCriteria {
+            perfiles = Sesion.withCriteria {
                 eq("usuario", personaInstance)
                 perfil {
                     order("nombre", "asc")
@@ -147,11 +144,11 @@ class PersonaController extends Shield {
 //        println params
 //        println "PERFILES: " + perfiles
         if (perfiles) {
-            def perfilesOld = Sesn.findAllByUsuario(personaInstance)
+            def perfilesOld = Sesion.findAllByUsuario(personaInstance)
             def perfilesSelected = []
             def perfilesInsertar = []
             (perfiles.split("_")).each { perfId ->
-                def perf = Prfl.get(perfId.toLong())
+                def perf = Perfil.get(perfId.toLong())
                 if (!perfilesOld.perfil.id.contains(perf.id)) {
                     perfilesInsertar += perf
                 } else {
@@ -170,7 +167,7 @@ class PersonaController extends Shield {
             def errores = ""
 
             perfilesInsertar.each { perfil ->
-                def sesion = new Sesn()
+                def sesion = new Sesion()
                 sesion.usuario = personaInstance
                 sesion.perfil = perfil
                 if (!sesion.save(flush: true)) {
@@ -179,7 +176,7 @@ class PersonaController extends Shield {
                 }
             }
             perfilesDelete.each { perfil ->
-                def sesion = Sesn.findAllByPerfilAndUsuario(perfil, personaInstance)
+                def sesion = Sesion.findAllByPerfilAndUsuario(perfil, personaInstance)
                 try {
                     if (sesion.size() == 1) {
                         sesion.first().delete(flush: true)

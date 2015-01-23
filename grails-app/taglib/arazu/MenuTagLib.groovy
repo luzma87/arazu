@@ -1,7 +1,6 @@
 package arazu
 
-import arazu.alertas.Alerta
-import arazu.seguridad.Prms
+import arazu.seguridad.Permiso
 
 class MenuTagLib {
 //    static defaultEncodeAs = 'html'
@@ -63,7 +62,7 @@ class MenuTagLib {
         }
 //        attrs.title = attrs.title.toUpperCase()
         if (usuario) {
-            def acciones = Prms.findAllByPerfil(perfil).accion.sort { it.modulo.orden }
+            def acciones = Permiso.findAllByPerfil(perfil).accion.sort { it.modulo.orden }
 
             acciones.each { ac ->
                 if (ac.tipo.id == 1) {

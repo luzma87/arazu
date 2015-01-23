@@ -1,8 +1,6 @@
 package arazu.seguridad
 
 import org.springframework.dao.DataIntegrityViolationException
-import arazu.seguridad.Shield
-
 
 /**
  * Controlador que muestra las pantallas de manejo de Prfl
@@ -34,7 +32,7 @@ class PrflController extends Shield {
         }
         def list
         if (params.search) {
-            def c = Prfl.createCriteria()
+            def c = Perfil.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
@@ -46,7 +44,7 @@ class PrflController extends Shield {
                 }
             }
         } else {
-            list = Prfl.list(params)
+            list = Perfil.list(params)
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
@@ -72,7 +70,7 @@ class PrflController extends Shield {
      */
     def show_ajax() {
         if (params.id) {
-            def prflInstance = Prfl.get(params.id)
+            def prflInstance = Perfil.get(params.id)
             if (!prflInstance) {
                 render "ERROR*No se encontró Perfil."
                 return
@@ -89,9 +87,9 @@ class PrflController extends Shield {
      * @render ERROR*[mensaje] cuando no se encontró el elemento
      */
     def form_ajax() {
-        def prflInstance = new Prfl()
+        def prflInstance = new Perfil()
         if (params.id) {
-            prflInstance = Prfl.get(params.id)
+            prflInstance = Perfil.get(params.id)
             if (!prflInstance) {
                 render "ERROR*No se encontró Perfil."
                 return
@@ -106,9 +104,9 @@ class PrflController extends Shield {
      * @render ERROR*[mensaje] cuando no se pudo grabar correctamente, SUCCESS*[mensaje] cuando se grabó correctamente
      */
     def save_ajax() {
-        def prflInstance = new Prfl()
+        def prflInstance = new Perfil()
         if (params.id) {
-            prflInstance = Prfl.get(params.id)
+            prflInstance = Perfil.get(params.id)
             if (!prflInstance) {
                 render "ERROR*No se encontró Perfil."
                 return
@@ -129,7 +127,7 @@ class PrflController extends Shield {
      */
     def delete_ajax() {
         if (params.id) {
-            def prflInstance = Prfl.get(params.id)
+            def prflInstance = Perfil.get(params.id)
             if (!prflInstance) {
                 render "ERROR*No se encontró Perfil."
                 return
@@ -155,16 +153,16 @@ class PrflController extends Shield {
     def validar_unique_codigo_ajax() {
         params.codigo = params.codigo.toString().trim()
         if (params.id) {
-            def obj = Prfl.get(params.id)
+            def obj = Perfil.get(params.id)
             if (obj.codigo.toLowerCase() == params.codigo.toLowerCase()) {
                 render true
                 return
             } else {
-                render Prfl.countByCodigoIlike(params.codigo) == 0
+                render Perfil.countByCodigoIlike(params.codigo) == 0
                 return
             }
         } else {
-            render Prfl.countByCodigoIlike(params.codigo) == 0
+            render Perfil.countByCodigoIlike(params.codigo) == 0
             return
         }
     }

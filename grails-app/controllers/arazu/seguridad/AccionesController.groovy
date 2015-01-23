@@ -21,7 +21,7 @@ class AccionesController extends Shield {
      * Acción que muestra una lista de acciones filtrando por módulo y tipo para editar las acciones
      */
     def acciones_ajax() {
-        def acciones = Accn.withCriteria {
+        def acciones = Accion.withCriteria {
             eq("modulo", Modulo.get(params.id))
             order("tipo", "asc")
             control {
@@ -36,8 +36,8 @@ class AccionesController extends Shield {
      * Acción llamada con ajax que cambia el tipo de una acción entre Menú y Proceso
      */
     def accionCambiarTipo_ajax() {
-        def accion = Accn.get(params.id)
-        accion.tipo = Tpac.findByCodigo(params.tipo)
+        def accion = Accion.get(params.id)
+        accion.tipo = TipoAccion.findByCodigo(params.tipo)
         if (!accion.save(flush: true)) {
             render "ERROR*" + renderErrors(bean: accion)
         } else {
@@ -57,7 +57,7 @@ class AccionesController extends Shield {
                 def parts = k.split("_")
                 if (parts.size() == 2) {
                     def id = parts[1].toLong()
-                    def accion = Accn.get(id)
+                    def accion = Accion.get(id)
                     accion.descripcion = v.trim()
                     if (!accion.save(flush: true)) {
                         errores += renderErrors(bean: accion)
@@ -86,7 +86,7 @@ class AccionesController extends Shield {
                 def parts = k.split("_")
                 if (parts.size() == 2) {
                     def id = parts[1].toLong()
-                    def accion = Accn.get(id)
+                    def accion = Accion.get(id)
                     accion.modulo = Modulo.get(v.toLong())
                     if (!accion.save(flush: true)) {
                         errores += renderErrors(bean: accion)
@@ -111,9 +111,9 @@ class AccionesController extends Shield {
         def i = 0
         grailsApplication.controllerClasses.each {
             //def  lista = Ctrl.list()
-            def ctr = Ctrl.findByNombre(it.getName())
+            def ctr = Controlador.findByNombre(it.getName())
             if (!ctr) {
-                ctr = new Ctrl()
+                ctr = new Controlador()
                 ctr.nombre = it.getName()
                 ctr.save(flush: true)
                 i++
@@ -139,19 +139,19 @@ class AccionesController extends Shield {
                     if (!t.contains(s[2])) {
                         if (!ignore.contains(s[2])) {
                             if (!(s[2] =~ "Service")) {
-                                def accn = Accn.findByNombreAndControl(s[2], Ctrl.findByNombre(ct.getName()))
+                                def accn = Accion.findByNombreAndControl(s[2], Controlador.findByNombre(ct.getName()))
                                 //println "si service "+ s[2]+" accion "+accn.id+" url "+it
                                 if (accn == null) {
                                     println "if 2";
-                                    accn = new Accn()
+                                    accn = new Accion()
                                     accn.nombre = s[2]
-                                    accn.control = Ctrl.findByNombre(ct.getName())
+                                    accn.control = Controlador.findByNombre(ct.getName())
                                     accn.descripcion = s[2]
                                     accn.accnAuditable = 1
                                     if (s[2] =~ "save" || s[2] =~ "update" || s[2] =~ "delete" || s[2] =~ "guardar")
-                                        accn.tipo = Tpac.get(2)
+                                        accn.tipo = TipoAccion.get(2)
                                     else
-                                        accn.tipo = Tpac.get(1)
+                                        accn.tipo = TipoAccion.get(1)
                                     accn.modulo = Modulo.findByDescripcionLike("no%asignado")
                                     accn.save(flush: true)
                                     i++
@@ -189,9 +189,9 @@ class AccionesController extends Shield {
      * Acción llamada con ajax que muestra una lista de acciones filtrando por módulo y tipo para editar los permisos
      */
     def permisos_ajax() {
-        def perfil = Prfl.get(params.perf.toLong())
+        def perfil = Perfil.get(params.perf.toLong())
         def modulo = Modulo.get(params.id)
-        def acciones = Accn.withCriteria {
+        def acciones = Accion.withCriteria {
             eq("modulo", modulo)
             order("tipo", "asc")
             control {
@@ -206,11 +206,11 @@ class AccionesController extends Shield {
      * Acción llamada con ajax que guarda los permisos de un perfil
      */
     def guardarPermisos_ajax() {
-        def perfil = Prfl.get(params.perfil.toLong())
+        def perfil = Perfil.get(params.perfil.toLong())
         def modulo = Modulo.get(params.modulo.toLong())
 
         //todos los permisos actuales de este perfil en este modulo
-        def permisosOld = Prms.withCriteria {
+        def permisosOld = Permiso.withCriteria {
             eq("perfil", perfil)
             accion {
                 eq("modulo", modulo)
@@ -219,7 +219,7 @@ class AccionesController extends Shield {
         def accionesSelected = []
         def accionesInsertar = []
         (params.accion.split(",")).each { accionId ->
-            def accion = Accn.get(accionId.toLong())
+            def accion = Accion.get(accionId.toLong())
             if (!permisosOld.accion.id.contains(accion.id)) {
                 accionesInsertar += accion
             } else {
@@ -234,7 +234,7 @@ class AccionesController extends Shield {
         def errores = ""
 
         accionesInsertar.each { accion ->
-            def perm = new Prms()
+            def perm = new Permiso()
             perm.accion = accion
             perm.perfil = perfil
             if (!perm.save(flush: true)) {
@@ -243,7 +243,7 @@ class AccionesController extends Shield {
             }
         }
         accionesDelete.each { accion ->
-            def perm = Prms.findAllByPerfilAndAccion(perfil, accion)
+            def perm = Permiso.findAllByPerfilAndAccion(perfil, accion)
             try {
                 if (perm.size() == 1) {
                     perm.first().delete(flush: true)

@@ -55,7 +55,6 @@ class ${className}Controller extends Shield {
 
     /**
      * Acción que muestra la lista de elementos
-     * @return ${propertyName}List: la lista de elementos filtrados, ${propertyName}Count: la cantidad total de elementos (sin máximo)
      */
     def list() {
         def ${propertyName}List = getList(params, false)
@@ -65,8 +64,6 @@ class ${className}Controller extends Shield {
 
     /**
      * Acción llamada con ajax que muestra la información de un elemento particular
-     * @return ${propertyName} el objeto a mostrar cuando se encontró el elemento
-     * @render ERROR*[mensaje] cuando no se encontró el elemento
      */
     def show_ajax() {
         if(params.id) {
@@ -83,8 +80,6 @@ class ${className}Controller extends Shield {
 
     /**
      * Acción llamada con ajax que muestra un formaulario para crear o modificar un elemento
-     * @return ${propertyName} el objeto a modificar cuando se encontró el elemento
-     * @render ERROR*[mensaje] cuando no se encontró el elemento
      */
     def form_ajax() {
         def ${propertyName} = new ${className}()
@@ -101,7 +96,6 @@ class ${className}Controller extends Shield {
 
     /**
      * Acción llamada con ajax que guarda la información de un elemento
-     * @render ERROR*[mensaje] cuando no se pudo grabar correctamente, SUCCESS*[mensaje] cuando se grabó correctamente
      */
     def save_ajax() {
         def ${propertyName} = new ${className}()
@@ -123,7 +117,6 @@ class ${className}Controller extends Shield {
 
     /**
      * Acción llamada con ajax que permite eliminar un elemento
-     * @render ERROR*[mensaje] cuando no se pudo eliminar correctamente, SUCCESS*[mensaje] cuando se eliminó correctamente
      */
     def delete_ajax() {
         if(params.id) {

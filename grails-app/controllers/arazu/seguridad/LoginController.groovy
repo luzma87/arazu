@@ -26,10 +26,10 @@ class LoginController {
         def cn = "inicio"
         def an = "index"
         if (usu) {
-//            if (session.cn && session.an) {
-//                cn = session.cn
-//                an = session.an
-//            }
+            if (session.cn && session.an) {
+                cn = session.cn
+                an = session.an
+            }
             redirect(controller: cn, action: an)
         }
     }
@@ -41,28 +41,27 @@ class LoginController {
         }
         def user = Persona.withCriteria {
             ilike("login", params.user)
-            eq("estaActivo", 1)
+            eq("activo", 1)
         }
-
         if (user.size() == 0) {
+            println "0"
             flash.message = "No se ha encontrado el usuario"
             flash.tipo = "error"
             redirect(controller: 'login', action: "login")
             return
         } else if (user.size() > 1) {
+            println "1"
             flash.message = "Ha ocurrido un error grave"
             flash.tipo = "error"
             redirect(controller: 'login', action: "login")
             return
         } else {
+            println "2"
             user = user.first()
-            session.usuario = user
-            session.usuarioKerberos = user.login
-            session.time = new Date()
-            session.unidad = user.unidad
-            def perfiles = Sesn.findAllByUsuario(user)
+            def perfiles = Sesion.findAllByUsuario(user)
             if (perfiles.size() == 0) {
-                flash.message = "No puede ingresar porque no tiene ningun perfil asignado a su usuario. Comuníquese con el administrador."
+                println "3"
+                flash.message = "No puede ingresar porque no tiene ningún perfil asignado a su usuario. Comuníquese con el administrador."
                 flash.tipo = "error"
                 flash.icon = "icon-warning"
                 session.usuario = null
@@ -71,6 +70,7 @@ class LoginController {
                 return
             } else {
                 if (params.pass.encodeAsMD5() != user.password) {
+                    println "4"
                     flash.message = "Contraseña incorrecta"
                     flash.tipo = "error"
                     flash.icon = "icon-warning"
@@ -80,9 +80,16 @@ class LoginController {
                     return
                 }
             }
+            println "5"
+            session.usuario = user
+            session.usuarioKerberos = user.login
+            session.time = new Date()
+            session.unidad = user.unidad
             if (perfiles.size() == 1) {
+                println "6"
                 doLogin(perfiles.first().perfil)
             } else {
+                println "7"
                 redirect(action: "perfiles")
                 return
             }
@@ -114,7 +121,7 @@ class LoginController {
 //            perfiles.add(p)
 //        }
 
-        def perfiles = Sesn.withCriteria {
+        def perfiles = Sesion.withCriteria {
             eq("usuario", usuarioLog)
             perfil {
                 order("nombre", "asc")
@@ -128,12 +135,12 @@ class LoginController {
         if (!params.perfil) {
             redirect(controller: "inicio", action: "perfiles")
         }
-        def perfil = Prfl.get(params.perfil)
+        def perfil = Perfil.get(params.perfil)
         doLogin(perfil)
     }
 
     def savePer() {
-        def sesn = Sesn.get(params.prfl)
+        def sesn = Sesion.get(params.prfl)
         def perf = sesn.perfil
 
         if (perf) {
@@ -215,7 +222,7 @@ class LoginController {
     }
 
     def cargarPermisos() {
-        def permisos = Prms.findAllByPerfil(session.perfil)
+        def permisos = Permiso.findAllByPerfil(session.perfil)
         def hp = [:]
         permisos.each {
 //                println(it.accion.nombre+ " " + it.accion.control.nombre)

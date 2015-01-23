@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Prfl; arazu.seguridad.Persona" %>
+<%@ page import="arazu.seguridad.Perfil; arazu.seguridad.Prfl; arazu.seguridad.Persona" %>
 
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 <g:if test="${!personaInstance}">
@@ -204,7 +204,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="col-md-10">
-                                        <g:select name="perfil" from="${Prfl.list([sort: 'nombre'])}" class="form-control input-sm"
+                                        <g:select name="perfil" from="${arazu.seguridad.Perfil.list([sort: 'nombre'])}" class="form-control input-sm"
                                                   optionKey="id" optionValue="nombre"/>
                                     </div>
 

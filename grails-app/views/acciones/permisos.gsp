@@ -5,7 +5,7 @@
   Time: 04:10 PM
 --%>
 
-<%@ page import="arazu.seguridad.Prfl" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.seguridad.Perfil" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main"/>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <g:select name="perfil" class="form-control input-sm" from="${Prfl.list([sort: 'nombre'])}"
+                    <g:select name="perfil" class="form-control input-sm" from="${Perfil.list([sort: 'nombre'])}"
                               optionKey="id" optionValue="nombre"/>
                 </div>
             </div>

@@ -13,15 +13,15 @@ Collections.sort(props, comparator.constructors[0].newInstance([domainClass] as 
 props.eachWithIndex { p, i -> %>
         <g:if test="\${${propertyName}?.${p.name}}">
             <div class="row">
-                <div class="col-md-3 show-label">
+                <div class="col-sm-3 show-label">
                     ${p.naturalName}
                 </div>
                 <%  if (p.isEnum()) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     <g:fieldValue bean="\${${propertyName}}" field="${p.name}"/>
                 </div>
                 <%  } else if (p.oneToMany || p.manyToMany) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     <ul>
                         <g:each in="\${${propertyName}.${p.name}}" var="${p.name[0]}">
                             <li>\${${p.name[0]}?.encodeAsHTML()}</li>
@@ -29,19 +29,19 @@ props.eachWithIndex { p, i -> %>
                     </ul>
                 </div>
                 <%  } else if (p.manyToOne || p.oneToOne) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     \${${propertyName}?.${p.name}?.encodeAsHTML()}
                 </div>
                 <%  } else if (p.type == Boolean || p.type == boolean) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     <g:formatBoolean boolean="\${${propertyName}?.${p.name}}" true="Sí" false="No" />
                 </div>
                 <%  } else if (p.type == Date || p.type == java.sql.Date || p.type == java.sql.Time || p.type == Calendar) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     <g:formatDate date="\${${propertyName}?.${p.name}}" format="dd-MM-yyyy" />
                 </div>
                 <%  } else if(!p.type.isArray()) { %>
-                <div class="col-md-4">
+                <div class="col-sm-4">
                     <g:fieldValue bean="\${${propertyName}}" field="${p.name}"/>
                 </div>
                 <%  } %>

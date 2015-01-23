@@ -105,7 +105,7 @@ class ImportsTagLib {
         text += imp.css(src: resource(dir: 'js/jquery-ui-1.11.2', file: 'jquery-ui.structure.min.css'))
         text += imp.css(src: resource(dir: 'js/jquery-ui-1.11.2', file: 'jquery-ui.theme.min.css'))
         // FontAwesome
-        text += imp.css(src: resource(dir: 'fonts/font-awesome-4.2.0/css', file: 'font-awesome.min.css'))
+        text += imp.css(src: resource(dir: 'fonts/font-awesome-4.3.0/css', file: 'font-awesome.min.css'))
         // MFizz
         text += imp.css(src: resource(dir: 'fonts/font-mfizz-1.2', file: 'font-mfizz.css'))
 

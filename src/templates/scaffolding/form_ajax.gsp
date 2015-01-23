@@ -67,10 +67,10 @@
             if (display) { %>
         <div class="form-group keeptogether \${hasErrors(bean: ${propertyName}, field: '${prefix}${p.name}', 'error')} ${required ? 'required' : ''}">
             <span class="grupo">
-                <label for="${prefix}${p.name}" class="col-md-2 control-label">
+                <label for="${prefix}${p.name}" class="col-sm-2 control-label">
                     ${p.naturalName}
                 </label>
-                <div class="col-md-${size}">
+                <div class="col-sm-${size}">
                     ${renderEditor(p)}
                 </div>
                 <% if (required) { %> *<% } %>
@@ -93,6 +93,7 @@
             },
             success        : function (label) {
                 label.parents(".grupo").removeClass('has-error');
+                label.remove();
             }
             <% if(uniques.size() > 0) { %>
             , rules          : {
@@ -100,7 +101,7 @@
                 for (p in uniques) { %>
                 ${p.name}: {
                     remote: {
-                        url: "\${createLink(action: 'validar_unique_${p.name}_ajax')}",
+                        url: "\${createLink(controller:'${domainClass.propertyName.toLowerCase()}', action: 'validar_unique_${p.name}_ajax')}",
                         type: "post",
                         data: {
                             id: "\${${propertyName}?.id}"

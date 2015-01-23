@@ -95,7 +95,7 @@
             var id = null;
             function submitForm${domainClass.propertyName.capitalize()}() {
                 var \$form = \$("#frm${className}");
-                var \$btn = \$("#dlgCreateEdit").find("#btnSave");
+                var \$btn = \$("#dlgCreateEdit${domainClass.propertyName.capitalize()}").find("#btnSave");
                 if (\$form.valid()) {
                     \$btn.replaceWith(spinner);
                     openLoader("Guardando ${className}");
@@ -120,7 +120,7 @@
                 return false;
             } //else
             }
-            function deleteRow(itemId) {
+            function delete${domainClass.propertyName.capitalize()}(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
@@ -153,6 +153,9 @@
                                         } else {
                                             closeLoader();
                                         }
+                                    },
+                                    error: function() {
+                                        log("Ha ocurrido un error interno...", "Error")
                                     }
                                 });
                             }
@@ -160,7 +163,7 @@
                     }
                 });
             }
-            function createEditRow(id) {
+            function createEdit${domainClass.propertyName.capitalize()}(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? { id: id } : {};
                 \$.ajax({
@@ -169,7 +172,7 @@
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEdit",
+                            id      : "dlgCreateEdit${domainClass.propertyName.capitalize()}",
                             title   : title + " ${className}",
                             <% if(cant >= 10) { %>
                             class   : "modal-lg",
@@ -202,7 +205,7 @@
             \$(function () {
 
                 \$(".btnCrear").click(function() {
-                    createEditRow();
+                    createEdit${domainClass.propertyName.capitalize()}();
                     return false;
                 });
 
@@ -245,7 +248,7 @@
                             icon   : "fa fa-pencil",
                             action : function (\$element) {
                                 var id = \$element.data("id");
-                                createEditRow(id);
+                                createEdit${domainClass.propertyName.capitalize()}(id);
                             }
                         },
                         eliminar : {
@@ -254,7 +257,7 @@
                             separator_before : true,
                             action           : function (\$element) {
                                 var id = \$element.data("id");
-                                deleteRow(id);
+                                delete${domainClass.propertyName.capitalize()}(id);
                             }
                         }
                     },
