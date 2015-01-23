@@ -1,17 +1,17 @@
 package arazu.parametros
 
 /**
- * Clase para conectar con la tabla 'cgpr' de la base de datos
+ * Clase para conectar con la tabla 'crgo' de la base de datos
  */
 class Cargo {
-    /**
-     * Descipción del cargo de personal
-     */
-    String descripcion
     /**
      * Código del cargo de personal
      */
     String codigo
+    /**
+     * Descipción del cargo de personal
+     */
+    String descripcion
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
@@ -21,15 +21,15 @@ class Cargo {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'cgpr'
+        table 'crgo'
         cache usage: 'read-write', include: 'non-lazy'
-        id column: 'cgpr__id'
+        id column: 'crgo__id'
         id generator: 'identity'
         version false
         columns {
-            id column: 'cgpr__id'
-            descripcion column: 'cgprdscr'
-            codigo column: 'cgprcdgo'
+            id column: 'crgo__id'
+            descripcion column: 'crgodscr'
+            codigo column: 'crgocdgo'
         }
     }
 

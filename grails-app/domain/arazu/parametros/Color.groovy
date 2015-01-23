@@ -1,14 +1,18 @@
-package arazu.seguridad
+package arazu.parametros
 
 /**
- * Clase para conectar con la tabla 'ctrl' de la base de datos
+ * Clase para conectar con la tabla 'colr' de la base de datos
  */
-class Controlador {
+class Color {
     /**
-     * Nombre del controlador
+     * Nombre del color
      */
     String nombre
-    static hasMany = [acciones: Accion]
+    /**
+     * Valor hexadecimal para mostrar (formato: #rrggbb o #rrggbbaa)
+     */
+    String hex
+
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
@@ -18,14 +22,14 @@ class Controlador {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'ctrl'
+        table 'colr'
         cache usage: 'read-write', include: 'non-lazy'
-        version false
         id generator: 'identity'
-        sort nombre: "asc"
+        version false
         columns {
-            id column: 'ctrl__id'
-            nombre column: 'ctrlnmbr'
+            id column: 'colr__id'
+            nombre column: 'colrnmr'
+            hex column: 'colr_hex'
         }
     }
 
@@ -33,7 +37,7 @@ class Controlador {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        nombre(blank: false, size: 0..50)
+        hex nullable: true, maxSize: 9
     }
 
     /**

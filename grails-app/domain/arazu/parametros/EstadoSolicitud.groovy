@@ -1,14 +1,23 @@
-package arazu.seguridad
+package arazu.parametros
 
 /**
- * Clase para conectar con la tabla 'ctrl' de la base de datos
+ * Clase para conectar con la tabla 'essl' de la base de datos
  */
-class Controlador {
+class EstadoSolicitud {
+
     /**
-     * Nombre del controlador
+     * Código del tipo de solicitud
+     */
+    String codigo
+    /**
+     * Nombre del tipo de solicitud
      */
     String nombre
-    static hasMany = [acciones: Accion]
+    /**
+     * Descripción del tipo de solicitud
+     */
+    String descripcion
+
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
@@ -18,14 +27,15 @@ class Controlador {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'ctrl'
+        table 'essl'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort nombre: "asc"
         columns {
-            id column: 'ctrl__id'
-            nombre column: 'ctrlnmbr'
+            id column: 'essl__id'
+            codigo column: 'esslcdgo'
+            nombre column: 'esslnmbr'
+            descripcion column: 'essldscr'
         }
     }
 
@@ -33,14 +43,7 @@ class Controlador {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        nombre(blank: false, size: 0..50)
-    }
-
-    /**
-     * Genera un string para mostrar
-     * @return el nombre
-     */
-    String toString() {
-        "${this.nombre}"
+        descripcion nullable: true
+        codigo maxSize: 4
     }
 }
