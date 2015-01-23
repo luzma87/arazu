@@ -1,6 +1,7 @@
 package arazu.seguridad
 
 import arazu.parametros.Cargo
+import arazu.parametros.Departamento
 
 /*Usuario del sistema*/
 /**
@@ -63,6 +64,10 @@ class Persona {
      * Indica si el usuario está o no activo (1->Sí, 0->No)
      */
     int activo
+    /**
+     * Departamento del usuario
+     */
+    Departamento departamento
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -94,6 +99,7 @@ class Persona {
             password column: 'prsnpass'
             autorizacion column: 'prsnatrz'
             activo column: 'prsnactv'
+            departamento column: 'dpto__id'
         }
     }
 
@@ -114,6 +120,7 @@ class Persona {
         password(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..64, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para el ingreso al sistema'])
         autorizacion(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..255, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para autorizaciones'])
         activo(matches: /^[0-1]{1}$/, size: 1..1, blank: true, nullable: true, attributes: [mensaje: 'Usuario activo o no'])
+        departamento(blank:false,nullable: false)
     }
 
     /**
