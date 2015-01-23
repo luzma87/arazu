@@ -24,10 +24,7 @@ class Persona {
      * Sexo de la persona
      */
     String sexo
-    /**
-     * Indica si la persona es o no discapacitada (S para sí, N para no)
-     */
-    String discapacitado
+
     /**
      * Fecha de nacimiento de la persona
      */
@@ -49,10 +46,7 @@ class Persona {
      */
     String observaciones
 
-    /**
-     * Cargo del usuario
-     */
-    Cargo cargo
+
     /**
      * Nombre de usuario para el ingreso al sistema
      */
@@ -91,14 +85,11 @@ class Persona {
             nombre column: 'prsnnmbr'
             apellido column: 'prsnapll'
             sexo column: 'prsnsexo'
-            discapacitado column: 'prsndscp'
             fechaNacimiento column: 'prsnfcna'
             direccion column: 'prsndire'
             telefono column: 'prsntelf'
             mail column: 'prsnmail'
             observaciones column: 'prsnobsr'
-
-            cargo column: 'cgpr__id'
             login column: 'prsnlogn'
             password column: 'prsnpass'
             autorizacion column: 'prsnatrz'
@@ -114,14 +105,11 @@ class Persona {
         nombre(matches: /^[a-zA-ZñÑ áéíóúÁÉÍÚÓüÜ-]+$/, size: 1..40, blank: false, attributes: ['mensaje': 'Nombre de la persona'])
         apellido(matches: /^[a-zA-ZñÑ áéíóúÁÉÍÚÓüÜ-]+$/, size: 1..40, blank: false, attributes: ['mensaje': 'Apellido de la persona'])
         sexo(inList: ["F", "M"], size: 1..1, blank: false, attributes: ['mensaje': 'Sexo de la persona'])
-        discapacitado(matches: /^[0-1]{1}$/, size: 1..1, blank: true, nullable: true, attributes: ['mensaje': 'Si la persona es discapacitadad o no'])
         fechaNacimiento(max: new Date(), blank: true, nullable: true, attributes: ['mensaje': 'Fecha de nacimiento de la persona'])
         direccion(matches: /^[a-zA-Z0-9ñÑ .,áéíóúÁÉÍÚÓüÜ#_-]+$/, size: 1..127, blank: true, nullable: true, attributes: ['mensaje': 'Dirección de la persona'])
         telefono(size: 1..10, blank: true, nullable: true, attributes: ['mensaje': 'Teléfono de la persona'])
         mail(email: true, size: 1..40, blank: true, nullable: true, attributes: ['mensaje': 'E-mail de la persona'])
         observaciones(matches: /^[a-zA-Z0-9ñÑ .,áéíóúÁÉÍÚÓüÜ#_-]+$/, size: 1..127, blank: true, nullable: true, attributes: ['mensaje': 'Observaciones adicionales'])
-
-        cargo(blank: true, nullable: true, attributes: [mensaje: 'Cargo'])
         login(matches: /^[a-zA-Z0-9_-]{1,15}$/, size: 1..15, blank: true, nullable: true, unique: true, attributes: [mensaje: 'Nombre de usuario'])
         password(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..64, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para el ingreso al sistema'])
         autorizacion(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..255, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para autorizaciones'])
