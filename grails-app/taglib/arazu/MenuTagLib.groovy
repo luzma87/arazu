@@ -33,14 +33,14 @@ class MenuTagLib {
             html += "<div class='banner-esquina der'>"
             html += "</div>"
         } else {
-            html += "<div class='banner-search'>"
-            html += "<div class='input-group input-group-sm'>"
-            html += "<input type='text' class='form-control' placeholder='Buscador'>"
-            html += "<span class='input-group-btn'>"
-            html += "<a href='#' class='btn btn-default' style='margin-top:-4px;'><i class='fa fa-search'></i>&nbsp;</a>"
-            html += "</span>"
-            html += "</div><!-- /input-group -->"
-            html += "</div>"
+//            html += "<div class='banner-search'>"
+//            html += "<div class='input-group input-group-sm'>"
+//            html += "<input type='text' class='form-control' placeholder='Buscador'>"
+//            html += "<span class='input-group-btn'>"
+//            html += "<a href='#' class='btn btn-default' style='margin-top:-4px;'><i class='fa fa-search'></i>&nbsp;</a>"
+//            html += "</span>"
+//            html += "</div><!-- /input-group -->"
+//            html += "</div>"
         }
         html += "</div>"
 
@@ -123,7 +123,9 @@ class MenuTagLib {
         html += '<span class="icon-bar"></span>'
         html += '<span class="icon-bar"></span>'
         html += '</button>'
-        html += '<a class="navbar-brand navbar-logo" href="#"><img src="' + resource(dir: 'images/barras', file: 'logo-menu.png') + '" /></a>'
+        html += '<a class="navbar-brand navbar-logo" href="#">'
+        html += '<img src="' + resource(dir: 'images/barras', file: 'logo-menu.png') + '" />'
+        html += '</a>'
         html += '</div>'
 
         // Collect the nav links, forms, and other content for toggling

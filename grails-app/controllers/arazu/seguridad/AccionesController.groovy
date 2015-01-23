@@ -129,8 +129,10 @@ class AccionesController extends Shield {
 //        println "cargar acciones"
         def ac = []
         def accs = [:]
-        def i = 0
+        def ok = 0
+        def total = 0
         def ignore = ["afterInterceptor", "beforeInterceptor"]
+        def errores = ""
         grailsApplication.controllerClasses.each { ct ->
             def t = []
             ct.getURIs().each {
@@ -152,10 +154,14 @@ class AccionesController extends Shield {
                                         accn.tipo = TipoAccion.get(2)
                                     else
                                         accn.tipo = TipoAccion.get(1)
-                                    accn.modulo = Modulo.findByDescripcionLike("no%asignado")
-                                    accn.save(flush: true)
-                                    i++
-                                    println "errores " + accn.errors
+                                    accn.modulo = Modulo.findByNombre("noAsignado")
+                                    if (accn.save(flush: true)) {
+                                        ok++
+                                    } else {
+                                        errores += renderErrors(bean: accn)
+                                        println "errores " + accn.errors
+                                    }
+                                    total++
                                 }
                                 t.add(s.getAt(2))
                             } else {
@@ -174,7 +180,11 @@ class AccionesController extends Shield {
             accs.put(ct.getName(), t)
             t = null
         }
-        render("SUCCESS*Se ha${i == 1 ? '' : 'n'} agregado ${i} acci${i == 1 ? 'ón' : 'ones'}")
+        if (errores == "") {
+            render("SUCCESS*Se ha${ok == 1 ? '' : 'n'} agregado ${ok} acci${ok == 1 ? 'ón' : 'ones'}")
+        } else {
+            render "ERROR*Se insert${ok == 1 ? 'ó' : 'aron'} ${ok} de ${total} acci${ok == 1 ? 'ón' : 'ones'}: " + errores
+        }
     }
 
     /**

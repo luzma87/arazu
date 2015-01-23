@@ -2,6 +2,10 @@
     padding-top : 15px;
 }
 
+.navbar-logo img {
+    height : 40px;
+}
+
 .banner-top {
     position   : fixed;
     top        : 0;

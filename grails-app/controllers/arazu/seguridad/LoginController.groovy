@@ -65,7 +65,7 @@ class LoginController {
                 flash.tipo = "error"
                 flash.icon = "icon-warning"
                 session.usuario = null
-                session.unidad = null
+                session.departamento = null
                 redirect(controller: 'login', action: "login")
                 return
             } else {
@@ -75,7 +75,7 @@ class LoginController {
                     flash.tipo = "error"
                     flash.icon = "icon-warning"
                     session.usuario = null
-                    session.unidad = null
+                    session.departamento = null
                     redirect(controller: 'login', action: "login")
                     return
                 }
@@ -84,7 +84,7 @@ class LoginController {
             session.usuario = user
             session.usuarioKerberos = user.login
             session.time = new Date()
-            session.unidad = user.unidad
+            session.departamento = user.departamento
             if (perfiles.size() == 1) {
                 println "6"
                 doLogin(perfiles.first().perfil)
