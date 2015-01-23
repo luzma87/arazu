@@ -1,4 +1,4 @@
-package arazu.items
+package arazu.parametros
 
 class TipoItem {
     /**
