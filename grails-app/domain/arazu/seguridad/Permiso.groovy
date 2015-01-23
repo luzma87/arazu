@@ -33,10 +33,4 @@ class Permiso {
             perfil column: 'prfl__id'
         }
     }
-
-    /**
-     * Define las restricciones de cada uno de los campos
-     */
-    static constraints = {
-    }
 }

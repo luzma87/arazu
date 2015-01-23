@@ -34,7 +34,7 @@ class Unidad {
         table 'undd'
         version false
         id generator: 'identity'
-
+        sort descripcion: "asc"
         columns {
             id column: 'undd__id'
             codigo column: "unddcdgo"
@@ -50,5 +50,12 @@ class Unidad {
     static constraints = {
         padre nullable: true
         codigo maxSize: 4
+    }
+    /**
+     * Genera un string para mostrar
+     * @return la descripción
+     */
+    String toString() {
+        "${this.descripcion}"
     }
 }

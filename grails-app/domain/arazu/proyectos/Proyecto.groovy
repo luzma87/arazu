@@ -14,6 +14,14 @@ class Proyecto {
      */
     String descripcion
     /**
+     * Fecha de inicio del proyecto
+     */
+    Date fechaInicio
+    /**
+     * Fecha de fin del proyecto
+     */
+    Date fechaFin
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -24,11 +32,27 @@ class Proyecto {
         table 'proy'
         version false
         id generator: 'identity'
-
+        sort nombre: "asc"
         columns {
             id column: 'proy__id'
             nombre column: 'proynmbr'
             descripcion column: 'proydscr'
+            fechaInicio column: 'proyfcin'
+            fechaFin column: 'proyfcfn'
         }
+    }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
+    static constraints = {
+        fechaFin nullable: true
+    }
+    /**
+     * Genera un string para mostrar
+     * @return el nombre
+     */
+    String toString() {
+        "${this.nombre}"
     }
 }

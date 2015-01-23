@@ -94,7 +94,7 @@
         <script type="text/javascript">
             var id = null;
             function submitForm${domainClass.propertyName.capitalize()}() {
-                var \$form = \$("#frm${className}");
+                var \$form = \$("#frm${domainClass.propertyName.capitalize()}");
                 var \$btn = \$("#dlgCreateEdit${domainClass.propertyName.capitalize()}").find("#btnSave");
                 if (\$form.valid()) {
                     \$btn.replaceWith(spinner);
@@ -103,19 +103,24 @@
                         type    : "POST",
                         url     : \$form.attr("action"),
                         data    : \$form.serialize(),
-                            success : function (msg) {
-                        var parts = msg.split("*");
-                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                        setTimeout(function() {
-                            if (parts[0] == "SUCCESS") {
-                                location.reload(true);
-                            } else {
-                                spinner.replaceWith(\$btn);
-                                return false;
-                            }
-                        }, 1000);
-                    }
-                });
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function() {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith(\$btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error: function() {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
             } else {
                 return false;
             } //else
@@ -155,7 +160,8 @@
                                         }
                                     },
                                     error: function() {
-                                        log("Ha ocurrido un error interno...", "Error")
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
                                     }
                                 });
                             }
@@ -229,6 +235,9 @@
                                     success : function (msg) {
                                         bootbox.dialog({
                                             title   : "Ver ${className}",
+                                            <% if(cant >= 10) { %>
+                                            class   : "modal-lg",
+                                            <% } %>
                                             message : msg,
                                             buttons : {
                                                 ok : {

@@ -30,6 +30,7 @@ class Departamento {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort nombre: "asc"
         columns {
             id column: 'dpto__id'
             codigo column: 'dptocdgo'
@@ -44,5 +45,12 @@ class Departamento {
     static constraints = {
         descripcion nullable: true
         codigo maxSize: 4
+    }
+    /**
+     * Genera un string para mostrar
+     * @return el nombre
+     */
+    String toString() {
+        "${this.nombre}"
     }
 }

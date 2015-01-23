@@ -31,6 +31,7 @@ class TipoSolicitud {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort nombre: "asc"
         columns {
             id column: 'tpsl__id'
             codigo column: 'tpslcdgo'
@@ -45,5 +46,12 @@ class TipoSolicitud {
     static constraints = {
         descripcion nullable: true
         codigo maxSize: 4
+    }
+    /**
+     * Genera un string para mostrar
+     * @return el nombre
+     */
+    String toString() {
+        "${this.nombre}"
     }
 }

@@ -2,8 +2,14 @@ package arazu.items
 
 import arazu.parametros.TipoItem
 
+/**
+ *  Clase para conectar con la tabla 'item' de la base de datos
+ */
 class Item {
 
+    /**
+     * Tipo de item
+     */
     TipoItem tipo
     /**
      * Descripción del item
@@ -31,7 +37,14 @@ class Item {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true,blank: true,size: 1..500)
-        tipo(nullable: false,blank:false)
+        descripcion(nullable: true, blank: true, size: 1..500)
+        tipo(nullable: false, blank: false)
+    }
+    /**
+     * Genera un string para mostrar
+     * @return la descripción
+     */
+    String toString() {
+        return "${this.descripcion}"
     }
 }

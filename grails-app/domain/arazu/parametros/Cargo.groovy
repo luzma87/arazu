@@ -23,9 +23,9 @@ class Cargo {
     static mapping = {
         table 'crgo'
         cache usage: 'read-write', include: 'non-lazy'
-        id column: 'crgo__id'
         id generator: 'identity'
         version false
+        sort descripcion: "asc"
         columns {
             id column: 'crgo__id'
             descripcion column: 'crgodscr'

@@ -53,7 +53,7 @@ class Alerta {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-
+        sort fechaEnvio: "desc"
         columns {
             id column: 'aler__id'
             from column: 'alerfrom'

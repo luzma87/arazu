@@ -1,11 +1,28 @@
 package arazu.items
 
+/**
+ *  Clase para conectar con la tabla 'hsit' de la base de datos
+ */
 class HistorialItem {
-
+    /**
+     * Item
+     */
     Item item
+    /**
+     * Maquinaria
+     */
     Maquinaria maquinaria
+    /**
+     * Fecha
+     */
     Date fecha = new Date()
+    /**
+     * Texto
+     */
     String texto
+    /**
+     * Define los campos que se van a ignorar al momento de hacer logs
+     */
     static auditable = [ignore: []]
     /**
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
@@ -15,7 +32,7 @@ class HistorialItem {
         cache usage: 'read-write'
         version false
         id generator: 'identity'
-        sort fecha: "asc"
+        sort fecha: "desc"
         columns {
             id column: 'hsit__id'
             item column: 'item__id'
@@ -30,9 +47,9 @@ class HistorialItem {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        item(nullable: true,blank: true)
-        maquinaria(nullable: true,blank: true)
-        fecha(nullable: false,blank: false)
-        texto(nullable: false,blank: false)
+        item(nullable: true, blank: true)
+        maquinaria(nullable: true, blank: true)
+        fecha(nullable: false, blank: false)
+        texto(nullable: false, blank: false)
     }
 }

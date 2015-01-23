@@ -82,6 +82,7 @@ class Pedido {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort fecha: "desc"
         columns {
             id column: 'pddo__id'
             tipoSolicitud column: 'tpsl__id'
@@ -100,6 +101,9 @@ class Pedido {
         }
     }
 
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
     static constraints = {
         codigo maxSize: 4
         maquinaria nullable: true

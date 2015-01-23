@@ -35,7 +35,6 @@ class ErrorLog {
     static mapping = {
         table 'logf'
         cache usage: 'read-write', include: 'non-lazy'
-        id column: 'logf__id'
         id generator: 'identity'
         version false
         columns {

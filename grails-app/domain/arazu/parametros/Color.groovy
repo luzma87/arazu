@@ -25,6 +25,7 @@ class Color {
         table 'colr'
         cache usage: 'read-write', include: 'non-lazy'
         id generator: 'identity'
+        sort nombre: "asc"
         version false
         columns {
             id column: 'colr__id'

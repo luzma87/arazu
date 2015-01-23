@@ -18,8 +18,8 @@
     uniques = []
     %>
     <div class="modal-contenido">
-    <g:form class="form-horizontal" name="frm${domainClass.propertyName.capitalize()}" role="form" action="save_ajax" method="POST">
-        <g:hiddenField name="id" value="\${${propertyName}?.id}" />
+    <g:form class="form-horizontal" name="frm${domainClass.propertyName.capitalize()}" id="\${${propertyName}?.id}"
+            role="form" action="save_ajax" method="POST">
 
         <%
         Collections.sort(props, comparator.constructors[0].newInstance([domainClass] as Object[]))
@@ -65,17 +65,9 @@
                 }
             }
             if (display) { %>
-        <div class="form-group keeptogether \${hasErrors(bean: ${propertyName}, field: '${prefix}${p.name}', 'error')} ${required ? 'required' : ''}">
-            <span class="grupo">
-                <label for="${prefix}${p.name}" class="col-sm-2 control-label">
-                    ${p.naturalName}
-                </label>
-                <div class="col-sm-${size}">
-                    ${renderEditor(p)}
-                </div>
-                <% if (required) { %> *<% } %>
-            </span>
-        </div>
+        <elm:fieldRapido claseLabel="col-sm-2" label="${p.naturalName}" claseField="col-sm-${size}">
+            ${renderEditor(p)}
+        </elm:fieldRapido>
         <% }   } %>
     </g:form>
         </div>

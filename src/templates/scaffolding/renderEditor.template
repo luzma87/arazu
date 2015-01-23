@@ -197,7 +197,7 @@
             if (property.type == Byte) {
                 return "<g:select name=\"${property.name}\" from=\"\${-128..127}\" class=\"range\" value=\"\${fieldValue(bean: ${domainInstance}, field: '${property.name}')}\" />"
             } else {
-                return "<g:field type=\"number\" name=\"${property.name}\" value=\"\${${domainInstance}.${property.name}}\" />"
+                return "<g:teextField name=\"${property.name}\" value=\"\${${domainInstance}.${property.name}}\" />"
             }
         } else {
             def sb = new StringBuilder()
@@ -227,10 +227,9 @@
                 sb << renderNoSelection(property)
                 sb << '/>'
             } else {
-                sb << '<g:field'
+                sb << '<g:textField'
                 sb << ' name="' << property.name << '"'
                 if (property.type in [float, double, Float, Double, BigDecimal]) {
-                     sb << ' type="number"'
                     if (cp.min != null) sb << ' min="' << cp.min << '"'
                     if (cp.max != null) sb << ' max="' << cp.max << '"'
                     sb << ' value="${' << "fieldValue(bean: ${domainInstance}, field: '${property.name}')" << '}"'
@@ -240,7 +239,6 @@
                     }
                     sb << '"'
                 } else {
-                    sb << ' type="number"'
                     if (cp.min != null) sb << ' min="' << cp.min << '"'
                     if (cp.max != null) sb << ' max="' << cp.max << '"'
                     sb << ' value="${' << domainInstance << '.' << property.name << '}"'

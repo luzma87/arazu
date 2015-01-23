@@ -45,6 +45,7 @@ class Cotizacion {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort fecha: "desc"
         columns {
             id column: 'ctzn__id'
             pedido column: 'pddo__id'

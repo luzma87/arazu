@@ -35,18 +35,11 @@ class Sesion {
     }
 
     /**
-     * Define las restricciones de cada uno de los campos
-     */
-    static constraints = {
-
-    }
-
-    /**
      * Genera un string para mostrar
-     * @return el perfil
+     * @return el perfil - login
      */
     String toString() {
-        return "${this.perfil}"
+        return this.perfil.descripcion + " - " + this.usuario.login
     }
 
 }

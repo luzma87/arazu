@@ -31,6 +31,7 @@ class EstadoSolicitud {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort nombre: "asc"
         columns {
             id column: 'essl__id'
             codigo column: 'esslcdgo'
@@ -45,5 +46,13 @@ class EstadoSolicitud {
     static constraints = {
         descripcion nullable: true
         codigo maxSize: 4
+    }
+
+    /**
+     * Genera un string para mostrar
+     * @return el nombre
+     */
+    String toString() {
+        "${this.nombre}"
     }
 }

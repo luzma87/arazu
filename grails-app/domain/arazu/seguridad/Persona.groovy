@@ -47,7 +47,6 @@ class Persona {
      */
     String observaciones
 
-
     /**
      * Nombre de usuario para el ingreso al sistema
      */
@@ -81,7 +80,6 @@ class Persona {
         table 'prsn'
         sort 'apellido'
         cache usage: 'read-write', include: 'non-lazy'
-        id column: 'prsn__id'
         id generator: 'identity'
         version false
         columns {
@@ -120,7 +118,7 @@ class Persona {
         password(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..64, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para el ingreso al sistema'])
         autorizacion(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..255, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para autorizaciones'])
         activo(matches: /^[0-1]{1}$/, size: 1..1, blank: true, nullable: true, attributes: [mensaje: 'Usuario activo o no'])
-        departamento(blank:false,nullable: false)
+        departamento(blank: false, nullable: false)
     }
 
     /**
@@ -128,6 +126,6 @@ class Persona {
      * @return el nombre y el apellido concatenado
      */
     String toString() {
-        "${this.nombre} ${this.apellido}"
+        return "${this.nombre} ${this.apellido}"
     }
 }

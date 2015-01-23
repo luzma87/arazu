@@ -3,15 +3,41 @@ package arazu.items
 import arazu.parametros.Color
 import arazu.parametros.TipoMaquinaria
 
+/**
+ *  Clase para conectar con la tabla 'maqn' de la base de datos
+ */
 class Maquinaria {
-
+    /**
+     * Tipo de maquinaria
+     */
     TipoMaquinaria tipo
+    /**
+     * Descripción de la maquinaria
+     */
     String descripcion
+    /**
+     * Placa de la maquinaria
+     */
     String placa
+    /**
+     * Año de la maquinaria
+     */
     int anio
+    /**
+     * Marca de la maquinaria
+     */
     String marca
+    /**
+     * Modelo de la maquinaria
+     */
     String modelo
+    /**
+     * Observaciones
+     */
     String observaciones
+    /**
+     * Color de la maquinaria
+     */
     Color color
 
     /**
@@ -43,12 +69,20 @@ class Maquinaria {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true,blank: true,size: 1..255)
-        observaciones(nullable: true,blank: true,size: 1..1023)
-        tipo(nullable: false,blank:false)
-        placa(nullable: true,blank: true,size: 1..20)
-        marca(nullable: true,blank: true,size: 1..50)
-        modelo(nullable: true,blank: true,size: 1..50)
-        color(nullable: false,blank:false)
+        descripcion(nullable: true, blank: true, size: 1..255)
+        observaciones(nullable: true, blank: true, size: 1..1023)
+        tipo(nullable: false, blank: false)
+        placa(nullable: true, blank: true, size: 1..20)
+        marca(nullable: true, blank: true, size: 1..50)
+        modelo(nullable: true, blank: true, size: 1..50)
+        color(nullable: false, blank: false)
+    }
+
+    /**
+     * Genera un string para mostrar
+     * @return la descripción
+     */
+    String toString() {
+        "${this.descripcion} (${this.placa})"
     }
 }
