@@ -155,12 +155,12 @@
                 var data = id ? { id: id } : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'tipoitem', action:'form_ajax')}",
+                    url     : "${createLink(controller:'tipoItem', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
                             id      : "dlgCreateEditTipoItem",
-                            title   : title + " TipoItem",
+                            title   : title + " Tipos de Items",
                             
                             message : msg,
                             buttons : {
@@ -175,7 +175,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitForm();
+                                        return submitFormTipoItem();
                                     } //callback
                                 } //guardar
                             } //buttons

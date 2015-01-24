@@ -143,3 +143,29 @@ body {
 .noPadding {
     padding : 0;
 }
+
+.svt-bg-primary{
+    background-color: #282851;
+    color: #ffffff;
+    border: 1px solid #282851;
+}
+.svt-bg-info{
+    background-color: #3A5DAA;
+    color: #ffffff;
+    border: 1px solid #3A5DAA;
+}
+.svt-bg-danger{
+    background-color: #ab3a3e;
+    color: #ffffff;
+    border: 1px solid #ab3a3e;
+}
+.svt-bg-success{
+    background-color: #7aab3a;
+    color: #ffffff;
+    border: 1px solid #7aab3a;
+}
+.svt-bg-warning{
+    background-color: #AB623A;
+    color: #ffffff;
+    border: 1px solid #AB623A;
+}

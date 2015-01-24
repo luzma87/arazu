@@ -1,5 +1,5 @@
 <%@ page import="arazu.items.Item" %>
-
+<elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 <g:if test="${!itemInstance}">
     <elm:notFound elem="Item" genero="o" />
@@ -16,7 +16,7 @@
         </elm:fieldRapido>
         
         <elm:fieldRapido claseLabel="col-sm-2" label="Tipo" claseField="col-sm-6">
-            <g:select id="tipo" name="tipo.id" from="${arazu.parametros.TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control "/>
+            <g:select id="tipo" name="tipo.id" from="${arazu.parametros.TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>
         </elm:fieldRapido>
         
     </g:form>

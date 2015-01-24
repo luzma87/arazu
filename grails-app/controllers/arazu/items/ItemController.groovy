@@ -89,6 +89,8 @@ class ItemController extends Shield {
                 return
             }
         }
+        if(params.msg)
+            flash.message=params.msg
         itemInstance.properties = params
         return [itemInstance: itemInstance]
     } //form para cargar con ajax en un dialog

@@ -56,6 +56,6 @@ class Unidad {
      * @return la descripción
      */
     String toString() {
-        "${this.descripcion}"
+        "(${this.codigo}) ${this.descripcion}"
     }
 }

@@ -1,9 +1,17 @@
 package arazu.inventario
 
-class InventarioController {
+import arazu.items.Item
+import arazu.seguridad.Shield
+
+class InventarioController extends Shield {
 
     def ingresoDeBodega(){
         def bodegas = Bodega.findAllByPersona(session.usuario)
-        [bodegas:bodegas]
+        def items = Item.list([sort: "descripcion"])
+        def itemStr = ""
+        itemStr+=items.collect{'"'+it.descripcion+'"'}
+
+        println "items "+itemStr
+        [bodegas:bodegas,items:itemStr]
     }
 }
