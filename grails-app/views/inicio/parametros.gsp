@@ -54,7 +54,7 @@
                                 </g:link>
 
                                 <div class="descripcion hidden">
-                                    <h4><i class="fa fa-file-archive-o fa-2x"></i> Tipo de solicitud</h4>
+                                    <h4><i class="fa fa-file-archive-o fa-2x"></i> Tipos de solicitud</h4>
 
                                     <p>Permite registrar los diferentes tipos de solicitud</p>
                                 </div>
@@ -66,7 +66,7 @@
                                 </g:link>
 
                                 <div class="descripcion hidden">
-                                    <h4><i class="fa fa-check-square-o fa-2x "></i> Estado de solicitud</h4>
+                                    <h4><i class="fa fa-check-square-o fa-2x "></i> Estados de solicitud</h4>
 
                                     <p>Permite registrar los diferentes estados en los que puede estar una solicitud</p>
                                 </div>
@@ -78,7 +78,7 @@
                                 </g:link>
 
                                 <div class="descripcion hidden">
-                                    <h4><i class="fa flaticon-power30 fa-2x "></i> Tipo de ítem</h4>
+                                    <h4><i class="fa flaticon-power30 fa-2x "></i> Tipos de ítem</h4>
 
                                     <p>Permite registrar los diferentes tipos de ítems</p>
                                 </div>
@@ -90,7 +90,7 @@
                                 </g:link>
 
                                 <div class="descripcion hidden">
-                                    <h4><i class="fa flaticon-construction12 fa-2x "></i> Tipo de maquinaria</h4>
+                                    <h4><i class="fa flaticon-construction12 fa-2x "></i> Tipos de maquinaria</h4>
 
                                     <p>Permite registrar los diferentes tipos de ítems</p>
                                 </div>
@@ -102,7 +102,7 @@
                                 </g:link>
 
                                 <div class="descripcion hidden">
-                                    <h4><i class=" fa fa-server fa-2x"></i> Unidad</h4>
+                                    <h4><i class=" fa fa-server fa-2x"></i> Unidades</h4>
 
                                     <p>Permite registrar los diferentes tipos de ítems</p>
                                 </div>
