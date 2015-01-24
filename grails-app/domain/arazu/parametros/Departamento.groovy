@@ -5,6 +5,10 @@ package arazu.parametros
  */
 class Departamento {
     /**
+     * Departamento padre
+     */
+    Departamento padre
+    /**
      * Código del departamento
      */
     String codigo
@@ -33,6 +37,7 @@ class Departamento {
         sort nombre: "asc"
         columns {
             id column: 'dpto__id'
+            padre column: 'dptopdre'
             codigo column: 'dptocdgo'
             nombre column: 'dptonmbr'
             descripcion column: 'dptodscr'
@@ -43,6 +48,7 @@ class Departamento {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
+        padre nullable: true
         descripcion nullable: true
         codigo maxSize: 4
     }
