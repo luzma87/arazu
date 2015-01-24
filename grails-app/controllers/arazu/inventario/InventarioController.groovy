@@ -54,7 +54,7 @@ class InventarioController extends Shield {
 
     def inventario(){
         def bodega = Bodega.get(params.id)
-        def ingresos = Ingreso.findAllByBodega(bodega)
+        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodega,0)
         [ingresos:ingresos,bodega:bodega]
     }
 }
