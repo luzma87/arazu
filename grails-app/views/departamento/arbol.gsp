@@ -197,6 +197,14 @@
                         showPersona(nodeId);
                     }
                 };
+                var resetPass = {
+                    label            : "<span class='text-warning text-shadow'>Resetear contraseña</span>",
+                    icon             : "fa fa-unlock text-warning text-shadow",
+                    separator_before : true,
+                    action           : function () {
+                        cambiarPassPersona(nodeId, "pass");
+                    }
+                };
 
                 var items = {};
 
@@ -222,6 +230,7 @@
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
                     items.desactivarUsuario = desactivarUsuario;
+                    items.resetPass = resetPass;
                 } else if (esUsuarioInactivo) {
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
@@ -638,14 +647,198 @@
                     }
                 });
             }
+            function cambiarPassPersona(id, tipo) {
+                var title = "";
+                var $alert = $("<div class='alert alert-info'>");
+
+                var submitFormPass = function () {
+                    if ($form.valid()) {
+                        openLoader("Guardando");
+                        $.ajax({
+                            type    : "POST",
+                            url     : '${createLink(controller: 'persona', action:'savePass_ajax')}',
+                            data    : {
+                                id     : id,
+                                tipo   : tipo,
+                                input1 : set1.input.val(),
+                                input2 : set2.input.val(),
+                                input3 : set3.input.val()
+                            },
+                            success : function (msg) {
+                                $("#dlgChangePass").modal("hide");
+                                var parts = msg.split("*");
+                                log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                closeLoader();
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
+                };
+
+                var createInput = function (num) {
+                    var $grupo = $("<div class='grupo'>");
+                    var $inputGroup = $("<div class='input-group input-group-sm'>");
+                    var $input = $("<input type='password' id='input" + num + "' name='input" + num + "' class='form-control input-sm required'>");
+                    $input.keyup(function (ev) {
+                        if (ev.keyCode == 13) {
+                            submitFormPass();
+                        }
+                    });
+                    var $span = $("<span class='input-group-addon'>");
+                    if (tipo == "pass") {
+                        $span.html("<i class='fa fa-unlock'></i> ");
+                    } else if (tipo == "auth") {
+                        $span.html("<i class='fa fa-unlock-alt'></i> ");
+                    }
+                    var $row = $("<div class='row'>");
+                    var $cell1 = $("<div class='col-md-4'>");
+                    var $cell2 = $("<div class='col-md-6'>");
+                    $inputGroup.append($input);
+                    $inputGroup.append($span);
+                    $grupo.append($inputGroup);
+                    $cell2.append($grupo);
+                    $row.append($cell1);
+                    $row.append($cell2);
+                    return {input : $input, row : $row, cell : $cell1};
+                };
+
+                var set1 = createInput(1);
+                var set2 = createInput(2);
+                var set3 = createInput(3);
+
+                var $form = $("<form>");
+                $form.attr("id", "frmPass");
+                var strEqualTo = "";
+
+                if (tipo == "pass") {
+                    $alert.text("Ingrese la nueva contraseña del usuario");
+                    title = "Cambio de contraseña del usuario";
+                    set2.cell.text("Contraseña nueva");
+                    set3.cell.text("Verifique la contraseña");
+                    $form.append(set2.row).append(set3.row);
+                    strEqualTo = "Repita la nueva contraseña";
+                } else if (tipo == "auth") {
+                    $alert.text("Ingrese su autorización actual y la nueva");
+                    title = "Cambio de autorización del usuario";
+                    set1.cell.text("Autorización actual");
+                    set2.cell.text("Autorización nueva");
+                    set3.cell.text("Verifique la autorización");
+                    $form.append(set1.row).append(set2.row).append(set3.row);
+                    strEqualTo = "Repita su nueva autorización";
+                }
+
+                $form.prepend($alert);
+
+                $form.validate({
+                    errorClass     : "help-block",
+                    errorPlacement : function (error, element) {
+                        if (element.parent().hasClass("input-group")) {
+                            error.insertAfter(element.parent());
+                        } else {
+                            error.insertAfter(element);
+                        }
+                        element.parents(".grupo").addClass('has-error');
+                    },
+                    success        : function (label) {
+                        label.parents(".grupo").removeClass('has-error');
+                        label.remove();
+                    },
+                    rules          : {
+                        input1 : {
+                            remote : {
+                                url  : "${createLink(controller:'persona',action: 'validar_aut_previa_ajax')}",
+                                type : "post",
+                                data : {
+                                    id : id
+                                }
+                            }
+                        },
+                        input2 : {
+                            notEqualTo : "#input1"
+                        },
+                        input3 : {
+                            equalTo : "#input2"
+                        }
+                    },
+                    messages       : {
+                        input1 : {
+                            remote : "La autorización no concuerda con la ingresada"
+                        },
+                        input2 : {
+                            notEqualTo : "No ingrese su autorización actual"
+                        },
+                        input3 : {
+                            equalTo : strEqualTo
+                        }
+                    }
+                });
+
+                var b = bootbox.dialog({
+                    id      : "dlgChangePass",
+                    title   : title,
+                    message : $form,
+                    buttons : {
+                        cancelar : {
+                            label     : "Cancelar",
+                            className : "btn-primary",
+                            callback  : function () {
+                            }
+                        },
+                        guardar  : {
+                            label     : "<i class='fa fa-save'></i> Guardar",
+                            className : "btn-success",
+                            callback  : function () {
+                                submitFormPass();
+                            }
+                        }
+                    }
+                });
+                setTimeout(function () {
+                    b.find(".form-control").first().focus()
+                }, 500);
+            }
+
+            function moveNode(node, newParent) {
+                var parts = node.split("_");
+                var nodeType = parts[0];
+                var nodeId = parts[1];
+
+                parts = newParent.split("_");
+                var parentId = parts[1];
+
+                var url;
+                if (nodeType.contains("Usu")) {
+                    url = "${createLink(controller: 'persona', action:'cambiarDepartamento_ajax')}";
+                } else if (nodeType.contains("Dep")) {
+                    url = "${createLink(controller: 'departamento', action:'cambiarPadre_ajax')}";
+                }
+
+                $.ajax({
+                    type    : "POST",
+                    url     : url,
+                    data    : {
+                        id    : nodeId,
+                        padre : parentId
+                    },
+                    success : function (msg) {
+                        var parts = msg.split("*");
+                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                        if (parts[0] == "ERROR") {
+                            openLoader();
+                            location.reload(true);
+                        }
+                    },
+                    error   : function (jqXHR, textStatus, errorThrown) {
+//                        console.log(jqXHR, textStatus, errorThrown);
+                        log(errorThrown, "error");
+                        openLoader();
+                        location.reload(true);
+                    }
+                });
+            }
 
             $(function () {
-
-//                $(document).on("dnd_start.vakata", function (data, element, helper, event) {
-//                    console.log("data: ", data, " element: ", element, " helper: ", helper, " event: ", event)
-//                }).on("dnd_stop.vakata", function (data, element, helper, event) {
-//                    console.log("data: ", data, " element: ", element, " helper: ", helper, " event: ", event)
-//                });
 
                 $treeContainer.on("loaded.jstree", function () {
                     $("#loading").hide();
@@ -653,10 +846,8 @@
                 }).on("select_node.jstree", function (node, selected, event) {
 //                    $('#tree').jstree('toggle_node', selected.selected[0]);
                 }).on("move_node.jstree", function (e, data) {
-                    //data.node, data.parent, data.old_parent is what you need
-                    console.log(data);
-                    console.log(data.node.id);
-                    console.log(data.parent);
+//                    console.log(data);
+                    moveNode(data.node.id, data.parent);
                 }).jstree({
                     plugins     : ["types", "state", "contextmenu", "search", "dnd"],
                     core        : {

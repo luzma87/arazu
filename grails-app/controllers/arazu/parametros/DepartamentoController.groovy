@@ -322,13 +322,13 @@ class DepartamentoController extends Shield {
      * Acción llamada con ajax que permite modificar el padre de un departamento
      */
     def cambiarPadre_ajax() {
+        println "CAMBAIR PADRE:::: " + params
         def dep = Departamento.get(params.id.toLong())
-        def padre = Departamento.get(params.padre.toLong())
-        if (padre) {
-            dep.padre = padre
-        } else {
-            dep.padre = null
+        def padre = null
+        if (params.padre) {
+            padre = Departamento.get(params.padre.toLong())
         }
+        dep.padre = padre
         if (dep.save(flush: true)) {
             render "SUCCESS*Departamento reubicado exitosamente"
         } else {

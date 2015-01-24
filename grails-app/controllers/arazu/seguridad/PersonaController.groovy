@@ -140,6 +140,9 @@ class PersonaController extends Shield {
             }
         }
         personaInstance.properties = params
+        if (!params.id) {
+            personaInstance.password = personaInstance.cedula.encodeAsMD5()
+        }
         if (!personaInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Persona: " + renderErrors(bean: personaInstance)
             return
@@ -213,7 +216,7 @@ class PersonaController extends Shield {
     /**
      * Acción llamada con ajax que permite modificar el departamento de una persona
      */
-    def cambiarPadre_ajax() {
+    def cambiarDepartamento_ajax() {
         def per = Persona.get(params.id.toLong())
         def dep = Departamento.get(params.padre.toLong())
         if (dep) {
@@ -258,7 +261,7 @@ class PersonaController extends Shield {
      * @render ERROR*[mensaje] cuando no se pudo grabar correctamente, SUCCESS*[mensaje] cuando se grabó correctamente
      */
     def savePass_ajax() {
-        println params
+//        println params
         def persona = Persona.get(params.id)
         def str = params.tipo == "pass" ? "contraseña" : "autorización"
         params.input2 = params.input2.trim()
