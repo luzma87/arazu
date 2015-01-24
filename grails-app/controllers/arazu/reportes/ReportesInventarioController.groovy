@@ -6,7 +6,9 @@ class ReportesInventarioController {
 
 
     def ingresoDeBodega(){
-        def ingreso = Ingreso.get(param.id)
+        def ingreso = Ingreso.get(params.id)
+        if(!ingreso)
+            response.sendError(404)
         [ingreso:ingreso]
     }
 }

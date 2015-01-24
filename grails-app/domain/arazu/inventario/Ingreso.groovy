@@ -40,6 +40,10 @@ class Ingreso {
      * Saldo del ingreso por cantidad
      */
     double saldo = 0
+    /**
+     * Número de factura
+     */
+    String factura
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -64,6 +68,7 @@ class Ingreso {
             valor column: 'ingrvlor'
             pedido column: 'pddo__id'
             saldo column: 'ingrsldo'
+            factura column: 'ingrfact'
         }
     }
 
@@ -76,6 +81,7 @@ class Ingreso {
         bodega(nullable: false, blank: false)
         fecha(nullable: false, blank: false)
         pedido(nullable: true, blank: true)
+        factura(nullable: true, blank: true,size: 1..50)
     }
 
     def getEgresos(){
