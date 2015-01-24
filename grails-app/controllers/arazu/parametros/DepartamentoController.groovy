@@ -39,34 +39,30 @@ class DepartamentoController extends Shield {
      * Función que genera las hojas del árbol de un padre específico
      */
     private String imprimeHijos(Long padre) {
-        def band = true
+//        def band = true
         def t = ""
         def txt = ""
 
         def dpto = Departamento.get(padre)
+        def departamentos = Departamento.findAllByPadre(dpto)
 
-        def l = Departamento.findAllByPadre(dpto);
-
-        l.each {
-            band = false;
-            t += imprimeHijos(it.id)
+        def clase = "jstree-open"
+        def rel = "dpto"
+        if (departamentos.size() > 0) {
+            clase = ""
         }
-
-        if (!band) {
-            def clase = "jstree-open"
-//            if (dpto.nivel >= 2) {
-//                clase = "jstree-closed"
-//            }
-            txt += "<li id='li_" + dpto.id + "' class='" + clase + "' data-jstree='{\"type\":\"dpto\"}'>"
-            txt += "<a href='#' class='label_arbol'>" + dpto + "</a>"
-            txt += "<ul>"
-            txt += t
-            txt += "</ul>"
-        } else {
-            txt += "<li id='li_" + dpto.id + "' class='hijo jstree-leaf' data-jstree='{\"type\":\"hijo\"}'>"
-            txt += "<a href='#' class='label_arbol'>" + dpto + "</a>"
+        if (dpto.activo != 1) {
+            rel += "Inactivo"
         }
+        txt += "<li id='li_" + dpto.id + "' class='" + clase + "' data-jstree='{\"type\":\"${rel}\"}'>"
+        txt += "<a href='#' class='label_arbol'>" + dpto + "</a>"
+        txt += "<ul>"
+        departamentos.each { h ->
+            txt += imprimeHijos(h.id)
+        }
+        txt += "</ul>"
         txt += "</li>"
+
         return txt
     }
 

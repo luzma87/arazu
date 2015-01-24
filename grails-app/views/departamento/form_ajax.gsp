@@ -2,33 +2,37 @@
 
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 <g:if test="${!departamentoInstance}">
-    <elm:notFound elem="Departamento" genero="o" />
+    <elm:notFound elem="Departamento" genero="o"/>
 </g:if>
 <g:else>
-    
-    <div class="modal-contenido">
-    <g:form class="form-horizontal" name="frmDepartamento" id="${departamentoInstance?.id}"
-            role="form" action="save_ajax" method="POST">
 
-        
-        <elm:fieldRapido claseLabel="col-sm-2" label="Padre" claseField="col-sm-6">
-            <g:select id="padre" name="padre.id" from="${arazu.parametros.Departamento.list()}" optionKey="id" value="${departamentoInstance?.padre?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
-        </elm:fieldRapido>
-        
-        <elm:fieldRapido claseLabel="col-sm-2" label="Descripcion" claseField="col-sm-6">
-            <g:textField name="descripcion" class="form-control " value="${departamentoInstance?.descripcion}"/>
-        </elm:fieldRapido>
-        
-        <elm:fieldRapido claseLabel="col-sm-2" label="Codigo" claseField="col-sm-6">
-            <g:textField name="codigo" maxlength="4" required="" class="form-control  required unique noEspacios" value="${departamentoInstance?.codigo}"/>
-        </elm:fieldRapido>
-        
-        <elm:fieldRapido claseLabel="col-sm-2" label="Nombre" claseField="col-sm-6">
-            <g:textField name="nombre" required="" class="form-control  required" value="${departamentoInstance?.nombre}"/>
-        </elm:fieldRapido>
-        
-    </g:form>
-        </div>
+    <div class="modal-contenido">
+        <g:form class="form-horizontal" name="frmDepartamento" id="${departamentoInstance?.id}"
+                role="form" action="save_ajax" method="POST">
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Padre" claseField="col-sm-6">
+                <g:select id="padre" name="padre.id" from="${Departamento.list()}" optionKey="id" value="${departamentoInstance?.padre?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Descripcion" claseField="col-sm-6">
+                <g:textField name="descripcion" class="form-control " value="${departamentoInstance?.descripcion}"/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Codigo" claseField="col-sm-6">
+                <g:textField name="codigo" maxlength="4" required="" class="form-control  required unique noEspacios" value="${departamentoInstance?.codigo}"/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Nombre" claseField="col-sm-6">
+                <g:textField name="nombre" required="" class="form-control  required" value="${departamentoInstance?.nombre}"/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Activo" claseField="col-sm-2">
+                <g:select name="activo" from="[1: 'Sí', 0: 'No']" optionKey="key" optionValue="value" value="${departamentoInstance?.activo}"
+                          class="form-control "/>
+            </elm:fieldRapido>
+
+        </g:form>
+    </div>
 
     <script type="text/javascript">
         var validator = $("#frmDepartamento").validate({
@@ -45,28 +49,28 @@
                 label.parents(".grupo").removeClass('has-error');
                 label.remove();
             }
-            
-            , rules          : {
-                
-                codigo: {
-                    remote: {
-                        url: "${createLink(controller:'departamento', action: 'validar_unique_codigo_ajax')}",
-                        type: "post",
-                        data: {
-                            id: "${departamentoInstance?.id}"
+
+            , rules        : {
+
+                codigo : {
+                    remote : {
+                        url  : "${createLink(controller:'departamento', action: 'validar_unique_codigo_ajax')}",
+                        type : "post",
+                        data : {
+                            id : "${departamentoInstance?.id}"
                         }
                     }
                 }
-                
+
             },
-            messages : {
-                
-                codigo: {
-                    remote: "Ya existe Codigo"
+            messages       : {
+
+                codigo : {
+                    remote : "Ya existe Codigo"
                 }
-                
+
             }
-            
+
         });
         $(".form-control").keydown(function (ev) {
             if (ev.keyCode == 13) {

@@ -20,6 +20,10 @@ class Departamento {
      * Descripción del departamento
      */
     String descripcion
+    /**
+     * Indica si el usuario está o no activo (1->Sí, 0->No)
+     */
+    int activo
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -41,6 +45,7 @@ class Departamento {
             codigo column: 'dptocdgo'
             nombre column: 'dptonmbr'
             descripcion column: 'dptodscr'
+            activo column: 'dptoactv'
         }
     }
 

@@ -29,7 +29,7 @@
     </head>
 
     <body>
-        <mn:bannerTop/>
+        %{--<mn:bannerTop/>--}%
 
         <mn:menu title="${g.layoutTitle(default: 'Arazu')}"/>
 
