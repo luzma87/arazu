@@ -165,7 +165,7 @@
             <td></td>
         </tr>
         <tr>
-            <td>Responsable de bodega</td>
+            <td style="text-align: center">Responsable de bodega</td>
             <td></td>
             <td></td>
         </tr>
