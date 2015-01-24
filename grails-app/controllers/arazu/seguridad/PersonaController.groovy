@@ -1,7 +1,14 @@
 package arazu.seguridad
 
 import arazu.parametros.Departamento
+import groovy.json.JsonBuilder
 import org.springframework.dao.DataIntegrityViolationException
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
+import static java.awt.RenderingHints.KEY_INTERPOLATION
+import static java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC
 
 /**
  * Controlador que muestra las pantallas de manejo de Persona
@@ -261,8 +268,11 @@ class PersonaController extends Shield {
      * @render ERROR*[mensaje] cuando no se pudo grabar correctamente, SUCCESS*[mensaje] cuando se grabó correctamente
      */
     def savePass_ajax() {
-//        println params
+        println "save pass     " + params
         def persona = Persona.get(params.id)
+        if (!params.id) {
+            persona = Persona.get(session.usuario.id)
+        }
         def str = params.tipo == "pass" ? "contraseña" : "autorización"
         params.input2 = params.input2.trim()
         params.input3 = params.input3.trim()
@@ -340,4 +350,244 @@ class PersonaController extends Shield {
         }
     }
 
+    /**
+     * Acción que muestra una pantalla de configuración para el usuario
+     */
+    def personal() {
+        def usuario = Persona.get(session.usuario.id)
+        return [usuario: usuario]
+    }
+
+    /**
+     * Acción llamada con ajax que valida la validez del password de una persona
+     */
+    def validarPass_ajax() {
+        def usuario = Persona.get(session.usuario.id)
+        render usuario.password == params.password_actual.toString().trim().encodeAsMD5()
+    }
+
+    /**
+     * Acción llamada con ajax que valida la validez de la autoriación de una persona
+     */
+    def validarAuth_ajax() {
+        def usuario = Persona.get(session.usuario.id)
+        render usuario.autorizacion == params.auth_actual.toString().trim().encodeAsMD5()
+    }
+
+    /**
+     * Acción que carga la foto de un usuario
+     * @return
+     */
+    def loadFoto() {
+        def usuario = Persona.get(session.usuario.id)
+        def path = servletContext.getRealPath("/") + "images/perfiles/" //web-app/archivos
+        def img
+        def w
+        def h
+        if (usuario.foto) {
+            img = ImageIO.read(new File(path + usuario.foto));
+            w = img.getWidth();
+            h = img.getHeight();
+        } else {
+            w = 0
+            h = 0
+        }
+        return [usuario: usuario, w: w, h: h]
+    }
+
+    /**
+     * Acción que permite subir una foto para la persona
+     * @return
+     */
+    def uploadFile() {
+        def usuario = Persona.get(session.usuario.id)
+        def path = servletContext.getRealPath("/") + "images/perfiles/"    //web-app/archivos
+        new File(path).mkdirs()
+
+        def f = request.getFile('file')  //archivo = name del input type file
+
+        def okContents = ['image/png': "png", 'image/jpeg': "jpeg", 'image/jpg': "jpg"]
+
+        if (f && !f.empty) {
+            def fileName = f.getOriginalFilename() //nombre original del archivo
+            def ext
+
+            if (okContents.containsKey(f.getContentType())) {
+                ext = okContents[f.getContentType()]
+                fileName = usuario.id + "." + ext
+                def pathFile = path + fileName
+                def nombre = fileName
+                try {
+                    f.transferTo(new File(pathFile)) // guarda el archivo subido al nuevo path
+                } catch (e) {
+                    println "????????\n" + e + "\n???????????"
+                }
+                /* RESIZE */
+                def img = ImageIO.read(new File(pathFile))
+                def scale = 0.5
+                def minW = 300 * 0.7
+                def minH = 400 * 0.7
+                def maxW = minW * 3
+                def maxH = minH * 3
+                def w = img.width
+                def h = img.height
+
+                if (w > maxW || h > maxH || w < minW || h < minH) {
+                    def newW = w * scale
+                    def newH = h * scale
+                    def r = 1
+                    if (w > h) {
+                        if (w > maxW) {
+                            r = w / maxW
+                            newW = maxW
+                            println "w>maxW:    r=" + r + "   newW=" + newW
+                        }
+                        if (w < minW) {
+                            r = minW / w
+                            newW = minW
+                            println "w<minW:    r=" + r + "   newW=" + newW
+                        }
+                        newH = h / r
+                        println "newH=" + newH
+                    } else {
+                        if (h > maxH) {
+                            r = h / maxH
+                            newH = maxH
+                            println "h>maxH:    r=" + r + "   newH=" + newH
+                        }
+                        if (h < minH) {
+                            r = minH / h
+                            newH = minH
+                            println "h<minxH:    r=" + r + "   newH=" + newH
+                        }
+                        newW = w / r
+                        println "newW=" + newW
+                    }
+                    println newW + "   " + newH
+
+                    newW = Math.round(newW.toDouble()).toInteger()
+                    newH = Math.round(newH.toDouble()).toInteger()
+
+                    println newW + "   " + newH
+
+                    new BufferedImage(newW, newH, img.type).with { j ->
+                        createGraphics().with {
+                            setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BICUBIC)
+                            drawImage(img, 0, 0, newW, newH, null)
+                            dispose()
+                        }
+                        ImageIO.write(j, ext, new File(pathFile))
+                    }
+                }
+
+                /* fin resize */
+
+                if (!usuario.foto || usuario.foto != nombre) {
+                    def fotoOld = usuario.foto
+                    if (fotoOld) {
+                        def file = new File(path + fotoOld)
+                        file.delete()
+                    }
+                    usuario.foto = nombre
+                    if (usuario.save(flush: true)) {
+                        def data = [
+                                files: [
+                                        [
+                                                name: nombre,
+                                                url : resource(dir: 'images/perfiles/', file: nombre),
+                                                size: f.getSize(),
+                                                url : pathFile
+                                        ]
+                                ]
+                        ]
+                        def json = new JsonBuilder(data)
+                        render json
+                        return
+                    } else {
+                        def data = [
+                                files: [
+                                        [
+                                                name : nombre,
+                                                size : f.getSize(),
+                                                error: "Ha ocurrido un error al guardar"
+                                        ]
+                                ]
+                        ]
+                        def json = new JsonBuilder(data)
+                        render json
+                        return
+                    }
+                } else {
+                    def data = [
+                            files: [
+                                    [
+                                            name: nombre,
+                                            url : resource(dir: 'images/perfiles/', file: nombre),
+                                            size: f.getSize(),
+                                            url : pathFile
+                                    ]
+                            ]
+                    ]
+                    def json = new JsonBuilder(data)
+                    render json
+                    return
+                }
+            } else {
+                def data = [
+                        files: [
+                                [
+                                        name : fileName + "." + ext,
+                                        size : f.getSize(),
+                                        error: "Extensión no permitida"
+                                ]
+                        ]
+                ]
+
+                def json = new JsonBuilder(data)
+                render json
+                return
+            }
+        }
+        render "OK"
+    }
+
+    /**
+     * Acción que redimensiona una imagen
+     * @return
+     */
+    def resizeCropImage() {
+        def usuario = Persona.get(session.usuario.id)
+        def path = servletContext.getRealPath("/") + "images/perfiles/"    //web-app/archivos
+        def fileName = usuario.foto
+        def ext = fileName.split("\\.").last()
+        def pathFile = path + fileName
+        /* RESIZE */
+        def img = ImageIO.read(new File(pathFile))
+
+        def oldW = img.getWidth()
+        def oldH = img.getHeight()
+
+        int newW = 300 * 0.7
+        int newH = 400 * 0.7
+        int newX = params.x.toInteger()
+        int newY = params.y.toInteger()
+        def rx = newW / (params.w.toDouble())
+        def ry = newH / (params.h.toDouble())
+
+        int resW = oldW * rx
+        int resH = oldH * ry
+        int resX = newX * rx * -1
+        int resY = newY * ry * -1
+
+        new BufferedImage(newW, newH, img.type).with { j ->
+            createGraphics().with {
+                setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BICUBIC)
+                drawImage(img, resX, resY, resW, resH, null)
+                dispose()
+            }
+            ImageIO.write(j, ext, new File(pathFile))
+        }
+        /* fin resize */
+        render "OK"
+    }
 }

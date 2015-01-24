@@ -67,6 +67,10 @@ class Persona {
      * Departamento del usuario
      */
     Departamento departamento
+    /**
+     * Path de la foto de la persona
+     */
+    String foto
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -98,6 +102,7 @@ class Persona {
             autorizacion column: 'prsnatrz'
             activo column: 'prsnactv'
             departamento column: 'dpto__id'
+            foto column: 'prsnfoto'
         }
     }
 
@@ -119,6 +124,7 @@ class Persona {
         autorizacion(size: 1..255, blank: true, nullable: true)
         activo(size: 1..1, blank: true, nullable: true)
         departamento(blank: true, nullable: true)
+        foto(blank: true, nullable: true)
     }
 
     /**

@@ -197,12 +197,19 @@
                         showPersona(nodeId);
                     }
                 };
-                var resetPass = {
+                var resetPassUsuario = {
                     label            : "<span class='text-warning text-shadow'>Resetear contraseña</span>",
                     icon             : "fa fa-unlock text-warning text-shadow",
                     separator_before : true,
                     action           : function () {
                         cambiarPassPersona(nodeId, "pass");
+                    }
+                };
+                var addPicUsuario = {
+                    label  : "Foto",
+                    icon   : "fa fa-picture-o",
+                    action : function () {
+
                     }
                 };
 
@@ -229,11 +236,13 @@
                 } else if (esUsuario) {
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
+                    items.foto = addPicUsuario;
                     items.desactivarUsuario = desactivarUsuario;
-                    items.resetPass = resetPass;
+                    items.resetPass = resetPassUsuario;
                 } else if (esUsuarioInactivo) {
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
+                    items.foto = addPicUsuario;
                     items.activarUsuario = activarUsuario;
                 }
 
