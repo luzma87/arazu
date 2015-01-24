@@ -105,19 +105,19 @@ class Persona {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        cedula(matches: /^[0-2]{1}[0-9]{9}$/, size: 1..13, blank: false, attributes: ['mensaje': 'Número de cédula de identidad de la persona'])
-        nombre(matches: /^[a-zA-ZñÑ áéíóúÁÉÍÚÓüÜ-]+$/, size: 1..40, blank: false, attributes: ['mensaje': 'Nombre de la persona'])
-        apellido(matches: /^[a-zA-ZñÑ áéíóúÁÉÍÚÓüÜ-]+$/, size: 1..40, blank: false, attributes: ['mensaje': 'Apellido de la persona'])
-        sexo(inList: ["F", "M"], size: 1..1, blank: false, attributes: ['mensaje': 'Sexo de la persona'])
-        fechaNacimiento(max: new Date(), blank: true, nullable: true, attributes: ['mensaje': 'Fecha de nacimiento de la persona'])
-        direccion(matches: /^[a-zA-Z0-9ñÑ .,áéíóúÁÉÍÚÓüÜ#_-]+$/, size: 1..127, blank: true, nullable: true, attributes: ['mensaje': 'Dirección de la persona'])
-        telefono(size: 1..10, blank: true, nullable: true, attributes: ['mensaje': 'Teléfono de la persona'])
-        mail(email: true, size: 1..40, blank: true, nullable: true, attributes: ['mensaje': 'E-mail de la persona'])
-        observaciones(matches: /^[a-zA-Z0-9ñÑ .,áéíóúÁÉÍÚÓüÜ#_-]+$/, size: 1..127, blank: true, nullable: true, attributes: ['mensaje': 'Observaciones adicionales'])
-        login(matches: /^[a-zA-Z0-9_-]{1,15}$/, size: 1..15, blank: true, nullable: true, unique: true, attributes: [mensaje: 'Nombre de usuario'])
-        password(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..64, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para el ingreso al sistema'])
-        autorizacion(matches: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÚÓüÜ_-]+$/, size: 1..255, blank: true, nullable: true, attributes: [mensaje: 'Contraseña para autorizaciones'])
-        activo(matches: /^[0-1]{1}$/, size: 1..1, blank: true, nullable: true, attributes: [mensaje: 'Usuario activo o no'])
+        cedula(size: 1..10, blank: false)
+        nombre(size: 1..40, blank: false)
+        apellido(size: 1..40, blank: false)
+        sexo(inList: ["F", "M"], size: 1..1, blank: false)
+        fechaNacimiento(max: new Date(), blank: true, nullable: true)
+        direccion(size: 1..127, blank: true, nullable: true)
+        telefono(size: 1..10, blank: true, nullable: true)
+        mail(email: true, size: 1..40, blank: true, nullable: true)
+        observaciones(size: 1..127, blank: true, nullable: true)
+        login(size: 1..15, blank: true, nullable: true, unique: true)
+        password(size: 1..64, blank: true, nullable: true)
+        autorizacion(size: 1..255, blank: true, nullable: true)
+        activo(size: 1..1, blank: true, nullable: true)
         departamento(blank: true, nullable: true)
     }
 

@@ -56,6 +56,8 @@ class Departamento {
         padre nullable: true
         descripcion nullable: true
         codigo maxSize: 4
+        nombre maxSize: 25
+        descripcion maxSize: 127
     }
     /**
      * Genera un string para mostrar

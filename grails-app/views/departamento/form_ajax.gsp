@@ -11,19 +11,22 @@
                 role="form" action="save_ajax" method="POST">
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Padre" claseField="col-sm-6">
-                <g:select id="padre" name="padre.id" from="${Departamento.list()}" optionKey="id" value="${departamentoInstance?.padre?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
+                <g:select id="padre" name="padre.id"
+                          from="${departamentoInstance.id ? Departamento.findAllByIdNotEqualAndActivo(departamentoInstance.id, 1, [sort: 'nombre']) : Departamento.findAllByActivo(1, [sort: 'nombre'])}"
+                          optionKey="id" value="${departamentoInstance?.padre?.id}" class="many-to-one form-control "
+                          noSelection="['null': '- Sin padre -']"/>
             </elm:fieldRapido>
 
-            <elm:fieldRapido claseLabel="col-sm-2" label="Descripcion" claseField="col-sm-6">
-                <g:textField name="descripcion" class="form-control " value="${departamentoInstance?.descripcion}"/>
-            </elm:fieldRapido>
-
-            <elm:fieldRapido claseLabel="col-sm-2" label="Codigo" claseField="col-sm-6">
+            <elm:fieldRapido claseLabel="col-sm-2" label="Código" claseField="col-sm-6">
                 <g:textField name="codigo" maxlength="4" required="" class="form-control  required unique noEspacios" value="${departamentoInstance?.codigo}"/>
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Nombre" claseField="col-sm-6">
-                <g:textField name="nombre" required="" class="form-control  required" value="${departamentoInstance?.nombre}"/>
+                <g:textField name="nombre" maxlength="25" required="" class="form-control  required" value="${departamentoInstance?.nombre}"/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-6">
+                <g:textArea cols="5" rows="5" maxlength="127" name="descripcion" class="form-control " value="${departamentoInstance?.descripcion}"/>
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Activo" claseField="col-sm-2">

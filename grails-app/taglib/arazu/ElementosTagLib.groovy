@@ -16,6 +16,7 @@ class ElementosTagLib {
         def claseField = (attrs.claseField ? attrs.claseField : 'col-md-3')
         def claseLabel = (attrs.claseLabel ? attrs.claseLabel : 'col-md-2')
         html += '<div class="form-group keeptogether">'
+        html += '<div class="col-sm-12">'
         html += '<span class="grupo">'
         html += '<label class="' + claseLabel + ' control-label">'
         html += attrs.label
@@ -24,6 +25,43 @@ class ElementosTagLib {
         html += body()
         html += '</div>'
         html += '</span>'
+        html += '</div>'
+        html += '</div>'
+        out << html
+    }
+    def fieldRapidoDoble = { attrs, body ->
+        def html = ""
+        def claseField1 = (attrs.claseField1 ?: 'col-md-3')
+        def claseLabel1 = (attrs.claseLabel1 ?: 'col-md-2')
+        def claseField2 = (attrs.claseField2 ?: 'col-md-3')
+        def claseLabel2 = (attrs.claseLabel2 ?: 'col-md-2')
+
+        def parts = body().toString().split("<hr/>")
+
+        html += '<div class="form-group keeptogether">'
+
+        html += '<div class="col-sm-6">'
+        html += '<span class="grupo">'
+        html += '<label class="' + claseLabel1 + ' control-label">'
+        html += attrs.label1
+        html += '</label>'
+        html += '<div class="' + claseField1 + '">'
+        html += parts[0]
+        html += '</div>'
+        html += '</span>'
+        html += '</div>'
+
+        html += '<div class="col-sm-6">'
+        html += '<span class="grupo">'
+        html += '<label class="' + claseLabel2 + ' control-label">'
+        html += attrs.label2
+        html += '</label>'
+        html += '<div class="' + claseField2 + '">'
+        html += parts[1]
+        html += '</div>'
+        html += '</span>'
+        html += '</div>'
+
         html += '</div>'
         out << html
     }

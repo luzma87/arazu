@@ -18,7 +18,7 @@
                 </a>
             </div>
             <div class="btn-group pull-right col-md-3">
-                <div class="input-group input-group-sm">
+                <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
                         <g:link controller="persona" action="list" class="btn btn-default btn-search">
@@ -41,9 +41,9 @@
                     
                     <g:sortableColumn property="sexo" title="Sexo" />
                     
-                    <g:sortableColumn property="discapacitado" title="Discapacitado" />
-                    
                     <g:sortableColumn property="fechaNacimiento" title="Fecha Nacimiento" />
+                    
+                    <g:sortableColumn property="direccion" title="Direccion" />
                     
                 </tr>
             </thead>
@@ -60,16 +60,16 @@
                             
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${personaInstance}" field="sexo"/></elm:textoBusqueda></td>
                             
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${personaInstance}" field="discapacitado"/></elm:textoBusqueda></td>
-                            
                             <td><g:formatDate date="${personaInstance.fechaNacimiento}" format="dd-MM-yyyy" /></td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${personaInstance}" field="direccion"/></elm:textoBusqueda></td>
                             
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
-                        <td class="text-center" colspan="18">
+                        <td class="text-center" colspan="13">
                             <g:if test="${params.search && params.search!= ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
@@ -88,7 +88,7 @@
             var id = null;
             function submitFormPersona() {
                 var $form = $("#frmPersona");
-                var $btn = $("#dlgCreateEdit").find("#btnSave");
+                var $btn = $("#dlgCreateEditPersona").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
                     openLoader("Guardando Persona");
@@ -96,24 +96,29 @@
                         type    : "POST",
                         url     : $form.attr("action"),
                         data    : $form.serialize(),
-                            success : function (msg) {
-                        var parts = msg.split("*");
-                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                        setTimeout(function() {
-                            if (parts[0] == "SUCCESS") {
-                                location.reload(true);
-                            } else {
-                                spinner.replaceWith($btn);
-                                return false;
-                            }
-                        }, 1000);
-                    }
-                });
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function() {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith($btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error: function() {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
             } else {
                 return false;
             } //else
             }
-            function deleteRow(itemId) {
+            function deletePersona(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
@@ -132,7 +137,7 @@
                                 openLoader("Eliminando Persona");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'persona', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -146,6 +151,10 @@
                                         } else {
                                             closeLoader();
                                         }
+                                    },
+                                    error: function() {
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
                                     }
                                 });
                             }
@@ -153,16 +162,16 @@
                     }
                 });
             }
-            function createEditRow(id) {
+            function createEditPersona(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? { id: id } : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(action:'form_ajax')}",
+                    url     : "${createLink(controller:'persona', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEdit",
+                            id      : "dlgCreateEditPersona",
                             title   : title + " Persona",
                             
                             class   : "modal-lg",
@@ -180,7 +189,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitForm();
+                                        return submitFormPersona();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -195,7 +204,7 @@
             $(function () {
 
                 $(".btnCrear").click(function() {
-                    createEditRow();
+                    createEditPersona();
                     return false;
                 });
 
@@ -212,13 +221,16 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(action:'show_ajax')}",
+                                    url     : "${createLink(controller:'persona', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
                                             title   : "Ver Persona",
+                                            
+                                            class   : "modal-lg",
+                                            
                                             message : msg,
                                             buttons : {
                                                 ok : {
@@ -238,7 +250,7 @@
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
-                                createEditRow(id);
+                                createEditPersona(id);
                             }
                         },
                         eliminar : {
@@ -247,7 +259,7 @@
                             separator_before : true,
                             action           : function ($element) {
                                 var id = $element.data("id");
-                                deleteRow(id);
+                                deletePersona(id);
                             }
                         }
                     },

@@ -9,7 +9,7 @@
 
         <g:if test="${departamentoInstance?.padre}">
             <div class="row">
-                <div class="col-sm-3 show-label">
+                <div class="col-sm-2 show-label">
                     Padre
                 </div>
                 
@@ -19,41 +19,41 @@
                 
             </div>
         </g:if>
+
+        <g:if test="${departamentoInstance?.codigo}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Código
+                </div>
+
+                <div class="col-sm-4">
+                    <g:fieldValue bean="${departamentoInstance}" field="codigo"/>
+                </div>
+
+            </div>
+        </g:if>
+
+        <g:if test="${departamentoInstance?.nombre}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Nombre
+                </div>
+
+                <div class="col-sm-4">
+                    <g:fieldValue bean="${departamentoInstance}" field="nombre"/>
+                </div>
+
+            </div>
+        </g:if>
     
         <g:if test="${departamentoInstance?.descripcion}">
             <div class="row">
-                <div class="col-sm-3 show-label">
-                    Descripcion
+                <div class="col-sm-2 show-label">
+                    Descripción
                 </div>
                 
                 <div class="col-sm-4">
                     <g:fieldValue bean="${departamentoInstance}" field="descripcion"/>
-                </div>
-                
-            </div>
-        </g:if>
-    
-        <g:if test="${departamentoInstance?.codigo}">
-            <div class="row">
-                <div class="col-sm-3 show-label">
-                    Codigo
-                </div>
-                
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${departamentoInstance}" field="codigo"/>
-                </div>
-                
-            </div>
-        </g:if>
-    
-        <g:if test="${departamentoInstance?.nombre}">
-            <div class="row">
-                <div class="col-sm-3 show-label">
-                    Nombre
-                </div>
-                
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${departamentoInstance}" field="nombre"/>
                 </div>
                 
             </div>

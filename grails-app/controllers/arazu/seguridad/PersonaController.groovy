@@ -1,5 +1,6 @@
 package arazu.seguridad
 
+import arazu.parametros.Departamento
 import org.springframework.dao.DataIntegrityViolationException
 
 /**
@@ -118,6 +119,10 @@ class PersonaController extends Shield {
             }
         }
         personaInstance.properties = params
+        if (params.dep) {
+            def dep = Departamento.get(params.dep.toLong())
+            personaInstance.departamento = dep
+        }
         return [personaInstance: personaInstance, perfiles: perfiles]
     } //form para cargar con ajax en un dialog
 
@@ -192,6 +197,36 @@ class PersonaController extends Shield {
         render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Persona exitosa."
         return
     } //save para grabar desde ajax
+
+    /**
+     * Acción llamada con ajax que permite activar/desactivar una persona
+     */
+    def cambiarActivo_ajax() {
+        def per = Persona.get(params.id)
+        per.activo = params.activo.toInteger()
+        if (per.save(flush: true)) {
+            render "SUCCESS*Usuario " + (per.activo == 1 ? "activado" : "desactivado") + " exitosamente"
+        } else {
+            render "ERROR*" + renderErrors(bean: per)
+        }
+    }
+    /**
+     * Acción llamada con ajax que permite modificar el departamento de una persona
+     */
+    def cambiarPadre_ajax() {
+        def per = Persona.get(params.id.toLong())
+        def dep = Departamento.get(params.padre.toLong())
+        if (dep) {
+            per.departamento = dep
+        } else {
+            per.departamento = null
+        }
+        if (per.save(flush: true)) {
+            render "SUCCESS*Usuario reubicado exitosamente"
+        } else {
+            render "ERROR*" + renderErrors(bean: dep)
+        }
+    }
 
     /**
      * Acción llamada con ajax que permite eliminar un elemento

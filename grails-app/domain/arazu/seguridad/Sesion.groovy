@@ -39,7 +39,7 @@ class Sesion {
      * @return el perfil - login
      */
     String toString() {
-        return this.perfil.descripcion + " - " + this.usuario.login
+        return this.perfil.nombre
     }
 
 }

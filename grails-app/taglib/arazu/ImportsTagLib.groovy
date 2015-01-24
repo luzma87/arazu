@@ -189,6 +189,7 @@ class ImportsTagLib {
 
         //typeahead
         text += imp.js(src: resource(dir: 'js/plugins/jquery-typeahead-0.10.5', file: 'typeahead.js'))
+        text += imp.css(src: resource(dir: 'js/plugins/jquery-typeahead-0.10.5', file: 'lzm-typeahead.css'))
 
         //context js
         text += imp.js(src: resource(dir: 'js/plugins/lzm.context/js', file: 'lzm.context-0.5.js'))
