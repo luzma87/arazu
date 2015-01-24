@@ -1,76 +1,142 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: vanessa
-  Date: 18/12/14
-  Time: 03:21 PM
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-<head>
-    <meta name="layout" content="main">
-    <title>Parámetros</title>
-</head>
+    <head>
+        <meta name="layout" content="main">
+        <title>Parámetros</title>
 
-<body>
-<div class="row">
-    <div class="col-md-8">
+        <style type="text/css">
+        .fa-ul li {
+            margin : 5px;
+        }
+        </style>
+    </head>
 
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">Parámetros del Sistema</h3>
+    <body>
+
+        <div class="row">
+            <div class="col-md-8">
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Parámetros del Sistema</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul class="fa-ul">
+                            <li>
+                                <i class="fa-li fa fa-paint-brush text-info"></i>
+                                <g:link class="over" controller="color" action="list">
+                                    Colores
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class="fa fa-paint-brush fa-2x"></i> Colores</h4>
+
+                                    <p>Permite registrar diferentes colores para la descripción de items de la bodega</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa fa-street-view text-info"></i>
+                                <g:link class="over" controller="cargo" action="list">
+                                    Cargos
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class=" fa fa-street-view fa-2x"></i> Cargos</h4>
+
+                                    <p>Permite registrar cargos para registrar funciones en los proyectos</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa fa-file-archive-o text-info"></i>
+                                <g:link class="over" controller="tipoSolicitud" action="list">
+                                    Tipos de solicitud
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class="fa fa-file-archive-o fa-2x"></i> Tipo de solicitud</h4>
+
+                                    <p>Permite registrar los diferentes tipos de solicitud</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa fa-check-square-o text-info"></i>
+                                <g:link class="over" controller="estadoSolicitud" action="list">
+                                    Estados de solicitud
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class="fa fa-check-square-o fa-2x "></i> Estado de solicitud</h4>
+
+                                    <p>Permite registrar los diferentes estados en los que puede estar una solicitud</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa flaticon-power30 text-info"></i>
+                                <g:link class="over" controller="tipoItem" action="list">
+                                    Tipos de ítem
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class="fa flaticon-power30 fa-2x "></i> Tipo de ítem</h4>
+
+                                    <p>Permite registrar los diferentes tipos de ítems</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa flaticon-construction12 text-info"></i>
+                                <g:link class="over" controller="tipoMaquinaria" action="list">
+                                    Tipos de maquinaria
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class="fa flaticon-construction12 fa-2x "></i> Tipo de maquinaria</h4>
+
+                                    <p>Permite registrar los diferentes tipos de ítems</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-li fa fa-server text-info"></i>
+                                <g:link class="over" controller="unidad" action="list">
+                                    Unidades
+                                </g:link>
+
+                                <div class="descripcion hidden">
+                                    <h4><i class=" fa fa-server fa-2x"></i> Unidad</h4>
+
+                                    <p>Permite registrar los diferentes tipos de ítems</p>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-                <p><g:link data-info="catalogo" class="over" controller="catalogo" action="items">Catálogo del Sistema</g:link> datos tipo y parámetros que se usan en el sistema</p>
-                <p><g:link data-info="presupuesto" class="over" controller="presupuesto" action="tree">Plan de cuentas Presupuestario</g:link> o partidas presupuestarias para la asignación de gasto corriente y de inversión</p>
-                <p><g:link data-info="cargo" class="over" controller="cargo" action="list">Cargos del Personal de las Unidades</g:link> que se aplican a los responsables del ingreso y seguimiento del proyecto      </p>
-                <p><g:link data-info="institucion" class="over" controller="tipoInstitucion" action="list">Área de Gestión</g:link> que se aplica a las distintas entidades y unidades responsables</p>
-                <p><g:link data-info="estrategia" class="over" controller="estrategia" action="list">Estrategia</g:link> que se aplica de acuerdo al objetivo estratégico</p>
-                <p><g:link data-info="anio" class="over" controller="anio" action="list">Año Fiscal</g:link> Año al cual corresponde el PAPP. Es similar al período contable o año fiscal</p>
+
+            <div class="col-md-4">
+                <div class="panel panel-info right hidden">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-shadow"></h3>
+                    </div>
+
+                    <div class="panel-body">
+
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-default" id="1" >
-            <div class="panel-body" >
-                <div class="catalogo" >
-                    <h4>Catálogo del Sistema</h4><br>
-                    <p>Valores de las tablas tipo del sistema y parámetros en general.</p>
-                    <p>Entre los parámetros más importantes tenemos a: grupo de procesos, tipos de elemento, fuentes de recursos, tipo de compra,
-                    año presupuestario, unidades de medida, programas, portafolios, etc..</p>
-                </div>
-                <div class="presupuesto" >
-                    <p > Basic panel example </p>
-                </div>
-                <div class="cargo" >
-                    <p > Basic panel example </p>
-                </div>
-                <div class="institucion" >
-                    <p > Basic panel example </p>
-                </div>
-                <div class="estrategia" >
-                    <p > Basic panel example </p>
-                </div>
-                <div class="anio" >
-                    <p > Basic panel example </p>
-                </div>
 
+        <script type="text/javascript">
+            $(function () {
+                $(".over").hover(function () {
+                    var $h4 = $(this).siblings(".descripcion").find("h4");
+                    var $cont = $(this).siblings(".descripcion").find("p");
+                    $(".right").removeClass("hidden").find(".panel-title").html($h4.html()).end().find(".panel-body").html($cont.html());
+                }, function () {
+                    $(".right").addClass("hidden");
+                });
+            });
+        </script>
 
-            </div>
-        </div>
-    </div>
-</div>
-<script type="text/javascript">
-    //    $('.pres').mouseover(function() {$('#1').show()});
-    $(function(){
-        $('.over').hover(function() {
-            $('#1').removeClass("hidden");
-        }, function() {
-            $('#1').addClass("hidden")
-        });
-    })
-
-</script>
-
-</body>
+    </body>
 </html>
