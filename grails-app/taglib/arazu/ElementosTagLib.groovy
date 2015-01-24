@@ -89,8 +89,11 @@ class ElementosTagLib {
                 titulo += '<div class="linea"></div>'
             }
         } else {
-            clase = "horizontal-container ${attrs.border ? 'bordered ui-corner-all' : ''}"
-            titulo = '<div class="titulo-azul"  style="color:' + attrs.color + '">' + attrs.titulo + '</div>'
+            if(attrs.titulo!=""){
+                clase = "horizontal-container ${attrs.border ? 'bordered ui-corner-all' : ''}"
+                titulo = '<div class="svt-note"  style="color:' + attrs.color + '">' + attrs.titulo + '</div>'
+            }
+
         }
 
         def html = ""

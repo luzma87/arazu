@@ -29,9 +29,17 @@ class Ingreso {
      */
     Double cantidad = 1
     /**
+     * Cantidad que ingresa
+     */
+    Double valor = 1
+    /**
      * Pedido que origina el ingreso
      */
     Pedido pedido
+    /**
+     * Saldo del ingreso por cantidad
+     */
+    double saldo = 0
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -53,7 +61,9 @@ class Ingreso {
             bodega column: 'bdga__id'
             fecha column: 'ingrfcha'
             cantidad column: 'ingrcant'
+            valor column: 'ingrvlor'
             pedido column: 'pddo__id'
+            saldo column: 'ingrsldo'
         }
     }
 
@@ -65,6 +75,26 @@ class Ingreso {
         item(nullable: false, blank: false)
         bodega(nullable: false, blank: false)
         fecha(nullable: false, blank: false)
-        pedido(nullable: false, blank: false)
+        pedido(nullable: true, blank: true)
     }
+
+    def getEgresos(){
+        def egresos = Egreso.findAllByIngreso(this)
+        return egresos
+    }
+    def getCantidadEgresos(){
+        def egresos = Egreso.findAllByIngreso(this)
+        def total = 0
+        egresos.each {
+            total+=it.cantidad
+        }
+        return total
+    }
+
+    def calcularSaldo(){
+        this.saldo = this.cantidad-getCantidadEgresos()
+        this.save(flush: true)
+        return this.saldo
+    }
+
 }
