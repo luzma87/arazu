@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.parametros.Departamento" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,19 @@
         <meta name="layout" content="main">
         <title>Lista de Departamento</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -32,37 +33,39 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    
+
                     <th>Padre</th>
-                    
-                    <g:sortableColumn property="descripcion" title="Descripcion" />
-                    
-                    <g:sortableColumn property="codigo" title="Codigo" />
-                    
-                    <g:sortableColumn property="nombre" title="Nombre" />
-                    
+
+                    <g:sortableColumn property="descripcion" title="Descripcion"/>
+
+                    <g:sortableColumn property="codigo" title="Codigo"/>
+
+                    <g:sortableColumn property="nombre" title="Nombre"/>
+                    <g:sortableColumn property="activo" title="Activo"/>
+
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${departamentoInstanceCount > 0}">
                     <g:each in="${departamentoInstanceList}" status="i" var="departamentoInstance">
                         <tr data-id="${departamentoInstance.id}">
-                            
+
                             <td>${departamentoInstance.padre}</td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="descripcion"/></elm:textoBusqueda></td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="codigo"/></elm:textoBusqueda></td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="nombre"/></elm:textoBusqueda></td>
-                            
+                            <td><g:fieldValue bean="${departamentoInstance}" field="activo"/></td>
+
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="4">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -91,7 +94,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -101,20 +104,20 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteDepartamento(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Departamento seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Departamento seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -137,14 +140,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -156,16 +159,16 @@
             }
             function createEditDepartamento(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'departamento', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditDepartamento",
-                            title   : title + " Departamento",
-                            
+                            id    : "dlgCreateEditDepartamento",
+                            title : title + " Departamento",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -193,7 +196,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditDepartamento();
                     return false;
                 });
@@ -217,8 +220,8 @@
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver Departamento",
-                                            
+                                            title : "Ver Departamento",
+
                                             message : msg,
                                             buttons : {
                                                 ok : {
