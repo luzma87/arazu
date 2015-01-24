@@ -1,14 +1,14 @@
-<% import grails.persistence.Event %>
-<%=packageName%>
+
+<%@ page import="arazu.inventario.Bodega" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de ${className}</title>
+        <title>Lista de Bodega</title>
     </head>
     <body>
 
-        <elm:message tipo="\${flash.tipo}" clase="\${flash.clase}">\${flash.message}</elm:message>
+        <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
     <!-- botones -->
         <div class="btn-toolbar toolbar">
@@ -19,9 +19,9 @@
             </div>
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
-                    <input type="text" class="form-control input-search" placeholder="Buscar" value="\${params.search}">
+                    <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="${className.toLowerCase()}" action="list" class="btn btn-default btn-search">
+                        <g:link controller="bodega" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -32,52 +32,41 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <%
-                    int cant = 0
-                    excludedProps = Event.allEvents.toList() << 'id' << 'version' << 'password' << 'pass'
-                    allowedNames = domainClass.persistentProperties*.name << 'dateCreated' << 'lastUpdated'
-                    props = domainClass.properties.findAll { allowedNames.contains(it.name) && !excludedProps.contains(it.name) && it.type != null && !Collection.isAssignableFrom(it.type) }
-//                    cant = props.size()
-                    Collections.sort(props, comparator.constructors[0].newInstance([domainClass] as Object[]))
-                    props.eachWithIndex { p, i ->
-                        cant = (int)cant+1
-                        if (i < 6) {
-                            if (p.isAssociation()) { %>
-                    <th>${p.naturalName}</th>
-                    <%      } else { %>
-                    <g:sortableColumn property="${p.name}" title="${p.naturalName}" />
-                    <%  }   }   } %>
+                    
+                    <g:sortableColumn property="descripcion" title="Descripcion" />
+                    
+                    <g:sortableColumn property="observaciones" title="Observaciones" />
+                    
+                    <th>Proyecto</th>
+                    
+                    <th>Persona</th>
+                    
+                    <g:sortableColumn property="activo" title="Activo" />
+                    
                 </tr>
             </thead>
             <tbody>
-                <g:if test="\${${propertyName}Count > 0}">
-                    <g:each in="\${${propertyName}List}" status="i" var="${propertyName}">
-                        <tr data-id="\${${propertyName}.id}">
-                            <%  props.eachWithIndex { p, i ->
-
-                                boolean bool = p.type == Boolean || p.type == boolean
-                                boolean number = Number.isAssignableFrom(p.type) || (p.type?.isPrimitive() && p. type != boolean)
-                                boolean date = p.type == Date || p.type == java.sql.Date || p.type == java.sql.Time || p.type == Calendar
-
-                                if (i == 0) { %>
-                            <td>\${${propertyName}.${p.name}}</td>
-                            <%      } else if (i < 6) {
-                                if (bool) { %>
-                            <td><g:formatBoolean boolean="\${${propertyName}.${p.name}}" false="No" true="Sí" /></td>
-                            <%          } else if (date) { %>
-                            <td><g:formatDate date="\${${propertyName}.${p.name}}" format="dd-MM-yyyy" /></td>
-                            <%          } else if (number) { %>
-                            <td><g:fieldValue bean="\${${propertyName}}" field="${p.name}"/></td>
-                            <%          } else { %>
-                            <td><elm:textoBusqueda busca="\${params.search}"><g:fieldValue bean="\${${propertyName}}" field="${p.name}"/></elm:textoBusqueda></td>
-                            <%  }   }   } %>
+                <g:if test="${bodegaInstanceCount > 0}">
+                    <g:each in="${bodegaInstanceList}" status="i" var="bodegaInstance">
+                        <tr data-id="${bodegaInstance.id}">
+                            
+                            <td>${bodegaInstance.descripcion}</td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="observaciones"/></elm:textoBusqueda></td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="proyecto"/></elm:textoBusqueda></td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="persona"/></elm:textoBusqueda></td>
+                            
+                            <td><g:fieldValue bean="${bodegaInstance}" field="activo"/></td>
+                            
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
-                        <td class="text-center" colspan="${cant}">
-                            <g:if test="\${params.search && params.search!= ''}">
+                        <td class="text-center" colspan="5">
+                            <g:if test="${params.search && params.search!= ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -89,20 +78,20 @@
             </tbody>
         </table>
 
-        <elm:pagination total="\${${domainClass.propertyName}InstanceCount}" params="\${params}"/>
+        <elm:pagination total="${bodegaInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
             var id = null;
-            function submitForm${domainClass.propertyName.capitalize()}() {
-                var \$form = \$("#frm${domainClass.propertyName.capitalize()}");
-                var \$btn = \$("#dlgCreateEdit${domainClass.propertyName.capitalize()}").find("#btnSave");
-                if (\$form.valid()) {
-                    \$btn.replaceWith(spinner);
-                    openLoader("Guardando ${className}");
-                    \$.ajax({
+            function submitFormBodega() {
+                var $form = $("#frmBodega");
+                var $btn = $("#dlgCreateEditBodega").find("#btnSave");
+                if ($form.valid()) {
+                    $btn.replaceWith(spinner);
+                    openLoader("Guardando Bodega");
+                    $.ajax({
                         type    : "POST",
-                        url     : \$form.attr("action"),
-                        data    : \$form.serialize(),
+                        url     : $form.attr("action"),
+                        data    : $form.serialize(),
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
@@ -110,7 +99,7 @@
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
-                                    spinner.replaceWith(\$btn);
+                                    spinner.replaceWith($btn);
                                     closeLoader();
                                     return false;
                                 }
@@ -125,11 +114,11 @@
                 return false;
             } //else
             }
-            function delete${domainClass.propertyName.capitalize()}(itemId) {
+            function deleteBodega(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el ${className} seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Bodega seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -141,10 +130,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando ${className}");
-                                \$.ajax({
+                                openLoader("Eliminando Bodega");
+                                $.ajax({
                                     type    : "POST",
-                                    url     : '\${createLink(controller:'${domainClass.propertyName.toLowerCase()}', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'bodega', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -169,20 +158,18 @@
                     }
                 });
             }
-            function createEdit${domainClass.propertyName.capitalize()}(id) {
+            function createEditBodega(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? { id: id } : {};
-                \$.ajax({
+                $.ajax({
                     type    : "POST",
-                    url     : "\${createLink(controller:'${domainClass.propertyName.toLowerCase()}', action:'form_ajax')}",
+                    url     : "${createLink(controller:'bodega', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEdit${domainClass.propertyName.capitalize()}",
-                            title   : title + " ${className}",
-                            <% if(cant >= 10) { %>
-                            class   : "modal-lg",
-                            <% } %>
+                            id      : "dlgCreateEditBodega",
+                            title   : title + " Bodega",
+                            
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -196,7 +183,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitForm${domainClass.propertyName.capitalize()}();
+                                        return submitFormBodega();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -208,14 +195,14 @@
                 }); //ajax
             } //createEdit
 
-            \$(function () {
+            $(function () {
 
-                \$(".btnCrear").click(function() {
-                    createEdit${domainClass.propertyName.capitalize()}();
+                $(".btnCrear").click(function() {
+                    createEditBodega();
                     return false;
                 });
 
-                \$("tbody>tr").contextMenu({
+                $("tbody>tr").contextMenu({
                     items  : {
                         header   : {
                             label  : "Acciones",
@@ -224,20 +211,18 @@
                         ver      : {
                             label  : "Ver",
                             icon   : "fa fa-search",
-                            action : function (\$element) {
-                                var id = \$element.data("id");
-                                \$.ajax({
+                            action : function ($element) {
+                                var id = $element.data("id");
+                                $.ajax({
                                     type    : "POST",
-                                    url     : "\${createLink(controller:'${domainClass.propertyName.toLowerCase()}', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'bodega', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver ${className}",
-                                            <% if(cant >= 10) { %>
-                                            class   : "modal-lg",
-                                            <% } %>
+                                            title   : "Ver Bodega",
+                                            
                                             message : msg,
                                             buttons : {
                                                 ok : {
@@ -255,26 +240,26 @@
                         editar   : {
                             label  : "Editar",
                             icon   : "fa fa-pencil",
-                            action : function (\$element) {
-                                var id = \$element.data("id");
-                                createEdit${domainClass.propertyName.capitalize()}(id);
+                            action : function ($element) {
+                                var id = $element.data("id");
+                                createEditBodega(id);
                             }
                         },
                         eliminar : {
                             label            : "Eliminar",
                             icon             : "fa fa-trash-o",
                             separator_before : true,
-                            action           : function (\$element) {
-                                var id = \$element.data("id");
-                                delete${domainClass.propertyName.capitalize()}(id);
+                            action           : function ($element) {
+                                var id = $element.data("id");
+                                deleteBodega(id);
                             }
                         }
                     },
-                    onShow : function (\$element) {
-                        \$element.addClass("success");
+                    onShow : function ($element) {
+                        $element.addClass("success");
                     },
-                    onHide : function (\$element) {
-                        \$(".success").removeClass("success");
+                    onHide : function ($element) {
+                        $(".success").removeClass("success");
                     }
                 });
             });
