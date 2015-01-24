@@ -57,7 +57,8 @@
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="codigo"/></elm:textoBusqueda></td>
 
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="nombre"/></elm:textoBusqueda></td>
-                            <td><g:fieldValue bean="${departamentoInstance}" field="activo"/></td>
+
+                            <td><g:formatBoolean boolean="${departamentoInstance.activo == 1}" true="Sí" false="No"/></td>
 
                         </tr>
                     </g:each>
