@@ -65,6 +65,8 @@ class Pedido {
      */
     Date aprobacion
 
+    int numero = 0
+
     /**
      * Define las relaciones uno a varios
      */
@@ -98,6 +100,7 @@ class Pedido {
             item column: 'item__id'
             aprobadoPor column: 'pddoprap'
             aprobacion column: 'pddofcap'
+            numero column: 'pddonmro'
         }
     }
 

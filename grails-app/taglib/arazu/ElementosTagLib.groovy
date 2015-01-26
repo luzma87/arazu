@@ -106,7 +106,7 @@ class ElementosTagLib {
         }
 
         def html = ""
-        html += '<div class="' + clase + '" style="' + attrs.style + '">'
+        html += '<div class=" svt-content ' + clase + '" style="' + attrs.style + '">'
         html += titulo
         out << html << body() + "</div>"
     }

@@ -1,8 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.Departamento" contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <meta name="layout" content="main">
-    <title>Ingreso a bodega</title>
+    <title>Nota de pedido</title>
     <style type="text/css">
     .tt-dropdown-menu {
         width                 : 262px;
@@ -31,20 +31,25 @@
     }
     </style>
 </head>
-
 <body>
 <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-
-
-<elm:container tipo="horizontal" titulo="Ingreso a bodega">
+<elm:container tipo="horizontal" titulo="Nueva nota de pedido">
     <div class="row">
         <div class="col-md-1">
             <label class=" control-label">
-                Bodega
+                Motivo
             </label>
         </div>
-        <div class="col-md-3">
-            <g:select name="bodega.id" from="${bodegas}" class="form-control input-sm" id="bodega" optionKey="id"></g:select>
+        <div class="col-md-2">
+            <g:select name="maquinaria.id" from="${arazu.parametros.TipoSolicitud.list()}" optionKey="id" optionValue="descripcion" class="form-control input-sm"></g:select>
+        </div>
+        <div class="col-md-1">
+            <label class=" control-label">
+                Número
+            </label>
+        </div>
+        <div class="col-md-2">
+            ${numero}
         </div>
         <div class="col-md-1">
             <label class=" control-label">
@@ -54,17 +59,49 @@
         <div class="col-md-3">
             ${new Date().format("dd-MM-yyyy hh:mm:ss")}
         </div>
+    </div>
+    <div class="row">
         <div class="col-md-1">
             <label class=" control-label">
-                Responsable
+                De
             </label>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+            ${session.usuario}
+        </div>
+        <div class="col-md-1">
+            <label class=" control-label">
+                Para
+            </label>
+        </div>
+        <div class="col-md-2">
             ${session.usuario}
         </div>
     </div>
 
 
+    <div class="row">
+        <div class="col-md-1">
+            <label class=" control-label">
+                Proyecto
+            </label>
+        </div>
+        <div class="col-md-2">
+            <g:select name="proyecto.id" from="${arazu.proyectos.Proyecto.list()}" optionKey="id" optionValue="descripcion" class="form-control input-sm"></g:select>
+        </div>
+        <div class="col-md-1">
+            <label class=" control-label">
+                Equipo
+            </label>
+        </div>
+        <div class="col-md-2">
+            <g:select name="maquinaria.id" from="${arazu.items.Maquinaria.list()}" optionKey="id" optionValue="descripcion" class="form-control input-sm"></g:select>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 10px">
+
+    </div>
     <div class="row" style="margin-bottom: 10px;">
         <div class="col-md-1">
             <label class=" control-label">
@@ -119,7 +156,7 @@
         </div>
     </div>
 </elm:container>
-<elm:container tipo="horizontal" titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
+<elm:container tipo="horizontal"  titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
     <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
         <thead>
         <tr>
@@ -143,11 +180,6 @@
         </tfoot>
     </table>
 </elm:container>
-<div class="row">
-    <div class="col-md-1">
-        <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
-    </div>
-</div>
 <script type="text/javascript">
     var item
     var cantidad
@@ -198,80 +230,6 @@
         reset()
         calculaTotal()
     }
-    function submitFormItem() {
-        var $form = $("#frmItem");
-        var $btn = $("#dlgCreateEditItem").find("#btnSave");
-        if ($form.valid()) {
-            $btn.replaceWith(spinner);
-            openLoader("Guardando Item");
-            $.ajax({
-                type    : "POST",
-                url     : $form.attr("action"),
-                data    : $form.serialize(),
-                success : function (msg) {
-                    var parts = msg.split("*");
-                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                    setTimeout(function () {
-                        if (parts[0] == "SUCCESS") {
-                            closeLoader();
-                            $("#dlgCreateEditItem").modal("hide")
-                            insertRow();
-                            items.add(item)
-
-                        } else {
-                            spinner.replaceWith($btn);
-                            closeLoader();
-                            return false;
-                        }
-                    }, 1000);
-                },
-                error   : function () {
-                    log("Ha ocurrido un error interno", "Error");
-                    closeLoader();
-                }
-            });
-        } else {
-            return false;
-        } //else
-    }
-    function createEditItem(id, msn, item) {
-        var title = id ? "Editar" : "Crear";
-        var data = id ? {id : id} : {};
-        $.ajax({
-            type    : "POST",
-            url     : "${createLink(controller:'item', action:'form_ajax')}?msg=" + msn,
-            data    : data,
-            success : function (msg) {
-                var b = bootbox.dialog({
-                    id    : "dlgCreateEditItem",
-                    title : title + " Item",
-
-                    message : msg,
-                    buttons : {
-                        cancelar : {
-                            label     : "Cancelar",
-                            className : "btn-primary",
-                            callback  : function () {
-                            }
-                        },
-                        guardar  : {
-                            id        : "btnSave",
-                            label     : "<i class='fa fa-save'></i> Guardar",
-                            className : "btn-success",
-                            callback  : function () {
-                                return submitFormItem();
-                            } //callback
-                        } //guardar
-                    } //buttons
-                }); //dialog
-                closeLoader()
-                $("#descripcion").val(item)
-                setTimeout(function () {
-                    b.find(".form-control").first().focus()
-                }, 500);
-            } //success
-        }); //ajax
-    } //createEdit
     var substringMatcher = function (strs) {
         return function findMatches(q, cb) {
             var matches, substrRegex;
@@ -392,7 +350,7 @@
 
                         $.ajax({
                             type    : "POST",
-                            url     :"${g.createLink(controller: 'inventario',action: 'saveIngreso')}",
+                            url     :"${g.createLink(controller: 'notaDePedido',action: 'saveSolicitud')}",
                             data    : "bodega="+$("#bodega").val()+"&data="+data,
                             success : function (msg) {
                                 closeLoader()
@@ -410,7 +368,6 @@
 
                 });
             });
-
 </script>
 </body>
 </html>
