@@ -32,7 +32,7 @@ class DepartamentoController extends Shield {
         res += "<a href='#' class='label_arbol'>HINSA</a>"
         res += "<ul>"
         res += imprimeDepartamentos(null, params)
-        res += "</ul>"
+        res += "</li>"
         res += "</ul>"
         return res
     }

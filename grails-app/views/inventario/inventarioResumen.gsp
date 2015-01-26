@@ -38,34 +38,16 @@
                     </div>
 
                     <div class="btn-group btn-group-sm" role="group">
-                        <g:link action="inventarioResumen" id="${bodega.id}" class="btn btn-default">
-                            <i class="fa fa-th-list"></i> Mostrar resumen
+                        <g:link action="inventario" id="${bodega.id}" class="btn btn-default">
+                            <i class="fa fa-list"></i> Mostrar detallado
                         </g:link>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-info corner-all ${params.search_desde || params.search_hasta ||
-                    params.search_item || params.search_pedido ? '' : 'hidden'}"
+            <div class="bg-info corner-all ${params.search_item ? '' : 'hidden'}"
                  id="div-search" role="toolbar" style="padding: 4px; margin-top: 5px;">
                 <form class="form-inline">
-                    <div class="form-group">
-                        <label for="search_desde">Desde</label>
-                        <elm:datepicker class="form-control input-sm buscar" name="search_desde" onChangeDate="validarFechaIni"
-                                        value="${params.search_desde}"/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="search_hasta">Hasta</label>
-                        <elm:datepicker class="form-control input-sm buscar" name="search_hasta" onChangeDate="validarFechaFin"
-                                        value="${params.search_hasta}"/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="search_item">Pedido</label>
-                        <g:textField name="search_pedido" class="form-control input-sm buscar"
-                                     value="${params.search_pedido}"/>
-                    </div>
 
                     <div class="form-group">
                         <label for="search_item">Item</label>
@@ -74,10 +56,10 @@
                     </div>
 
                     <div class="btn-group btn-group-sm" role="group">
-                        <g:link controller="inventario" action="inventario" id="${bodega.id}" class="btn btn-info btnSearch bsc">
+                        <g:link controller="inventario" action="inventarioResumen" id="${bodega.id}" class="btn btn-info btnSearch bsc">
                             <i class="fa fa-search"></i> Buscar
                         </g:link>
-                        <g:link controller="inventario" action="inventario" id="${bodega.id}" class="btn btn-default bsc">
+                        <g:link controller="inventario" action="inventarioResumen" id="${bodega.id}" class="btn btn-default bsc">
                             <i class="fa fa-times"></i> Borrar búsqueda
                         </g:link>
                     </div>
@@ -87,28 +69,16 @@
             <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
                 <thead>
                     <tr>
-                        <g:sortableColumn property="fecha" title="Fecha"/>
-                        <g:sortableColumn property="pedido" title="Pedido"/>
                         <g:sortableColumn property="item" title="Item"/>
                         <th>Unidad</th>
                         <g:sortableColumn property="cantidad" title="Cantidad"/>
-                        <g:sortableColumn property="valor" title="V. Unitario"/>
-                        <th>V. Total</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <g:set var="total" value="${0}"/>
                     <g:if test="${ingresos.size() > 0}">
-                        <g:each in="${ingresos}" var="ig" status="i">
+                        <g:each in="${ingresos}" var="igg" status="i">
+                            <g:set var="ig" value="${igg.value}"/>
                             <tr>
-                                <g:set var="total" value="${total += ig.valor * ig.cantidad}"/>
-                                <td>
-                                    ${ig.fecha.format("dd-MM-yyyy hh:mm:ss")}
-                                </td>
-                                <td>
-                                    ${ig?.pedido}
-                                </td>
                                 <td>
                                     <elm:textoBusqueda search="${params.search_item}">
                                         ${ig.item.descripcion}
@@ -120,23 +90,12 @@
                                 <td class="text-center">
                                     ${ig.saldo}
                                 </td>
-                                <td class="text-right">
-                                    <g:formatNumber number="${ig.valor}" type="currency"/>
-                                </td>
-                                <td class="text-right">
-                                    <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
-                                </td>
-                                <td class="text-center">
-                                    <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
-                                        <i class="fa fa-print"></i>
-                                    </a>
-                                </td>
                             </tr>
                         </g:each>
                     </g:if>
                     <g:else>
                         <tr class="danger">
-                            <td class="text-center" colspan="7">
+                            <td class="text-center" colspan="3">
                                 <g:if test="${(params.search_desde && params.search_desde != '') ||
                                         (params.search_hasta && params.search_hasta != '') ||
                                         (params.search_item && params.search_item != '')}">
@@ -149,14 +108,6 @@
                         </tr>
                     </g:else>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="6" style="text-align: right;font-weight: bold">TOTAL</td>
-                        <td style="text-align: right;font-weight: bold">
-                            <g:formatNumber number="${total.toDouble()}" type="currency"/>
-                        </td>
-                    </tr>
-                </tfoot>
             </table>
         </elm:container>
 
@@ -165,24 +116,6 @@
                 var params = "";
                 if ("${params.search_item}" != "") {
                     params += "search_item=${params.search_item}";
-                }
-                if ("${params.search_pedido}" != "") {
-                    if (params != "") {
-                        params += "&";
-                    }
-                    params += "search_pedido=${params.search_pedido}";
-                }
-                if ("${params.search_desde}" != "") {
-                    if (params != "") {
-                        params += "&";
-                    }
-                    params += "search_desde=${params.search_desde}";
-                }
-                if ("${params.search_hasta}" != "") {
-                    if (params != "") {
-                        params += "&";
-                    }
-                    params += "search_hasta=${params.search_hasta}";
                 }
 //                if (params != "") {
 //                    params = "?" + params;
@@ -201,30 +134,13 @@
             function buscar() {
                 var $btn = $(".btnSearch");
                 var str = "";
-                var desde = $.trim($("#search_desde_input").val());
-                var hasta = $.trim($("#search_hasta_input").val());
                 var item = $.trim($("#search_item").val());
-                var pedido = $.trim($("#search_pedido").val());
-                if (desde != "") {
-                    str += "search_desde=" + desde;
-                }
-                if (hasta != "") {
-                    if (str != "") {
-                        str += "&";
-                    }
-                    str += "search_hasta=" + hasta;
-                }
+
                 if (item != "") {
                     if (str != "") {
                         str += "&";
                     }
                     str += "search_item=" + item;
-                }
-                if (pedido != "") {
-                    if (str != "") {
-                        str += "&";
-                    }
-                    str += "search_pedido=" + pedido;
                 }
                 var url = $btn.attr("href") + "?" + str;
                 if (str == "") {
@@ -233,14 +149,6 @@
                 location.href = url;
             }
 
-            function validarFechaIni($elm, e) {
-//                console.log("validar fecha ini   ", e);
-                $('#search_hasta_input').data("DateTimePicker").setMinDate(e.date);
-            }
-            function validarFechaFin($elm, e) {
-//                console.log("validar fecha fin   ", e, e.date);
-                $('#search_desde_input').data("DateTimePicker").setMaxDate(e.date);
-            }
             $(function () {
                 $(".bsc").click(function () {
                     openLoader("Buscando...");

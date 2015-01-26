@@ -906,7 +906,7 @@
                             max_children   : 1
                         },
                         root            : {
-                            icon           : "fa fa-folder text-warning",
+                            icon           : "fa fa-folder text-success",
                             valid_children : ["dpto", "dptoInactivo"]
                         },
                         dpto            : {
@@ -918,7 +918,7 @@
                             valid_children : []
                         },
                         usuario         : {
-                            icon           : "fa fa-user text-success",
+                            icon           : "fa fa-user text-warning",
                             valid_children : []
                         },
                         usuarioInactivo : {

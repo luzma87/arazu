@@ -64,8 +64,8 @@ class InventarioController extends Shield {
         if (params.search_hasta) {
             hasta = new Date().parse("dd-MM-yyyy", params.search_hasta)
         }
-
-        def ingresos = Ingreso.withCriteria {
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
             eq("bodega", bodega)
             gt("saldo", 0.toDouble())
             if (desde) {
@@ -80,7 +80,37 @@ class InventarioController extends Shield {
                 }
             }
         }
-
         return [ingresos: ingresos, bodega: bodega, params: params]
+    }
+
+    def inventarioResumen() {
+//        println "INVENTARIO     " + params
+        def bodega = Bodega.get(params.id)
+//        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodega, 0)
+
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
+            eq("bodega", bodega)
+            gt("saldo", 0.toDouble())
+            if (params.search_item) {
+                item {
+                    ilike("descripcion", "%" + params.search_item + "%")
+                }
+            }
+        }
+
+        def res = [:]
+        ingresos.each { ing ->
+            if (!res[ing.item.id + "-" + ing.unidad.id]) {
+                res[ing.item.id + "-" + ing.unidad.id] = [:]
+                res[ing.item.id + "-" + ing.unidad.id].item = ing.item
+                res[ing.item.id + "-" + ing.unidad.id].unidad = ing.unidad
+                res[ing.item.id + "-" + ing.unidad.id].saldo = ing.saldo
+            } else {
+                res[ing.item.id + "-" + ing.unidad.id].saldo += ing.saldo
+            }
+        }
+
+        return [ingresos: res, bodega: bodega, params: params]
     }
 }

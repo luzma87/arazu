@@ -1,18 +1,14 @@
 package arazu.items
 
-import arazu.inventario.Ingreso
-import arazu.parametros.Departamento
-import arazu.parametros.TipoItem
-import arazu.seguridad.Persona
-import arazu.seguridad.TipoAccion
+import arazu.parametros.TipoMaquinaria
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
 
 /**
- * Controlador que muestra las pantallas de manejo de Item
+ * Controlador que muestra las pantallas de manejo de Maquinaria
  */
-class ItemController extends Shield {
+class MaquinariaController extends Shield {
 
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
@@ -39,16 +35,20 @@ class ItemController extends Shield {
         }
         def list
         if (params.search) {
-            def c = Item.createCriteria()
+            def c = Maquinaria.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
 
                     ilike("descripcion", "%" + params.search + "%")
+                    ilike("marca", "%" + params.search + "%")
+                    ilike("modelo", "%" + params.search + "%")
+                    ilike("observaciones", "%" + params.search + "%")
+                    ilike("placa", "%" + params.search + "%")
                 }
             }
         } else {
-            list = Item.list(params)
+            list = Maquinaria.list(params)
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
@@ -61,9 +61,9 @@ class ItemController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
-        def itemInstanceList = getList(params, false)
-        def itemInstanceCount = getList(params, true).size()
-        return [itemInstanceList: itemInstanceList, itemInstanceCount: itemInstanceCount]
+        def maquinariaInstanceList = getList(params, false)
+        def maquinariaInstanceCount = getList(params, true).size()
+        return [maquinariaInstanceList: maquinariaInstanceList, maquinariaInstanceCount: maquinariaInstanceCount]
     }
 
     /**
@@ -71,14 +71,14 @@ class ItemController extends Shield {
      */
     def show_ajax() {
         if (params.id) {
-            def itemInstance = Item.get(params.id)
-            if (!itemInstance) {
-                render "ERROR*No se encontró Item."
+            def maquinariaInstance = Maquinaria.get(params.id)
+            if (!maquinariaInstance) {
+                render "ERROR*No se encontró Maquinaria."
                 return
             }
-            return [itemInstance: itemInstance]
+            return [maquinariaInstance: maquinariaInstance]
         } else {
-            render "ERROR*No se encontró Item."
+            render "ERROR*No se encontró Maquinaria."
         }
     } //show para cargar con ajax en un dialog
 
@@ -86,38 +86,40 @@ class ItemController extends Shield {
      * Acción llamada con ajax que muestra un formaulario para crear o modificar un elemento
      */
     def form_ajax() {
-        def itemInstance = new Item()
+        def maquinariaInstance = new Maquinaria()
         if (params.id) {
-            itemInstance = Item.get(params.id)
-            if (!itemInstance) {
-                render "ERROR*No se encontró Item."
+            maquinariaInstance = Maquinaria.get(params.id)
+            if (!maquinariaInstance) {
+                render "ERROR*No se encontró Maquinaria."
                 return
             }
         }
-        if (params.msg)
-            flash.message = params.msg
-        itemInstance.properties = params
-        return [itemInstance: itemInstance]
+        maquinariaInstance.properties = params
+        def current = new Date().format("yyyy").toInteger()
+        def ini = current - 35
+        def fin = current + 1
+        def anios = ini..fin
+        return [maquinariaInstance: maquinariaInstance, anios: anios, current: current]
     } //form para cargar con ajax en un dialog
 
     /**
      * Acción llamada con ajax que guarda la información de un elemento
      */
     def save_ajax() {
-        def itemInstance = new Item()
+        def maquinariaInstance = new Maquinaria()
         if (params.id) {
-            itemInstance = Item.get(params.id)
-            if (!itemInstance) {
-                render "ERROR*No se encontró Item."
+            maquinariaInstance = Maquinaria.get(params.id)
+            if (!maquinariaInstance) {
+                render "ERROR*No se encontró Maquinaria."
                 return
             }
         }
-        itemInstance.properties = params
-        if (!itemInstance.save(flush: true)) {
-            render "ERROR*Ha ocurrido un error al guardar Item: " + renderErrors(bean: itemInstance)
+        maquinariaInstance.properties = params
+        if (!maquinariaInstance.save(flush: true)) {
+            render "ERROR*Ha ocurrido un error al guardar Maquinaria: " + renderErrors(bean: maquinariaInstance)
             return
         }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Item exitosa."
+        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Maquinaria exitosa."
         return
     } //save para grabar desde ajax
 
@@ -126,21 +128,21 @@ class ItemController extends Shield {
      */
     def delete_ajax() {
         if (params.id) {
-            def itemInstance = Item.get(params.id)
-            if (!itemInstance) {
-                render "ERROR*No se encontró Item."
+            def maquinariaInstance = Maquinaria.get(params.id)
+            if (!maquinariaInstance) {
+                render "ERROR*No se encontró Maquinaria."
                 return
             }
             try {
-                itemInstance.delete(flush: true)
-                render "SUCCESS*Eliminación de Item exitosa."
+                maquinariaInstance.delete(flush: true)
+                render "SUCCESS*Eliminación de Maquinaria exitosa."
                 return
             } catch (DataIntegrityViolationException e) {
-                render "ERROR*Ha ocurrido un error al eliminar Item"
+                render "ERROR*Ha ocurrido un error al eliminar Maquinaria"
                 return
             }
         } else {
-            render "ERROR*No se encontró Item."
+            render "ERROR*No se encontró Maquinaria."
             return
         }
     } //delete para eliminar via ajax
@@ -175,48 +177,28 @@ class ItemController extends Shield {
         def hijos = []
         def tipo
         if (!padre) {
-            hijos = TipoItem.list([sort: "nombre"])
-            tipo = "ti"
+            hijos = TipoMaquinaria.list([sort: "nombre"])
+            tipo = "tm"
         } else {
-            if (padre instanceof TipoItem) {
-                hijos = Item.findAllByTipo(padre)
-                tipo = "it"
-            } else if (padre instanceof Item) {
-                def res = Ingreso.findAllByItemAndSaldoGreaterThan(padre, 0)
-                hijos = [:]
-                res.each { ing ->
-                    if (!hijos[ing.item.id + "-" + ing.unidad.id]) {
-                        hijos[ing.item.id + "-" + ing.unidad.id] = [:]
-                        hijos[ing.item.id + "-" + ing.unidad.id].bodega = ing.bodega
-                        hijos[ing.item.id + "-" + ing.unidad.id].item = ing.item
-                        hijos[ing.item.id + "-" + ing.unidad.id].unidad = ing.unidad
-                        hijos[ing.item.id + "-" + ing.unidad.id].saldo = ing.saldo
-                    } else {
-                        hijos[ing.item.id + "-" + ing.unidad.id].saldo += ing.saldo
-                    }
-                }
-                tipo = "bd"
+            if (padre instanceof TipoMaquinaria) {
+                hijos = Maquinaria.findAllByTipo(padre)
+                tipo = "mq"
             }
         }
 
         hijos.each { hijo ->
             def id = "", clase = "", rel = "", label = ""
 
-            if (tipo == "ti") {
-                id = "liTi_" + hijo.id
+            if (tipo == "tm") {
+                id = "liTm_" + hijo.id
                 clase = "jstree-open"
-                rel = "tipoItem"
+                rel = "tipoMaquinaria"
                 label = hijo.nombre
-            } else if (tipo == "it") {
-                id = "liIt_" + hijo.id
+            } else if (tipo == "mq") {
+                id = "liMq_" + hijo.id
                 clase = "jstree-open"
-                rel = "item"
+                rel = "maquinaria"
                 label = hijo.descripcion
-            } else if (tipo == "bd") {
-                id = "liBd_" + hijo.key
-                clase = ""
-                rel = "bodega"
-                label = hijo.value.bodega.descripcion + " (${hijo.value.saldo.toInteger()} ${hijo.value.unidad.codigo})"
             }
 
             arbol += "<li id='${id}' data-level='0' class='${clase}' data-jstree='{\"type\":\"${rel}\"}'>"
@@ -237,15 +219,15 @@ class ItemController extends Shield {
     def arbolSearch_ajax() {
         def search = params.str.trim()
         if (search != "") {
-            def find = TipoItem.findAllByNombreIlike("%" + params.str.trim() + "%")
-            def find2 = Item.findAllByDescripcionIlike("%" + params.str.trim() + "%")
+            def find = TipoMaquinaria.findAllByNombreIlike("%" + params.str.trim() + "%")
+            def find2 = Maquinaria.findAllByDescripcionIlike("%" + params.str.trim() + "%")
 
             def tipos = (find + find2.tipo).unique()
 
             def ids = "["
             if (find.size() > 0) {
                 ids += "\"#root\","
-                tipos.each { TipoItem pr ->
+                tipos.each { TipoMaquinaria pr ->
                     ids += "\"#liTi_" + pr.id + "\","
                 }
                 ids = ids[0..-2]

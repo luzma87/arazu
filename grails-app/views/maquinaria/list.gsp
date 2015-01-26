@@ -1,8 +1,9 @@
+<%@ page import="arazu.items.Maquinaria" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de tipos de Maquinaria</title>
+        <title>Lista de Maquinaria</title>
     </head>
 
     <body>
@@ -21,7 +22,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="tipoMaquinaria" action="list" class="btn btn-default btn-search">
+                        <g:link controller="maquinaria" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -33,31 +34,43 @@
             <thead>
                 <tr>
 
-                    <g:sortableColumn property="codigo" title="Código"/>
+                    <g:sortableColumn property="descripcion" title="Descripcion"/>
 
-                    <g:sortableColumn property="nombre" title="Nombre"/>
+                    <g:sortableColumn property="observaciones" title="Observaciones"/>
 
-                    <g:sortableColumn property="descripcion" title="Descripción"/>
+                    <th>Tipo</th>
+
+                    <g:sortableColumn property="placa" title="Placa"/>
+
+                    <g:sortableColumn property="marca" title="Marca"/>
+
+                    <g:sortableColumn property="modelo" title="Modelo"/>
 
                 </tr>
             </thead>
             <tbody>
-                <g:if test="${tipoMaquinariaInstanceCount > 0}">
-                    <g:each in="${tipoMaquinariaInstanceList}" status="i" var="tipoMaquinariaInstance">
-                        <tr data-id="${tipoMaquinariaInstance.id}">
+                <g:if test="${maquinariaInstanceCount > 0}">
+                    <g:each in="${maquinariaInstanceList}" status="i" var="maquinariaInstance">
+                        <tr data-id="${maquinariaInstance.id}">
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoMaquinariaInstance}" field="codigo"/></elm:textoBusqueda></td>
+                            <td>${maquinariaInstance.descripcion}</td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoMaquinariaInstance}" field="nombre"/></elm:textoBusqueda></td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${maquinariaInstance}" field="observaciones"/></elm:textoBusqueda></td>
 
-                            <td>${tipoMaquinariaInstance.descripcion}</td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${maquinariaInstance}" field="tipo"/></elm:textoBusqueda></td>
+
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${maquinariaInstance}" field="placa"/></elm:textoBusqueda></td>
+
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${maquinariaInstance}" field="marca"/></elm:textoBusqueda></td>
+
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${maquinariaInstance}" field="modelo"/></elm:textoBusqueda></td>
 
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
-                        <td class="text-center" colspan="3">
+                        <td class="text-center" colspan="8">
                             <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
@@ -70,16 +83,16 @@
             </tbody>
         </table>
 
-        <elm:pagination total="${tipoMaquinariaInstanceCount}" params="${params}"/>
+        <elm:pagination total="${maquinariaInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
             var id = null;
-            function submitFormTipoMaquinaria() {
-                var $form = $("#frmTipoMaquinaria");
-                var $btn = $("#dlgCreateEdittipoMaquinaria").find("#btnSave");
+            function submitFormMaquinaria() {
+                var $form = $("#frmMaquinaria");
+                var $btn = $("#dlgCreateEditMaquinaria").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando tipo de Maquinaria");
+                    openLoader("Guardando Maquinaria");
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
@@ -106,11 +119,11 @@
                     return false;
                 } //else
             }
-            function deleteTipoMaquinaria(itemId) {
+            function deleteMaquinaria(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el tipo de Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -122,10 +135,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando tipo de Maquinaria");
+                                openLoader("Eliminando Maquinaria");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'tipoMaquinaria', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'maquinaria', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -150,18 +163,20 @@
                     }
                 });
             }
-            function createEditTipoMaquinaria(id) {
+            function createEditMaquinaria(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
+                openLoader();
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'tipoMaquinaria', action:'form_ajax')}",
+                    url     : "${createLink(controller:'maquinaria', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
+                        closeLoader();
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEdittipoMaquinaria",
-                            title : title + " tipo de Maquinaria",
-
+                            id      : "dlgCreateEditMaquinaria",
+                            title   : title + " Maquinaria",
+//                            class   : "modal-lg",
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -175,7 +190,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitFormTipoMaquinaria();
+                                        return submitFormMaquinaria();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -190,7 +205,7 @@
             $(function () {
 
                 $(".btnCrear").click(function () {
-                    createEditTipoMaquinaria();
+                    createEditMaquinaria();
                     return false;
                 });
 
@@ -207,13 +222,13 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(controller:'tipoMaquinaria', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'maquinaria', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title : "Ver tipoMaquinaria",
+                                            title : "Ver Maquinaria",
 
                                             message : msg,
                                             buttons : {
@@ -234,7 +249,7 @@
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
-                                createEditTipoMaquinaria(id);
+                                createEditMaquinaria(id);
                             }
                         },
                         eliminar : {
@@ -243,7 +258,7 @@
                             separator_before : true,
                             action           : function ($element) {
                                 var id = $element.data("id");
-                                deleteTipoMaquinaria(id);
+                                deleteMaquinaria(id);
                             }
                         }
                     },

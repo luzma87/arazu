@@ -17,7 +17,7 @@
         <div class="alert alert-info text-shadow">
             <i class="fa icon-ghost fa-4x pull-left" style="margin-top: 15px;"></i>
 
-            <h1 class="text-info tituloError">Ha ocurrido un error</h1>
+            <h1 class="text-info tituloError">Página no encontrada</h1>
 
             <p style="font-size: 16px; margin-top: 25px;">La página solicitada no ha sido encontrada.</p>
 
