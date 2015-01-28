@@ -99,6 +99,9 @@ class MaquinariaController extends Shield {
         def ini = current - 35
         def fin = current + 1
         def anios = ini..fin
+        if (params.padre) {
+            maquinariaInstance.tipo = TipoMaquinaria.get(params.padre.toLong())
+        }
         return [maquinariaInstance: maquinariaInstance, anios: anios, current: current]
     } //form para cargar con ajax en un dialog
 

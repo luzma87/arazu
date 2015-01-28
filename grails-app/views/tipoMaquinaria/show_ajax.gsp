@@ -6,24 +6,11 @@
 </g:if>
 <g:else>
     <div class="modal-contenido">
-
-        <g:if test="${tipoMaquinariaInstance?.descripcion}">
-            <div class="row">
-                <div class="col-sm-3 show-label">
-                    Descripcion
-                </div>
-                
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${tipoMaquinariaInstance}" field="descripcion"/>
-                </div>
-                
-            </div>
-        </g:if>
     
         <g:if test="${tipoMaquinariaInstance?.codigo}">
             <div class="row">
-                <div class="col-sm-3 show-label">
-                    Codigo
+                <div class="col-sm-2 show-label">
+                    Código
                 </div>
                 
                 <div class="col-sm-4">
@@ -35,7 +22,7 @@
     
         <g:if test="${tipoMaquinariaInstance?.nombre}">
             <div class="row">
-                <div class="col-sm-3 show-label">
+                <div class="col-sm-2 show-label">
                     Nombre
                 </div>
                 
@@ -43,6 +30,19 @@
                     <g:fieldValue bean="${tipoMaquinariaInstance}" field="nombre"/>
                 </div>
                 
+            </div>
+        </g:if>
+
+        <g:if test="${tipoMaquinariaInstance?.descripcion}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Descripción
+                </div>
+
+                <div class="col-sm-4">
+                    <g:fieldValue bean="${tipoMaquinariaInstance}" field="descripcion"/>
+                </div>
+
             </div>
         </g:if>
     

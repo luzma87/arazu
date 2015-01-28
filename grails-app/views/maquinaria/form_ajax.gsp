@@ -9,10 +9,18 @@
     <div class="modal-contenido">
         <g:form class="form-horizontal" name="frmMaquinaria" id="${maquinariaInstance?.id}"
                 role="form" action="save_ajax" method="POST">
+            <g:if test="${!maquinariaInstance.id && maquinariaInstance.tipo}">
+                <g:hiddenField name="tipo.id" value="${maquinariaInstance.tipoId}"/>
+            </g:if>
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Tipo" claseField1="col-sm-8"
                                   claseLabel2="col-sm-4" label2="Color" claseField2="col-sm-8">
-                <g:select id="tipo" name="tipo.id" from="${TipoMaquinaria.list()}" optionKey="id" required="" value="${maquinariaInstance?.tipo?.id}" class="many-to-one form-control "/>
+                <g:if test="${!maquinariaInstance.id && maquinariaInstance.tipo}">
+                    <p class="form-control-static">${maquinariaInstance.tipo.nombre}</p>
+                </g:if>
+                <g:else>
+                    <g:select id="tipo" name="tipo.id" from="${TipoMaquinaria.list()}" optionKey="id" required="" value="${maquinariaInstance?.tipo?.id}" class="many-to-one form-control "/>
+                </g:else>
                 <hr/>
                 <g:select id="color" name="color.id" from="${Color.list()}" optionKey="id" required="" value="${maquinariaInstance?.color?.id}" class="many-to-one form-control "/>
             </elm:fieldRapidoDoble>
