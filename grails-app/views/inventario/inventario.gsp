@@ -8,6 +8,12 @@
     <body>
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
+                <g:link controller="bodega" action="list" class="btn btn-default btnCrear">
+                    <i class="fa fa-list"></i> Bodegas
+                </g:link>
+            </div>
+
+            <div class="btn-group">
                 <g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Nuevo ingreso a bodega
                 </g:link>
@@ -84,80 +90,97 @@
                 </form>
             </div>
 
-            <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-                <thead>
-                    <tr>
-                        <g:sortableColumn property="fecha" title="Fecha"/>
-                        <g:sortableColumn property="pedido" title="Pedido"/>
-                        <g:sortableColumn property="item" title="Item"/>
-                        <th>Unidad</th>
-                        <g:sortableColumn property="cantidad" title="Cantidad"/>
-                        <g:sortableColumn property="valor" title="V. Unitario"/>
-                        <th>V. Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <g:set var="total" value="${0}"/>
-                    <g:if test="${ingresos.size() > 0}">
-                        <g:each in="${ingresos}" var="ig" status="i">
-                            <tr>
-                                <g:set var="total" value="${total += ig.valor * ig.cantidad}"/>
-                                <td>
-                                    ${ig.fecha.format("dd-MM-yyyy hh:mm:ss")}
-                                </td>
-                                <td>
-                                    ${ig?.pedido}
-                                </td>
-                                <td>
-                                    <elm:textoBusqueda search="${params.search_item}">
-                                        ${ig.item.descripcion}
-                                    </elm:textoBusqueda>
-                                </td>
-                                <td>
-                                    ${ig.unidad}
-                                </td>
-                                <td class="text-center">
-                                    ${ig.saldo}
-                                </td>
-                                <td class="text-right">
-                                    <g:formatNumber number="${ig.valor}" type="currency"/>
-                                </td>
-                                <td class="text-right">
-                                    <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
-                                </td>
-                                <td class="text-center">
-                                    <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
-                                        <i class="fa fa-print"></i>
-                                    </a>
+            <div class="table-wrapper" style="margin-top: 10px; margin-right: 35px;">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <g:sortableColumn property="fecha" title="Fecha"/>
+                            <g:sortableColumn property="pedido" title="Pedido"/>
+                            <g:sortableColumn property="item" title="Item"/>
+                            <th>Unidad</th>
+                            <g:sortableColumn property="cantidad" title="Cantidad"/>
+                            <g:sortableColumn property="saldo" title="Saldo"/>
+                            <g:sortableColumn property="valor" title="V. Unitario"/>
+                            <th>V. Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <g:set var="totalValor" value="${0}"/>
+                        <g:set var="totalSaldo" value="${0}"/>
+                        <g:set var="totalCantidad" value="${0}"/>
+                        <g:if test="${ingresos.size() > 0}">
+                            <g:each in="${ingresos}" var="ig" status="i">
+                                <g:set var="totalValor" value="${totalValor + ig.valor * ig.saldo}"/>
+                                <g:set var="totalCantidad" value="${totalCantidad + ig.cantidad}"/>
+                                <g:set var="totalSaldo" value="${totalSaldo + ig.saldo}"/>
+                                <tr>
+                                    <td>
+                                        ${ig.fecha.format("dd-MM-yyyy hh:mm:ss")}
+                                    </td>
+                                    <td>
+                                        ${ig?.pedido}
+                                    </td>
+                                    <td>
+                                        <elm:textoBusqueda search="${params.search_item}">
+                                            ${ig.item.descripcion}
+                                        </elm:textoBusqueda>
+                                    </td>
+                                    <td>
+                                        ${ig.unidad}
+                                    </td>
+                                    <td class="text-right">
+                                        <g:formatNumber number="${ig.cantidad}" maxFractionDigits="2" minFractionDigits="2"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <g:formatNumber number="${ig.saldo}" maxFractionDigits="2" minFractionDigits="2"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <g:formatNumber number="${ig.valor}" type="currency"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
+                                            <i class="fa fa-print"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </g:each>
+                        </g:if>
+                        <g:else>
+                            <tr class="danger">
+                                <td class="text-center" colspan="7">
+                                    <g:if test="${(params.search_desde && params.search_desde != '') ||
+                                            (params.search_hasta && params.search_hasta != '') ||
+                                            (params.search_item && params.search_item != '')}">
+                                        No se encontraron resultados para su búsqueda
+                                    </g:if>
+                                    <g:else>
+                                        No se encontraron registros que mostrar
+                                    </g:else>
                                 </td>
                             </tr>
-                        </g:each>
-                    </g:if>
-                    <g:else>
-                        <tr class="danger">
-                            <td class="text-center" colspan="7">
-                                <g:if test="${(params.search_desde && params.search_desde != '') ||
-                                        (params.search_hasta && params.search_hasta != '') ||
-                                        (params.search_item && params.search_item != '')}">
-                                    No se encontraron resultados para su búsqueda
-                                </g:if>
-                                <g:else>
-                                    No se encontraron registros que mostrar
-                                </g:else>
-                            </td>
+                        </g:else>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-right">TOTAL</th>
+                            <th class="text-right">
+                                <g:formatNumber number="${totalCantidad.toDouble()}" maxFractionDigits="2" minFractionDigits="2"/>
+                            </th>
+                            <th class="text-right">
+                                <g:formatNumber number="${totalSaldo.toDouble()}" maxFractionDigits="2" minFractionDigits="2"/>
+                            </th>
+                            <th></th>
+                            <th class="text-right">
+                                <g:formatNumber number="${totalValor.toDouble()}" type="currency"/>
+                            </th>
                         </tr>
-                    </g:else>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="6" style="text-align: right;font-weight: bold">TOTAL</td>
-                        <td style="text-align: right;font-weight: bold">
-                            <g:formatNumber number="${total.toDouble()}" type="currency"/>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </tfoot>
+                </table>
+            </div>
         </elm:container>
 
         <script type="text/javascript">

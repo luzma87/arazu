@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de Bodega</title>
+        <title>Lista de Bodegas</title>
     </head>
 
     <body>
@@ -34,15 +34,15 @@
             <thead>
                 <tr>
 
-                    <g:sortableColumn property="descripcion" title="Descripcion"/>
+                    <g:sortableColumn property="descripcion" title="Descripción"/>
 
                     <g:sortableColumn property="observaciones" title="Observaciones"/>
 
                     <th>Proyecto</th>
 
-                    <th>Persona</th>
+                    <th>Responsable</th>
 
-                    <g:sortableColumn property="activo" title="Activo"/>
+                    <g:sortableColumn property="activo" title="Activa"/>
 
                 </tr>
             </thead>
@@ -59,7 +59,7 @@
 
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="persona"/></elm:textoBusqueda></td>
 
-                            <td><g:fieldValue bean="${bodegaInstance}" field="activo"/></td>
+                            <td><g:formatBoolean boolean="${bodegaInstance.activo == 1}" true="Sí" false="No"/></td>
 
                         </tr>
                     </g:each>
@@ -162,11 +162,13 @@
             function createEditBodega(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
+                openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'bodega', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
+                        closeLoader();
                         var b = bootbox.dialog({
                             id    : "dlgCreateEditBodega",
                             title : title + " Bodega",
@@ -242,11 +244,20 @@
                         }
                     },
                     inventario : {
-                        label  : "Inventario",
-                        icon   : " fa fa-shopping-cart",
-                        action : function ($element) {
+                        label            : "Inventario",
+                        icon             : " fa fa-shopping-cart",
+                        separator_bedore : true,
+                        action           : function ($element) {
                             var id = $element.data("id");
                             location.href = "${createLink(controller: 'inventario', action:'inventario')}/" + id;
+                        }
+                    },
+                    ingreso    : {
+                        label  : "Nuevo ingreso a bodega",
+                        icon   : "fa fa-file-o",
+                        action : function ($element) {
+                            var id = $element.data("id");
+                            location.href = "${createLink(controller: 'inventario', action: 'ingresoDeBodega')}?bodega=" + id;
                         }
                     }
 

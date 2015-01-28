@@ -22,6 +22,22 @@ class Proyecto {
      */
     Date fechaFin
     /**
+     * Entidad contratante
+     */
+    String entidad
+    /**
+     * Latitud
+     */
+    Double latitud
+    /**
+     * Longitud
+     */
+    Double longitud
+    /**
+     * Zoom para mostrar en el mapa
+     */
+    Integer zoom
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -39,6 +55,10 @@ class Proyecto {
             descripcion column: 'proydscr'
             fechaInicio column: 'proyfcin'
             fechaFin column: 'proyfcfn'
+            entidad column: 'proyentd'
+            latitud column: 'proylttd'
+            longitud column: 'proylngt'
+            zoom column: 'proyzoom'
         }
     }
 

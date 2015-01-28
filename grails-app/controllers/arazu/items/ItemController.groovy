@@ -97,6 +97,9 @@ class ItemController extends Shield {
         if (params.msg)
             flash.message = params.msg
         itemInstance.properties = params
+        if (params.padre) {
+            itemInstance.tipo = TipoItem.get(params.padre.toLong())
+        }
         return [itemInstance: itemInstance]
     } //form para cargar con ajax en un dialog
 
@@ -185,16 +188,18 @@ class ItemController extends Shield {
                 def res = Ingreso.findAllByItemAndSaldoGreaterThan(padre, 0)
                 hijos = [:]
                 res.each { ing ->
-                    if (!hijos[ing.item.id + "-" + ing.unidad.id]) {
-                        hijos[ing.item.id + "-" + ing.unidad.id] = [:]
-                        hijos[ing.item.id + "-" + ing.unidad.id].bodega = ing.bodega
-                        hijos[ing.item.id + "-" + ing.unidad.id].item = ing.item
-                        hijos[ing.item.id + "-" + ing.unidad.id].unidad = ing.unidad
-                        hijos[ing.item.id + "-" + ing.unidad.id].saldo = ing.saldo
+                    def key = ing.bodega.id + "-" + ing.item.id + "-" + ing.unidad.id
+                    if (!hijos[key]) {
+                        hijos[key] = [:]
+                        hijos[key].bodega = ing.bodega
+                        hijos[key].item = ing.item
+                        hijos[key].unidad = ing.unidad
+                        hijos[key].saldo = ing.saldo
                     } else {
-                        hijos[ing.item.id + "-" + ing.unidad.id].saldo += ing.saldo
+                        hijos[key].saldo += ing.saldo
                     }
                 }
+                println hijos
                 tipo = "bd"
             }
         }

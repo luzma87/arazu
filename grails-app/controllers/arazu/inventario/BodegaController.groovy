@@ -1,5 +1,7 @@
 package arazu.inventario
 
+import arazu.items.Item
+import arazu.parametros.Unidad
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -15,7 +17,7 @@ class BodegaController extends Shield {
      * Acción que redirecciona a la lista (acción "list")
      */
     def index() {
-        redirect(action:"list", params: params)
+        redirect(action: "list", params: params)
     }
 
     /**
@@ -28,19 +30,19 @@ class BodegaController extends Shield {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
-        if(all) {
+        if (all) {
             params.remove("max")
             params.remove("offset")
         }
         def list
-        if(params.search) {
+        if (params.search) {
             def c = Bodega.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
-                    
-                    ilike("descripcion", "%" + params.search + "%")  
-                    ilike("observaciones", "%" + params.search + "%")  
+
+                    ilike("descripcion", "%" + params.search + "%")
+                    ilike("observaciones", "%" + params.search + "%")
                 }
             }
         } else {
@@ -66,9 +68,9 @@ class BodegaController extends Shield {
      * Acción llamada con ajax que muestra la información de un elemento particular
      */
     def show_ajax() {
-        if(params.id) {
+        if (params.id) {
             def bodegaInstance = Bodega.get(params.id)
-            if(!bodegaInstance) {
+            if (!bodegaInstance) {
                 render "ERROR*No se encontró Bodega."
                 return
             }
@@ -83,9 +85,9 @@ class BodegaController extends Shield {
      */
     def form_ajax() {
         def bodegaInstance = new Bodega()
-        if(params.id) {
+        if (params.id) {
             bodegaInstance = Bodega.get(params.id)
-            if(!bodegaInstance) {
+            if (!bodegaInstance) {
                 render "ERROR*No se encontró Bodega."
                 return
             }
@@ -99,15 +101,15 @@ class BodegaController extends Shield {
      */
     def save_ajax() {
         def bodegaInstance = new Bodega()
-        if(params.id) {
+        if (params.id) {
             bodegaInstance = Bodega.get(params.id)
-            if(!bodegaInstance) {
+            if (!bodegaInstance) {
                 render "ERROR*No se encontró Bodega."
                 return
             }
         }
         bodegaInstance.properties = params
-        if(!bodegaInstance.save(flush: true)) {
+        if (!bodegaInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Bodega: " + renderErrors(bean: bodegaInstance)
             return
         }
@@ -119,7 +121,7 @@ class BodegaController extends Shield {
      * Acción llamada con ajax que permite eliminar un elemento
      */
     def delete_ajax() {
-        if(params.id) {
+        if (params.id) {
             def bodegaInstance = Bodega.get(params.id)
             if (!bodegaInstance) {
                 render "ERROR*No se encontró Bodega."
@@ -138,5 +140,21 @@ class BodegaController extends Shield {
             return
         }
     } //delete para eliminar via ajax
-    
+
+    /**
+     * Acción llamada con ajax que muestra los detalles de ingreso de un item a una bodega
+     */
+    def verDetalles_ajax() {
+        def bodega = Bodega.get(params.bodega.toLong())
+        def item = Item.get(params.item.toLong())
+        def unidad = Unidad.get(params.unidad.toLong())
+        def ingresos = Ingreso.withCriteria {
+            eq("bodega", bodega)
+            eq("item", item)
+            eq("unidad", unidad)
+            gt("saldo", 0.toDouble())
+        }
+        return [ingresos: ingresos, bodega: bodega, item: item, unidad: unidad]
+    }
+
 }

@@ -7,13 +7,13 @@ import arazu.seguridad.Shield
 class InventarioController extends Shield {
 
     def ingresoDeBodega() {
-        def bodega
+        def bodega = null
         def bodegas = []
         if (params.bodega) {
             bodega = Bodega.get(params.bodega)
             if (session.usuario.id != bodega.persona.id) {
                 flash.message = "Solo el responsable de bodega puede realizar ingresos."
-                response.sendError("403")
+                response.sendError(403)
             } else {
                 bodegas.add(bodega)
             }
@@ -25,7 +25,7 @@ class InventarioController extends Shield {
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
 
         //println "items "+itemStr
-        [bodegas: bodegas, items: itemStr]
+        return [bodegas: bodegas, bodega: bodega, items: itemStr]
     }
 
     def saveIngreso() {
