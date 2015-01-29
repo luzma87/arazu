@@ -104,110 +104,49 @@
         <div class="row" style="margin-bottom: 10px">
 
         </div>
-        <div class="row" style="margin-bottom: 10px;">
+
+    </elm:container>
+
+    <elm:container tipo="horizontal"  titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
+        <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
+            <thead>
+            <tr>
+                <th style="width: 80px">Cantidad</th>
+                <th style="width: 150px">Unidad</th>
+                <th>Descripción</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-items">
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <input type="text" class="form-control input-sm digits required" id="cantidad" style="text-align: right" value="1" name="cantidad">
+                        <span class="input-group-addon svt-bg-warning">#</span>
+                    </div>
+                </td>
+                <td>
+                    <g:select name="unidad.id" id="unidad" from="${arazu.parametros.Unidad.list()}" optionKey="id" class="form-control input-sm required" noSelection="['':'Seleccione...']"></g:select>
+                </td>
+                <td>
+                    <input type="text" class="form-control input-sm allCaps required" id="item_txt" placeholder="Item" style="width: 100%!important;">
+                </td>
+
+            </tr>
+            </tbody>
+
+        </table>
+        <div class="row" style="margin-top: 20px">
             <div class="col-md-1">
-                <label class=" control-label">
-                    Ítem
-                </label>
-            </div>
-
-            <div class="col-md-3">
-                <input type="text" class="form-control input-sm allCaps" id="item_txt" placeholder="Item" style="width: 100%!important;">
-            </div>
-
-            <div class="col-md-1">
-                <label class=" control-label">
-                    Unidad
-                </label>
-            </div>
-
-            <div class="col-md-2">
-                <g:select name="unidad.id" id="unidad" from="${arazu.parametros.Unidad.list()}" optionKey="id" class="form-control input-sm"></g:select>
-            </div>
-
-            <div class="col-md-1">
-                <label class=" control-label">
-                    Cantidad
-                </label>
-            </div>
-
-            <div class="col-md-1">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm digits" id="cantidad" style="text-align: right" value="1">
-                    <span class="input-group-addon svt-bg-warning">#</span>
-                </div>
-            </div>
-
-
-
-            <div class="col-md-1">
-                <a href="#" id="agregar" title="Agregar" class="btn btn-success btn-sm">
-                    <i class="fa fa-plus"></i>
-                </a>
+                <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
             </div>
         </div>
     </elm:container>
 </g:form>
-<elm:container tipo="horizontal"  titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
-    <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-        <thead>
-        <tr>
-            <th style="width: 80px">Cantidad</th>
-            <th style="width: 80px">Unidad</th>
-            <th>Descripción</th>
-            <th style="width: 50px"></th>
-        </tr>
-        </thead>
-        <tbody id="tabla-items">
-
-        </tbody>
-
-    </table>
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-1">
-            <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
-        </div>
-    </div>
-</elm:container>
 <script type="text/javascript">
-    var item
-    var cantidad
-    var valor
-    var unidad
-    var unidadId
-    var id = null;
-    var total = 0
-    var max = 1
-    var data=""
-    function reset(){
-        $("#item_txt").val("")
-        $("#cantidad").val("1")
-        $("#valor").val("")
-        unidad = null
-        unidadId = null
-        cantidad = null
-        valor = null
-    }
 
-    function insertRow(){
-        var tr = $("<tr class='item-row'>")
-        tr.append("<td class='cantidad'>"+cantidad+"</td>")
-        tr.append("<td class='unidad' iden='"+unidadId+"'>"+unidad+"</td>")
-        tr.append("<td class='descripcion'>"+item+"</td>")
 
-        var boton = $("<a href='#' title='Borrar' class='btn-borrar btn btn-danger btn-sm'><i class='fa fa-trash-o'></i></a>")
 
-        boton.click(function(){
-            $(this).parent().parent().remove()
 
-        });
-        var td = $("<td></td>")
-        td.append(boton)
-        tr.append(td)
-        $("#tabla-items").append(tr)
-        reset()
-
-    }
     var substringMatcher = function (strs) {
         return function findMatches(q, cb) {
             var matches, substrRegex;
@@ -249,46 +188,7 @@
                     }
 
                 });
-                $("#agregar").click(function () {
-                    if($(".item-row").size()>max){
-                        bootbox.alert({
-                                    message : "Solo puede registrar un item por orden de ingreso",
-                                    title   : "Error",
-                                    class   : "modal-error"
-                                }
-                        );
-                    }else{
-                        item = $.trim($("#item_txt").val().toUpperCase())
-                        cantidad = $("#cantidad").val()
-                        unidad = $("#unidad").find("option:selected").text()
-                        unidadId = $("#unidad").val()
-                        var msg = ""
-                        var nuevo = false
-                        if (item == "") {
-                            msg += "Por favor ingrese un Item."
-                        } else {
-                            //console.log($.inArray(item, items))
-                            if ($.inArray(item, items)<0)
-                                nuevo = true
-                        }
-                        if (cantidad * 1 < 1) {
-                            msg += "<br>La cantidad debe ser mayor a cero."
-                        }
 
-                        if (msg == "") {
-                            cantidad=cantidad*1
-                            insertRow()
-                        } else {
-                            bootbox.alert({
-                                        message : msg,
-                                        title   : "Error",
-                                        class   : "modal-error"
-                                    }
-                            );
-                        }
-                    }
-
-                });
                 $('#item_txt').typeahead({
                             hint      : true,
                             highlight : true,
@@ -306,29 +206,11 @@
 
                 $("#guardar").click(function(){
                     if($(".frmNota").valid()){
-                        if($(".item-row").size()<1){
-                            bootbox.alert({
-                                        message : "Primero ingrese un item.",
-                                        title   : "Error",
-                                        class   : "modal-error"
-                                    }
-                            );
 
-                        }else{
-                            data=""
-                            openLoader()
-                            $(".item-row").each(function(){
-                                var cant = $(this).find(".cantidad").html()
-                                var desc = $(this).find(".descripcion").html()
-                                var uni = $(this).find(".unidad").attr("iden")
-                                data+=desc+"!!"+cant+"!!"+uni+"!!"
-                            });
-
-                            $("#data").val(data)
                             $(".frmNota").submit()
 
                         }
-                    }
+
                 });
             });
 </script>
