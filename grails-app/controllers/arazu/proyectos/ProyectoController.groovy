@@ -15,7 +15,7 @@ class ProyectoController extends Shield {
      * Acción que redirecciona a la lista (acción "list")
      */
     def index() {
-        redirect(action:"list", params: params)
+        redirect(action: "list", params: params)
     }
 
     /**
@@ -28,20 +28,20 @@ class ProyectoController extends Shield {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
-        if(all) {
+        if (all) {
             params.remove("max")
             params.remove("offset")
         }
         def list
-        if(params.search) {
+        if (params.search) {
             def c = Proyecto.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
-                    
-                    ilike("descripcion", "%" + params.search + "%")  
-                    ilike("entidad", "%" + params.search + "%")  
-                    ilike("nombre", "%" + params.search + "%")  
+
+                    ilike("descripcion", "%" + params.search + "%")
+                    ilike("entidad", "%" + params.search + "%")
+                    ilike("nombre", "%" + params.search + "%")
                 }
             }
         } else {
@@ -67,9 +67,9 @@ class ProyectoController extends Shield {
      * Acción llamada con ajax que muestra la información de un elemento particular
      */
     def show_ajax() {
-        if(params.id) {
+        if (params.id) {
             def proyectoInstance = Proyecto.get(params.id)
-            if(!proyectoInstance) {
+            if (!proyectoInstance) {
                 render "ERROR*No se encontró Proyecto."
                 return
             }
@@ -84,9 +84,9 @@ class ProyectoController extends Shield {
      */
     def form_ajax() {
         def proyectoInstance = new Proyecto()
-        if(params.id) {
+        if (params.id) {
             proyectoInstance = Proyecto.get(params.id)
-            if(!proyectoInstance) {
+            if (!proyectoInstance) {
                 render "ERROR*No se encontró Proyecto."
                 return
             }
@@ -100,15 +100,15 @@ class ProyectoController extends Shield {
      */
     def save_ajax() {
         def proyectoInstance = new Proyecto()
-        if(params.id) {
+        if (params.id) {
             proyectoInstance = Proyecto.get(params.id)
-            if(!proyectoInstance) {
+            if (!proyectoInstance) {
                 render "ERROR*No se encontró Proyecto."
                 return
             }
         }
         proyectoInstance.properties = params
-        if(!proyectoInstance.save(flush: true)) {
+        if (!proyectoInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Proyecto: " + renderErrors(bean: proyectoInstance)
             return
         }
@@ -117,10 +117,37 @@ class ProyectoController extends Shield {
     } //save para grabar desde ajax
 
     /**
+     * Acción que guarda la información de un elemento
+     */
+    def save() {
+        def proyectoInstance = new Proyecto()
+        if (params.id) {
+            proyectoInstance = Proyecto.get(params.id)
+            if (!proyectoInstance) {
+                flash.message = "No se encontró el proyecto"
+                flash.tipo = "error"
+                redirect(action: "form")
+                return
+            }
+        }
+        proyectoInstance.properties = params
+        if (!proyectoInstance.save(flush: true)) {
+            flash.message = "Ha ocurrido un error al guardar Proyecto: " + renderErrors(bean: proyectoInstance)
+            flash.tipo = "error"
+            redirect(action: "form")
+            return
+        }
+        flash.message = "${params.id ? 'Actualización' : 'Creación'} de Proyecto exitosa."
+        flash.tipo = "success"
+        redirect(action: "list")
+        return
+    } //save para grabar desde ajax
+
+    /**
      * Acción llamada con ajax que permite eliminar un elemento
      */
     def delete_ajax() {
-        if(params.id) {
+        if (params.id) {
             def proyectoInstance = Proyecto.get(params.id)
             if (!proyectoInstance) {
                 render "ERROR*No se encontró Proyecto."
@@ -139,5 +166,20 @@ class ProyectoController extends Shield {
             return
         }
     } //delete para eliminar via ajax
-    
+
+    /**
+     * Acción que muestra el formulario de creación de proyecto
+     */
+    def form() {
+        def proyectoInstance = new Proyecto()
+        if (params.id) {
+            proyectoInstance = Proyecto.get(params.id)
+            if (!proyectoInstance) {
+                proyectoInstance = null
+            }
+        }
+        proyectoInstance.properties = params
+        return [proyectoInstance: proyectoInstance]
+    }
+
 }
