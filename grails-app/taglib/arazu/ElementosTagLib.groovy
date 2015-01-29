@@ -99,7 +99,7 @@ class ElementosTagLib {
             }
         } else {
             if (attrs.titulo != "") {
-                clase = "horizontal-container ${attrs.border ? 'bordered ui-corner-all' : ''}"
+                clase = "horizontal-container ${attrs.border ? 'bordered ui-corner-all' : 'not-bordered'}"
                 titulo = '<div class="svt-note"  style="color:' + attrs.color + '">' + attrs.titulo + '</div>'
             }
 

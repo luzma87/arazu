@@ -10,11 +10,23 @@ class NotaDePedidoController {
             numero=numero.first().numero+1
         else
             numero=1
+        session.numero = numero
         def items = Item.list([sort: "descripcion"])
         def itemStr = ""
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
         [numero:numero,items:itemStr]
 
+    }
+
+    def saveSolicitud(){
+        println "save solicitud "+params
+        flash.message="Solicitud envidada"
+        redirect(action: "lista")
+
+    }
+    def lista(){
+        def notas = Pedido.list([sort: "numero"])
+        [notas:notas]
     }
 
 }
