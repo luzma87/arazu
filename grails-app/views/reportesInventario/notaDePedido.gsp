@@ -67,8 +67,6 @@
         background-color: #fff;
     }
 
-
-
     div.header{
         display: block;
         text-align: center;
@@ -95,56 +93,55 @@
     }
 
 
-
     </style>
 </head>
 
 <body>
 <div class="header">
-    <g:header titulo="Ingreso a bodega"/>
+    <g:header titulo="Nota de pedido"/>
 </div>
-<div class="hoja">
 
+<div class="hoja">
     <div class="row" style="">
         <div style="width: 130px;height: 20px;float: right;font-weight: bold">
-            Ingreso a bodega
+            Número
         </div>
     </div>
     <div class="row" style="">
         <div style="width: 130px;height: 20px;float: right;border: 1px solid #000000;padding-right: 5px;text-align: right;line-height: 20px">
-            ${ingreso.id}
+            ${nota.numero}
         </div>
     </div>
     <table style="width: 100%;margin-top: 15px">
         <tbody>
         <tr>
+            <td class="label" >Tipo:</td>
+            <td>${nota.tipoSolicitud.descripcion}</td>
+        </tr>
+        <tr>
             <td class="label" >Fecha:</td>
-            <td>${ingreso.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
+            <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
         </tr>
         <tr>
-            <td class="label" >Bodega:</td>
-            <td>${ingreso.bodega.descripcion}</td>
+            <td class="label" >De:</td>
+            <td>${nota.de}</td>
         </tr>
         <tr>
-            <td class="label" >Responsable:</td>
-            <td>${ingreso.bodega.persona}</td>
+            <td class="label" >Proyecto:</td>
+            <td>${nota.proyecto.nombre}</td>
         </tr>
         <tr>
-            <td class="label" >Nota de pedido:</td>
-            <td>${(ingreso.pedido)?ingreso.pedido:'Ingreso de inventario inicial'}</td>
-        </tr>
-        <tr>
-            <td class="label" >Orden de compra:</td>
+            <td class="label" >Departamento:</td>
             <td></td>
         </tr>
         <tr>
-            <td class="label" >N de factura:</td>
-            <td>${ingreso.factura}</td>
+            <td class="label" >Equipo:</td>
+            <td>${nota.maquinaria}</td>
         </tr>
         </tbody>
     </table>
-    <div class="row">
-        Solicito se digne almacenar las especies que constan a continuación
+    <div class="row" style="margin-top: 30px">
+        Solicito se digne disponer se despache las especies que constan a continuación
     </div>
     <table style="margin-top: 10px;width: 100%;border-collapse: collapse;">
         <thead>
@@ -152,27 +149,20 @@
             <th>Cantidad</th>
             <th>Unidad</th>
             <th>Descripción</th>
-            <th>V/unitario</th>
-            <th>V/TOTAL</th>
         </tr>
         </thead>
         <tbody>
         <tr class="odd">
             <td style="text-align: center">
-                ${ingreso.cantidad}
+                ${nota.cantidad.toInteger()}
             </td>
             <td style="text-align: center">
-                ${ingreso.unidad}
+                ${nota.unidad}
             </td>
             <td>
-                ${ingreso.item.descripcion}
+                ${nota.item.descripcion}
             </td>
-            <td style="text-align: right">
-                <g:formatNumber number="${ingreso.valor}"  type="currency"/>
-            </td>
-            <td style="text-align: right">
-                <g:formatNumber number="${ingreso.cantidad*ingreso.valor}"  type="currency"/>
-            </td>
+
         </tr>
         </tbody>
     </table>
@@ -185,13 +175,13 @@
         </tr>
         <tr>
             <td style="border-top: 2px solid black;text-align: center">
-                ${ingreso.bodega.persona}
+                ${nota.de}
             </td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td style="text-align: center">Responsable de bodega</td>
+            <td style="text-align: center">Solicitado</td>
             <td></td>
             <td></td>
         </tr>
@@ -201,5 +191,6 @@
 <div class="footer">
     Impreso el ${new java.util.Date().format('dd-MM-yyyy HH:mm:ss')}
 </div>
+
 </body>
 </html>

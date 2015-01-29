@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main">
-    <title>Nota de pedido</title>
+    <title>Notas de pedido del usuario ${session.usuario}</title>
     <style type="text/css">
 
     .numero{
@@ -22,30 +22,38 @@
 
 <body>
 <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-<table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-    <thead>
-    <tr>
-        <th style="width: 80px">Número</th>
-        <th style="width: 80px">Fecha</th>
-        <th style="width: 80px">Tipo</th>
-        <th style="">Item</th>
-        <th style="width: 80px">Cantidad</th>
-        <th style="width: 80px">Estado</th>
-    </tr>
-    </thead>
-    <tbody id="tabla-items">
+<elm:container tipo="horizontal" titulo="Notas de pedido del usuario: ${session.usuario}">
+    <table class="table table-striped  table-bordered" style="margin-top: 10px">
+        <thead>
+        <tr>
+            <th style="width: 80px">Número</th>
+            <th style="width: 80px">Fecha</th>
+            <th style="width: 80px">Tipo</th>
+            <th style="">Item</th>
+            <th style="width: 80px">Cantidad</th>
+            <th style="width: 80px">Estado</th>
+            <th style="width: 50px"></th>
+        </tr>
+        </thead>
+        <tbody id="tabla-items">
         <g:each in="${notas}" var="nota">
             <tr>
                 <td>${nota.numero}</td>
                 <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                 <td>${nota.tipoSolicitud.descripcion}</td>
                 <td>${nota.item}</td>
-                <td>${nota.cantidad}</td>
-                <td>${nota.estadoSolicitud.descripcion}</td>
+                <td class="cantidad">${nota.cantidad.toInteger()}</td>
+                <td style="font-weight: bold">${nota.estadoSolicitud.descripcion}</td>
+                <td style="text-align: center">
+                    <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id))}" title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
+                        <i class="fa fa-print"></i>
+                    </a>
+                </td>
             </tr>
         </g:each>
-    </tbody>
+        </tbody>
+    </table>
+</elm:container>
 
-</table>
 </body>
 </html>

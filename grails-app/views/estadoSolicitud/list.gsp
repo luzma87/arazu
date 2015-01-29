@@ -21,7 +21,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="estadosolicitud" action="list" class="btn btn-default btn-search">
+                        <g:link controller="estadoSolicitud" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -125,7 +125,7 @@
                                 openLoader("Eliminando EstadoSolicitud");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'estadosolicitud', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'estadoSolicitud', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -155,7 +155,7 @@
                 var data = id ? { id: id } : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'estadosolicitud', action:'form_ajax')}",
+                    url     : "${createLink(controller:'estadoSolicitud', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
@@ -175,7 +175,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitForm();
+                                        return submitFormEstadoSolicitud();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -207,7 +207,7 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(controller:'estadosolicitud', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'estadoSolicitud', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },

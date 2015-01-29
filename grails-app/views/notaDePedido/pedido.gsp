@@ -5,7 +5,7 @@
     <title>Nota de pedido</title>
     <style type="text/css">
     .tt-dropdown-menu {
-        width                 : 262px;
+        width                 : 890px;
         margin-top            : 0px;
         padding               : 5px 0;
         background-color      : rgba(154, 216, 144, 0.91);
@@ -107,40 +107,40 @@
 
     </elm:container>
 
-    <elm:container tipo="horizontal"  titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
-        <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-            <thead>
-            <tr>
-                <th style="width: 80px">Cantidad</th>
-                <th style="width: 150px">Unidad</th>
-                <th>Descripción</th>
-            </tr>
-            </thead>
-            <tbody id="tabla-items">
-            <tr>
-                <td>
-                    <div class="input-group">
-                        <input type="text" class="form-control input-sm digits required" id="cantidad" style="text-align: right" value="1" name="cantidad">
-                        <span class="input-group-addon svt-bg-warning">#</span>
-                    </div>
-                </td>
-                <td>
-                    <g:select name="unidad.id" id="unidad" from="${arazu.parametros.Unidad.list()}" optionKey="id" class="form-control input-sm required" noSelection="['':'Seleccione...']"></g:select>
-                </td>
-                <td>
-                    <input type="text" class="form-control input-sm allCaps required" id="item_txt" placeholder="Item" style="width: 100%!important;">
-                </td>
 
-            </tr>
-            </tbody>
+    <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
+        <thead>
+        <tr>
+            <th style="width: 80px">Cantidad</th>
+            <th style="width: 150px">Unidad</th>
+            <th>Descripción</th>
+        </tr>
+        </thead>
+        <tbody id="tabla-items">
+        <tr>
+            <td>
+                <div class="input-group">
+                    <input type="text" class="form-control input-sm digits required" id="cantidad" style="text-align: right" value="1" name="cantidad">
+                    <span class="input-group-addon svt-bg-warning">#</span>
+                </div>
+            </td>
+            <td>
+                <g:select name="unidad.id" id="unidad" from="${arazu.parametros.Unidad.list()}" optionKey="id" class="form-control input-sm required" noSelection="['':'Seleccione...']"></g:select>
+            </td>
+            <td>
+                <input type="text" name="item" class="form-control input-sm allCaps required" id="item_txt" placeholder="Item" style="width: 100%!important;">
+            </td>
 
-        </table>
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-1">
-                <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
-            </div>
+        </tr>
+        </tbody>
+
+    </table>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-1">
+            <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
         </div>
-    </elm:container>
+    </div>
+
 </g:form>
 <script type="text/javascript">
 
@@ -207,9 +207,9 @@
                 $("#guardar").click(function(){
                     if($(".frmNota").valid()){
 
-                            $(".frmNota").submit()
+                        $(".frmNota").submit()
 
-                        }
+                    }
 
                 });
             });

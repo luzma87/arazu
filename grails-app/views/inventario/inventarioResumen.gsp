@@ -88,7 +88,7 @@
                                     ${ig.unidad}
                                 </td>
                                 <td class="text-center">
-                                    ${ig.saldo}
+                                    ${ig.saldo.toInteger()}
                                 </td>
                             </tr>
                         </g:each>
