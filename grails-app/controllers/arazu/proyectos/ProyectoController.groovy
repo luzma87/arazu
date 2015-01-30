@@ -64,86 +64,6 @@ class ProyectoController extends Shield {
     }
 
     /**
-     * Acción llamada con ajax que muestra la información de un elemento particular
-     */
-    def show_ajax() {
-        if (params.id) {
-            def proyectoInstance = Proyecto.get(params.id)
-            if (!proyectoInstance) {
-                render "ERROR*No se encontró Proyecto."
-                return
-            }
-            return [proyectoInstance: proyectoInstance]
-        } else {
-            render "ERROR*No se encontró Proyecto."
-        }
-    } //show para cargar con ajax en un dialog
-
-    /**
-     * Acción llamada con ajax que muestra un formaulario para crear o modificar un elemento
-     */
-    def form_ajax() {
-        def proyectoInstance = new Proyecto()
-        if (params.id) {
-            proyectoInstance = Proyecto.get(params.id)
-            if (!proyectoInstance) {
-                render "ERROR*No se encontró Proyecto."
-                return
-            }
-        }
-        proyectoInstance.properties = params
-        return [proyectoInstance: proyectoInstance]
-    } //form para cargar con ajax en un dialog
-
-    /**
-     * Acción llamada con ajax que guarda la información de un elemento
-     */
-    def save_ajax() {
-        def proyectoInstance = new Proyecto()
-        if (params.id) {
-            proyectoInstance = Proyecto.get(params.id)
-            if (!proyectoInstance) {
-                render "ERROR*No se encontró Proyecto."
-                return
-            }
-        }
-        proyectoInstance.properties = params
-        if (!proyectoInstance.save(flush: true)) {
-            render "ERROR*Ha ocurrido un error al guardar Proyecto: " + renderErrors(bean: proyectoInstance)
-            return
-        }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Proyecto exitosa."
-        return
-    } //save para grabar desde ajax
-
-    /**
-     * Acción que guarda la información de un elemento
-     */
-    def save() {
-        def proyectoInstance = new Proyecto()
-        if (params.id) {
-            proyectoInstance = Proyecto.get(params.id)
-            if (!proyectoInstance) {
-                flash.message = "No se encontró el proyecto"
-                flash.tipo = "error"
-                redirect(action: "form")
-                return
-            }
-        }
-        proyectoInstance.properties = params
-        if (!proyectoInstance.save(flush: true)) {
-            flash.message = "Ha ocurrido un error al guardar Proyecto: " + renderErrors(bean: proyectoInstance)
-            flash.tipo = "error"
-            redirect(action: "form")
-            return
-        }
-        flash.message = "${params.id ? 'Actualización' : 'Creación'} de Proyecto exitosa."
-        flash.tipo = "success"
-        redirect(action: "list")
-        return
-    } //save para grabar desde ajax
-
-    /**
      * Acción llamada con ajax que permite eliminar un elemento
      */
     def delete_ajax() {
@@ -181,5 +101,49 @@ class ProyectoController extends Shield {
         proyectoInstance.properties = params
         return [proyectoInstance: proyectoInstance]
     }
+
+    /**
+     * Acción que guarda la información de un elemento
+     */
+    def save() {
+        def proyectoInstance = new Proyecto()
+        if (params.id) {
+            proyectoInstance = Proyecto.get(params.id)
+            if (!proyectoInstance) {
+                flash.message = "No se encontró el proyecto"
+                flash.tipo = "error"
+                redirect(action: "form")
+                return
+            }
+        }
+        proyectoInstance.properties = params
+        if (!proyectoInstance.save(flush: true)) {
+            flash.message = "Ha ocurrido un error al guardar Proyecto: " + renderErrors(bean: proyectoInstance)
+            flash.tipo = "error"
+            redirect(action: "form")
+            return
+        }
+        flash.message = "${params.id ? 'Actualización' : 'Creación'} de Proyecto exitosa."
+        flash.tipo = "success"
+        redirect(action: "list")
+        return
+    } //save para grabar desde ajax
+
+    /**
+     * Acción llamada con ajax que muestra la información de un elemento particular
+     */
+    def show() {
+        if (params.id) {
+            def proyectoInstance = Proyecto.get(params.id)
+            if (!proyectoInstance) {
+                flash.message = "No se encontró el proyecto"
+                flash.tipo = "error"
+            }
+            return [proyectoInstance: proyectoInstance]
+        } else {
+            flash.message = "No se encontró el proyecto"
+            flash.tipo = "error"
+        }
+    } //show para cargar con ajax en un dialog
 
 }
