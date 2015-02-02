@@ -7,6 +7,8 @@
 <g:else>
 
     <div class="modal-contenido">
+        <g:set var="maxChars" value="${1023 - bodegaInstance.observaciones.size() - 80}"/>
+        <g:set var="maxChars" value="${maxChars <= 0 ? 0 : maxChars}"/>
         <g:form class="form-horizontal" name="frmBodega" id="${bodegaInstance?.id}"
                 role="form" action="save_ajax" method="POST">
 
@@ -18,18 +20,28 @@
                 <g:select id="persona" name="persona.id" from="${Persona.list()}" optionKey="id" required="" value="${bodegaInstance?.persona?.id}" class="many-to-one form-control "/>
             </elm:fieldRapido>
 
-            <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-6">
-                <g:textField name="descripcion" maxlength="50" class="form-control " value="${bodegaInstance?.descripcion}"/>
-            </elm:fieldRapido>
-
-            <elm:fieldRapido claseLabel="col-sm-2" label="Observaciones" claseField="col-sm-6">
-                <g:textArea name="observaciones" cols="40" rows="5" maxlength="1023" class="form-control " value="${bodegaInstance?.observaciones}"/>
-            </elm:fieldRapido>
-
             <elm:fieldRapido claseLabel="col-sm-2" label="Activa" claseField="col-sm-2">
                 <g:select name="activo" from="[1: 'Sí', 0: 'No']" class="form-control required" required=""
                           optionKey="key" optionValue="value" value="${bodegaInstance.activo}"/>
             </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-10">
+                <g:textField name="descripcion" maxlength="50" class="form-control " value="${bodegaInstance?.descripcion}"/>
+            </elm:fieldRapido>
+
+            <g:if test="${bodegaInstance.observaciones && bodegaInstance.observaciones.trim() != ''}">
+                <elm:fieldRapido claseLabel="col-sm-2" label="Observaciones previas" claseField="col-sm-10">
+                    <div style="max-height: 150px; overflow-y: auto;">
+                        ${bodegaInstance.observaciones}
+                    </div>
+                </elm:fieldRapido>
+            </g:if>
+
+            <g:if test="${maxChars > 0}">
+                <elm:fieldRapido claseLabel="col-sm-2" label="Observaciones" claseField="col-sm-10">
+                    <g:textArea name="observaciones" cols="40" rows="5" maxlength="${maxChars}" class="form-control " value=""/>
+                </elm:fieldRapido>
+            </g:if>
 
         </g:form>
     </div>

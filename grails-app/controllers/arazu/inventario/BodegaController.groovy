@@ -2,6 +2,7 @@ package arazu.inventario
 
 import arazu.items.Item
 import arazu.parametros.Unidad
+import arazu.proyectos.Proyecto
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -35,14 +36,33 @@ class BodegaController extends Shield {
             params.remove("offset")
         }
         def list
-        if (params.search) {
-            def c = Bodega.createCriteria()
-            list = c.list(params) {
+        if (params.search != null) {
+            def c1 = Bodega.createCriteria()
+            def l1 = c1.list(params) {
                 or {
-                    /* TODO: cambiar aqui segun sea necesario */
-
                     ilike("descripcion", "%" + params.search + "%")
                     ilike("observaciones", "%" + params.search + "%")
+                }
+            }
+            def c2 = Bodega.createCriteria()
+            def l2 = c2.list(params) {
+                proyecto {
+                    ilike("nombre", "%" + params.search + "%")
+                }
+            }
+            def c3 = Bodega.createCriteria()
+            def l3 = c3.list(params) {
+                persona {
+                    or {
+                        ilike("nombre", "%" + params.search + "%")
+                        ilike("apellido", "%" + params.search + "%")
+                    }
+                }
+            }
+            list = (l1 + l2 + l3).unique()
+            if (params.max) {
+                if (list.size() > params.max) {
+                    list = list[0..params.max - 1]
                 }
             }
         } else {
@@ -108,7 +128,9 @@ class BodegaController extends Shield {
                 return
             }
         }
+        def obs = params.remove("observaciones").toString().trim()
         bodegaInstance.properties = params
+        bodegaInstance.actualizaObservaciones(session.usuario, obs)
         if (!bodegaInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Bodega: " + renderErrors(bean: bodegaInstance)
             return
@@ -155,6 +177,115 @@ class BodegaController extends Shield {
             gt("saldo", 0.toDouble())
         }
         return [ingresos: ingresos, bodega: bodega, item: item, unidad: unidad]
+    }
+
+    /**
+     * Acción llamada con ajax que permite agregar observaciones a una bodega
+     */
+    def agregarObservaciones_ajax() {
+        def bodega = Bodega.get(params.id)
+        return [bodega: bodega]
+    }
+
+    /**
+     * Acción llamada con ajax que gaurda observaciones adicionales a una bodega
+     */
+    def guardarObservaciones_ajax() {
+        def bodega = Bodega.get(params.id)
+        bodega.actualizaObservaciones(session.usuario, params.obs)
+        if (!bodega.save(flush: true)) {
+            println bodega.errors
+            render "ERROR*" + renderErrors(bean: bodega)
+        } else {
+            render "SUCCESS*Observaciones agregadas exitosamente"
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que permite desactivar la bodega de un proyecto y redireccionar su inventario a otra bodega
+     */
+    def desactivarUI_ajax() {
+        def proyecto = Proyecto.get(params.id)
+        def bodegas = Bodega.findAllByProyecto(proyecto)
+        return [proyecto: proyecto, bodegas: bodegas]
+    }
+
+    /**
+     * Acción llamada con ajax que ejecuta la desactivación de la bodega con la reubicación de su inventario
+     */
+    def desactivar_ajax() {
+        def errores = ""
+        params.each { k, v ->
+            //bodegaNew_3:2
+            if (k.toString().startsWith("bodega")) {
+                def parts = k.split("_")
+                def bodegaAntigua = Bodega.get(parts[1].toLong())
+                def bodegaNueva = Bodega.get(v.toLong())
+                errores += desactivarBodega(bodegaAntigua, bodegaNueva)
+            }
+        }
+        if (errores == "") {
+            render "SUCCESS*Inventario reubicado exitosamente"
+        } else {
+            render "ERROR*" + errores
+        }
+    }
+
+    def desactivarBodega(Bodega bodegaAntigua, Bodega bodegaNueva) {
+        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodegaAntigua, 0)
+        def errores = ""
+
+        bodegaAntigua.activo = 0
+        if (!bodegaAntigua.save(flush: true)) {
+            errores += renderErrors(bean: bodegaAntigua)
+        }
+
+        def transfer = new Transferencia()
+        transfer.origen = bodegaAntigua
+        transfer.destino = bodegaNueva
+        transfer.observaciones = "<strong>${session.usuario} <em>${new Date().format('dd-MM-yyyy HH:mm')}</em></strong> " +
+                "Desactivación de la bodega ${bodegaAntigua}"
+        transfer.usuario = session.usuario
+        if (!transfer.save(flush: true)) {
+            errores += renderErrors(bean: transfer)
+        }
+
+        if (errores == "") {
+            ingresos.each { ingresoAntiguo ->
+                def ok = true
+                ingresoAntiguo.calcularSaldo()
+                def egreso = new Egreso()
+                egreso.ingreso = ingresoAntiguo
+                egreso.cantidad = ingresoAntiguo.saldo
+                egreso.transferencia = transfer
+                if (!egreso.save(flush: true)) {
+                    errores += renderErrors(bean: egreso)
+                    ok = false
+                }
+                if (ok) {
+                    ingresoAntiguo.saldo = 0
+                    if (!ingresoAntiguo.save(flush: true)) {
+                        errores += renderErrors(bean: ingresoAntiguo)
+                        ok = false
+                    }
+//                if (ok) {
+//                    def ingresoNuevo = new Ingreso()
+//                    ingresoNuevo.unidad = ingresoAntiguo.unidad
+//                    ingresoNuevo.item = ingresoAntiguo.item
+//                    ingresoNuevo.bodega = bodegaNueva
+//                    ingresoNuevo.cantidad = egreso.cantidad
+//                    ingresoNuevo.valor = ingresoAntiguo.valor
+//                    ingresoNuevo.saldo = egreso.cantidad
+//                    if (!ingresoNuevo.save(flush: true)) {
+//                        errores += renderErrors(bean: ingresoNuevo)
+//                        ok = false
+//                    }
+//                }
+                }
+            }
+        }
+
+        return errores
     }
 
 }

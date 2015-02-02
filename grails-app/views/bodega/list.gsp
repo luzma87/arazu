@@ -36,11 +36,11 @@
 
                     <g:sortableColumn property="descripcion" title="Descripción"/>
 
-                    <g:sortableColumn property="observaciones" title="Observaciones"/>
+                    <g:sortableColumn property="observaciones" title="Observaciones" style="width:450px;"/>
 
-                    <th>Proyecto</th>
+                    <g:sortableColumn property="proyecto" title="Proyecto"/>
 
-                    <th>Responsable</th>
+                    <g:sortableColumn property="persona" title="Responsable"/>
 
                     <g:sortableColumn property="activo" title="Activa"/>
 
@@ -51,13 +51,29 @@
                     <g:each in="${bodegaInstanceList}" status="i" var="bodegaInstance">
                         <tr data-id="${bodegaInstance.id}">
 
-                            <td>${bodegaInstance.descripcion}</td>
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    ${bodegaInstance.descripcion}
+                                </elm:textoBusqueda>
+                            </td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="observaciones"/></elm:textoBusqueda></td>
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    ${bodegaInstance.observaciones.size() > 200 ? bodegaInstance.observaciones[0..197] + "..." : bodegaInstance.observaciones}
+                                </elm:textoBusqueda>
+                            </td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="proyecto"/></elm:textoBusqueda></td>
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    <g:fieldValue bean="${bodegaInstance}" field="proyecto"/>
+                                </elm:textoBusqueda>
+                            </td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${bodegaInstance}" field="persona"/></elm:textoBusqueda></td>
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    <g:fieldValue bean="${bodegaInstance}" field="persona"/>
+                                </elm:textoBusqueda>
+                            </td>
 
                             <td><g:formatBoolean boolean="${bodegaInstance.activo == 1}" true="Sí" false="No"/></td>
 
@@ -119,7 +135,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Bodega seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Bodega seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",

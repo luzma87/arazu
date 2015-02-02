@@ -1,4 +1,4 @@
-<%@ page import="arazu.proyectos.Proyecto" %>
+<%@ page import="arazu.proyectos.Funcion; arazu.inventario.Bodega; arazu.proyectos.Proyecto" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,17 +38,48 @@
                     <g:sortableColumn property="entidad" title="Entidad"/>
                     <g:sortableColumn property="fechaInicio" title="Fecha Inicio"/>
                     <g:sortableColumn property="fechaFin" title="Fecha Fin"/>
+                    <th>Observaciones</th>
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${proyectoInstanceCount > 0}">
                     <g:each in="${proyectoInstanceList}" status="i" var="proyectoInstance">
+                        <g:set var="bodegas" value="${Bodega.countByProyecto(proyectoInstance)}"/>
+                        <g:set var="funciones" value="${Funcion.countByProyecto(proyectoInstance)}"/>
+
+                        <g:set var="bodegasActivas" value="${Bodega.countByProyectoAndActivo(proyectoInstance, 1)}"/>
+                        <g:set var="tieneBodegasActivas" value="${proyectoInstance.fechaFin && proyectoInstance.fechaFin < new Date().clearTime() && bodegasActivas > 0}"/>
                         <tr data-id="${proyectoInstance.id}">
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${proyectoInstance}" field="nombre"/></elm:textoBusqueda></td>
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${proyectoInstance}" field="descripcion"/></elm:textoBusqueda></td>
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${proyectoInstance}" field="entidad"/></elm:textoBusqueda></td>
                             <td><g:formatDate date="${proyectoInstance.fechaInicio}" format="dd-MM-yyyy"/></td>
                             <td><g:formatDate date="${proyectoInstance.fechaFin}" format="dd-MM-yyyy"/></td>
+                            <td class="${bodegas == 0 || funciones == 0 ? 'alert alert-danger' : ''} ${tieneBodegasActivas ? 'alert alert-warning' : ''} ">
+                                <g:if test="${!tieneBodegasActivas}">
+                                    <g:if test="${bodegas == 0}">
+                                        <p>
+                                            <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
+                                                <i class="fa fa-archive"></i> No tiene una bodega asignada
+                                            </g:link>
+                                        </p>
+                                    </g:if>
+                                    <g:if test="${funciones == 0}">
+                                        <p>
+                                            <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
+                                                <i class="fa fa-users"></i> No tiene funciones asignadas
+                                            </g:link>
+                                        </p>
+                                    </g:if>
+                                </g:if>
+                                <g:else>
+                                    <p>
+                                        <a href="#" data-id="${proyectoInstance.id}" class="alert-link desactivarBodega">
+                                            <i class="fa fa-archive"></i> No ha desactivado la bodega
+                                        </a>
+                                    </p>
+                                </g:else>
+                            </td>
                         </tr>
                     </g:each>
                 </g:if>
@@ -119,11 +150,11 @@
 
                 $("tbody>tr").contextMenu({
                     items  : {
-                        header : {
+                        header     : {
                             label  : "Acciones",
                             header : true
                         },
-                        ver    : {
+                        ver        : {
                             label  : "Ver",
                             icon   : "fa fa-search",
                             action : function ($element) {
@@ -131,12 +162,20 @@
                                 location.href = "${createLink(controller: 'proyecto', action:'show')}/" + id;
                             }
                         },
-                        editar : {
+                        editar     : {
                             label  : "Editar",
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
                                 location.href = "${createLink(controller: 'proyecto', action:'form')}/" + id;
+                            }
+                        },
+                        configurar : {
+                            label  : "Configurar",
+                            icon   : "fa fa-cogs",
+                            action : function ($element) {
+                                var id = $element.data("id");
+                                location.href = "${createLink(controller: 'proyecto', action:'config')}/" + id;
                             }
                         }/*,
                          eliminar : {
@@ -156,6 +195,64 @@
                         $(".success").removeClass("success");
                     }
                 });
+
+                $(".desactivarBodega").click(function () {
+                    var id = $(this).data("id");
+                    openLoader();
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'bodega', action:'desactivarUI_ajax')}",
+                        data    : {
+                            id : id
+                        },
+                        success : function (msg) {
+                            closeLoader();
+                            bootbox.dialog({
+                                id      : "dlgDesactivarBodega",
+                                title   : "Desactivar Bodega",
+                                message : msg,
+                                buttons : {
+                                    cancelar : {
+                                        label     : "Cancelar",
+                                        className : "btn-primary",
+                                        callback  : function () {
+                                        }
+                                    },
+                                    mover    : {
+                                        label     : "<i class='fa fa-paper-plane-o'></i> Mover",
+                                        className : "btn-success",
+                                        callback  : function () {
+                                            var data = {};
+                                            $(".bdNew").each(function () {
+                                                data[$(this).attr("name")] = $(this).val();
+                                            });
+                                            openLoader("Moviendo inventario");
+                                            $.ajax({
+                                                type    : "POST",
+                                                url     : "${createLink(controller:'bodega', action:'desactivar_ajax')}",
+                                                data    : data,
+                                                success : function (msg) {
+                                                    var parts = msg.split("*");
+                                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                                    setTimeout(function() {
+                                                        if (parts[0] == "SUCCESS") {
+                                                            location.reload(true);
+                                                        } else {
+                                                           closeLoader();
+                                                            return false;
+                                                        }
+                                                    }, 1000);
+                                                }
+                                            });
+                                        }
+                                    }
+                                } //buttons
+                            }); //dialog
+                        } //success
+                    }); //ajax
+                    return false;
+                });
+
             });
         </script>
 

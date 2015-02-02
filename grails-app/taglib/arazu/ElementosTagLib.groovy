@@ -7,6 +7,8 @@ import org.springframework.web.servlet.support.RequestContextUtils
 
 class ElementosTagLib {
 
+    static encodeAsForTags = [tagName: 'raw']
+
     static namespace = "elm"
 
     def pdfLink = { attrs ->
@@ -14,7 +16,16 @@ class ElementosTagLib {
            var url = "${createLink(action: 'avanceReportePDF')}?id=" + elems;
                     location.href = "${createLink(controller:'pdf',action:'pdfLink')}?url=" + url
          */
-        out << g.createLink(controller: 'pdf', action: 'pdfLink') + "?url=" + attrs.href
+        def link = attrs.href
+        if (!link) {
+            link = attrs.url
+        }
+        def filename = attrs.filename
+        if (!filename) {
+            filename = "doc.pdf"
+        }
+        def parms = "?filename=${filename}&url=" + link
+        out << g.createLink(controller: 'pdf', action: 'pdfLink') + parms
     }
 
     /**
@@ -211,10 +222,10 @@ class ElementosTagLib {
     def textoBusqueda = { attrs, body ->
         def texto = body()
 
-        def busca
-        if (attrs.search) {
+        def busca = ""
+        if (attrs.search != null) {
             busca = attrs.search
-        } else if (attrs.busca) {
+        } else if (attrs.busca != null) {
             busca = attrs.busca
         }
 
@@ -230,12 +241,14 @@ class ElementosTagLib {
             }
         }
 
-        try {
-            texto = texto.toString().replaceAll("(?iu)" + busca) {
-                "<span class='found'>" + it + "</span>"
+        if (busca && busca != "") {
+            try {
+                texto = texto.toString().replaceAll("(?iu)" + busca) {
+                    "<span class='found'>" + it + "</span>"
+                }
+            } catch (e) {
+                println e
             }
-        } catch (e) {
-            println e
         }
 
         out << texto

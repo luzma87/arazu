@@ -30,6 +30,10 @@ class Egreso {
      * Cantidad retirada
      */
     Double cantidad = 1
+    /**
+     * Transferencia en caso de que se saque de otra bodega
+     */
+    Transferencia transferencia
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -52,6 +56,7 @@ class Egreso {
             observaciones column: 'egrsobsr'
             responsable column: 'egrsresp'
             cantidad column: 'egrscant'
+            transferencia column: 'trsf__id'
         }
     }
 
@@ -64,5 +69,6 @@ class Egreso {
         ingreso(nullable: false, blank: false)
         fecha(nullable: false, blank: false)
         responsable(nullable: true, blank: true, size: 1..255)
+        transferencia nullable: true
     }
 }

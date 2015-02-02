@@ -6,6 +6,9 @@ import arazu.seguridad.Shield
 
 class InventarioController extends Shield {
 
+    /**
+     * Acción que mustra la pantalla para hacer ingresos a una bodega
+     */
     def ingresoDeBodega() {
         def bodega = null
         def bodegas = []
@@ -28,6 +31,9 @@ class InventarioController extends Shield {
         return [bodegas: bodegas, bodega: bodega, items: itemStr]
     }
 
+    /**
+     * Acción que guarda los ingresos a una bodega
+     */
     def saveIngreso() {
         println "save ingreso " + params
         def parts = params.data.split("\\|\\|")
@@ -51,6 +57,9 @@ class InventarioController extends Shield {
         render "ok"
     }
 
+    /**
+     * Acción que muestra la pantalla de inventario de una bodega
+     */
     def inventario() {
 //        println "INVENTARIO     " + params
         def bodega = Bodega.get(params.id)
@@ -83,6 +92,9 @@ class InventarioController extends Shield {
         return [ingresos: ingresos, bodega: bodega, params: params]
     }
 
+    /**
+     * Acción que muestra la pntalla de invetario resumido (una fila por item/unidad) de una bodega
+     */
     def inventarioResumen() {
 //        println "INVENTARIO     " + params
         def bodega = Bodega.get(params.id)
@@ -97,6 +109,35 @@ class InventarioController extends Shield {
                     ilike("descripcion", "%" + params.search_item + "%")
                 }
             }
+        }
+
+        def res = [:]
+        ingresos.each { ing ->
+            if (!res[ing.item.id + "-" + ing.unidad.id]) {
+                res[ing.item.id + "-" + ing.unidad.id] = [:]
+                res[ing.item.id + "-" + ing.unidad.id].item = ing.item
+                res[ing.item.id + "-" + ing.unidad.id].unidad = ing.unidad
+                res[ing.item.id + "-" + ing.unidad.id].saldo = ing.saldo
+            } else {
+                res[ing.item.id + "-" + ing.unidad.id].saldo += ing.saldo
+            }
+        }
+
+        return [ingresos: res, bodega: bodega, params: params]
+    }
+
+    /**
+     * Acción llamada con ajax que muestra la pntalla de invetario resumido (una fila por item/unidad) de una bodega
+     */
+    def inventarioResumen_ajax() {
+//        println "INVENTARIO     " + params
+        def bodega = Bodega.get(params.id)
+//        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodega, 0)
+
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
+            eq("bodega", bodega)
+            gt("saldo", 0.toDouble())
         }
 
         def res = [:]

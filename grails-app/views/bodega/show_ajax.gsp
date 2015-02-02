@@ -12,7 +12,7 @@
                     Proyecto
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-10">
                     ${bodegaInstance?.proyecto?.encodeAsHTML()}
                 </div>
 
@@ -25,34 +25,8 @@
                     Responsable
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-10">
                     ${bodegaInstance?.persona?.encodeAsHTML()}
-                </div>
-
-            </div>
-        </g:if>
-
-        <g:if test="${bodegaInstance?.descripcion}">
-            <div class="row">
-                <div class="col-sm-2 show-label">
-                    Descripción
-                </div>
-
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${bodegaInstance}" field="descripcion"/>
-                </div>
-
-            </div>
-        </g:if>
-
-        <g:if test="${bodegaInstance?.observaciones}">
-            <div class="row">
-                <div class="col-sm-2 show-label">
-                    Observaciones
-                </div>
-
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${bodegaInstance}" field="observaciones"/>
                 </div>
 
             </div>
@@ -68,6 +42,32 @@
             </div>
 
         </div>
+
+        <g:if test="${bodegaInstance?.descripcion}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Descripción
+                </div>
+
+                <div class="col-sm-10">
+                    <g:fieldValue bean="${bodegaInstance}" field="descripcion"/>
+                </div>
+
+            </div>
+        </g:if>
+
+        <g:if test="${bodegaInstance?.observaciones}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Observaciones
+                </div>
+
+                <div class="col-sm-9" style="max-height: 100px; overflow-y: auto;">
+                    ${bodegaInstance.observaciones}
+                </div>
+
+            </div>
+        </g:if>
 
     </div>
 </g:else>

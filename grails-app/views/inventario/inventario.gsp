@@ -142,7 +142,7 @@
                                         <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
                                     </td>
                                     <td class="text-center">
-                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
+                                        <a href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
                                             <i class="fa fa-print"></i>
                                         </a>
                                     </td>
@@ -151,7 +151,7 @@
                         </g:if>
                         <g:else>
                             <tr class="danger">
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="8">
                                     <g:if test="${(params.search_desde && params.search_desde != '') ||
                                             (params.search_hasta && params.search_hasta != '') ||
                                             (params.search_item && params.search_item != '')}">

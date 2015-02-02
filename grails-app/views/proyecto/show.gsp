@@ -40,6 +40,14 @@
                         <i class="fa fa-list"></i> Lista de proyectos
                     </g:link>
                 </div>
+                <div class="btn-group">
+                    <g:link action="form" id="${proyectoInstance.id}" class="btn btn-default">
+                        <i class="fa fa-pencil"></i> Modificar
+                    </g:link>
+                    <g:link action="config" id="${proyectoInstance.id}" class="btn btn-default">
+                        <i class="fa fa-cogs"></i> Configurar
+                    </g:link>
+                </div>
             </div>
 
             <elm:container tipo="horizontal" titulo="${proyectoInstance.nombre}">

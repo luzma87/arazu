@@ -48,7 +48,7 @@ class Maquinaria {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'maqn__id'
+        table 'maqn'
         cache usage: 'read-write'
         version false
         id generator: 'identity'

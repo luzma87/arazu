@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.parametros.Cargo" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,19 @@
         <meta name="layout" content="main">
         <title>Lista de Cargo</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -32,29 +33,37 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    
-                    <g:sortableColumn property="descripcion" title="Descripcion" />
-                    
-                    <g:sortableColumn property="codigo" title="Codigo" />
-                    
+
+                    <g:sortableColumn property="codigo" title="Código"/>
+
+                    <g:sortableColumn property="descripcion" title="Descripción"/>
+
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${cargoInstanceCount > 0}">
                     <g:each in="${cargoInstanceList}" status="i" var="cargoInstance">
                         <tr data-id="${cargoInstance.id}">
-                            
-                            <td>${cargoInstance.descripcion}</td>
-                            
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${cargoInstance}" field="codigo"/></elm:textoBusqueda></td>
-                            
+
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    <g:fieldValue bean="${cargoInstance}" field="codigo"/>
+                                </elm:textoBusqueda>
+                            </td>
+
+                            <td>
+                                <elm:textoBusqueda busca="${params.search}">
+                                    ${cargoInstance.descripcion}
+                                </elm:textoBusqueda>
+                            </td>
+
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="2">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -83,7 +92,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -93,14 +102,14 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteCargo(itemId) {
                 bootbox.dialog({
@@ -129,14 +138,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -148,16 +157,16 @@
             }
             function createEditCargo(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? { id : id } : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'cargo', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditCargo",
-                            title   : title + " Cargo",
-                            
+                            id    : "dlgCreateEditCargo",
+                            title : title + " Cargo",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -185,7 +194,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditCargo();
                     return false;
                 });
@@ -196,35 +205,35 @@
                             label  : "Acciones",
                             header : true
                         },
-                        ver      : {
-                            label  : "Ver",
-                            icon   : "fa fa-search",
-                            action : function ($element) {
-                                var id = $element.data("id");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : "${createLink(controller:'cargo', action:'show_ajax')}",
-                                    data    : {
-                                        id : id
-                                    },
-                                    success : function (msg) {
-                                        bootbox.dialog({
-                                            title   : "Ver Cargo",
-                                            
-                                            message : msg,
-                                            buttons : {
-                                                ok : {
-                                                    label     : "Aceptar",
-                                                    className : "btn-primary",
-                                                    callback  : function () {
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        },
+                        %{--ver      : {--}%
+                        %{--label  : "Ver",--}%
+                        %{--icon   : "fa fa-search",--}%
+                        %{--action : function ($element) {--}%
+                        %{--var id = $element.data("id");--}%
+                        %{--$.ajax({--}%
+                        %{--type    : "POST",--}%
+                        %{--url     : "${createLink(controller:'cargo', action:'show_ajax')}",--}%
+                        %{--data    : {--}%
+                        %{--id : id--}%
+                        %{--},--}%
+                        %{--success : function (msg) {--}%
+                        %{--bootbox.dialog({--}%
+                        %{--title : "Ver Cargo",--}%
+
+                        %{--message : msg,--}%
+                        %{--buttons : {--}%
+                        %{--ok : {--}%
+                        %{--label     : "Aceptar",--}%
+                        %{--className : "btn-primary",--}%
+                        %{--callback  : function () {--}%
+                        %{--}--}%
+                        %{--}--}%
+                        %{--}--}%
+                        %{--});--}%
+                        %{--}--}%
+                        %{--});--}%
+                        %{--}--}%
+                        %{--},--}%
                         editar   : {
                             label  : "Editar",
                             icon   : "fa fa-pencil",

@@ -1,27 +1,27 @@
+
+<%@ page import="arazu.proyectos.Funcion" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de Prfl</title>
+        <title>Lista de Funcion</title>
     </head>
-
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-        <!-- botones -->
+    <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
-
             <div class="btn-group pull-right col-md-3">
-                <div class="input-group input-group-sm">
-                    <input type="text" class="form-control input-sm input-search" placeholder="Buscar" value="${params.search}">
+                <div class="input-group">
+                    <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="prfl" action="list" class="btn btn-default btn-search">
+                        <g:link controller="funcion" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -32,41 +32,33 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-
-                    <g:sortableColumn property="codigo" title="Codigo"/>
-
-                    <g:sortableColumn property="descripcion" title="Descripcion"/>
-
-                    <g:sortableColumn property="nombre" title="Nombre"/>
-
-                    <g:sortableColumn property="observaciones" title="Observaciones"/>
-
-                    <th>Padre</th>
-
+                    
+                    <th>Cargo</th>
+                    
+                    <th>Persona</th>
+                    
+                    <th>Proyecto</th>
+                    
                 </tr>
             </thead>
             <tbody>
-                <g:if test="${prflInstanceCount > 0}">
-                    <g:each in="${prflInstanceList}" status="i" var="prflInstance">
-                        <tr data-id="${prflInstance.id}">
-
-                            <td>${prflInstance.codigo}</td>
-
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${prflInstance}" field="descripcion"/></elm:textoBusqueda></td>
-
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${prflInstance}" field="nombre"/></elm:textoBusqueda></td>
-
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${prflInstance}" field="observaciones"/></elm:textoBusqueda></td>
-
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${prflInstance}" field="padre"/></elm:textoBusqueda></td>
-
+                <g:if test="${funcionInstanceCount > 0}">
+                    <g:each in="${funcionInstanceList}" status="i" var="funcionInstance">
+                        <tr data-id="${funcionInstance.id}">
+                            
+                            <td>${funcionInstance.cargo}</td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${funcionInstance}" field="persona"/></elm:textoBusqueda></td>
+                            
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${funcionInstance}" field="proyecto"/></elm:textoBusqueda></td>
+                            
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
-                        <td class="text-center" colspan="5">
-                            <g:if test="${params.search && params.search != ''}">
+                        <td class="text-center" colspan="3">
+                            <g:if test="${params.search && params.search!= ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -78,16 +70,16 @@
             </tbody>
         </table>
 
-        <elm:pagination total="${prflInstanceCount}" params="${params}"/>
+        <elm:pagination total="${funcionInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
             var id = null;
-            function submitForm() {
-                var $form = $("#frmPrfl");
-                var $btn = $("#dlgCreateEdit").find("#btnSave");
+            function submitFormFuncion() {
+                var $form = $("#frmFuncion");
+                var $btn = $("#dlgCreateEditFuncion").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando Prfl");
+                    openLoader("Guardando Funcion");
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
@@ -95,25 +87,30 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
                                     spinner.replaceWith($btn);
+                                    closeLoader();
                                     return false;
                                 }
                             }, 1000);
+                        },
+                        error: function() {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
                         }
                     });
-                } else {
-                    return false;
-                } //else
+            } else {
+                return false;
+            } //else
             }
-            function deleteRow(itemId) {
+            function deleteFuncion(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Prfl seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Funcion seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -125,10 +122,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando Prfl");
+                                openLoader("Eliminando Funcion");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'funcion', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -136,12 +133,16 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function () {
+                                            setTimeout(function() {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
+                                    },
+                                    error: function() {
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
                                     }
                                 });
                             }
@@ -149,18 +150,18 @@
                     }
                 });
             }
-            function createEditRow(id) {
+            function createEditFuncion(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id : id } : {};
+                var data = id ? { id: id } : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(action:'form_ajax')}",
+                    url     : "${createLink(controller:'funcion', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEdit",
-                            title : title + " Prfl",
-
+                            id      : "dlgCreateEditFuncion",
+                            title   : title + " Funcion",
+                            
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -174,7 +175,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitForm();
+                                        return submitFormFuncion();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -188,8 +189,8 @@
 
             $(function () {
 
-                $(".btnCrear").click(function () {
-                    createEditRow();
+                $(".btnCrear").click(function() {
+                    createEditFuncion();
                     return false;
                 });
 
@@ -206,13 +207,14 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(action:'show_ajax')}",
+                                    url     : "${createLink(controller:'funcion', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver Prfl",
+                                            title   : "Ver Funcion",
+                                            
                                             message : msg,
                                             buttons : {
                                                 ok : {
@@ -232,7 +234,7 @@
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
-                                createEditRow(id);
+                                createEditFuncion(id);
                             }
                         },
                         eliminar : {
@@ -241,7 +243,7 @@
                             separator_before : true,
                             action           : function ($element) {
                                 var id = $element.data("id");
-                                deleteRow(id);
+                                deleteFuncion(id);
                             }
                         }
                     },

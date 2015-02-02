@@ -1,5 +1,6 @@
 package arazu.proyectos
 
+import arazu.inventario.Bodega
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -145,5 +146,26 @@ class ProyectoController extends Shield {
             flash.tipo = "error"
         }
     } //show para cargar con ajax en un dialog
+
+    /**
+     * Acción que muestra la antalla de configuración del proyecto: asignación de funciones,
+     */
+    def config() {
+        if (params.id) {
+            def proyectoInstance = Proyecto.get(params.id)
+            if (!proyectoInstance) {
+                flash.message = "No se encontró el proyecto"
+                flash.tipo = "error"
+            }
+
+            def bodegas = Bodega.findAllByProyecto(proyectoInstance)
+            def funciones = Funcion.findAllByProyecto(proyectoInstance)
+
+            return [proyectoInstance: proyectoInstance, bodegas: bodegas, funciones: funciones, params: params]
+        } else {
+            flash.message = "No se encontró el proyecto"
+            flash.tipo = "error"
+        }
+    }
 
 }

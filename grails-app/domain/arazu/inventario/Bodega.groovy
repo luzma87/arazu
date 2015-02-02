@@ -66,4 +66,15 @@ class Bodega {
     String toString() {
         return this.descripcion
     }
+
+    def actualizaObservaciones(Persona usuario, String nuevaObs) {
+        if (nuevaObs && nuevaObs != "" && nuevaObs != null) {
+            def str = "<strong><em>" + usuario.login + "</em> " + new Date().format("dd-MM-yyyy HH:mm") + ":</strong> " + nuevaObs
+            if (this.observaciones && this.observaciones.trim() != "") {
+                this.observaciones = str + "; " + this.observaciones
+            } else {
+                this.observaciones = str
+            }
+        }
+    }
 }
