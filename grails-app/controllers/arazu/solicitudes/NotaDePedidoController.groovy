@@ -3,6 +3,7 @@ package arazu.solicitudes
 import arazu.alertas.Alerta
 import arazu.items.Item
 import arazu.parametros.EstadoSolicitud
+import arazu.seguridad.Persona
 
 class NotaDePedidoController {
 

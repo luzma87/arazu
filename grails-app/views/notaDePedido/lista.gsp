@@ -23,7 +23,7 @@
 <body>
 <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 <elm:container tipo="horizontal" titulo="Notas de pedido del usuario: ${session.usuario}">
-    <table class="table table-striped  table-bordered" style="margin-top: 10px">
+    <table class="table table-striped  table-bordered" style="margin-top: 10px;font-size: 12px">
         <thead>
         <tr>
             <th style="width: 80px">Número</th>
