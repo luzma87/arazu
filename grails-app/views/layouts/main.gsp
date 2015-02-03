@@ -138,6 +138,7 @@
                         $handle.animate({
                             width : handleFin
                         }, time);
+                        $handle.find(".circle-icon").addClass("fa-rotate-180", time);
                     } else {
                         $circle.addClass("showing");
                         $circleBg.removeClass("hidden");
@@ -152,6 +153,7 @@
                         $handle.animate({
                             width : handleIni
                         }, time);
+                        $handle.find(".circle-icon").removeClass("fa-rotate-180", time);
                     }
                 });
             });

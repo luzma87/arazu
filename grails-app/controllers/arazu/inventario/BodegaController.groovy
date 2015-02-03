@@ -251,10 +251,11 @@ class BodegaController extends Shield {
             errores += renderErrors(bean: transfer)
         }
         def alerta = new Alerta()
-        alerta.from = session.usuario
+        def usu = Persona.get(session.usuario.id)
+        alerta.from = usu
         alerta.persona = bodegaNueva.persona
         alerta.fechaEnvio = new Date()
-        alerta.mensaje = session.nombre + " " + session.apellido + " ha desactivado la bodega " + bodegaAntigua.descripcion +
+        alerta.mensaje = usu.nombre + " " + usu.apellido + " ha desactivado la bodega " + bodegaAntigua.descripcion +
                 " haciendo transferencia del inventario a la bodega " + bodegaNueva.descripcion +
                 ". Por favor realice el ingreso a bodega cuando reciba físicamente los items."
         alerta.controlador = "inventario"
