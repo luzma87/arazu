@@ -56,4 +56,7 @@ class Cotizacion {
             estadoSolicitud column: 'essl__id'
         }
     }
+    static constraints = {
+        proveedor(nullable: false,blank: false,size: 1..255)
+    }
 }

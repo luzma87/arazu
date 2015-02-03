@@ -20,8 +20,6 @@ class NotaDePedidoController {
     }
 
     def saveSolicitud(){
-        println "save solicitud "+params
-
         def item = Item.findByDescripcion(params.item.trim())
         params.remove("item")
         params["item.id"]=item.id
@@ -45,5 +43,64 @@ class NotaDePedidoController {
         def notas = Pedido.findAllByEstadoSolicitudNotEqual(EstadoSolicitud.findByCodigo("E03"),[sort: "numero"])
         [notas:notas]
     }
+
+    def listaPendientes(){
+
+        def notas = Pedido.findAllByEstadoSolicitudAndPara(EstadoSolicitud.findByCodigo("E01"),session.usuario,[sort: "numero"])
+        [notas:notas]
+    }
+
+    def revisar(){
+        if(!params.id)
+            response.sendError(404)
+        def nota = Pedido.get(params.id)
+        if(nota.para.id!=session.usuario.id){
+            response.sendError(403)
+        }
+        if(nota.estadoSolicitud.codigo!="E01"){
+            response.sendError(403)
+        }
+        def cots = Cotizacion.findAllByPedido(nota,[sort: "id"])
+        [nota:nota,cots:cots]
+    }
+
+    def savaCotizacion(){
+        println "save cotizacion "+params
+        def cotizacion
+        if(params.id){
+            cotizacion= Cotizacion.get(params.id)
+            cotizacion.properties=params
+        }else{
+            cotizacion = new Cotizacion(params)
+        }
+        cotizacion.fecha=new Date()
+        cotizacion.estadoSolicitud= EstadoSolicitud.findByCodigo("E01")
+        if(!cotizacion.save(flush: true)){
+            flash.message=renderErrors(bean: cotizacion)
+        }
+        redirect(action: "revisar",id: params.pedido.id)
+    }
+
+    def enviarAprobacion(){
+
+        def nota = Pedido.get(params.id)
+        def cots = Cotizacion.findAllByPedido(nota,[sort: "id"])
+        if(cots.size()<1){
+            flash.message="Error: Está nota de pedido no tiene al menos una cotización"
+            response.sendError(403)
+        }else{
+            nota.estadoSolicitud = EstadoSolicitud.findByCodigo("E04")
+            nota.save(flush: true)
+            flash.message="La nota de pedido número ${nota.numero} ha sido enviada para su aprobación"
+            redirect(action: "listaPendientes")
+        }
+    }
+
+    def listaAprobacion(){
+
+        def notas = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("E04"),[sort: "numero"])
+        [notas:notas]
+    }
+
 
 }
