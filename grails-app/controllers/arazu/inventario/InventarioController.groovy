@@ -7,7 +7,7 @@ import arazu.seguridad.Shield
 class InventarioController extends Shield {
 
     /**
-     * Acción que mustra la pantalla para hacer ingresos a una bodega
+     * Acción que muestra la pantalla para hacer ingresos a una bodega
      */
     def ingresoDeBodega() {
         def bodega = null
@@ -153,5 +153,14 @@ class InventarioController extends Shield {
         }
 
         return [ingresos: res, bodega: bodega, params: params]
+    }
+
+    /**
+     * Acción que muestra la pantalla de recepción de una transferencia de una bodega a otra
+     */
+    def transferencia() {
+        def transfer = Transferencia.get(params.id)
+
+        return [transfer: transfer]
     }
 }

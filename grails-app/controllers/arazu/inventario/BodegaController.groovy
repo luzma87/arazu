@@ -1,5 +1,6 @@
 package arazu.inventario
 
+import arazu.alertas.Alerta
 import arazu.items.Item
 import arazu.parametros.Unidad
 import arazu.proyectos.Proyecto
@@ -248,6 +249,19 @@ class BodegaController extends Shield {
         transfer.usuario = session.usuario
         if (!transfer.save(flush: true)) {
             errores += renderErrors(bean: transfer)
+        }
+        def alerta = new Alerta()
+        alerta.from = session.usuario
+        alerta.persona = bodegaNueva.persona
+        alerta.fechaEnvio = new Date()
+        alerta.mensaje = session.nombre + " " + session.apellido + " ha desactivado la bodega " + bodegaAntigua.descripcion +
+                " haciendo transferencia del inventario a la bodega " + bodegaNueva.descripcion +
+                ". Por favor realice el ingreso a bodega cuando reciba físicamente los items."
+        alerta.controlador = "inventario"
+        alerta.accion = "transferencia"
+        alerta.id_remoto = transfer.id
+        if (!alerta.save(flush: true)) {
+            println "Error al generar la alerta: " + alerta.errors
         }
 
         if (errores == "") {
