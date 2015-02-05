@@ -91,18 +91,13 @@ class LoginController {
     def doLogin(perfil) {
         session.perfil = perfil
         cargarPermisos()
-        def count = Alerta.countByPersonaAndFechaRecibidoIsNull(session.usuario)
-        if (count > 0) {
-            redirect(controller: 'alerta', action: 'list')
-            return
+
+        if (session.an && session.cn) {
+            redirect(controller: session.cn, action: session.an, params: session.pr)
         } else {
-            if (session.an && session.cn) {
-                redirect(controller: session.cn, action: session.an, params: session.pr)
-            } else {
-                redirect(controller: "inicio", action: "index")
-            }
-            return
+            redirect(controller: "inicio", action: "index")
         }
+        return
     }
 
     def perfiles() {

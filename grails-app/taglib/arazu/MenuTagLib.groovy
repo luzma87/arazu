@@ -12,7 +12,7 @@ class MenuTagLib {
         def html = ""
         html += "<footer class='footer'>"
         html += "<div class='container text-center'>"
-        html += "<strong>HIDALGO NARANJO INGENIEROS & ARQUITECTOS S.A.</strong>&nbsp;&nbsp;&nbsp;&nbsp;2014 Todos los derechos reservados"
+        html += "<strong>HIDALGO NARANJO INGENIEROS & ARQUITECTOS S.A.</strong>&nbsp;&nbsp;&nbsp;&nbsp;2015 Todos los derechos reservados - VERSION 1.0"
         html += "</div>"
         html += "</footer>"
         out << html
