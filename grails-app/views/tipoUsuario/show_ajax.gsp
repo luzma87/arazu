@@ -1,59 +1,59 @@
 
-<%@ page import="arazu.parametros.Departamento" %>
+<%@ page import="arazu.parametros.TipoUsuario" %>
 
-<g:if test="${!departamentoInstance}">
-    <elm:notFound elem="Departamento" genero="o" />
+<g:if test="${!tipoUsuarioInstance}">
+    <elm:notFound elem="TipoUsuario" genero="o" />
 </g:if>
 <g:else>
     <div class="modal-contenido">
 
-        <g:if test="${departamentoInstance?.padre}">
+        <g:if test="${tipoUsuarioInstance?.padre}">
             <div class="row">
                 <div class="col-sm-2 show-label">
                     Padre
                 </div>
                 
                 <div class="col-sm-4">
-                    ${departamentoInstance?.padre?.encodeAsHTML()}
+                    ${tipoUsuarioInstance?.padre?.encodeAsHTML()}
                 </div>
                 
             </div>
         </g:if>
 
-        <g:if test="${departamentoInstance?.codigo}">
+        <g:if test="${tipoUsuarioInstance?.codigo}">
             <div class="row">
                 <div class="col-sm-2 show-label">
                     Código
                 </div>
 
                 <div class="col-sm-4">
-                    <g:fieldValue bean="${departamentoInstance}" field="codigo"/>
+                    <g:fieldValue bean="${tipoUsuarioInstance}" field="codigo"/>
                 </div>
 
             </div>
         </g:if>
 
-        <g:if test="${departamentoInstance?.nombre}">
+        <g:if test="${tipoUsuarioInstance?.nombre}">
             <div class="row">
                 <div class="col-sm-2 show-label">
                     Nombre
                 </div>
 
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${departamentoInstance}" field="nombre"/>
+                <div class="col-sm-8">
+                    <g:fieldValue bean="${tipoUsuarioInstance}" field="nombre"/>
                 </div>
 
             </div>
         </g:if>
     
-        <g:if test="${departamentoInstance?.descripcion}">
+        <g:if test="${tipoUsuarioInstance?.descripcion}">
             <div class="row">
                 <div class="col-sm-2 show-label">
                     Descripción
                 </div>
                 
-                <div class="col-sm-4">
-                    <g:fieldValue bean="${departamentoInstance}" field="descripcion"/>
+                <div class="col-sm-10">
+                    <g:fieldValue bean="${tipoUsuarioInstance}" field="descripcion"/>
                 </div>
                 
             </div>

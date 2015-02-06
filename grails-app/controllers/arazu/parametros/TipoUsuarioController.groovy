@@ -6,9 +6,9 @@ import arazu.seguridad.Shield
 
 
 /**
- * Controlador que muestra las pantallas de manejo de Departamento
+ * Controlador que muestra las pantallas de manejo de TipoUsuario
  */
-class DepartamentoController extends Shield {
+class TipoUsuarioController extends Shield {
 
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
@@ -31,14 +31,14 @@ class DepartamentoController extends Shield {
         res += "<li id='root' data-level='0' class='root jstree-open' data-jstree='{\"type\":\"root\"}'>"
         res += "<a href='#' class='label_arbol'>HINSA</a>"
         res += "<ul>"
-        res += imprimeDepartamentos(null, params)
+        res += imprimeTipoUsuarios(null, params)
         res += "</li>"
         res += "</ul>"
         return res
     }
 
     /**
-     * Función que genera las hojas tipo departamento del árbol de un padre específico
+     * Función que genera las hojas tipo tipoUsuario del árbol de un padre específico
      */
     private String imprimeUsuario(Persona usuario, params) {
         def txt = ""
@@ -64,9 +64,9 @@ class DepartamentoController extends Shield {
     }
 
     /**
-     * Función que genera las hojas tipo departamento del árbol de un padre específico
+     * Función que genera las hojas tipo tipoUsuario del árbol de un padre específico
      */
-    private String imprimeDepartamentos(Departamento dpto, params) {
+    private String imprimeTipoUsuarios(TipoUsuario dpto, params) {
         def txt = ""
         def activos = [1]
         if (params.inactivos == "S") {
@@ -74,28 +74,28 @@ class DepartamentoController extends Shield {
         }
         def hijosDep = 0, hijosUsu = 0;
 
-        def departamentos, usuarios
+        def tipoUsuarios, usuarios
         if (dpto) {
-            departamentos = Departamento.findAllByPadreAndActivoInList(dpto, activos)
-            usuarios = Persona.findAllByDepartamentoAndActivoInList(dpto, activos)
-            hijosDep = Departamento.countByPadre(dpto)
-            hijosUsu = Persona.countByDepartamento(dpto)
+            tipoUsuarios = TipoUsuario.findAllByPadreAndActivoInList(dpto, activos)
+            usuarios = Persona.findAllByTipoUsuarioAndActivoInList(dpto, activos)
+            hijosDep = TipoUsuario.countByPadre(dpto)
+            hijosUsu = Persona.countByTipoUsuario(dpto)
         } else {
-            departamentos = Departamento.findAllByPadreIsNullAndActivoInList(activos, [sort: "nombre"])
-            usuarios = Persona.findAllByDepartamentoIsNullAndActivoInList(activos, [sort: "apellido"])
-            hijosDep = departamentos.size()
+            tipoUsuarios = TipoUsuario.findAllByPadreIsNullAndActivoInList(activos, [sort: "nombre"])
+            usuarios = Persona.findAllByTipoUsuarioIsNullAndActivoInList(activos, [sort: "apellido"])
+            hijosDep = tipoUsuarios.size()
             hijosUsu = usuarios.size()
         }
         if (dpto) {
             def clase = "jstree-open"
             def rel = "dpto"
-            if (departamentos.size() > 0) {
+            if (tipoUsuarios.size() > 0) {
                 clase = ""
             }
             if (dpto.activo != 1) {
                 rel += "Inactivo"
             }
-            txt += "<li id='liDep_" + dpto.id + "' class='" + clase + "' data-hijos='${hijosDep + hijosUsu}' data-jstree='{\"type\":\"${rel}\"}'>"
+            txt += "<li title='test' id='liDep_" + dpto.id + "' class='" + clase + "' data-hijos='${hijosDep + hijosUsu}' data-jstree='{\"type\":\"${rel}\"}'>"
             txt += "<a href='#' class='label_arbol'>"
             if (dpto.activo != 1) {
                 txt += "<span class='text-muted'>"
@@ -110,8 +110,8 @@ class DepartamentoController extends Shield {
         usuarios.each { usu ->
             txt += imprimeUsuario(usu, params)
         }
-        departamentos.each { h ->
-            txt += imprimeDepartamentos(h, params)
+        tipoUsuarios.each { h ->
+            txt += imprimeTipoUsuarios(h, params)
         }
         if (dpto) {
             txt += "</ul>"
@@ -131,36 +131,36 @@ class DepartamentoController extends Shield {
                     ilike("nombre", "%" + search + "%")
                     ilike("apellido", "%" + search + "%")
                     ilike("login", "%" + search + "%")
-                    departamento {
+                    tipoUsuario {
                         ilike("nombre", "%" + search + "%")
                         ilike("codigo", "%" + search + "%")
                     }
                 }
             }
-            def find2 = Departamento.withCriteria {
+            def find2 = TipoUsuario.withCriteria {
                 or {
                     ilike("nombre", "%" + search + "%")
                     ilike("codigo", "%" + search + "%")
                 }
             }
-            def departamentos = []
-            (find.departamento + find2).each { Departamento dp ->
-                if (dp && !departamentos.contains(dp)) {
+            def tipoUsuarios = []
+            (find.tipoUsuario + find2).each { TipoUsuario dp ->
+                if (dp && !tipoUsuarios.contains(dp)) {
                     def pr = dp
                     while (pr) {
-                        if (pr && !departamentos.contains(pr)) {
-                            departamentos.add(pr)
+                        if (pr && !tipoUsuarios.contains(pr)) {
+                            tipoUsuarios.add(pr)
                         }
                         pr = pr.padre
                     }
                 }
             }
-            departamentos = departamentos.reverse()
+            tipoUsuarios = tipoUsuarios.reverse()
 
             def ids = "["
             if (find.size() > 0) {
                 ids += "\"#root\","
-                departamentos.each { Departamento pr ->
+                tipoUsuarios.each { TipoUsuario pr ->
                     ids += "\"#liDep_" + pr.id + "\","
                 }
                 ids = ids[0..-2]
@@ -195,7 +195,7 @@ class DepartamentoController extends Shield {
         }
         def list
         if (params.search) {
-            def c = Departamento.createCriteria()
+            def c = TipoUsuario.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
@@ -206,7 +206,7 @@ class DepartamentoController extends Shield {
                 }
             }
         } else {
-            list = Departamento.list(params)
+            list = TipoUsuario.list(params)
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
@@ -219,9 +219,9 @@ class DepartamentoController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
-        def departamentoInstanceList = getList(params, false)
-        def departamentoInstanceCount = getList(params, true).size()
-        return [departamentoInstanceList: departamentoInstanceList, departamentoInstanceCount: departamentoInstanceCount]
+        def tipoUsuarioInstanceList = getList(params, false)
+        def tipoUsuarioInstanceCount = getList(params, true).size()
+        return [tipoUsuarioInstanceList: tipoUsuarioInstanceList, tipoUsuarioInstanceCount: tipoUsuarioInstanceCount]
     }
 
     /**
@@ -229,14 +229,14 @@ class DepartamentoController extends Shield {
      */
     def show_ajax() {
         if (params.id) {
-            def departamentoInstance = Departamento.get(params.id)
-            if (!departamentoInstance) {
-                render "ERROR*No se encontró Departamento."
+            def tipoUsuarioInstance = TipoUsuario.get(params.id)
+            if (!tipoUsuarioInstance) {
+                render "ERROR*No se encontró Tipo de Usuario."
                 return
             }
-            return [departamentoInstance: departamentoInstance]
+            return [tipoUsuarioInstance: tipoUsuarioInstance]
         } else {
-            render "ERROR*No se encontró Departamento."
+            render "ERROR*No se encontró Tipo de Usuario."
         }
     } //show para cargar con ajax en un dialog
 
@@ -244,40 +244,43 @@ class DepartamentoController extends Shield {
      * Acción llamada con ajax que muestra un formaulario para crear o modificar un elemento
      */
     def form_ajax() {
-        def departamentoInstance = new Departamento()
+        def tipoUsuarioInstance = new TipoUsuario()
         if (params.id) {
-            departamentoInstance = Departamento.get(params.id)
-            if (!departamentoInstance) {
-                render "ERROR*No se encontró Departamento."
+            tipoUsuarioInstance = TipoUsuario.get(params.id)
+            if (!tipoUsuarioInstance) {
+                render "ERROR*No se encontró Tipo de Usuario."
                 return
             }
         }
-        departamentoInstance.properties = params
+        tipoUsuarioInstance.properties = params
         if (params.padre) {
-            def padre = Departamento.get(params.padre.toLong())
-            departamentoInstance.padre = padre
+            def padre = TipoUsuario.get(params.padre.toLong())
+            tipoUsuarioInstance.padre = padre
         }
-        return [departamentoInstance: departamentoInstance]
+        return [tipoUsuarioInstance: tipoUsuarioInstance]
     } //form para cargar con ajax en un dialog
 
     /**
      * Acción llamada con ajax que guarda la información de un elemento
      */
     def save_ajax() {
-        def departamentoInstance = new Departamento()
+        def tipoUsuarioInstance = new TipoUsuario()
         if (params.id) {
-            departamentoInstance = Departamento.get(params.id)
-            if (!departamentoInstance) {
-                render "ERROR*No se encontró Departamento."
+            tipoUsuarioInstance = TipoUsuario.get(params.id)
+            if (!tipoUsuarioInstance) {
+                render "ERROR*No se encontró Tipo de Usuario."
                 return
             }
         }
-        departamentoInstance.properties = params
-        if (!departamentoInstance.save(flush: true)) {
-            render "ERROR*Ha ocurrido un error al guardar Departamento: " + renderErrors(bean: departamentoInstance)
+        if(params.codigo) {
+            params.codigo = params.codigo.toString().toUpperCase()
+        }
+        tipoUsuarioInstance.properties = params
+        if (!tipoUsuarioInstance.save(flush: true)) {
+            render "ERROR*Ha ocurrido un error al guardar Tipo de Usuario: " + renderErrors(bean: tipoUsuarioInstance)
             return
         }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Departamento exitosa."
+        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Tipo de Usuario exitosa."
         return
     } //save para grabar desde ajax
 
@@ -286,51 +289,51 @@ class DepartamentoController extends Shield {
      */
     def delete_ajax() {
         if (params.id) {
-            def departamentoInstance = Departamento.get(params.id)
-            if (!departamentoInstance) {
-                render "ERROR*No se encontró Departamento."
+            def tipoUsuarioInstance = TipoUsuario.get(params.id)
+            if (!tipoUsuarioInstance) {
+                render "ERROR*No se encontró Tipo de Usuario."
                 return
             }
             try {
-                departamentoInstance.delete(flush: true)
-                render "SUCCESS*Eliminación de Departamento exitosa."
+                tipoUsuarioInstance.delete(flush: true)
+                render "SUCCESS*Eliminación de Tipo de Usuario exitosa."
                 return
             } catch (DataIntegrityViolationException e) {
-                render "ERROR*Ha ocurrido un error al eliminar Departamento"
+                render "ERROR*Ha ocurrido un error al eliminar Tipo de Usuario"
                 return
             }
         } else {
-            render "ERROR*No se encontró Departamento."
+            render "ERROR*No se encontró Tipo de Usuario."
             return
         }
     } //delete para eliminar via ajax
 
     /**
-     * Acción llamada con ajax que permite activar/desactivar un departamento
+     * Acción llamada con ajax que permite activar/desactivar un tipoUsuario
      */
     def cambiarActivo_ajax() {
-        def dep = Departamento.get(params.id)
+        def dep = TipoUsuario.get(params.id)
         dep.activo = params.activo.toInteger()
         if (dep.save(flush: true)) {
-            render "SUCCESS*Departamento " + (dep.activo == 1 ? "activado" : "desactivado") + " exitosamente"
+            render "SUCCESS*Tipo de Usuario " + (dep.activo == 1 ? "activado" : "desactivado") + " exitosamente"
         } else {
             render "ERROR*" + renderErrors(bean: dep)
         }
     }
 
     /**
-     * Acción llamada con ajax que permite modificar el padre de un departamento
+     * Acción llamada con ajax que permite modificar el padre de un tipoUsuario
      */
     def cambiarPadre_ajax() {
-        println "CAMBAIR PADRE:::: " + params
-        def dep = Departamento.get(params.id.toLong())
+//        println "CAMBAIR PADRE:::: " + params
+        def dep = TipoUsuario.get(params.id.toLong())
         def padre = null
         if (params.padre) {
-            padre = Departamento.get(params.padre.toLong())
+            padre = TipoUsuario.get(params.padre.toLong())
         }
         dep.padre = padre
         if (dep.save(flush: true)) {
-            render "SUCCESS*Departamento reubicado exitosamente"
+            render "SUCCESS*Tipo de Usuario reubicado exitosamente"
         } else {
             render "ERROR*" + renderErrors(bean: dep)
         }
@@ -343,16 +346,16 @@ class DepartamentoController extends Shield {
     def validar_unique_codigo_ajax() {
         params.codigo = params.codigo.toString().trim()
         if (params.id) {
-            def obj = Departamento.get(params.id)
+            def obj = TipoUsuario.get(params.id)
             if (obj.codigo.toLowerCase() == params.codigo.toLowerCase()) {
                 render true
                 return
             } else {
-                render Departamento.countByCodigoIlike(params.codigo) == 0
+                render TipoUsuario.countByCodigoIlike(params.codigo) == 0
                 return
             }
         } else {
-            render Departamento.countByCodigoIlike(params.codigo) == 0
+            render TipoUsuario.countByCodigoIlike(params.codigo) == 0
             return
         }
     }

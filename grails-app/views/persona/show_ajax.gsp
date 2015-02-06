@@ -7,13 +7,13 @@
     <div class="modal-contenido">
 
         <div class="row">
-            <g:if test="${personaInstance?.departamento}">
+            <g:if test="${personaInstance?.tipoUsuario}">
                 <div class="col-sm-2 show-label">
                     Departamento
                 </div>
 
                 <div class="col-sm-4">
-                    ${personaInstance?.departamento?.encodeAsHTML()}
+                    ${personaInstance?.tipoUsuario?.encodeAsHTML()}
                 </div>
             </g:if>
 

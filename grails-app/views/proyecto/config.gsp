@@ -5,7 +5,7 @@
   Time: 22:01
 --%>
 
-<%@ page import="arazu.parametros.Cargo; arazu.seguridad.Persona; arazu.proyectos.Proyecto" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.TipoUsuario; arazu.parametros.Cargo; arazu.seguridad.Persona; arazu.proyectos.Proyecto" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -42,6 +42,10 @@
             </div>
 
             <g:set var="bodegaIn" value="${bodegas.size() == 0 || params.b == '1'}"/>
+            <g:set var="maxChars" value="${1023 - 80}"/>
+            <g:set var="maxChars" value="${maxChars <= 0 ? 0 : maxChars}"/>
+
+            <g:set var="responsablesBodega" value="${Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo('RSBD'))}"/>
 
             <elm:container tipo="horizontal" titulo="${proyectoInstance.nombre}: configuración">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="margin-top: 15px;">
@@ -70,7 +74,7 @@
                                             <span class="grupo">
                                                 <label class="col-sm-1 control-label">Proyecto</label>
 
-                                                <div class="col-sm-5">
+                                                <div class="col-sm-3">
                                                     <p class="form-control-static">
                                                         ${proyectoInstance.nombre}
                                                     </p>
@@ -80,8 +84,21 @@
                                             <span class="grupo">
                                                 <label class="col-sm-1 control-label">Responsable</label>
 
-                                                <div class="col-sm-3">
-                                                    <g:select id="persona" name="persona.id" from="${Persona.list()}" optionKey="id" required="" class="many-to-one form-control bodega"/>
+                                                <div class="col-sm-2">
+                                                    <g:select id="responsable.id" name="responsable.id"
+                                                              from="${responsablesBodega}" optionKey="id" required=""
+                                                              class="many-to-one form-control required bodega"/>
+                                                </div>
+                                            </span>
+
+                                            <span class="grupo">
+                                                <label class="col-sm-1 control-label">Suplente</label>
+
+                                                <div class="col-sm-2">
+                                                    <g:select id="suplente.id" name="suplente.id"
+                                                              from="${responsablesBodega}" optionKey="id"
+                                                              noSelection="['': '-- Ninguno --']"
+                                                              class="many-to-one form-control bodega"/>
                                                 </div>
                                             </span>
 
@@ -108,7 +125,7 @@
                                                 <label class="col-sm-1 control-label">Observaciones</label>
 
                                                 <div class="col-sm-5">
-                                                    <g:textArea name="observaciones" cols="40" rows="5" maxlength="1023" class="form-control bodega"/>
+                                                    <g:textArea name="observaciones" cols="40" rows="5" maxlength="${maxChars}" class="form-control bodega"/>
                                                 </div>
                                             </span>
                                         </div>
@@ -130,11 +147,14 @@
                                                 </div>
 
                                                 <div class="col-sm-1 show-label">
-                                                    Responsable
+                                                    Responsables
                                                 </div>
 
                                                 <div class="col-sm-3">
-                                                    ${bodega?.persona?.encodeAsHTML()}
+                                                    <strong>${bodega?.responsable?.encodeAsHTML()}</strong>
+                                                    <g:if test="${bodega.suplente}">
+                                                        , ${bodega?.suplente?.encodeAsHTML()}
+                                                    </g:if>
                                                 </div>
 
                                                 <div class="col-sm-1 show-label">
@@ -188,7 +208,7 @@
                             <h4 class="panel-title">
                                 <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
                                    aria-expanded="${bodegaIn ? 'false' : 'true'}" aria-controls="collapseTwo">
-                                    <i class="fa fa-users"></i>  Funciones
+                                    <i class="fa fa-users"></i>  Responsables
                                 </a>
                             </h4>
                         </div>
@@ -352,8 +372,17 @@
                         success        : function (label) {
                             label.parents(".grupo").removeClass('has-error');
                             label.remove();
+                        },
+                        rules          : {
+                            "suplente.id" : {
+                                notEqualTo : '#responsable\\.id'
+                            }
+                        },
+                        messages       : {
+                            "suplente.id" : {
+                                notEqualTo : 'El suplente no puede ser el mismo que el responsable'
+                            }
                         }
-
                     });
                     $("#frmFuncion").validate({
                         errorClass     : "help-block",

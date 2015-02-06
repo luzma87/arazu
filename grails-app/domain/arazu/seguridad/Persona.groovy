@@ -1,7 +1,6 @@
 package arazu.seguridad
 
-import arazu.parametros.Cargo
-import arazu.parametros.Departamento
+import arazu.parametros.TipoUsuario
 
 /*Usuario del sistema*/
 /**
@@ -66,7 +65,7 @@ class Persona {
     /**
      * Departamento del usuario
      */
-    Departamento departamento
+    TipoUsuario tipoUsuario
     /**
      * Path de la foto de la persona
      */
@@ -101,7 +100,7 @@ class Persona {
             password column: 'prsnpass'
             autorizacion column: 'prsnatrz'
             activo column: 'prsnactv'
-            departamento column: 'dpto__id'
+            tipoUsuario column: 'tpus__id'
             foto column: 'prsnfoto'
         }
     }
@@ -123,7 +122,7 @@ class Persona {
         password(size: 1..64, blank: true, nullable: true)
         autorizacion(size: 1..255, blank: true, nullable: true)
         activo(size: 1..1, blank: true, nullable: true)
-        departamento(blank: true, nullable: true)
+        tipoUsuario(blank: true, nullable: true)
         foto(blank: true, nullable: true)
     }
 

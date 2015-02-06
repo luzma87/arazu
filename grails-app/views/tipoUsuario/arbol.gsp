@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Estructura departamental</title>
+        <title>Tipos de usuario</title>
 
         <script src="${resource(dir: 'js/plugins/jstree-3.0.9/dist', file: 'jstree.min.js')}"></script>
         <link href="${resource(dir: 'js/plugins/jstree-3.0.9/dist/themes/default', file: 'style.min.css')}" rel="stylesheet">
@@ -98,55 +98,55 @@
                 var cantHijos = parseInt($node.data("hijos"));
 
                 var esRoot = nodeType == "root";
-                var esDepartamento = nodeType == "dpto";
-                var esDepartamentoInactivo = nodeType == "dptoInactivo";
+                var esTipoUsuario = nodeType == "dpto";
+                var esTipoUsuarioInactivo = nodeType == "dptoInactivo";
                 var esUsuario = nodeType == "usuario";
                 var esUsuarioInactivo = nodeType == "usuarioInactivo";
 
                 var crearDep = {
-                    label  : "Nuevo departamento",
+                    label  : "Nuevo tipo de Usuario",
                     icon   : "fa fa-building-o text-success",
                     action : function () {
-                        createEditDepartamento(nodeId);
+                        createEditTipoUsuario(nodeId);
                     }
                 };
                 var editarDep = {
-                    label  : "Modificar departamento",
+                    label  : "Modificar tipo de Usuario",
                     icon   : "fa fa-pencil text-info",
                     action : function () {
-                        createEditDepartamento(null, nodeId);
+                        createEditTipoUsuario(null, nodeId);
                     }
                 };
                 var eliminarDep = {
-                    label            : "Eliminar departamento",
+                    label            : "Eliminar tipo de Usuario",
                     icon             : "fa fa-trash-o text-danger",
                     separator_before : true,
                     action           : function () {
-                        deleteDepartamento(nodeId);
+                        deleteTipoUsuario(nodeId);
                     }
                 };
                 var activarDep = {
-                    label            : "Activar departamento",
+                    label            : "Activar tipo de Usuario",
                     icon             : "fa fa-power-off text-success",
                     separator_before : true,
                     action           : function () {
-                        cambiarActivoDepartamento(nodeId, 1);
+                        cambiarActivoTipoUsuario(nodeId, 1);
                     }
                 };
                 var desactivarDep = {
-                    label            : "Desactivar departamento",
+                    label            : "Desactivar tipo de Usuario",
                     icon             : "fa fa-power-off text-muted",
                     separator_before : true,
                     action           : function () {
-                        cambiarActivoDepartamento(nodeId, 0);
+                        cambiarActivoTipoUsuario(nodeId, 0);
                     }
                 };
                 var verDep = {
-                    label            : "Ver departamento",
+                    label            : "Ver tipo de Usuario",
                     icon             : "fa fa-search",
                     separator_before : true,
                     action           : function () {
-                        showDepartamento(nodeId);
+                        showTipoUsuario(nodeId);
                     }
                 };
 
@@ -217,7 +217,7 @@
 
                 if (esRoot) {
                     items.crearDep = crearDep;
-                } else if (esDepartamento) {
+                } else if (esTipoUsuario) {
                     items.verDep = verDep;
                     items.crearDep = crearDep;
                     items.editarDep = editarDep;
@@ -226,7 +226,7 @@
 //                        items.eliminarDep = eliminarDep;
                     }
                     items.crearUsuario = crearUsuario;
-                } else if (esDepartamentoInactivo) {
+                } else if (esTipoUsuarioInactivo) {
                     items.verDep = verDep;
                     items.editarDep = editarDep;
                     if (cantHijos == 0) {
@@ -266,12 +266,12 @@
                 scrollToNode($scrollTo);
             }
 
-            function submitFormDepartamento() {
-                var $form = $("#frmDepartamento");
-                var $btn = $("#dlgCreateEditDepartamento").find("#btnSave");
+            function submitFormTipoUsuario() {
+                var $form = $("#frmTipoUsuario");
+                var $btn = $("#dlgCreateEditTipoUsuario").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando Departamento");
+                    openLoader("Guardando TipoUsuario");
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
@@ -298,11 +298,11 @@
                     return false;
                 } //else
             }
-            function deleteDepartamento(itemId) {
+            function deleteTipoUsuario(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Departamento seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Tipo de Usuario seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -314,10 +314,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando Departamento");
+                                openLoader("Eliminando Tipo de Usuario");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'departamento', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'tipoUsuario', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -342,11 +342,11 @@
                     }
                 });
             }
-            function cambiarActivoDepartamento(itemId, activo) {
+            function cambiarActivoTipoUsuario(itemId, activo) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-power-off fa-3x pull-left " + (activo == 1 ? "text-success" : "text-muted") + " text-shadow'></i><p>" +
-                            "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " el Departamento seleccionado?</p>",
+                              "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " el Tipo de Usuario seleccionado?</p>",
                     buttons : {
                         cancelar   : {
                             label     : "Cancelar",
@@ -358,10 +358,10 @@
                             label     : activo == 1 ? "<i class='fa fa-power-off'></i> Activar" : "<i class='fa fa-power-off'></i> Desactivar",
                             className : activo == 1 ? "btn-success" : "btn-danger",
                             callback  : function () {
-                                openLoader((activo == 1 ? "Activando" : "Desactivando" ) + " Departamento");
+                                openLoader((activo == 1 ? "Activando" : "Desactivando" ) + " Tipo de Usuario");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'departamento', action:'cambiarActivo_ajax')}',
+                                    url     : '${createLink(controller:'tipoUsuario', action:'cambiarActivo_ajax')}',
                                     data    : {
                                         id     : itemId,
                                         activo : activo
@@ -387,7 +387,7 @@
                     }
                 });
             }
-            function createEditDepartamento(padreId, id) {
+            function createEditTipoUsuario(padreId, id) {
                 openLoader();
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
@@ -396,13 +396,13 @@
                 }
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'departamento', action:'form_ajax')}",
+                    url     : "${createLink(controller:'tipoUsuario', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         closeLoader();
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEditDepartamento",
-                            title : title + " Departamento",
+                            id    : "dlgCreateEditTipoUsuario",
+                            title : title + " Tipo de Usuario",
 
                             message : msg,
                             buttons : {
@@ -417,7 +417,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitFormDepartamento();
+                                        return submitFormTipoUsuario();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -428,18 +428,18 @@
                     } //success
                 }); //ajax
             } //createEdit
-            function showDepartamento(id) {
+            function showTipoUsuario(id) {
                 openLoader();
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'departamento', action:'show_ajax')}",
+                    url     : "${createLink(controller:'tipoUsuario', action:'show_ajax')}",
                     data    : {
                         id : id
                     },
                     success : function (msg) {
                         closeLoader();
                         bootbox.dialog({
-                            title : "Ver Departamento",
+                            title : "Ver Tipo de Usuario",
 
                             message : msg,
                             buttons : {
@@ -500,7 +500,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Persona seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Persona seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -544,7 +544,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-power-off fa-3x pull-left " + (activo == 1 ? "text-success" : "text-muted") + " text-shadow'></i><p>" +
-                            "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " la Persona seleccionada?</p>",
+                              "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " la Persona seleccionada?</p>",
                     buttons : {
                         cancelar   : {
                             label     : "Cancelar",
@@ -556,7 +556,7 @@
                             label     : activo == 1 ? "<i class='fa fa-power-off'></i> Activar" : "<i class='fa fa-power-off'></i> Desactivar",
                             className : activo == 1 ? "btn-success" : "btn-danger",
                             callback  : function () {
-                                openLoader((activo == 1 ? "Activando" : "Desactivando" ) + " Departamento");
+                                openLoader((activo == 1 ? "Activando" : "Desactivando" ) + " Tipo de Usuario");
                                 $.ajax({
                                     type    : "POST",
                                     url     : '${createLink(controller:'persona', action:'cambiarActivo_ajax')}',
@@ -818,9 +818,9 @@
 
                 var url;
                 if (nodeType.contains("Usu")) {
-                    url = "${createLink(controller: 'persona', action:'cambiarDepartamento_ajax')}";
+                    url = "${createLink(controller: 'persona', action:'cambiarTipoUsuario_ajax')}";
                 } else if (nodeType.contains("Dep")) {
-                    url = "${createLink(controller: 'departamento', action:'cambiarPadre_ajax')}";
+                    url = "${createLink(controller: 'tipoUsuario', action:'cambiarPadre_ajax')}";
                 }
 
                 $.ajax({
@@ -873,7 +873,7 @@
                         items        : createContextMenu
                     },
                     state       : {
-                        key : "departamentos"
+                        key : "tipoUsuarios"
                     },
                     dnd         : {
                         copy : false

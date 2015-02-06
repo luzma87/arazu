@@ -38,8 +38,8 @@ class NotaDePedidoController {
         } else {
             def alerta = new Alerta()
             def usu = Persona.get(session.usuario.id)
-            alerta.from = usu
-            alerta.persona = solicitud.para
+            alerta.envia = usu
+            alerta.recibe = solicitud.para
             alerta.fechaEnvio = new Date()
             alerta.mensaje = usu.nombre + " " + usu.apellido + " ha realizado una nota de pedido."
             alerta.controlador = "notaDePedido"

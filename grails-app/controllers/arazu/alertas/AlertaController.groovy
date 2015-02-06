@@ -35,7 +35,7 @@ class AlertaController extends Shield {
         if (params.search) {
             def c = Alerta.createCriteria()
             list = c.list(params) {
-                eq("persona", session.usuario)
+                eq("recibe", session.usuario)
                 isNull("fechaRecibido")
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
@@ -45,7 +45,7 @@ class AlertaController extends Shield {
                 }
             }
         } else {
-            list = Alerta.findAllByPersonaAndFechaRecibidoIsNull(session.usuario, params)
+            list = Alerta.findAllByRecibeAndFechaRecibidoIsNull(session.usuario, params)
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1

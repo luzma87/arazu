@@ -19,14 +19,17 @@
             </div>
         </g:if>
 
-        <g:if test="${bodegaInstance?.persona}">
+        <g:if test="${bodegaInstance?.responsable}">
             <div class="row">
                 <div class="col-sm-2 show-label">
-                    Responsable
+                    Responsables
                 </div>
 
                 <div class="col-sm-10">
-                    ${bodegaInstance?.persona?.encodeAsHTML()}
+                    <strong>${bodegaInstance?.responsable?.encodeAsHTML()}</strong>
+                    <g:if test="${bodegaInstance.suplente}">
+                        , ${bodegaInstance.suplente.encodeAsHTML()}
+                    </g:if>
                 </div>
 
             </div>

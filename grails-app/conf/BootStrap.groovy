@@ -1,3 +1,4 @@
+import arazu.parametros.TipoUsuario
 import arazu.seguridad.Modulo
 import arazu.seguridad.Persona
 import arazu.seguridad.Perfil
@@ -39,6 +40,52 @@ class BootStrap {
             }
         }
 
+        if (TipoUsuario.count() == 0) {
+            def admins = new TipoUsuario()
+            admins.codigo = "ADMN"
+            admins.nombre = "Administradores"
+            admins.descripcion = "Administradores del sistema"
+            admins.activo = 1
+            if (admins.save(flush: true)) {
+                println "Creado tipo de usuario ADMN"
+            } else {
+                println "error al crear tipo de usuario ADMN: " + admins.errors
+            }
+
+            def gerentes = new TipoUsuario()
+            gerentes.codigo = "GRNT"
+            gerentes.nombre = "Gerentes"
+            gerentes.descripcion = "Personas que pueden aprobar compras mayores a \$100"
+            gerentes.activo = 1
+            if (gerentes.save(flush: true)) {
+                println "Creado tipo de usuario GRNT"
+            } else {
+                println "error al crear tipo de usuario GRNT: " + gerentes.errors
+            }
+
+            def jefes = new TipoUsuario()
+            jefes.codigo = "JEFE"
+            jefes.nombre = "Jefes"
+            jefes.descripcion = "Usuarios que pueden aprobar las notas de pedido de menos de \$100"
+            jefes.activo = 1
+            if (jefes.save(flush: true)) {
+                println "Creado tipo de usuario JEFE"
+            } else {
+                println "error al crear tipo de usuario JEFE: " + jefes.errors
+            }
+
+            def bodegas = new TipoUsuario()
+            bodegas.codigo = "RSBD"
+            bodegas.nombre = "Responsables de bodega"
+            bodegas.descripcion = "Personas que pueden ser asignadas como responsable principal o suplente de bodega"
+            bodegas.activo = 1
+            if (bodegas.save(flush: true)) {
+                println "Creado tipo de usuario RSBD"
+            } else {
+                println "error al crear tipo de usuario RSBD: " + bodegas.errors
+            }
+        }
+
         if (Persona.count() == 0) {
             def admin = new Persona()
 
@@ -52,6 +99,7 @@ class BootStrap {
             admin.password = "123".encodeAsMD5()
             admin.autorizacion = "456".encodeAsMD5()
             admin.activo = 1
+            admin.tipoUsuario = TipoUsuario.findByCodigo("ADMN")
             if (admin.save(flush: true)) {
                 println "Creado el admin"
             } else {

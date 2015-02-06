@@ -222,7 +222,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el tipo de Item seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el tipo de Item seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -265,11 +265,13 @@
             function createEditTipoItem(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
+                openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'tipoItem', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
+                        closeLoader();
                         var b = bootbox.dialog({
                             id    : "dlgcreateEditTipoItem",
                             title : title + " Tipos de Items",
@@ -299,6 +301,7 @@
                 }); //ajax
             } //createEdit
             function showTipoItem(id) {
+                openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'tipoItem', action:'show_ajax')}",
@@ -306,6 +309,7 @@
                         id : id
                     },
                     success : function (msg) {
+                        closeLoader();
                         bootbox.dialog({
                             title : "Ver tipo de Item",
 
@@ -329,10 +333,19 @@
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
                     openLoader("Guardando Item");
+                    var data = $form.serialize();
+                    var maq = "";
+                    $(".maquinas").each(function () {
+                        if (maq != "") {
+                            maq += "_";
+                        }
+                        maq += $(this).data("id");
+                    });
+                    data += "&maquinas=" + maq;
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
-                        data    : $form.serialize(),
+                        data    : data,
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
@@ -359,7 +372,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Item seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Item seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -405,11 +418,13 @@
                 if (padreId) {
                     data.padre = padreId;
                 }
+                openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'item', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
+                        closeLoader();
                         var b = bootbox.dialog({
                             id    : "dlgCreateEditItem",
                             title : title + " Item",
@@ -439,6 +454,7 @@
                 }); //ajax
             } //createEdit
             function showItem(id) {
+                openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'item', action:'show_ajax')}",
@@ -446,6 +462,7 @@
                         id : id
                     },
                     success : function (msg) {
+                        closeLoader();
                         bootbox.dialog({
                             title : "Ver Item",
 
@@ -476,7 +493,7 @@
                     success : function (msg) {
                         closeLoader();
                         bootbox.dialog({
-                            title : "Ver Item",
+                            title   : "Ver Item",
                             message : msg,
                             buttons : {
                                 ok : {

@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Perfil; arazu.parametros.Departamento; arazu.seguridad.Persona" %>
+<%@ page import="arazu.parametros.TipoUsuario; arazu.seguridad.Perfil; arazu.parametros.Departamento; arazu.seguridad.Persona" %>
 
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 
@@ -13,8 +13,7 @@
 }
 
 .noMargin {
-    margin-top : 0;
-    padding    : 3px;
+    padding : 3px;
 }
 </style>
 
@@ -29,7 +28,7 @@
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Departamento" claseField1="col-sm-8"
                                   claseLabel2="col-sm-4" label2="Usuario" claseField2="col-sm-8">
-                <g:select id="departamento" name="departamento.id" from="${Departamento.list()}" optionKey="id" value="${personaInstance?.departamento?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
+                <g:select id="departamento" name="departamento.id" from="${TipoUsuario.list()}" optionKey="id" value="${personaInstance?.tipoUsuario?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
                 <hr/>
                 <g:textField name="login" maxlength="15" class="form-control required unique noEspacios" value="${personaInstance?.login}"/>
             </elm:fieldRapidoDoble>
@@ -83,7 +82,7 @@
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Perfiles" claseField="col-sm-10">
-                <div class="row noMargin bg-success">
+                <div class="row no-margin-top noMargin bg-success">
                     <div class="col-sm-5">
                         <g:select name="perfil" from="${Perfil.list([sort: 'nombre'])}" class="form-control input-sm"
                                   optionKey="id" optionValue="nombre"/>
@@ -96,7 +95,7 @@
                     </div>
                 </div>
 
-                <div class="row noMargin scroll">
+                <div class="row no-margin-top noMargin scroll">
                     <div class="col-md-6">
                         <table id="tblPerfiles" class="table table-hover table-bordered table-condensed">
                             <g:each in="${perfiles.perfil}" var="perfil">
@@ -173,8 +172,7 @@
             success        : function (label) {
                 label.parents(".grupo").removeClass('has-error');
                 label.remove();
-            }
-            , rules        : {
+            }, rules       : {
                 mail  : {
                     remote : {
                         url  : "${createLink(controller:'persona', action: 'validar_unique_mail_ajax')}",

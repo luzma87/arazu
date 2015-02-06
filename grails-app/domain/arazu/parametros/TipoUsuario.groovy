@@ -1,23 +1,23 @@
 package arazu.parametros
 
 /**
- * Clase para conectar con la tabla 'dpto' de la base de datos
+ * Clase para conectar con la tabla 'tpus' de la base de datos
  */
-class Departamento {
+class TipoUsuario {
     /**
      * Departamento padre
      */
-    Departamento padre
+    TipoUsuario padre
     /**
-     * Código del departamento
+     * Código del tipoUsuario
      */
     String codigo
     /**
-     * Nombre del departamento
+     * Nombre del tipoUsuario
      */
     String nombre
     /**
-     * Descripción del departamento
+     * Descripción del tipoUsuario
      */
     String descripcion
     /**
@@ -34,18 +34,18 @@ class Departamento {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'dpto'
+        table 'tpus'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
         sort nombre: "asc"
         columns {
-            id column: 'dpto__id'
-            padre column: 'dptopdre'
-            codigo column: 'dptocdgo'
-            nombre column: 'dptonmbr'
-            descripcion column: 'dptodscr'
-            activo column: 'dptoactv'
+            id column: 'tpus__id'
+            padre column: 'tpuspdre'
+            codigo column: 'tpuscdgo'
+            nombre column: 'tpusnmbr'
+            descripcion column: 'tpusdscr'
+            activo column: 'tpusactv'
         }
     }
 

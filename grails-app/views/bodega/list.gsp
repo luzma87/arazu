@@ -40,7 +40,7 @@
 
                     <g:sortableColumn property="proyecto" title="Proyecto"/>
 
-                    <g:sortableColumn property="persona" title="Responsable"/>
+                    <g:sortableColumn property="persona" title="Responsables"/>
 
                     <g:sortableColumn property="activo" title="Activa"/>
 
@@ -59,7 +59,7 @@
 
                             <td>
                                 <elm:textoBusqueda busca="${params.search}">
-                                    ${bodegaInstance.observaciones.size() > 200 ? bodegaInstance.observaciones[0..197] + "..." : bodegaInstance.observaciones}
+                                    ${bodegaInstance.observaciones?.size() > 200 ? bodegaInstance.observaciones[0..197] + "..." : bodegaInstance.observaciones}
                                 </elm:textoBusqueda>
                             </td>
 
@@ -71,7 +71,10 @@
 
                             <td>
                                 <elm:textoBusqueda busca="${params.search}">
-                                    <g:fieldValue bean="${bodegaInstance}" field="persona"/>
+                                    <strong><g:fieldValue bean="${bodegaInstance}" field="responsable"/></strong>
+                                    <g:if test="${bodegaInstance.suplente}">
+                                        , <g:fieldValue bean="${bodegaInstance}" field="suplente"/>
+                                    </g:if>
                                 </elm:textoBusqueda>
                             </td>
 

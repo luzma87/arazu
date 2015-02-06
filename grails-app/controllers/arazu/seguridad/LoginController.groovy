@@ -78,7 +78,7 @@ class LoginController {
             session.usuario = user
             session.usuarioKerberos = user.login
             session.time = new Date()
-            session.departamento = user.departamento
+            session.departamento = user.tipoUsuario
             if (perfiles.size() == 1) {
                 doLogin(perfiles.first().perfil)
             } else {
@@ -129,65 +129,23 @@ class LoginController {
     def savePer() {
         def sesn = Sesion.get(params.prfl)
         def perf = sesn.perfil
-
         if (perf) {
-
             def permisos = Prpf.findAllByPerfil(perf)
-//            println "perfil "+perf.descripcion+"  "+perf.codigo
             permisos.each {
-//                println "perm "+it.permiso+"  "+it.permiso.codigo
                 def perm = PermisoUsuario.findAllByPersonaAndPermisoTramite(session.usuario, it.permiso)
                 perm.each { pr ->
-//                    println "fechas "+pr.fechaInicio+"  "+pr.fechaFin+" "+pr.id+" "+pr.estaActivo
                     if (pr.estaActivo) {
-
                         session.usuario.permisos.add(pr.permisoTramite)
                     }
                 }
-
             }
-//            println "permisos " + session.usuario.permisos.id + "  " + session.usuario.permisos
-//            println "add " + session.usuario.permisos
-//            println "puede recibir " + session.usuario.getPuedeRecibir()
-//            println "puede getPuedeVer " + session.usuario.getPuedeVer()
-//            println "puede getPuedeAdmin " + session.usuario.getPuedeAdmin()
-//            println "puede getPuedeJefe " + session.usuario.getPuedeJefe()
-//            println "puede getPuedeDirector " + session.usuario.getPuedeDirector()
-//            println "puede getPuedeExternos " + session.usuario.getPuedeExternos()
-//            println "puede getPuedeAnular " + session.usuario.getPuedeAnular()
-//            println "puede getPuedeTramitar " + session.usuario.getPuedeTramitar()
             session.perfil = perf
             cargarPermisos()
-//            if (session.an && session.cn) {
-//                if (session.an.toString().contains("ajax")) {
-//                    redirect(controller: "inicio", action: "index")
-//                } else {
-//                    redirect(controller: session.cn, action: session.an, params: session.pr)
-//                }
-//            } else {
-            def count = 0
-            if (session.usuario.esTriangulo()) {
-                count = Alerta.countByDepartamentoAndFechaRecibidoIsNull(session.departamento)
-            } else {
-                count = Alerta.countByPersonaAndFechaRecibidoIsNull(session.usuario)
-            }
-
-            if (count > 0)
+            if (Alerta.cantAlertasPersona(session.usuario) > 0)
                 redirect(controller: 'alerta', action: 'list')
-            else {//
-//                redirect(controller: "retrasadosWeb", action: "reporteRetrasadosConsolidado", params: [dpto: Persona.get(session.usuario.id).departamento.id,inicio:"1"])
-                if (session.usuario.getPuedeDirector()) {
-                    redirect(controller: "retrasadosWeb", action: "reporteRetrasadosConsolidadoDir", params: [dpto: Persona.get(session.usuario.id).departamento.id, inicio: "1", dir: "1"])
-                } else {
-                    if (session.usuario.getPuedeJefe()) {
-                        redirect(controller: "retrasadosWeb", action: "reporteRetrasadosConsolidado", params: [dpto: Persona.get(session.usuario.id).departamento.id, inicio: "1"])
-                    } else {
-                        redirect(controller: "inicio", action: "index")
-                    }
-
-                }
+            else {
+                redirect(controller: "inicio", action: "index")
             }
-//            }
         } else {
             redirect(action: "login")
         }
@@ -212,15 +170,12 @@ class LoginController {
         def permisos = Permiso.findAllByPerfil(session.perfil)
         def hp = [:]
         permisos.each {
-//                println(it.accion.nombre+ " " + it.accion.control.nombre)
             if (hp[it.accion.control.nombre.toLowerCase()]) {
                 hp[it.accion.control.nombre.toLowerCase()].add(it.accion.nombre.toLowerCase())
             } else {
                 hp.put(it.accion.control.nombre.toLowerCase(), [it.accion.nombre.toLowerCase()])
             }
-
         }
         session.permisos = hp
-//        println "permisos menu "+session.permisos
     }
 }

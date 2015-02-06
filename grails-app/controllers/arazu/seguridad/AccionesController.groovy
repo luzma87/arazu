@@ -144,7 +144,7 @@ class AccionesController extends Shield {
                                 def accn = Accion.findByNombreAndControl(s[2], Controlador.findByNombre(ct.getName()))
                                 //println "si service "+ s[2]+" accion "+accn.id+" url "+it
                                 if (accn == null) {
-                                    println "if 2";
+//                                    println "if 2";
                                     accn = new Accion()
                                     accn.nombre = s[2]
                                     accn.control = Controlador.findByNombre(ct.getName())

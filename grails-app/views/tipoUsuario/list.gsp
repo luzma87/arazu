@@ -1,9 +1,9 @@
-<%@ page import="arazu.parametros.Departamento" %>
+<%@ page import="arazu.parametros.TipoUsuario" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de Departamento</title>
+        <title>Lista de TipoUsuario</title>
     </head>
 
     <body>
@@ -22,7 +22,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="departamento" action="list" class="btn btn-default btn-search">
+                        <g:link controller="tipoUsuario" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -46,19 +46,19 @@
                 </tr>
             </thead>
             <tbody>
-                <g:if test="${departamentoInstanceCount > 0}">
-                    <g:each in="${departamentoInstanceList}" status="i" var="departamentoInstance">
-                        <tr data-id="${departamentoInstance.id}">
+                <g:if test="${tipoUsuarioInstanceCount > 0}">
+                    <g:each in="${tipoUsuarioInstanceList}" status="i" var="tipoUsuarioInstance">
+                        <tr data-id="${tipoUsuarioInstance.id}">
 
-                            <td>${departamentoInstance.padre}</td>
+                            <td>${tipoUsuarioInstance.padre}</td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="descripcion"/></elm:textoBusqueda></td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoUsuarioInstance}" field="descripcion"/></elm:textoBusqueda></td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="codigo"/></elm:textoBusqueda></td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoUsuarioInstance}" field="codigo"/></elm:textoBusqueda></td>
 
-                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${departamentoInstance}" field="nombre"/></elm:textoBusqueda></td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoUsuarioInstance}" field="nombre"/></elm:textoBusqueda></td>
 
-                            <td><g:formatBoolean boolean="${departamentoInstance.activo == 1}" true="Sí" false="No"/></td>
+                            <td><g:formatBoolean boolean="${tipoUsuarioInstance.activo == 1}" true="Sí" false="No"/></td>
 
                         </tr>
                     </g:each>
@@ -78,16 +78,16 @@
             </tbody>
         </table>
 
-        <elm:pagination total="${departamentoInstanceCount}" params="${params}"/>
+        <elm:pagination total="${tipoUsuarioInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
             var id = null;
-            function submitFormDepartamento() {
-                var $form = $("#frmDepartamento");
-                var $btn = $("#dlgCreateEditDepartamento").find("#btnSave");
+            function submitFormTipoUsuario() {
+                var $form = $("#frmTipoUsuario");
+                var $btn = $("#dlgCreateEditTipoUsuario").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando Departamento");
+                    openLoader("Guardando TipoUsuario");
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
@@ -114,11 +114,11 @@
                     return false;
                 } //else
             }
-            function deleteDepartamento(itemId) {
+            function deleteTipoUsuario(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Departamento seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el TipoUsuario seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -130,10 +130,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando Departamento");
+                                openLoader("Eliminando TipoUsuario");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'departamento', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'tipoUsuario', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -158,17 +158,17 @@
                     }
                 });
             }
-            function createEditDepartamento(id) {
+            function createEditTipoUsuario(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'departamento', action:'form_ajax')}",
+                    url     : "${createLink(controller:'tipoUsuario', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEditDepartamento",
-                            title : title + " Departamento",
+                            id    : "dlgCreateEditTipoUsuario",
+                            title : title + " TipoUsuario",
 
                             message : msg,
                             buttons : {
@@ -183,7 +183,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitFormDepartamento();
+                                        return submitFormTipoUsuario();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -198,7 +198,7 @@
             $(function () {
 
                 $(".btnCrear").click(function () {
-                    createEditDepartamento();
+                    createEditTipoUsuario();
                     return false;
                 });
 
@@ -215,13 +215,13 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(controller:'departamento', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'tipoUsuario', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title : "Ver Departamento",
+                                            title : "Ver TipoUsuario",
 
                                             message : msg,
                                             buttons : {
@@ -242,7 +242,7 @@
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
-                                createEditDepartamento(id);
+                                createEditTipoUsuario(id);
                             }
                         },
                         eliminar : {
@@ -251,7 +251,7 @@
                             separator_before : true,
                             action           : function ($element) {
                                 var id = $element.data("id");
-                                deleteDepartamento(id);
+                                deleteTipoUsuario(id);
                             }
                         }
                     },

@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Persona; arazu.proyectos.Proyecto; arazu.inventario.Bodega" %>
+<%@ page import="arazu.parametros.TipoUsuario; arazu.seguridad.Persona; arazu.proyectos.Proyecto; arazu.inventario.Bodega" %>
 
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 <g:if test="${!bodegaInstance}">
@@ -7,17 +7,29 @@
 <g:else>
 
     <div class="modal-contenido">
-        <g:set var="maxChars" value="${1023 - bodegaInstance.observaciones.size() - 80}"/>
+        <g:set var="maxChars" value="${1023 - (bodegaInstance.observaciones ? bodegaInstance.observaciones.size() : 0) - 80}"/>
         <g:set var="maxChars" value="${maxChars <= 0 ? 0 : maxChars}"/>
+
+        <g:set var="responsablesBodega" value="${Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo('RSBD'))}"/>
+
         <g:form class="form-horizontal" name="frmBodega" id="${bodegaInstance?.id}"
                 role="form" action="save_ajax" method="POST">
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Proyecto" claseField="col-sm-6">
-                <g:select id="proyecto" name="proyecto.id" from="${Proyecto.list()}" optionKey="id" value="${bodegaInstance?.proyecto?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
+                <g:select id="proyecto" name="proyecto.id" from="${Proyecto.list()}" optionKey="id" value="${bodegaInstance?.proyecto?.id}"
+                          class="many-to-one form-control " noSelection="['null': '-- Ninguno --']"/>
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Responsable" claseField="col-sm-6">
-                <g:select id="persona" name="persona.id" from="${Persona.list()}" optionKey="id" required="" value="${bodegaInstance?.persona?.id}" class="many-to-one form-control "/>
+                <g:select id="responsable.id" name="responsable.id" from="${responsablesBodega}"
+                          optionKey="id" required="" value="${bodegaInstance?.responsableId}"
+                          class="many-to-one required form-control "/>
+            </elm:fieldRapido>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Suplente" claseField="col-sm-6">
+                <g:select id="suplente.id" name="suplente.id" from="${responsablesBodega}"
+                          optionKey="id" value="${bodegaInstance?.suplenteId}"
+                          class="many-to-one form-control " noSelection="['': '-- Ninguno --']"/>
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Activa" claseField="col-sm-2">
@@ -60,8 +72,17 @@
             success        : function (label) {
                 label.parents(".grupo").removeClass('has-error');
                 label.remove();
+            },
+            rules          : {
+                "suplente.id" : {
+                    notEqualTo : '#responsable\\.id'
+                }
+            },
+            messages       : {
+                "suplente.id" : {
+                    notEqualTo : 'El suplente no puede ser el mismo que el responsable'
+                }
             }
-
         });
         $(".form-control").keydown(function (ev) {
             if (ev.keyCode == 13) {

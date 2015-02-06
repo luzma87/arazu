@@ -1,6 +1,6 @@
 package arazu.seguridad
 
-import arazu.parametros.Departamento
+import arazu.parametros.TipoUsuario
 import groovy.json.JsonBuilder
 import org.springframework.dao.DataIntegrityViolationException
 
@@ -127,8 +127,8 @@ class PersonaController extends Shield {
         }
         personaInstance.properties = params
         if (params.dep) {
-            def dep = Departamento.get(params.dep.toLong())
-            personaInstance.departamento = dep
+            def dep = TipoUsuario.get(params.dep.toLong())
+            personaInstance.tipoUsuario = dep
         }
         return [personaInstance: personaInstance, perfiles: perfiles]
     } //form para cargar con ajax en un dialog
@@ -221,15 +221,15 @@ class PersonaController extends Shield {
         }
     }
     /**
-     * Acción llamada con ajax que permite modificar el departamento de una persona
+     * Acción llamada con ajax que permite modificar el tipoUsuario de una persona
      */
-    def cambiarDepartamento_ajax() {
+    def cambiarTipoUsuario_ajax() {
         def per = Persona.get(params.id.toLong())
-        def dep = Departamento.get(params.padre.toLong())
+        def dep = TipoUsuario.get(params.padre.toLong())
         if (dep) {
-            per.departamento = dep
+            per.tipoUsuario = dep
         } else {
-            per.departamento = null
+            per.tipoUsuario = null
         }
         if (per.save(flush: true)) {
             render "SUCCESS*Usuario reubicado exitosamente"

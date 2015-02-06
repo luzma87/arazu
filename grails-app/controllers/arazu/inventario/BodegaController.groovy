@@ -4,6 +4,7 @@ import arazu.alertas.Alerta
 import arazu.items.Item
 import arazu.parametros.Unidad
 import arazu.proyectos.Proyecto
+import arazu.seguridad.Persona
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -53,14 +54,23 @@ class BodegaController extends Shield {
             }
             def c3 = Bodega.createCriteria()
             def l3 = c3.list(params) {
-                persona {
+                responsable {
                     or {
                         ilike("nombre", "%" + params.search + "%")
                         ilike("apellido", "%" + params.search + "%")
                     }
                 }
             }
-            list = (l1 + l2 + l3).unique()
+            def c4 = Bodega.createCriteria()
+            def l4 = c4.list(params) {
+                suplente {
+                    or {
+                        ilike("nombre", "%" + params.search + "%")
+                        ilike("apellido", "%" + params.search + "%")
+                    }
+                }
+            }
+            list = (l1 + l2 + l3 + l4).unique()
             if (params.max) {
                 if (list.size() > params.max) {
                     list = list[0..params.max - 1]
@@ -252,8 +262,8 @@ class BodegaController extends Shield {
         }
         def alerta = new Alerta()
         def usu = Persona.get(session.usuario.id)
-        alerta.from = usu
-        alerta.persona = bodegaNueva.persona
+        alerta.envia = usu
+        alerta.recibe = bodegaNueva.persona
         alerta.fechaEnvio = new Date()
         alerta.mensaje = usu.nombre + " " + usu.apellido + " ha desactivado la bodega " + bodegaAntigua.descripcion +
                 " haciendo transferencia del inventario a la bodega " + bodegaNueva.descripcion +

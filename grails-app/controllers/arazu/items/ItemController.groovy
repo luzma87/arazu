@@ -1,10 +1,7 @@
 package arazu.items
 
 import arazu.inventario.Ingreso
-import arazu.parametros.Departamento
 import arazu.parametros.TipoItem
-import arazu.seguridad.Persona
-import arazu.seguridad.TipoAccion
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -76,7 +73,13 @@ class ItemController extends Shield {
                 render "ERROR*No se encontró Item."
                 return
             }
-            return [itemInstance: itemInstance]
+            def maquinas = ItemMaquinaria.withCriteria {
+                eq("item", itemInstance)
+                maquinaria {
+                    order("descripcion", "asc")
+                }
+            }
+            return [itemInstance: itemInstance, maquinas: maquinas]
         } else {
             render "ERROR*No se encontró Item."
         }
@@ -87,11 +90,18 @@ class ItemController extends Shield {
      */
     def form_ajax() {
         def itemInstance = new Item()
+        def maquinas = []
         if (params.id) {
             itemInstance = Item.get(params.id)
             if (!itemInstance) {
                 render "ERROR*No se encontró Item."
                 return
+            }
+            maquinas = ItemMaquinaria.withCriteria {
+                eq("item", itemInstance)
+                maquinaria {
+                    order("descripcion", "asc")
+                }
             }
         }
         if (params.msg)
@@ -100,7 +110,7 @@ class ItemController extends Shield {
         if (params.padre) {
             itemInstance.tipo = TipoItem.get(params.padre.toLong())
         }
-        return [itemInstance: itemInstance]
+        return [itemInstance: itemInstance, maquinas: maquinas]
     } //form para cargar con ajax en un dialog
 
     /**
@@ -119,6 +129,59 @@ class ItemController extends Shield {
         if (!itemInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Item: " + renderErrors(bean: itemInstance)
             return
+        }
+
+        println "ITEM INSTANCE   " + itemInstance
+        println "ITEM INSTANCE   " + itemInstance.class
+        println "PARAMS " + params
+
+        def maquinas = params.maquinas
+        if (maquinas) {
+            def maquinasOld = ItemMaquinaria.findAllByItem(itemInstance)
+            def maquinasSelected = []
+            def maquinasInsertar = []
+            (maquinas.split("_")).each { mqnId ->
+                def maquina = Maquinaria.get(mqnId.toLong())
+                if (!maquinasOld.maquinaria.id.contains(maquina.id)) {
+                    maquinasInsertar += maquina
+                } else {
+                    maquinasSelected += maquina
+                }
+            }
+            def commons = maquinasOld.maquinaria.intersect(maquinasSelected)
+            def maquinasDelete = maquinasOld.maquinaria.plus(maquinasSelected)
+            maquinasDelete.removeAll(commons)
+
+            println "maquinas old " + maquinasOld
+            println "maquinas sel " + maquinasSelected
+            println "maquinas ins " + maquinasInsertar
+            println "maquinas del " + maquinasDelete
+
+            def errores = ""
+
+            maquinasInsertar.each { maquina ->
+                def itemMaquina = new ItemMaquinaria()
+                itemMaquina.item = itemInstance
+                itemMaquina.maquinaria = maquina
+                if (!itemMaquina.save(flush: true)) {
+                    errores += renderErrors(bean: itemMaquina)
+                    println "error al guardar item mtaquina: " + itemMaquina.errors
+                }
+            }
+
+            maquinasDelete.each { maquina ->
+                def itemMaquina = ItemMaquinaria.findAllByItemAndMaquinaria(itemInstance, maquina)
+                try {
+                    if (itemMaquina.size() == 1) {
+                        itemMaquina.first().delete(flush: true)
+                    } else {
+                        errores += "Existen ${itemMaquina.size()} registros de la maquinaria ${maquina} para el item ${item}"
+                    }
+                } catch (Exception e) {
+                    errores += "Ha ocurrido un error al desasociar con la maquinaria ${maquina}"
+                    println "error al desasociar maquina: " + e
+                }
+            }
         }
         render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Item exitosa."
         return

@@ -10,11 +10,11 @@ class Alerta {
     /**
      * Usuario que envía la alerta
      */
-    Persona from
+    Persona envia
     /**
      * Usuario que recibe la alerta
      */
-    Persona persona
+    Persona recibe
     /**
      * Fecha de envío de la alerta
      */
@@ -49,21 +49,21 @@ class Alerta {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table: 'alertas'
+        table: 'alrt'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
         sort fechaEnvio: "desc"
         columns {
-            id column: 'aler__id'
-            from column: 'alerfrom'
-            persona column: 'aler__to'
-            fechaEnvio column: 'alerfcen'
-            fechaRecibido column: 'alerfcrc'
-            mensaje column: 'alermesn'
-            controlador column: 'alerctrl'
-            accion column: 'aleraccn'
-            id_remoto column: 'aleridrm'
+            id column: 'alrt__id'
+            envia column: 'alrtfrom'
+            recibe column: 'alrt__to'
+            fechaEnvio column: 'alrtfcen'
+            fechaRecibido column: 'alrtfcrc'
+            mensaje column: 'alrtmesn'
+            controlador column: 'alrtctrl'
+            accion column: 'alrtaccn'
+            id_remoto column: 'alrtidrm'
         }
     }
 
@@ -71,8 +71,8 @@ class Alerta {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        from(blank: false)
-        persona(blank: false)
+        envia(blank: false)
+        recibe(blank: false)
         fechaEnvio(blank: false)
         fechaRecibido(nullable: true, blank: true)
         mensaje(size: 5..200, blank: false)
@@ -88,4 +88,28 @@ class Alerta {
     String toString() {
         return "${this.id} ${this.mensaje}"
     }
+
+    def static cantAlertasPersonaPorTipo(Persona usuario) {
+        def count = [:]
+        def alertas = alertasPersona(usuario)
+        def c = alertas.size()
+        alertas.each { alerta ->
+            def tipo = "d" + (((new Date()) - alerta.fechaEnvio) > 2) ? "mas" : (new Date()) - alerta.fechaEnvio
+            if (!count[tipo]) {
+                count[tipo] = 0
+            }
+            count[tipo] += 1
+        }
+        count.total = c
+        return count
+    }
+
+    def static alertasPersona(Persona usuario) {
+        return findAllByRecibeAndFechaRecibidoIsNull(usuario)
+    }
+
+    def static cantAlertasPersona(Persona usuario) {
+        return alertasPersona(usuario).size()
+    }
+
 }

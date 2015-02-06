@@ -67,7 +67,7 @@
                                     <g:if test="${funciones == 0}">
                                         <p>
                                             <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
-                                                <i class="fa fa-users"></i> No tiene funciones asignadas
+                                                <i class="fa fa-users"></i> No tiene responsables asignados
                                             </g:link>
                                         </p>
                                     </g:if>

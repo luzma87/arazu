@@ -18,7 +18,11 @@ class Bodega {
     /**
      * Bodeguero
      */
-    Persona persona
+    Persona responsable
+    /**
+     * Bodeguero suplente
+     */
+    Persona suplente
     /**
      * Observaciones
      */
@@ -44,7 +48,8 @@ class Bodega {
             id column: 'bdga__id'
             proyecto column: 'proy__id'
             descripcion column: 'bdgadscr'
-            persona column: 'prsn__id'
+            responsable column: 'prsnrspn'
+            suplente column: 'prsnspln'
             observaciones column: 'bdgaobsr'
         }
     }
@@ -56,7 +61,8 @@ class Bodega {
         descripcion(nullable: true, blank: true, size: 1..50)
         observaciones(nullable: true, blank: true, size: 1..1023)
         proyecto(nullable: true, blank: true)
-        persona(nullable: false, blank: false)
+        responsable(nullable: false, blank: false)
+        suplente(nullable: true, blank: true)
     }
 
     /**

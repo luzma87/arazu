@@ -21,7 +21,7 @@ class InventarioController extends Shield {
                 bodegas.add(bodega)
             }
         } else {
-            bodegas = Bodega.findAllByPersona(session.usuario)
+            bodegas = Bodega.findAllByResponsableOrSuplente(session.usuario, session.usuario)
         }
         def items = Item.list([sort: "descripcion"])
         def itemStr = ""

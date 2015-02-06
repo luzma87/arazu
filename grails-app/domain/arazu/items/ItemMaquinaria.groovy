@@ -1,20 +1,22 @@
 package arazu.items
 
-import arazu.parametros.TipoItem
-
 /**
- *  Clase para conectar con la tabla 'item' de la base de datos
+ *  Clase para conectar con la tabla 'itmq' de la base de datos
  */
-class Item {
+class ItemMaquinaria {
 
     /**
-     * Tipo de item
+     * Item
      */
-    TipoItem tipo
+    Item item
     /**
-     * Descripción del item
+     * Maquinaria para la cual es el item
      */
-    String descripcion
+    Maquinaria maquinaria
+    /**
+     * Observaciones
+     */
+    String observaciones
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
@@ -23,15 +25,16 @@ class Item {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'item'
+        table 'itmq'
         cache usage: 'read-write'
         version false
         id generator: 'identity'
         sort descripcion: "asc"
         columns {
-            id column: 'item__id'
-            descripcion column: 'itemdscr'
-            tipo column: 'tpit__id'
+            id column: 'itmq__id'
+            item column: 'item__id'
+            maquinaria column: 'maqn__id'
+            observaciones column: 'itmqobsv'
         }
     }
 
@@ -39,14 +42,14 @@ class Item {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true, blank: true, size: 1..500)
-        tipo(nullable: false, blank: false)
+        observaciones(nullable: true, blank: true, size: 1..500)
     }
     /**
      * Genera un string para mostrar
-     * @return la descripción
+     * @return el item y la maquinaria concatenados
      */
     String toString() {
-        return "${this.descripcion}"
+        return "${this.item} - ${this.maquinaria}"
     }
+
 }

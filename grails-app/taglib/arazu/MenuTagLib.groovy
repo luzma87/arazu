@@ -1,5 +1,6 @@
 package arazu
 
+import arazu.alertas.Alerta
 import arazu.seguridad.Permiso
 
 class MenuTagLib {
@@ -54,7 +55,7 @@ class MenuTagLib {
         if (session.usuario) {
             usuario = session.usuario
             perfil = session.perfil
-            dpto = session.departamento
+            dpto = session.tipoUsuario
         }
         def strItems = ""
         if (!attrs.title) {
@@ -65,7 +66,7 @@ class MenuTagLib {
             def acciones = Permiso.findAllByPerfil(perfil).accion.sort { it.modulo.orden }
 
             acciones.each { ac ->
-                if (ac.tipo.id == 1) {
+                if (ac.tipo.codigo == 'M' && ac.modulo.nombre != 'noAsignado') {
                     if (!items[ac.modulo.nombre]) {
                         items.put(ac.modulo.nombre, [ac.descripcion, g.createLink(controller: ac.control.nombre, action: ac.nombre)])
                     } else {
@@ -106,8 +107,8 @@ class MenuTagLib {
         }
 
         def alertas = "("
-//        def count = Alerta.countByPersonaAndFechaRecibidoIsNull(usuario)
-        def count = 0
+        def count = Alerta.cantAlertasPersona(usuario)
+//        def count = 0
         alertas += count
         alertas += ")"
 

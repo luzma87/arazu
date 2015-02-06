@@ -32,5 +32,17 @@
             </div>
         </g:if>
 
+    %{--<g:if test="${maquinas.size()>0}">--}%
+        <div class="row">
+            <div class="col-sm-3 show-label">
+                Maquinarias
+            </div>
+
+            <div class="col-sm-4">
+                ${maquinas.maquinaria.join(", ")}
+            </div>
+        </div>
+        %{--</g:if>--}%
+
     </div>
 </g:else>

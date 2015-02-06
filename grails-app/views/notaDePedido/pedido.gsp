@@ -1,4 +1,4 @@
-<%@ page import="arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.Departamento" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <meta name="layout" content="main">
