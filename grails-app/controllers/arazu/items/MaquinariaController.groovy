@@ -76,7 +76,13 @@ class MaquinariaController extends Shield {
                 render "ERROR*No se encontró Maquinaria."
                 return
             }
-            return [maquinariaInstance: maquinariaInstance]
+            def items = ItemMaquinaria.withCriteria {
+                eq("maquinaria", maquinariaInstance)
+                item {
+                    order("descripcion", "asc")
+                }
+            }
+            return [maquinariaInstance: maquinariaInstance, items: items]
         } else {
             render "ERROR*No se encontró Maquinaria."
         }
@@ -87,11 +93,18 @@ class MaquinariaController extends Shield {
      */
     def form_ajax() {
         def maquinariaInstance = new Maquinaria()
+        def items = []
         if (params.id) {
             maquinariaInstance = Maquinaria.get(params.id)
             if (!maquinariaInstance) {
                 render "ERROR*No se encontró Maquinaria."
                 return
+            }
+            items = ItemMaquinaria.withCriteria {
+                eq("maquinaria", maquinariaInstance)
+                maquinaria {
+                    order("descripcion", "asc")
+                }
             }
         }
         maquinariaInstance.properties = params
@@ -102,7 +115,8 @@ class MaquinariaController extends Shield {
         if (params.padre) {
             maquinariaInstance.tipo = TipoMaquinaria.get(params.padre.toLong())
         }
-        return [maquinariaInstance: maquinariaInstance, anios: anios, current: current]
+
+        return [maquinariaInstance: maquinariaInstance, anios: anios, current: current, items: items]
     } //form para cargar con ajax en un dialog
 
     /**
@@ -122,6 +136,51 @@ class MaquinariaController extends Shield {
             render "ERROR*Ha ocurrido un error al guardar Maquinaria: " + renderErrors(bean: maquinariaInstance)
             return
         }
+
+        def items = params.items
+        if (items) {
+            def itemsOld = ItemMaquinaria.findAllByMaquinaria(maquinariaInstance)
+            def itemsSelected = []
+            def itemsInsertar = []
+            (items.split("_")).each { itemId ->
+                def item = Item.get(itemId.toLong())
+                if (!itemsOld.item.id.contains(item.id)) {
+                    itemsInsertar += item
+                } else {
+                    itemsSelected += item
+                }
+            }
+            def commons = itemsOld.item.intersect(itemsSelected)
+            def itemsDelete = itemsOld.item.plus(itemsSelected)
+            itemsDelete.removeAll(commons)
+
+            def errores = ""
+
+            itemsInsertar.each { item ->
+                def itemMaquina = new ItemMaquinaria()
+                itemMaquina.item = item
+                itemMaquina.maquinaria = maquinariaInstance
+                if (!itemMaquina.save(flush: true)) {
+                    errores += renderErrors(bean: itemMaquina)
+                    println "error al guardar item maquina: " + itemMaquina.errors
+                }
+            }
+
+            itemsDelete.each { item ->
+                def itemMaquina = ItemMaquinaria.findAllByItemAndMaquinaria(item, maquinariaInstance)
+                try {
+                    if (itemMaquina.size() == 1) {
+                        itemMaquina.first().delete(flush: true)
+                    } else {
+                        errores += "Existen ${itemMaquina.size()} registros de la maquinaria ${maquinariaInstance} para el item ${item}"
+                    }
+                } catch (Exception e) {
+                    errores += "Ha ocurrido un error al desasociar con la maquinaria ${maquinariaInstance}"
+                    println "error al desasociar maquina: " + e
+                }
+            }
+        }
+
         render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Maquinaria exitosa."
         return
     } //save para grabar desde ajax

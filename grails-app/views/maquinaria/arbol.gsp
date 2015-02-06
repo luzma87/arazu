@@ -207,7 +207,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el tipo de Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el tipo de Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -316,10 +316,19 @@
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
                     openLoader("Guardando Maquinaria");
+                    var data = $form.serialize();
+                    var items = "";
+                    $(".items").each(function () {
+                        if (items != "") {
+                            items += "_";
+                        }
+                        items += $(this).data("id");
+                    });
+                    data += "&items=" + items;
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
-                        data    : $form.serialize(),
+                        data    : data,
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
@@ -346,7 +355,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",

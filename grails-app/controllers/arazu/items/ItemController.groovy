@@ -131,10 +131,6 @@ class ItemController extends Shield {
             return
         }
 
-        println "ITEM INSTANCE   " + itemInstance
-        println "ITEM INSTANCE   " + itemInstance.class
-        println "PARAMS " + params
-
         def maquinas = params.maquinas
         if (maquinas) {
             def maquinasOld = ItemMaquinaria.findAllByItem(itemInstance)
@@ -151,11 +147,6 @@ class ItemController extends Shield {
             def commons = maquinasOld.maquinaria.intersect(maquinasSelected)
             def maquinasDelete = maquinasOld.maquinaria.plus(maquinasSelected)
             maquinasDelete.removeAll(commons)
-
-            println "maquinas old " + maquinasOld
-            println "maquinas sel " + maquinasSelected
-            println "maquinas ins " + maquinasInsertar
-            println "maquinas del " + maquinasDelete
 
             def errores = ""
 

@@ -93,6 +93,7 @@
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
                     openLoader("Guardando Maquinaria");
+
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),

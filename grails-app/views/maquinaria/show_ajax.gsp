@@ -104,5 +104,17 @@
             </div>
         </g:if>
 
+        <g:if test="${items.size() > 0}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Items
+                </div>
+
+                <div class="col-sm-10">
+                    ${items.item.join(", ")}
+                </div>
+            </div>
+        </g:if>
+
     </div>
 </g:else>

@@ -29,7 +29,7 @@ class ItemMaquinaria {
         cache usage: 'read-write'
         version false
         id generator: 'identity'
-        sort descripcion: "asc"
+        sort observaciones: "asc"
         columns {
             id column: 'itmq__id'
             item column: 'item__id'

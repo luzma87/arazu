@@ -8,7 +8,7 @@
 
         <g:if test="${itemInstance?.tipo}">
             <div class="row">
-                <div class="col-sm-3 show-label">
+                <div class="col-sm-2 show-label">
                     Tipo
                 </div>
 
@@ -21,7 +21,7 @@
 
         <g:if test="${itemInstance?.descripcion}">
             <div class="row">
-                <div class="col-sm-3 show-label">
+                <div class="col-sm-2 show-label">
                     Descripción
                 </div>
 
@@ -32,17 +32,17 @@
             </div>
         </g:if>
 
-    %{--<g:if test="${maquinas.size()>0}">--}%
-        <div class="row">
-            <div class="col-sm-3 show-label">
-                Maquinarias
-            </div>
+        <g:if test="${maquinas.size() > 0}">
+            <div class="row">
+                <div class="col-sm-2 show-label">
+                    Maquinarias
+                </div>
 
-            <div class="col-sm-4">
-                ${maquinas.maquinaria.join(", ")}
+                <div class="col-sm-10">
+                    ${maquinas.maquinaria.join(", ")}
+                </div>
             </div>
-        </div>
-        %{--</g:if>--}%
+        </g:if>
 
     </div>
 </g:else>
