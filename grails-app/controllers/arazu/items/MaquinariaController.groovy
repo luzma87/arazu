@@ -131,6 +131,9 @@ class MaquinariaController extends Shield {
                 return
             }
         }
+        if (params.placa) {
+            params.placa = params.placa.toString().toUpperCase()
+        }
         maquinariaInstance.properties = params
         if (!maquinariaInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Maquinaria: " + renderErrors(bean: maquinariaInstance)
@@ -260,7 +263,7 @@ class MaquinariaController extends Shield {
                 id = "liMq_" + hijo.id
                 clase = "jstree-open"
                 rel = "maquinaria"
-                label = hijo.descripcion
+                label = hijo.toString()
             }
 
             arbol += "<li id='${id}' data-level='0' class='${clase}' data-jstree='{\"type\":\"${rel}\"}'>"
@@ -299,6 +302,15 @@ class MaquinariaController extends Shield {
         } else {
             render ""
         }
+    }
+
+    /**
+     * Acción llamada con ajax que muestra una pantalla emergente con la lista de maquinaria para seleccionar
+     */
+    def list_ajax() {
+        def maquinariaInstanceList = getList([:], false)
+        def maquinariaInstanceCount = getList([:], true).size()
+        return [maquinariaInstanceList: maquinariaInstanceList, maquinariaInstanceCount: maquinariaInstanceCount]
     }
 
 }

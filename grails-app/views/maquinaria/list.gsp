@@ -124,7 +124,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",

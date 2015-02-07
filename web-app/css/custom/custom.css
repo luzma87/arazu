@@ -85,7 +85,7 @@ body {
     margin-right : 10px;
 }
 
-.found {
+.found, .highlight {
     background-color : #157AB5;
     color            : #F5F5F5;
 }

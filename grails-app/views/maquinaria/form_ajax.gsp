@@ -50,7 +50,7 @@
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Placa" claseField1="col-sm-8"
                                   claseLabel2="col-sm-4" label2="Año" claseField2="col-sm-8">
-                <g:textField name="placa" maxlength="20" class="form-control " value="${maquinariaInstance?.placa}"/>
+                <g:textField name="placa" maxlength="20" class="form-control allCaps placa" value="${maquinariaInstance?.placa}"/>
                 <hr/>
             %{--<g:textField name="anio" value="${maquinariaInstance.anio}" class="digits form-control  required" required=""/>--}%
                 <g:select name="anio" from="${anios}" class="form-control" value="${maquinariaInstance.anio ?: current}"/>
@@ -102,6 +102,7 @@
 
     <script type="text/javascript">
         $(function () {
+
             $("#btn-addItem").click(function () {
                 var $item = $("#item");
                 var idItemAdd = $item.val();

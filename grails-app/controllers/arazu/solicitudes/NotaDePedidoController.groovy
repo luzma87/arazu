@@ -4,8 +4,9 @@ import arazu.alertas.Alerta
 import arazu.items.Item
 import arazu.parametros.EstadoSolicitud
 import arazu.seguridad.Persona
+import arazu.seguridad.Shield
 
-class NotaDePedidoController {
+class NotaDePedidoController extends Shield {
 
     def pedido() {
         def numero = Pedido.list([sort: "numero", order: "desc", limit: 1])

@@ -83,6 +83,6 @@ class Maquinaria {
      * @return la descripción
      */
     String toString() {
-        "${this.descripcion} (${this.placa})"
+        "${this.marca} ${this.modelo} ${this.descripcion}"
     }
 }

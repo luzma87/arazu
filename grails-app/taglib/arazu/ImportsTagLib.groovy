@@ -201,8 +201,8 @@ class ImportsTagLib {
         text += imp.validation()
 
         //switches
-        text += imp.js(src: resource(dir: 'js/plugins/bootstrap-switch-3/dist/js', file: 'bootstrap-switch.js'))
-        text += imp.css(src: resource(dir: 'js/plugins/bootstrap-switch-3/dist/css/bootstrap3', file: 'bootstrap-switch.css'))
+//        text += imp.js(src: resource(dir: 'js/plugins/bootstrap-switch-3/dist/js', file: 'bootstrap-switch.js'))
+//        text += imp.css(src: resource(dir: 'js/plugins/bootstrap-switch-3/dist/css/bootstrap3', file: 'bootstrap-switch.css'))
 
         //para el formato de los numeros en los inputs
         text += imp.js(src: resource(dir: 'js/plugins/jquery-inputmask-3.1.49/dist', file: 'jquery.inputmask.bundle.min.js'))
