@@ -89,6 +89,10 @@ class Pedido {
      */
     Firma firmaNiega
     /**
+     * Firma del que notifica q existe en bodega
+     */
+    Firma firmaBodega
+    /**
      * Observaciones para guardar al momento de cambiar de estado el pedido
      */
     String observaciones
@@ -132,6 +136,7 @@ class Pedido {
             firmaAsistenteCompras column: 'pddofrac'
             firmaAprueba column: 'pddofrap'
             firmaNiega column: 'pddofrng'
+            firmaBodega column: 'pddofrbd'
             observaciones column: 'pddoobsv'
             observaciones type: "text"
         }
@@ -151,6 +156,7 @@ class Pedido {
         firmaAsistenteCompras nullable: true
         firmaAprueba nullable: true
         firmaNiega nullable: true
+        firmaBodega nullable: true
         observaciones blank: true, nullable: true
     }
 }

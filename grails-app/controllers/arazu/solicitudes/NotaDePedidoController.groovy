@@ -200,7 +200,7 @@ class NotaDePedidoController extends Shield {
 
     def cambiarEstadoPedido(params, String tipo) {
         String codEstadoInicial = ""
-        EstadoSolicitud estadoFinal = new EstadoSolicitud()
+        EstadoSolicitud estadoFinal = null
         String concepto = "", mensTipo = "", retTipo = "", retTipo2 = ""
         String firmaPedido = ""
         String accionAlerta = ""
@@ -235,93 +235,116 @@ class NotaDePedidoController extends Shield {
                 mensTipo = "negado"
                 retTipo = "negada"
                 retTipo2 = "negarla"
-                firmaPedido = "firmaNiega"
+                firmaPedido = "firmaBodega"
                 accionAlerta = "lista"
 
                 notificacion1Recibe = pedido.de
                 break;
+            case "BJF": // el jefe indica de q bodega(s) sacar
+                // ret_5:2, obs:sssss, auth:456, ret_6:1
+                params.each { k, v ->
+                    if(k.toString().startsWith("ret")) {
+
+                    }
+                }
+
+//                codEstadoInicial = "E01"
+//                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estadoExistenteEnBodega
+//                concepto = "Notificación de existencia en bodega"
+//                mensTipo = "notificado que existe en bodega"
+//                retTipo = "notificada que existe en bodega"
+//                retTipo2 = "notificar que existe en bodega"
+//                firmaPedido = "firmaNiega"
+//                accionAlerta = "lista"
+//
+//                notificacion1Recibe = pedido.de
+//                notificacion2Recibe = [].toArray()
+                break;
         }
+        if (pedido && estadoFinal) {
+            if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
+                if (pedido) {
+                    if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
+                        def now = new Date()
+                        pedido.estadoSolicitud = estadoFinal
 
-        if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
-            if (pedido) {
-                if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
-                    def now = new Date()
-                    pedido.estadoSolicitud = estadoFinal
+                        def firma = new Firma()
+                        firma.persona = usu
+                        firma.fecha = now
+                        firma.concepto = "${concepto} de Nota de pedido núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                        firma.pdfControlador = "reportesInventario"
+                        firma.pdfAccion = "notaDePedido"
+                        firma.pdfId = pedido.id
 
-                    def firma = new Firma()
-                    firma.persona = usu
-                    firma.fecha = now
-                    firma.concepto = "${concepto} de Nota de pedido núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
-                    firma.pdfControlador = "reportesInventario"
-                    firma.pdfAccion = "notaDePedido"
-                    firma.pdfId = pedido.id
-
-                    if (!firma.save(flush: true)) {
-                        println "Error con la firma"
-                        return "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
-                    } else {
-                        pedido[firmaPedido] = firma
-                        def observaciones = "<strong>${usu.toString()}</strong> ha <strong>${mensTipo}</strong> esta nota de pedido " +
-                                "el ${now.format('dd-MM-yyyy')} a las ${now.format('HH:mm')}"
-                        if (params.razon && params.razon.trim() != "") {
-                            observaciones += ", razón: " + params.razon.trim()
-                        }
-                        if (params.obs && params.obs.trim() != "") {
-                            observaciones += ", observaciones: " + params.obs.trim()
-                        }
-                        if (pedido.observaciones) {
-                            pedido.observaciones = observaciones + " | " + pedido.observaciones
+                        if (!firma.save(flush: true)) {
+                            println "Error con la firma"
+                            return "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
                         } else {
-                            pedido.observaciones = observaciones
-                        }
-                        if (!pedido.save(flush: true)) {
-                            println "Error al guardar firma en solicitud " + pedido.errors
-                        }
-
-                        def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
-                        def firmaRes = firmaService.firmarDocumento(usu.id, params.auth.toString().encodeAsMD5(), firma, baseUri)
-                        if (firmaRes instanceof String) {
-                            return "ERROR*" + firmaRes
-                        } else {
-                            def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}"
-                            def paramsAlerta = [
-                                    mensaje    : mens,
-                                    controlador: "notaDePedido",
-                                    accion     : accionAlerta
-                            ]
-                            def paramsMail = [
-                                    subject : "${concepto} de nota de pedido",
-                                    template: '/mail/notaPedido',
-                                    model   : [
-                                            recibe : notificacion1Recibe,
-                                            mensaje: mens,
-                                            now    : now,
-                                            link   : baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
-                                    ]
-                            ]
-                            def msg = notificacionService.notificacionCompleta(usu, notificacion1Recibe, paramsAlerta, paramsMail)
-                            if (notificacion2Recibe) {
-                                paramsAlerta.accion = "lista"
-                                paramsMail.model.recibe = notificacion2Recibe
-                                paramsMail.model.link = baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
-                                msg += notificacionService.notificacionCompleta(usu, notificacion2Recibe, paramsAlerta, paramsMail)
+                            pedido[firmaPedido] = firma
+                            def observaciones = "<strong>${usu.toString()}</strong> ha <strong>${mensTipo}</strong> esta nota de pedido " +
+                                    "el ${now.format('dd-MM-yyyy')} a las ${now.format('HH:mm')}"
+                            if (params.razon && params.razon.trim() != "") {
+                                observaciones += ", razón: " + params.razon.trim()
                             }
-                            if (msg != "") {
-                                msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                            if (params.obs && params.obs.trim() != "") {
+                                observaciones += ", observaciones: " + params.obs.trim()
+                            }
+                            if (pedido.observaciones) {
+                                pedido.observaciones = observaciones + " | " + pedido.observaciones
                             } else {
-                                msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente"
+                                pedido.observaciones = observaciones
                             }
-                            return msg
+                            if (!pedido.save(flush: true)) {
+                                println "Error al guardar firma en solicitud " + pedido.errors
+                            }
+
+                            def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+                            def firmaRes = firmaService.firmarDocumento(usu.id, params.auth.toString().encodeAsMD5(), firma, baseUri)
+                            if (firmaRes instanceof String) {
+                                return "ERROR*" + firmaRes
+                            } else {
+                                def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}"
+                                def paramsAlerta = [
+                                        mensaje    : mens,
+                                        controlador: "notaDePedido",
+                                        accion     : accionAlerta
+                                ]
+                                def paramsMail = [
+                                        subject : "${concepto} de nota de pedido",
+                                        template: '/mail/notaPedido',
+                                        model   : [
+                                                recibe : notificacion1Recibe,
+                                                mensaje: mens,
+                                                now    : now,
+                                                link   : baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
+                                        ]
+                                ]
+                                def msg = notificacionService.notificacionCompleta(usu, notificacion1Recibe, paramsAlerta, paramsMail)
+                                if (notificacion2Recibe) {
+                                    paramsAlerta.accion = "lista"
+                                    paramsMail.model.recibe = notificacion2Recibe
+                                    paramsMail.model.link = baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
+                                    msg += notificacionService.notificacionCompleta(usu, notificacion2Recibe, paramsAlerta, paramsMail)
+                                }
+                                if (msg != "") {
+                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                } else {
+                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente"
+                                }
+                                return msg
+                            }
                         }
+                    } else {
+                        return "ERROR*La nota de pedido se encuentra en estado ${pedido.estadoSolicitud.nombre}, no puede ${retTipo2}"
                     }
                 } else {
-                    return "ERROR*La nota de pedido se encuentra en estado ${pedido.estadoSolicitud.nombre}, no puede ${retTipo2}"
+                    return "ERROR*No se encontró la nota de pedido"
                 }
             } else {
-                return "ERROR*No se encontró la nota de pedido"
+                return "ERROR*Su clave de autorización es incorrecta"
             }
         } else {
-            return "ERROR*Su clave de autorización es incorrecta"
+            return "ERROR*Acción no reconocida"
         }
     }
 

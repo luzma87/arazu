@@ -221,7 +221,7 @@
                     $.ajax({
                         type    : "POST",
                         url     : "${createLink(controller:'notaDePedido', action:'bodegaJefatura_ajax')}",
-                        data    : $("#frmBodega").serialize(),
+                        data    : $("#frmBodega").serialize() + "&id=${nota.id}",
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
