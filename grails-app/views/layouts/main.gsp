@@ -70,7 +70,6 @@
             vertical-align : middle;
             position       : relative;
             margin-top     : -4px;
-
         }
 
         .circle-icon {
@@ -98,7 +97,6 @@
             padding                   : ${handlePadding / 2}px;
 
             z-index                   : 498;
-
         }
 
         .handle, .circle-bg, .circle-fg {
@@ -150,7 +148,7 @@
                     if ($circle.hasClass("showing")) {
                         $.ajax({
                             type    : "POST",
-                            url     : "${g.createLink(controller: 'alerta',action: 'listAjax')}",
+                            url     : "${g.createLink(controller: 'alerta',action: 'list_ajax')}",
                             data    : "",
                             success : function (msg) {
                                 $(".content-alertas").html(msg)
@@ -162,7 +160,7 @@
                         });
                         $circle.removeClass("showing");
                         $(".content-alertas").css({display : " inline-block"})
-                        $(".content-alertas").show()
+                        $(".content-alertas").show();
                         $circleBg.animate({
                             right : circleFin
                         }, time, function () {

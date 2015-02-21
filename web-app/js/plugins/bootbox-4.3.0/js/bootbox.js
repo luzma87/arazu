@@ -52,7 +52,10 @@
       textarea:
         "<textarea class='bootbox-input bootbox-input-textarea form-control'></textarea>",
       email:
-        "<input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' />",
+          "<div class='input-group'>"+
+              "<input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' />"+
+              "<span class='input-group-addon'><i class='fa fa-envelope-o'></i></span>"+
+          "</div>",
       select:
         "<select class='bootbox-input bootbox-input-select form-control'></select>",
       checkbox:
@@ -384,7 +387,16 @@
     /**
      * overrides; undo anything the user tried to set they shouldn't have
      */
-    options.message = form;
+//    options.message = form;
+      if(options.message) {
+          try {
+              options.message.append(form);
+          } catch(e) {
+              options.message = form;
+          }
+      } else {
+          options.message = form;
+      }
 
     options.buttons.cancel.callback = options.onEscape = function() {
       return options.callback(null);
@@ -396,13 +408,15 @@
       switch (options.inputType) {
         case "text":
         case "textarea":
-        case "email":
         case "select":
         case "date":
         case "time":
         case "number":
         case "password":
           value = input.val();
+          break;
+        case "email":
+          value = input.find("input").val();
           break;
 
         case "checkbox":
@@ -442,13 +456,15 @@
     switch (options.inputType) {
       case "text":
       case "textarea":
-      case "email":
       case "date":
       case "time":
       case "number":
       case "password":
         input.val(options.value);
         break;
+      case "email":
+         input.find("input").val(options.value);
+         break;
 
       case "select":
         var groups = {};

@@ -31,6 +31,10 @@ class Cotizacion {
      * Estado de la cotización
      */
     EstadoSolicitud estadoSolicitud
+    /**
+     * Fecha de aprobación o negación de la solicitud
+     */
+    Date fechaFin
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -54,9 +58,11 @@ class Cotizacion {
             valor column: 'ctznvlor'
             diasEntrega column: 'ctzndsen'
             estadoSolicitud column: 'essl__id'
+            fechaFin column: 'ctznfcfn'
         }
     }
     static constraints = {
-        proveedor(nullable: false,blank: false,size: 1..255)
+        proveedor(nullable: false, blank: false, size: 1..255)
+        fechaFin nullable: true
     }
 }

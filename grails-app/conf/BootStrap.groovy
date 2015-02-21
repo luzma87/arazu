@@ -1,3 +1,4 @@
+import arazu.parametros.EstadoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.seguridad.Modulo
 import arazu.seguridad.Persona
@@ -126,6 +127,57 @@ class BootStrap {
             }
         }
 
+        if (EstadoSolicitud.count() == 0) {
+            def estado = new EstadoSolicitud()
+            estado.codigo = "E01"
+            estado.descripcion = "Fue solicitada y está a la espera de que un jefe la apruebe"
+            estado.nombre = "Pendiente de aprobación"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "E02"
+            estado.descripcion = "Fue aprobada por un jefe y está a la espera de que un jefe de compras asigne a un asistente de compras para las cotizaciones"
+            estado.nombre = "Pendiente de asignación"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "E03"
+            estado.descripcion = "Un asistente de compras fue asignado y está a la espera del registro de las cotizaciones"
+            estado.nombre = "Pendientes cotizaciones"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "E04"
+            estado.descripcion = "Las cotizaciones fueron registradas y está a la espera de la aprobación final"
+            estado.nombre = "Pendiente de aprobación final"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "N01"
+            estado.descripcion = "La solicitud fue negada"
+            estado.nombre = "Negada"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "A01"
+            estado.descripcion = "La solicitud fue aprobada y se procederá a su adquisición"
+            estado.nombre = "Aprobada"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+            estado = new EstadoSolicitud()
+            estado.codigo = "B01"
+            estado.descripcion = "El item solicitado existe en bodega y se procederá al envío"
+            estado.nombre = "En bodega"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+        }
     }
     def destroy = {
     }

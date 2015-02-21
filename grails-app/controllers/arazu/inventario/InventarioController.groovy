@@ -7,6 +7,28 @@ import arazu.seguridad.Shield
 class InventarioController extends Shield {
 
     /**
+     * Acción que carga con ajax las unidades disponibles para un item
+     */
+    def unidadesItem_ajax = {
+        def item = Item.get(params.id)
+        def unidadPadre = item.unidad
+        def unidades = Unidad.findAllByPadre(unidadPadre)
+        unidades += unidadPadre
+        unidades = unidades.sort { it.descripcion }
+
+        /*
+         <g:select name="unidad.id" id="unidad" from="['': 'Seleccione el item']" optionKey="key" optionValue="value"
+                              class="form-control input-sm select"/>
+         */
+        def select = g.select(name: "unidad.id", id: "unidad", from: unidades, optionKey: "id", class: "form-control input-sm")
+        def js = "<script type='text/javascript'>"
+        js += '$("#unidad").selectpicker();'
+        js += "</script>"
+
+        render select + js
+    }
+
+    /**
      * Acción que muestra la pantalla para hacer ingresos a una bodega
      */
     def ingresoDeBodega() {

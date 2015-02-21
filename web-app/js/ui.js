@@ -46,6 +46,8 @@ $(function () {
 //    }
 //});
 
+    $("select").selectpicker();
+
     $(".digits").keydown(function (ev) {
         return validarInt(ev);
     });

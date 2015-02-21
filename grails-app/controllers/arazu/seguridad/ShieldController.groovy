@@ -7,7 +7,7 @@ class ShieldController {
     }
 
     def forbidden_403 = {
-        def msn = "Forbidden"
+        def msn = "No tiene autorización para ingresar a esta página"
         if (flash.message) {
             msn = flash.message
         }

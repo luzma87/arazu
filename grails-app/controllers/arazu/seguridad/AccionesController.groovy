@@ -23,6 +23,9 @@ class AccionesController extends Shield {
     def acciones_ajax() {
         def acciones = Accion.withCriteria {
             eq("modulo", Modulo.get(params.id))
+            not {
+                ilike("nombre", "%ajax%")
+            }
             order("tipo", "asc")
             control {
                 order("nombre", "asc")
@@ -203,6 +206,9 @@ class AccionesController extends Shield {
         def modulo = Modulo.get(params.id)
         def acciones = Accion.withCriteria {
             eq("modulo", modulo)
+            not {
+                ilike("nombre", "%ajax%")
+            }
             order("tipo", "asc")
             control {
                 order("nombre", "asc")

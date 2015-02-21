@@ -67,7 +67,7 @@ class AlertaController extends Shield {
      * Acción que muestra la lista de elementos
      * @return alertaInstanceList: la lista de elementos filtrados, alertaInstanceCount: la cantidad total de elementos (sin máximo)
      */
-    def listAjax() {
+    def list_ajax() {
         def alertaInstanceList = getList(params, false)
         def alertaInstanceCount = getList(params, true).size()
         return [alertaInstanceList: alertaInstanceList, alertaInstanceCount: alertaInstanceCount]

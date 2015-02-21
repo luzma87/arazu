@@ -1,6 +1,7 @@
 package arazu.items
 
 import arazu.parametros.TipoItem
+import arazu.parametros.Unidad
 
 /**
  *  Clase para conectar con la tabla 'item' de la base de datos
@@ -15,6 +16,10 @@ class Item {
      * Descripción del item
      */
     String descripcion
+    /**
+     * Unidad que se utiliza para el item
+     */
+    Unidad unidad
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
@@ -32,6 +37,7 @@ class Item {
             id column: 'item__id'
             descripcion column: 'itemdscr'
             tipo column: 'tpit__id'
+            unidad column: 'undd__id'
         }
     }
 
@@ -41,6 +47,7 @@ class Item {
     static constraints = {
         descripcion(nullable: true, blank: true, size: 1..500)
         tipo(nullable: false, blank: false)
+        unidad(nullable: true, blank: true)
     }
     /**
      * Genera un string para mostrar

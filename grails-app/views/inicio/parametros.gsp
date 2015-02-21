@@ -57,7 +57,7 @@
                             <div class="descripcion hidden">
                                 <h4><i class="fa fa-file-archive-o fa-2x"></i> Tipos de solicitud</h4>
 
-                                <p>Permite registrar los diferentes tipos de solicitud</p>
+                                <p>Muestra los diferentes tipos de solicitud</p>
                             </div>
                         </li>
                         <li>
@@ -69,7 +69,7 @@
                             <div class="descripcion hidden">
                                 <h4><i class="fa fa-check-square-o fa-2x "></i> Estados de solicitud</h4>
 
-                                <p>Permite registrar los diferentes estados en los que puede estar una solicitud</p>
+                                <p>Muestra los diferentes estados en los que puede estar una solicitud</p>
                             </div>
                         </li>
                         %{--<li>--}%

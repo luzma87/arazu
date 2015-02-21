@@ -15,6 +15,8 @@ import static java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC
  */
 class PersonaController extends Shield {
 
+    def mailService
+
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
@@ -268,7 +270,6 @@ class PersonaController extends Shield {
      * @render ERROR*[mensaje] cuando no se pudo grabar correctamente, SUCCESS*[mensaje] cuando se grabó correctamente
      */
     def savePass_ajax() {
-        println "save pass     " + params
         def persona = Persona.get(params.id)
         if (!params.id) {
             persona = Persona.get(session.usuario.id)
@@ -316,6 +317,27 @@ class PersonaController extends Shield {
     }
 
     /**
+     * Acción llamada con ajax que valida que no se duplique la propiedad cedula
+     * @render boolean que indica si se puede o no utilizar el valor recibido
+     */
+    def validar_unique_cedula_ajax() {
+        params.cedula = params.cedula.toString().trim()
+        if (params.id) {
+            def obj = Persona.get(params.id)
+            if (obj.cedula.toLowerCase() == params.cedula.toLowerCase()) {
+                render true
+                return
+            } else {
+                render Persona.countByCedulaIlike(params.cedula) == 0
+                return
+            }
+        } else {
+            render Persona.countByCedulaIlike(params.cedula) == 0
+            return
+        }
+    }
+
+    /**
      * Acción llamada con ajax que valida que no se duplique la propiedad mail
      * @render boolean que indica si se puede o no utilizar el valor recibido
      */
@@ -356,6 +378,44 @@ class PersonaController extends Shield {
     def personal() {
         def usuario = Persona.get(session.usuario.id)
         return [usuario: usuario]
+    }
+
+    /**
+     * Acción llamada con ajax que recibe un e-mail y si coincide con el del usuario logueado resetea la clave de autorización y envía un e-mail con la nueva clave
+     */
+    def resetAuth_ajax() {
+        def mail = params.mail.toString().trim()
+        def usu = Persona.get(session.usuario.id)
+        if (usu.mail.equalsIgnoreCase(mail)) {
+            def password = org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(7)
+            println password
+            def newAuth = password.encodeAsMD5()
+            usu.autorizacion = newAuth
+            usu.save(flush: true)
+
+            def title = "Nueva clave de autorización generada"
+            def mensaje = "Se le ha generado una nueva clave de autorización para que pueda cambiarla.<br/><br/>" +
+                    "<strong>${password}</strong>"
+
+            try {
+                mailService.sendMail {
+                    multipart true
+                    to usu.mail
+                    subject title
+                    html g.render(template: '/mail/resetPass', model: [recibe: usu, title: title, mensaje: mensaje, now: new Date()])
+                    inline 'springsourceInlineImage', 'image/jpg', new File('./web-app/images/logo-login.png')
+                }
+            } catch (e) {
+                println "Ha ocurrido un error al enviar el mail"
+                e.printStackTrace()
+                render "ERROR*No se pudo enviar el e-mail"
+                return
+            }
+            render "SUCCESS*Se ha enviado el e-mail con su nueva clave de autorización."
+        } else {
+            render "ERROR*El e-mail ingresado no coincide con el registrado. Si olvidó su e-mail contáactese con un administrador " +
+                    "del sistema para restablecerlo."
+        }
     }
 
     /**

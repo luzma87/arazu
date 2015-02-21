@@ -1,4 +1,4 @@
-<%@ page import="arazu.parametros.TipoUsuario; arazu.seguridad.Perfil; arazu.parametros.Departamento; arazu.seguridad.Persona" %>
+<%@ page import="arazu.parametros.TipoUsuario; arazu.seguridad.Perfil; arazu.seguridad.Persona" %>
 
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 
@@ -26,9 +26,10 @@
         <g:form class="form-horizontal" name="frmPersona" id="${personaInstance?.id}"
                 role="form" action="save_ajax" method="POST">
 
-            <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Departamento" claseField1="col-sm-8"
+            <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Tipo de usuario" claseField1="col-sm-8"
                                   claseLabel2="col-sm-4" label2="Usuario" claseField2="col-sm-8">
-                <g:select id="departamento" name="departamento.id" from="${TipoUsuario.list()}" optionKey="id" value="${personaInstance?.tipoUsuario?.id}" class="many-to-one form-control " noSelection="['null': '']"/>
+                <g:select id="tipoUsuario" name="tipoUsuario.id" from="${TipoUsuario.list()}" optionKey="id"
+                          value="${personaInstance?.tipoUsuario?.id}" class="many-to-one form-control "/>
                 <hr/>
                 <g:textField name="login" maxlength="15" class="form-control required unique noEspacios" value="${personaInstance?.login}"/>
             </elm:fieldRapidoDoble>
@@ -190,6 +191,15 @@
                             id : "${personaInstance?.id}"
                         }
                     }
+                },
+                cedula : {
+                    remote : {
+                        url  : "${createLink(controller:'persona', action: 'validar_unique_cedula_ajax')}",
+                        type : "post",
+                        data : {
+                            id : "${personaInstance?.id}"
+                        }
+                    }
                 }
             },
             messages       : {
@@ -198,6 +208,9 @@
                 },
                 login : {
                     remote : "Ya existe Login"
+                },
+                cedula : {
+                    remote : "Ya existe Cédula"
                 }
             }
         });

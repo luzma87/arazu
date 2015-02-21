@@ -23,12 +23,12 @@
             <div class="row">
                 <div class="col-md-1">
                     <label class=" control-label">
-                        Responsable
+                        Responsables
                     </label>
                 </div>
 
                 <div class="col-md-3">
-                    ${bodega.persona}
+                    <strong>${bodega.responsable}</strong>, ${bodega.suplente}
                 </div>
 
                 <div class="col-md-8">

@@ -54,6 +54,11 @@ class TipoUsuarioController extends Shield {
             txt += "<span class='text-muted'>"
         }
         txt += usuario.apellido + " " + usuario.nombre + " (" + usuario.login + ")"
+        if (usuario.mail) {
+            txt += " - " + usuario.mail
+        } else {
+            txt += " - <span class='text-danger'>No ha registrado un e-mail! No podrá reciir notificaciones ni reestablecer contraseñas</span>"
+        }
         if (usuario.activo != 1) {
             txt += "</span>"
         }
@@ -272,7 +277,7 @@ class TipoUsuarioController extends Shield {
                 return
             }
         }
-        if(params.codigo) {
+        if (params.codigo) {
             params.codigo = params.codigo.toString().toUpperCase()
         }
         tipoUsuarioInstance.properties = params

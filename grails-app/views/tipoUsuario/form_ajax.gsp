@@ -11,7 +11,7 @@
                 role="form" action="save_ajax" method="POST">
 
             <g:if test="${tipoUsuarioInstance.id}">
-                <g:hiddenField name="codigo" value="${tipoUsuarioInstance.id}"/>
+                <g:hiddenField name="codigo" value="${tipoUsuarioInstance.codigo}"/>
             </g:if>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Padre" claseField="col-sm-6">
@@ -41,7 +41,8 @@
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Activo" claseField="col-sm-2">
-                <g:select name="activo" from="[1: 'Sí', 0: 'No']" optionKey="key" optionValue="value" value="${tipoUsuarioInstance?.activo}"
+                <g:select name="activo" from="[1: 'Sí', 0: 'No']" optionKey="key" optionValue="value"
+                          value="${tipoUsuarioInstance?.activo == 0 ? 0 : 1}"
                           class="form-control "/>
             </elm:fieldRapido>
 

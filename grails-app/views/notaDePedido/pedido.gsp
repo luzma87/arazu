@@ -1,13 +1,8 @@
-<%@ page import="arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.items.Item; arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
         <title>Nota de pedido</title>
-
-        <imp:js src="${resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/js', file: 'bootstrap-select.min.js')}"/>
-        <imp:js src="${resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/js/i18n', file: 'defaults-es_CL.js')}"/>
-
-        <imp:css src="${resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/css', file: 'bootstrap-select.min.css')}"/>
 
         <style type="text/css">
         .tt-dropdown-menu {
@@ -47,6 +42,11 @@
             <elm:container tipo="horizontal" titulo="Nueva nota de pedido">
                 <input type="hidden" name="data" id="data">
 
+                <div class="alert alert-info" style="margin-top: 10px;">
+                    <strong>Nota:</strong> el número mostrado en esta pantalla es un número tentativo que puede cambiar al momento de guardar.
+                Se le informará el número final de su nota de pedido después de guardar.
+                </div>
+
                 <g:hiddenField name="maquinaria.id" id="maquina"/>
 
                 <div class="row">
@@ -66,7 +66,7 @@
                     </div>
                 </div>
 
-                <div class="hidden toggle">
+                <div class="hiddden toggle">
                     <div class="row">
                         <div class="col-md-1">
                             <label class=" control-label">
@@ -118,8 +118,8 @@
                         </div>
 
                         <div class="col-md-2">
-                            <g:select name="para.id" from="${Persona.list([sort: 'apellido'])}" optionKey="id"
-                                      class="form-control input-sm required select" noSelection="['': 'Seleccione...']"/>
+                            <g:select name="para.id" from="${jefes}" optionKey="id"
+                                      class="form-control input-sm required select" required=""/>
                         </div>
                     </div>
 
@@ -133,33 +133,8 @@
 
                         <div class="col-md-2">
                             <g:select name="proyecto.id" from="${Proyecto.list()}" optionKey="id" optionValue="descripcion"
-                                      class="form-control input-sm required select" noSelection="['': 'Seleccione...']"/>
+                                      class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"/>
                         </div>
-
-                        %{--<div class="col-md-1">--}%
-                        %{--<label class=" control-label">--}%
-                        %{--Equipo--}%
-                        %{--</label>--}%
-                        %{--</div>--}%
-
-                        %{--<div class="col-md-2">--}%
-                        %{--<g:select name="maquinaria.id" id="maquinaria" from="${Maquinaria.list([sort: 'descripcion'])}" optionKey="id"--}%
-                        %{--class="form-control input-sm required" noSelection="['': 'Seleccione...']"--}%
-                        %{--data-live-search="true"/>--}%
-                        %{--<select name="maquinaria.id" id="maquinaria" class="form-control input-sm required" data-live-search="true">--}%
-                        %{--<option value="">-- Seleccione --</option>--}%
-                        %{--<g:each in="${TipoMaquinaria.list([sort: 'nombre'])}" var="tm">--}%
-                        %{--<g:set var="maquinas" value="${Maquinaria.findAllByTipo(tm)}"/>--}%
-                        %{--<g:if test="${maquinas.size() > 0}">--}%
-                        %{--<optgroup label="${tm.toString()}">--}%
-                        %{--<g:each in="${maquinas+maquinas+maquinas+maquinas+maquinas}" var="m">--}%
-                        %{--<option value="${m.id}">${m.toString()}</option>--}%
-                        %{--</g:each>--}%
-                        %{--</optgroup>--}%
-                        %{--</g:if>--}%
-                        %{--</g:each>--}%
-                        %{--</select>--}%
-                        %{--</div>--}%
                     </div>
 
                     <div class="row" style="margin-bottom: 10px">
@@ -168,44 +143,52 @@
                 </div>
             </elm:container>
 
-            <div class="hidden toggle">
+            <div class="hiddden toggle">
                 <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
                     <thead>
                         <tr>
-                            <th style="width: 80px">Cantidad</th>
+                            <th>Item</th>
                             <th style="width: 150px">Unidad</th>
-                            <th>Descripción</th>
+                            <th style="width: 80px">Cantidad</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-items">
                         <tr>
+                            <td>
+                                %{--<a href="#" class="btn btn-success">--}%
+                                %{--<i class="fa fa-plus"></i>--}%
+                                %{--</a>--}%
+                                <g:select name="item.id" id="item" from="${Item.list([sort: 'descripcion'])}" optionKey="id"
+                                          optionValue="${{ it.descripcion.decodeHTML() }}"
+                                          class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"
+                                          data-live-search="true"/>
+                                %{--<input type="text" name="item" class="form-control input-sm allCaps required" id="item_txt"--}%
+                                %{--placeholder="Item" style="width: 100%!important;">--}%
+                            </td>
+                            <td>
+                                <g:select name="unidad.id" id="unidad" from="${Unidad.list()}" optionKey="id"
+                                          class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"/>
+                            </td>
                             <td>
                                 <div class="input-group">
                                     <input type="text" class="form-control input-sm digits required" id="cantidad" style="text-align: right" value="1" name="cantidad">
                                     <span class="input-group-addon svt-bg-warning">#</span>
                                 </div>
                             </td>
-                            <td>
-                                <g:select name="unidad.id" id="unidad" from="${Unidad.list()}" optionKey="id"
-                                          class="form-control input-sm required" noSelection="['': 'Seleccione...']"/>
-                            </td>
-                            <td>
-                                <input type="text" name="item" class="form-control input-sm allCaps required" id="item_txt" placeholder="Item" style="width: 100%!important;">
-                            </td>
-
                         </tr>
                     </tbody>
-
                 </table>
 
                 <div class="row" style="margin-top: 20px">
                     <div class="col-md-1">
-                        <a href="#" class="btn btn-primary" id="guardar"><i class="fa fa-save"></i> Guardar</a>
+                        <a href="#" class="btn btn-primary" id="guardar">
+                            <i class="fa fa-paper-plane-o"></i> Enviar
+                        </a>
                     </div>
                 </div>
             </div>
-
         </g:form>
+
         <script type="text/javascript">
 
             var substringMatcher = function (strs) {
@@ -233,7 +216,9 @@
             };
             var items = ${items};
             $(function () {
-                $("#maquina_input").click(function () {
+                $("#maquina").val("");
+
+                $("#maquina_input").val("").click(function () {
                     openLoader();
                     $.ajax({
                         type    : "POST",
@@ -279,22 +264,29 @@
 
                 });
 
-                $('#item_txt').typeahead({
-                            hint      : true,
-                            highlight : true,
-                            minLength : 1
-                        },
-                        {
-                            name       : 'states',
-                            displayKey : 'value',
-                            source     : substringMatcher(items)
-                        });
+//                $('#item_txt').on('typeahead:cursorchanged', function (evt, item) {
+//                    console.log("cc", evt, item);
+//                    // do what you want with the item here
+//                }).on('typeahead:selected', function (evt, item) {
+//                    console.log("s", evt, item);
+//                    // do what you want with the item here
+//                }).typeahead({
+//                            hint      : true,
+//                            highlight : true,
+//                            minLength : 1
+//                        },
+//                        {
+//                            name       : 'states',
+//                            displayKey : 'value',
+//                            source     : substringMatcher(items)
+//                        });
 
                 $(".twitter-typeahead").css({
                     width : "100%"
                 });
 
                 $("#guardar").click(function () {
+                    openLoader("Generando solicitud");
                     $(".frmNota").submit();
                 });
 

@@ -57,15 +57,41 @@ class Pedido {
      */
     Item item
     /**
-     * Persona que aprueba el pedido
-     */
-    Persona aprobadoPor
-    /**
      * Fecha en la que fue aprobado el pedido
      */
     Date aprobacion
-
+    /**
+     * Número de solicitud
+     */
     int numero = 0
+    /**
+     * Firma del que pide
+     */
+    Firma firmaSolicita
+    /**
+     * Firma del jefe
+     */
+    Firma firmaJefe
+    /**
+     * Firma del jefe de compras
+     */
+    Firma firmaJefeCompras
+    /**
+     * Firma del asistente de compras
+     */
+    Firma firmaAsistenteCompras
+    /**
+     * Firma del que aprueba (jefe si <100, gerente si >=100)
+     */
+    Firma firmaAprueba
+    /**
+     * Firma del que niega
+     */
+    Firma firmaNiega
+    /**
+     * Observaciones para guardar al momento de cambiar de estado el pedido
+     */
+    String observaciones
 
     /**
      * Define las relaciones uno a varios
@@ -98,9 +124,16 @@ class Pedido {
             cantidad column: 'pddocntd'
             unidad column: 'undd__id'
             item column: 'item__id'
-            aprobadoPor column: 'pddoprap'
             aprobacion column: 'pddofcap'
             numero column: 'pddonmro'
+            firmaSolicita column: 'pddofrsl'
+            firmaJefe column: 'pddofrjf'
+            firmaJefeCompras column: 'pddofrjc'
+            firmaAsistenteCompras column: 'pddofrac'
+            firmaAprueba column: 'pddofrap'
+            firmaNiega column: 'pddofrng'
+            observaciones column: 'pddoobsv'
+            observaciones type: "text"
         }
     }
 
@@ -108,9 +141,16 @@ class Pedido {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        codigo maxSize: 4
+        codigo maxSize: 10
         maquinaria nullable: true
-        aprobadoPor nullable: true
         aprobacion nullable: true
+
+        firmaSolicita nullable: true
+        firmaJefe nullable: true
+        firmaJefeCompras nullable: true
+        firmaAsistenteCompras nullable: true
+        firmaAprueba nullable: true
+        firmaNiega nullable: true
+        observaciones blank: true, nullable: true
     }
 }

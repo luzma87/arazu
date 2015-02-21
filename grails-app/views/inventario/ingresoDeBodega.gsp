@@ -142,7 +142,7 @@
                 </div>
             </div>
         </elm:container>
-        <elm:container tipo="horizontal" titulo="" style="min-height: 300px;overflow-y: auto;margin-top: 10px">
+        <elm:container tipo="horizontal" titulo="" style="max-height: 300px;overflow-y: auto;margin-top: 10px">
             <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
                 <thead>
                     <tr>
@@ -349,9 +349,9 @@
                                 }
                                 if (isNaN(valor))
                                     msg += "<br>Por favor ingrese el valor unitario.";
-                                else if (valor * 1 < 1) {
-                                    msg += "<br>El valor unitario debe ser mayor a cero.";
-                                }
+//                                else if (valor * 1 < 1) {
+//                                    msg += "<br>El valor unitario debe ser mayor a cero.";
+//                                }
                                 if (msg == "") {
                                     valor = valor * 1;
                                     cantidad = cantidad * 1;
@@ -419,7 +419,7 @@
                                         }
                                     },
                                     error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
+                                        log("Ha ocurrido un error interno", "error");
                                         closeLoader();
                                     }
                                 });

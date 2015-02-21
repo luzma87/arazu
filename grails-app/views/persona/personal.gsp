@@ -124,10 +124,12 @@
                                     %{--</div>--}%
                                 </span>
 
-                                <div class="col-md-2" style="margin-top: 20px;">
-                                    <a href="#" class="btn btn-success" id="btnPass">
-                                        <i class="fa fa-save"></i> Guardar
-                                    </a>
+                                <div class="col-md-3" style="margin-top: 20px;">
+                                    <div class="btn-group" role="group" aria-label="...">
+                                        <a href="#" class="btn btn-success" id="btnPass">
+                                            <i class="fa fa-save"></i> Guardar
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </g:form>
@@ -135,110 +137,75 @@
                 </div>
             </div>
 
-            %{--<div class="panel panel-default">--}%
-            %{--<div class="panel-heading">--}%
-            %{--<h4 class="panel-title">--}%
-            %{--<a data-toggle="collapse" data-parent="#accordion" href="#collapseAuth">--}%
-            %{--Cambiar autorización--}%
-            %{--</a>--}%
-            %{--</h4>--}%
-            %{--</div>--}%
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseAuth">
+                            Cambiar clave de autorización
+                        </a>
+                    </h4>
+                </div>
 
-            %{--<div id="collapseAuth" class="panel-collapse collapse ">--}%
-            %{--<div class="panel-body">--}%
-            %{--<g:form class="form-horizontal" name="frmPass" role="form" action="savePass_ajax" method="POST">--}%
-            %{--<div class="form-group required">--}%
-            %{--<div class="form-group required">--}%
-            %{--<span class="grupo">--}%
-            %{--<span class="form-grup col-md-3">--}%
-            %{--<label for="auth_actual" class="control-label text-info">--}%
-            %{--Autorización actual--}%
-            %{--</label>--}%
+                <div id="collapseAuth" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <g:form class="form-horizontal" name="frmAuth" role="form" action="savePass_ajax" method="POST">
+                            <div class="form-group required">
+                                %{--<div class="form-group required">--}%
+                                %{--<span class="grupo">--}%
+                                <span class="form-grup col-md-3">
+                                    <label for="password_actual" class="control-label text-info">
+                                        Autorización actual
+                                    </label>
 
-            %{--<div class="col-md-2">--}%
-            %{--<div class="input-group">--}%
-            %{--<g:passwordField name="auth_actual" class="form-control required"/>--}%
-            %{--<span class="input-group-addon"><i class="fa fa-unlock"></i></span>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</span>--}%
-            %{--</div>--}%
+                                    %{--<div class="col-md-2">--}%
+                                    <div class="input-group">
+                                        <g:passwordField name="auth_actual" class="form-control required"/>
+                                        <span class="input-group-addon"><i class="fa fa-unlock-alt"></i></span>
+                                    </div>
+                                    %{--</div>--}%
+                                </span>
+                                %{--</div>--}%
 
-            %{--<span class="form-grup col-md-3">--}%
-            %{--<label for="auth" class="control-label text-info">--}%
-            %{--Nueva autorización--}%
-            %{--</label>--}%
+                                <span class="form-grup col-md-3">
+                                    <label for="password" class="control-label text-info">
+                                        Nueva autorización
+                                    </label>
 
-            %{--<div class="col-md-3">--}%
-            %{--<div class="input-group">--}%
-            %{--<g:passwordField name="auth" class="form-control required"/>--}%
-            %{--<span class="input-group-addon"><i class="fa fa-lock"></i></span>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</span>--}%
-            %{--<span class="form-grup col-md-3">--}%
-            %{--<label for="auth_again" class="control-label text-info">--}%
-            %{--Confirme la autorización--}%
-            %{--</label>--}%
+                                    %{--<div class="col-md-3">--}%
+                                    <div class="input-group">
+                                        <g:passwordField name="auth" class="form-control required"/>
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    %{--</div>--}%
+                                </span>
+                                <span class="form-grup col-md-3">
+                                    <label for="password_again" class="control-label text-info">
+                                        Confirme la autorización
+                                    </label>
 
-            %{--<div class="col-md-3">--}%
-            %{--<div class="input-group">--}%
-            %{--<g:passwordField name="auth_again" class="form-control required" equalTo="#password"/>--}%
-            %{--<span class="input-group-addon"><i class="fa fa-lock"></i></span>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</span>--}%
+                                    %{--<div class="col-md-3">--}%
+                                    <div class="input-group">
+                                        <g:passwordField name="auth_again" class="form-control required" equalTo="#auth"/>
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    %{--</div>--}%
+                                </span>
 
-            %{--<div class="col-md-2" style="margin-top: 20px;">--}%
-            %{--<a href="#" class="btn btn-success" id="btnAuth">--}%
-            %{--<i class="fa fa-save"></i> Guardar--}%
-            %{--</a>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</g:form>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-
-            %{--<div class="panel panel-default">--}%
-            %{--<div class="panel-heading">--}%
-            %{--<h4 class="panel-title">--}%
-            %{--<a data-toggle="collapse" data-parent="#accordion" href="#collapseTelf">--}%
-            %{--Datos personales--}%
-            %{--</a>--}%
-            %{--</h4>--}%
-            %{--</div>--}%
-
-            %{--<div id="collapseTelf" class="panel-collapse collapse ">--}%
-            %{--<div class="panel-body">--}%
-            %{--<g:form class="form-horizontal frmTelf" name="frmTelf" role="form" action="saveTelf" method="POST">--}%
-            %{--<div class="form-group required">--}%
-            %{--<div class="form-group required">--}%
-            %{--<span class="grupo">--}%
-            %{--<span class="form-grup col-md-3">--}%
-            %{--<label for="telefono" class="control-label text-info">--}%
-            %{--Número de teléfono--}%
-            %{--</label>--}%
-
-            %{--<div class="col-md-2">--}%
-            %{--<div class="input-group">--}%
-            %{--<g:textField name="telefono" id="telefono" class="form-control digits required" value=""/>--}%
-            %{--<span class="input-group-addon"><i class="fa fa-phone"></i></span>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</span>--}%
-            %{--</div>--}%
-
-            %{--<div class="col-md-2" style="margin-top: 20px;">--}%
-            %{--<a href="#" class="btn btn-success" id="btnTelf">--}%
-            %{--<i class="fa fa-save"></i> Guardar--}%
-            %{--</a>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</g:form>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</div>--}%
+                                <div class="col-md-3" style="margin-top: 20px;">
+                                    <div class="btn-group" role="group" aria-label="...">
+                                        <a href="#" class="btn btn-success" id="btnAuth">
+                                            <i class="fa fa-save"></i> Guardar
+                                        </a>
+                                        <a href="#" class="btn btn-info" id="btnOlvidoAuth">
+                                            <i class="fa fa-question-circle"></i> Olvidé mi autorización
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </g:form>
+                    </div>
+                </div>
+            </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -338,7 +305,7 @@
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     $('#progress .progress-bar').css(
                             'width',
-                            progress + '%'
+                                    progress + '%'
                     );
                 }).on('fileuploaddone', function (e, data) {
 //                    closeLoader();
@@ -400,6 +367,7 @@
 //                    data += "&tipo=pass";
 
                     var data = {
+                        input3 : $("#auth_again").val(),
                         input2 : $("#auth").val(),
                         input1 : $("#auth_actual").val(),
                         tipo   : "auth"
@@ -500,7 +468,7 @@
                     },
                     messages       : {
                         auth_actual : {
-                            remote : "la autorización actual no coincide"
+                            remote : "La autorización actual no coincide"
                         }
                     },
                     success        : function (label) {
@@ -510,26 +478,36 @@
                 $btnAuth.click(function () {
                     submitAuth();
                 });
-                $("#btnTelf").click(function () {
-                    var url = $(".frmTelf").attr("action");
-                    var data = $(".frmTelf").serialize();
-                    if ($(".frmTelf").valid()) {
-                        $("#btnTelf").hide().after(spinner);
-                        $.ajax({
-                            type    : "POST",
-                            url     : url,
-                            data    : data,
-                            success : function (msg) {
 
-                                var parts = msg.split("_");
-                                log(parts[1], parts[0] == "OK" ? "success" : "error");
-                                spinner.remove();
-                                $("#btnTelf").show();
-//                        $(".frmTelf").find("input").val("");
-                                validatorTelf.resetForm();
+                $("#btnOlvidoAuth").click(function () {
+                    bootbox.prompt({
+                        title       : "Generar nueva autorización",
+                        placeholder : "E-mail registrado",
+                        inputType   : "email",
+                        message     : $("<div>Ingrese su e-mail registrado en el sistema y se le enviará una clave de " +
+                                        "autorización provisional</div>"),
+                        class       : "modal-sm",
+                        callback    : function (result) {
+                            if (result === null) {
+                            } else {
+                                openLoader();
+                                $.ajax({
+                                    type     : "POST",
+                                    url      : "${createLink(controller:'persona', action:'resetAuth_ajax')}",
+                                    data     : {
+                                        mail : result
+                                    },
+                                    success  : function (msg) {
+                                        var parts = msg.split("*");
+                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error");
+                                    },
+                                    complete : function () {
+                                        closeLoader();
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }
+                    });
                 });
             });
         </script>

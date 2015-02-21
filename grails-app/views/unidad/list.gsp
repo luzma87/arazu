@@ -32,14 +32,14 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
+
+                    <g:sortableColumn property="padre" title="Padre" />
+
+                    <g:sortableColumn property="codigo" title="Código" />
                     
-                    <th>Padre</th>
+                    <g:sortableColumn property="conversion" title="Conversión" />
                     
-                    <g:sortableColumn property="codigo" title="Codigo" />
-                    
-                    <g:sortableColumn property="conversion" title="Conversion" />
-                    
-                    <g:sortableColumn property="descripcion" title="Descripcion" />
+                    <g:sortableColumn property="descripcion" title="Descripción" />
                     
                 </tr>
             </thead>

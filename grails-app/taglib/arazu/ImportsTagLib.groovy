@@ -206,6 +206,11 @@ class ImportsTagLib {
 
         //para el formato de los numeros en los inputs
         text += imp.js(src: resource(dir: 'js/plugins/jquery-inputmask-3.1.49/dist', file: 'jquery.inputmask.bundle.min.js'))
+
+        text += imp.js(src: resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/js', file: 'bootstrap-select.min.js'))
+        text += imp.js(src: resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/js/i18n', file: 'defaults-es_CL.js'))
+        text += imp.css(src: resource(dir: 'js/plugins/bootstrap-select-1.6.3/dist/css', file: 'bootstrap-select.min.css'))
+
         out << text
     }
 

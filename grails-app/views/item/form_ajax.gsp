@@ -1,4 +1,4 @@
-<%@ page import="arazu.items.Maquinaria; arazu.parametros.TipoItem; arazu.items.Item" %>
+<%@ page import="arazu.parametros.Unidad; arazu.items.Maquinaria; arazu.parametros.TipoItem; arazu.items.Item" %>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 
 <style type="text/css">
@@ -29,7 +29,7 @@
                 <g:hiddenField name="tipo.id" value="${itemInstance.tipoId}"/>
             </g:if>
 
-            <elm:fieldRapido claseLabel="col-sm-2" label="Tipo" claseField="col-sm-6">
+            <elm:fieldRapido claseLabel="col-sm-2" label="Tipo" claseField="col-sm-10">
                 <g:if test="${!itemInstance.id && itemInstance.tipo}">
                     <p class="form-control-static">${itemInstance.tipo.nombre}</p>
                 </g:if>
@@ -38,8 +38,21 @@
                 </g:else>
             </elm:fieldRapido>
 
-            <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-6">
-                <g:textArea name="descripcion" cols="40" rows="5" maxlength="500" class="form-control " value="${itemInstance?.descripcion}"/>
+            %{--<elm:fieldRapidoDoble claseLabel1="col-sm-2" label1="Tipo" claseField1="col-sm-10"--}%
+                                  %{--claseLabel2="col-sm-2" label2="Unidad" claseField2="col-sm-10">--}%
+                %{--<g:if test="${!itemInstance.id && itemInstance.tipo}">--}%
+                    %{--<p class="form-control-static">${itemInstance.tipo.nombre}</p>--}%
+                %{--</g:if>--}%
+                %{--<g:else>--}%
+                    %{--<g:select id="tipo" name="tipo.id" from="${TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>--}%
+                %{--</g:else>--}%
+                %{--<hr/>--}%
+                %{--<g:select name="unidad.id" id="unidad" from="${Unidad.findAllByPadreIsNull()}" optionKey="id" class="form-control"/>--}%
+            %{--</elm:fieldRapidoDoble>--}%
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-10">
+                <g:textField name="descripcion" maxlength="500" class="form-control allCaps"
+                             value="${itemInstance?.descripcion}"/>
             </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Maquinarias" claseField="col-sm-8">

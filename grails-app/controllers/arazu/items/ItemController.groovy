@@ -125,6 +125,9 @@ class ItemController extends Shield {
                 return
             }
         }
+        if (params.descripcion) {
+            params.descripcion = params.descripcion.toString().toUpperCase()
+        }
         itemInstance.properties = params
         if (!itemInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Item: " + renderErrors(bean: itemInstance)
