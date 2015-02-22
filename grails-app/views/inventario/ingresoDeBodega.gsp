@@ -1,4 +1,4 @@
-<%@ page import="arazu.parametros.Unidad" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.items.Item; arazu.parametros.Unidad" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
@@ -96,7 +96,12 @@
                 </div>
 
                 <div class="col-md-3">
-                    <input type="text" class="form-control input-sm allCaps" id="item_txt" placeholder="Item" style="width: 100%!important;">
+                    %{--<input type="text" class="form-control input-sm allCaps" id="item_txt" placeholder="Item" --}%
+                    %{--style="width: 100%!important;">--}%
+                    <g:select name="item_txt" from="${Item.list([sort: 'descripcion'])}" optionKey="descripcion"
+                              optionValue="${{ it.descripcion.decodeHTML() }}"
+                              class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"
+                              data-live-search="true"/>
                 </div>
 
                 <div class="col-md-1">
@@ -329,7 +334,7 @@
                                         }
                                 );
                             } else {
-                                item = $.trim($("#item_txt").val().toUpperCase());
+                                item = $("#item_txt").val();
                                 cantidad = $("#cantidad").val();
                                 valor = $("#valor").val();
                                 valor = str_replace(",", "", valor);
@@ -337,13 +342,13 @@
                                 unidadId = $("#unidad").val();
                                 var msg = "";
                                 var nuevo = false;
-                                if (item == "") {
-                                    msg += "Por favor ingrese un Item."
-                                } else {
-                                    //console.log($.inArray(item, items))
-                                    if ($.inArray(item, items) < 0)
-                                        nuevo = true
-                                }
+//                                if (item == "") {
+//                                    msg += "Por favor ingrese un Item."
+//                                } else {
+//                                    //console.log($.inArray(item, items))
+////                                    if ($.inArray(item, items) < 0)
+////                                        nuevo = true
+//                                }
                                 if (cantidad * 1 < 1) {
                                     msg += "<br>La cantidad debe ser mayor a cero.";
                                 }
@@ -373,20 +378,20 @@
                             }
 
                         });
-                        $('#item_txt').typeahead({
-                                    hint      : true,
-                                    highlight : true,
-                                    minLength : 1
-                                },
-                                {
-                                    name       : 'states',
-                                    displayKey : 'value',
-                                    source     : substringMatcher(items)
-                                });
+//                        $('#item_txt').typeahead({
+//                                    hint      : true,
+//                                    highlight : true,
+//                                    minLength : 1
+//                                },
+//                                {
+//                                    name       : 'states',
+//                                    displayKey : 'value',
+//                                    source     : substringMatcher(items)
+//                                });
 
-                        $(".twitter-typeahead").css({
-                            width : "100%"
-                        });
+//                        $(".twitter-typeahead").css({
+//                            width : "100%"
+//                        });
 
                         $("#guardar").click(function () {
                             if ($(".item-row").size() < 1) {

@@ -19,21 +19,23 @@ class Shield {
             session.finalize()
             return false
         } else {
-            return true
+            if (isAllowed()) {
+                return true
+            }
         }
         /*************************************************************************** */
     }
 
     boolean isAllowed() {
-//        try {
-//            if (session.permisos[actionName] == controllerName)
-//                return true
-//        } catch (e) {
-//            println "Shield execption e: " + e
-//            return true
-//        }
+        try {
+            if (session.permisos[actionName]?.toLowerCase() == controllerName?.toLowerCase())
+                return true
+        } catch (e) {
+            println "Shield execption e: " + e
+            return false
+        }
+        return false
 //        return true
-        return true
     }
 
 

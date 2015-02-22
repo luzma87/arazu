@@ -99,6 +99,9 @@
             }
         }
 
+        .text-center {
+            text-align : center;
+        }
 
         </style>
     </head>
@@ -178,23 +181,64 @@
             <table style="margin-top: 100px;width: 90%;margin-left: 10px">
                 <tbody>
                     <tr>
-                        <td style="width: 33%; text-align: center">
+                        <td class="text-center" style="width: 25%;">
                             <img src="${resource(dir: 'firmas', file: nota.firmaSolicita.path)}" height="100"/>
                         </td>
-                        <td style="width: 33%"></td>
-                        <td style="width: 33%"></td>
+                        <td class="text-center" style="width: 25%">
+                            <g:if test="${nota.firmaJefe}">
+                                <img src="${resource(dir: 'firmas', file: nota.firmaJefe.path)}" height="100"/>
+                            </g:if>
+                            <g:elseif test="${nota.firmaNiega}">
+                                <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                            </g:elseif>
+                            <g:elseif test="${nota.firmaBodega}">
+                                <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                            </g:elseif>
+                        </td>
+                        <td class="text-center" style="width: 25%">
+
+                        </td>
+                        <td class="text-center" style="width: 25%">
+
+                        </td>
                     </tr>
                     <tr>
-                        <td style="text-align: center">
+                        <td class="text-center">
                             ${nota.de}
                         </td>
-                        <td></td>
-                        <td></td>
+                        <td class="text-center">
+                            <g:if test="${nota.firmaJefe}">
+                                ${nota.firmaJefe.persona}
+                            </g:if>
+                            <g:elseif test="${nota.firmaNiega}">
+                                ${nota.firmaNiega.persona}
+                            </g:elseif>
+                            <g:elseif test="${nota.firmaBodega}">
+                                ${nota.firmaBodega.persona}
+                            </g:elseif>
+                        </td>
+                        <td class="text-center">
+
+                        </td>
                     </tr>
                     <tr>
-                        <td style="text-align: center">Solicitado</td>
-                        <td></td>
-                        <td></td>
+                        <td class="text-center">
+                            Solicita
+                        </td>
+                        <td class="text-center">
+                            <g:if test="${nota.firmaJefe}">
+                                Aprueba
+                            </g:if>
+                            <g:elseif test="${nota.firmaNiega}">
+                                Niega
+                            </g:elseif>
+                            <g:elseif test="${nota.firmaBodega}">
+                                Notifica existencia en bodega
+                            </g:elseif>
+                        </td>
+                        <td class="text-center">
+
+                        </td>
                     </tr>
                 </tbody>
             </table>

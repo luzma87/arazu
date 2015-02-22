@@ -218,6 +218,12 @@ class MaquinariaController extends Shield {
     def arbol() {
         return [arbol: makeTree(params), params: params]
     }
+    /**
+     * Acción que muestra los tipos de items, items y bodegas en forma de árbol
+     */
+    def arbolAdmin() {
+        return [arbol: makeTree(params), params: params]
+    }
 
     /**
      * Función que genera el árbol de items

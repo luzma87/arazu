@@ -206,9 +206,16 @@ class ItemController extends Shield {
     } //delete para eliminar via ajax
 
     /**
-     * Acción que muestra la administración de tipos de items, items y bodegas en forma de árbol
+     * Acción que muestra los tipos de items, items y bodegas en forma de árbol
      */
     def arbol() {
+        return [arbol: makeTree(params), params: params]
+    }
+
+    /**
+     * Acción que muestra la administración de tipos de items, items y bodegas en forma de árbol
+     */
+    def arbolAdmin() {
         return [arbol: makeTree(params), params: params]
     }
 

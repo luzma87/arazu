@@ -94,41 +94,11 @@
                 var esTipoMaquinaria = nodeType == "tipoMaquinaria";
                 var esMaquinaria = nodeType == "maquinaria";
 
-                var crearTipoMaquina = {
-                    label  : "Nuevo Tipo de Mquinaria",
-                    icon   : "fa flaticon-construction12  text-success",
-                    action : function () {
-                        createEditTipoMaquinaria();
-                    }
-                };
-                var editarTipoMaquina = {
-                    label  : "Modificar Tipo de Mquinaria",
-                    icon   : "fa fa-pencil text-info",
-                    action : function () {
-                        createEditTipoMaquinaria(nodeId);
-                    }
-                };
                 var verTipoMaquina = {
                     label  : "Ver Tipo de Maquinaria",
                     icon   : "fa fa-search",
                     action : function () {
                         showTipoMaquinaria(nodeId);
-                    }
-                };
-                var crearMaquina = {
-                    label            : "Nueva maquinaria",
-                    icon             : "fa flaticon-construction16 text-success",
-                    separator_bedore : true,
-                    action           : function () {
-                        createEditMaquinaria(nodeId);
-                    }
-                };
-                var editarMaquina = {
-                    label            : "Modificar maquinaria",
-                    icon             : "fa fa-pencil text-info",
-                    separator_bedore : true,
-                    action           : function () {
-                        createEditMaquinaria(null, nodeId);
                     }
                 };
                 var verMaquina = {
@@ -143,14 +113,10 @@
                 var items = {};
 
                 if (esRoot) {
-                    items.crearTipoMaquina = crearTipoMaquina;
                 } else if (esTipoMaquinaria) {
                     items.verTipoMaquina = verTipoMaquina;
-                    items.editarTipoMaquina = editarTipoMaquina;
-                    items.crearMaquinaria = crearMaquina;
                 } else if (esMaquinaria) {
                     items.verMaquina = verMaquina;
-                    items.editarMaquina = editarMaquina;
                 }
 
                 return items;
@@ -171,120 +137,6 @@
                 scrollToNode($scrollTo);
             }
 
-            function submitFormTipoMaquinaria() {
-                var $form = $("#frmTipoMaquinaria");
-                var $btn = $("#dlgCreateEdittipoMaquinaria").find("#btnSave");
-                if ($form.valid()) {
-                    $btn.replaceWith(spinner);
-                    openLoader("Guardando tipo de Maquinaria");
-                    $.ajax({
-                        type    : "POST",
-                        url     : $form.attr("action"),
-                        data    : $form.serialize(),
-                        success : function (msg) {
-                            var parts = msg.split("*");
-                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function () {
-                                if (parts[0] == "SUCCESS") {
-                                    location.reload(true);
-                                } else {
-                                    spinner.replaceWith($btn);
-                                    closeLoader();
-                                    return false;
-                                }
-                            }, 1000);
-                        },
-                        error   : function () {
-                            log("Ha ocurrido un error interno", "Error");
-                            closeLoader();
-                        }
-                    });
-                } else {
-                    return false;
-                } //else
-            }
-            function deleteTipoMaquinaria(itemId) {
-                bootbox.dialog({
-                    title   : "Alerta",
-                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el tipo de Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
-                    buttons : {
-                        cancelar : {
-                            label     : "Cancelar",
-                            className : "btn-primary",
-                            callback  : function () {
-                            }
-                        },
-                        eliminar : {
-                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
-                            className : "btn-danger",
-                            callback  : function () {
-                                openLoader("Eliminando tipo de Maquinaria");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : '${createLink(controller:'tipoMaquinaria', action:'delete_ajax')}',
-                                    data    : {
-                                        id : itemId
-                                    },
-                                    success : function (msg) {
-                                        var parts = msg.split("*");
-                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                        if (parts[0] == "SUCCESS") {
-                                            setTimeout(function () {
-                                                location.reload(true);
-                                            }, 1000);
-                                        } else {
-                                            closeLoader();
-                                        }
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
-                                        closeLoader();
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-            function createEditTipoMaquinaria(id) {
-                var title = id ? "Editar" : "Crear";
-                var data = id ? {id : id} : {};
-                openLoader();
-                $.ajax({
-                    type    : "POST",
-                    url     : "${createLink(controller:'tipoMaquinaria', action:'form_ajax')}",
-                    data    : data,
-                    success : function (msg) {
-                        closeLoader();
-                        var b = bootbox.dialog({
-                            id    : "dlgCreateEdittipoMaquinaria",
-                            title : title + " tipo de Maquinaria",
-
-                            message : msg,
-                            buttons : {
-                                cancelar : {
-                                    label     : "Cancelar",
-                                    className : "btn-primary",
-                                    callback  : function () {
-                                    }
-                                },
-                                guardar  : {
-                                    id        : "btnSave",
-                                    label     : "<i class='fa fa-save'></i> Guardar",
-                                    className : "btn-success",
-                                    callback  : function () {
-                                        return submitFormTipoMaquinaria();
-                                    } //callback
-                                } //guardar
-                            } //buttons
-                        }); //dialog
-                        setTimeout(function () {
-                            b.find(".form-control").first().focus()
-                        }, 500);
-                    } //success
-                }); //ajax
-            } //createEdit
             function showTipoMaquinaria(id) {
                 $.ajax({
                     type    : "POST",
@@ -310,132 +162,6 @@
                 });
             }
 
-            function submitFormMaquinaria() {
-                var $form = $("#frmMaquinaria");
-                var $btn = $("#dlgCreateEditMaquinaria").find("#btnSave");
-                if ($form.valid()) {
-                    $btn.replaceWith(spinner);
-                    openLoader("Guardando Maquinaria");
-                    var data = $form.serialize();
-                    var items = "";
-                    $(".items").each(function () {
-                        if (items != "") {
-                            items += "_";
-                        }
-                        items += $(this).data("id");
-                    });
-                    data += "&items=" + items;
-                    $.ajax({
-                        type    : "POST",
-                        url     : $form.attr("action"),
-                        data    : data,
-                        success : function (msg) {
-                            var parts = msg.split("*");
-                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function () {
-                                if (parts[0] == "SUCCESS") {
-                                    location.reload(true);
-                                } else {
-                                    spinner.replaceWith($btn);
-                                    closeLoader();
-                                    return false;
-                                }
-                            }, 1000);
-                        },
-                        error   : function () {
-                            log("Ha ocurrido un error interno", "Error");
-                            closeLoader();
-                        }
-                    });
-                } else {
-                    return false;
-                } //else
-            }
-            function deleteMaquinaria(itemId) {
-                bootbox.dialog({
-                    title   : "Alerta",
-                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Maquinaria seleccionado? Esta acción no se puede deshacer.</p>",
-                    buttons : {
-                        cancelar : {
-                            label     : "Cancelar",
-                            className : "btn-primary",
-                            callback  : function () {
-                            }
-                        },
-                        eliminar : {
-                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
-                            className : "btn-danger",
-                            callback  : function () {
-                                openLoader("Eliminando Maquinaria");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : '${createLink(controller:'maquinaria', action:'delete_ajax')}',
-                                    data    : {
-                                        id : itemId
-                                    },
-                                    success : function (msg) {
-                                        var parts = msg.split("*");
-                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                        if (parts[0] == "SUCCESS") {
-                                            setTimeout(function () {
-                                                location.reload(true);
-                                            }, 1000);
-                                        } else {
-                                            closeLoader();
-                                        }
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
-                                        closeLoader();
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-            function createEditMaquinaria(padre, id) {
-                var title = id ? "Editar" : "Crear";
-                var data = id ? {id : id} : {};
-                if (padre) {
-                    data.padre = padre;
-                }
-                openLoader();
-                $.ajax({
-                    type    : "POST",
-                    url     : "${createLink(controller:'maquinaria', action:'form_ajax')}",
-                    data    : data,
-                    success : function (msg) {
-                        closeLoader();
-                        var b = bootbox.dialog({
-                            id      : "dlgCreateEditMaquinaria",
-                            title   : title + " Maquinaria",
-//                            class   : "modal-lg",
-                            message : msg,
-                            buttons : {
-                                cancelar : {
-                                    label     : "Cancelar",
-                                    className : "btn-primary",
-                                    callback  : function () {
-                                    }
-                                },
-                                guardar  : {
-                                    id        : "btnSave",
-                                    label     : "<i class='fa fa-save'></i> Guardar",
-                                    className : "btn-success",
-                                    callback  : function () {
-                                        return submitFormMaquinaria();
-                                    } //callback
-                                } //guardar
-                            } //buttons
-                        }); //dialog
-                        setTimeout(function () {
-                            b.find(".form-control").first().focus()
-                        }, 500);
-                    } //success
-                }); //ajax
-            } //createEdit
             function showMaquinaria(id) {
                 $.ajax({
                     type    : "POST",
@@ -484,7 +210,7 @@
                         items        : createContextMenu
                     },
                     state       : {
-                        key : "departamentos"
+                        key : "maquinaria"
                     },
                     search      : {
                         fuzzy             : false,

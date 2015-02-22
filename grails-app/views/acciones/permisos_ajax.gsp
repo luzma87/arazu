@@ -5,7 +5,7 @@
 
 <style type="text/css">
 .check {
-    cursor: pointer;
+    cursor : pointer;
 }
 </style>
 
@@ -32,7 +32,7 @@
         <g:each in="${acciones}" var="accion" status="i">
             <g:set var="esMenu" value="${accion.tipo.codigo == 'M'}"/>
             <g:set var="cantPermisos" value="${arazu.seguridad.Permiso.countByAccionAndPerfil(accion, perfil)}"/>
-            <tr class="${esMenu ? 'success' : 'info'}">
+            <tr class="${esMenu ? 'success' : 'info'}" style="${cantPermisos > 0 ? 'font-weight: bold' : ''}">
                 <td data-id="${accion.id}" class="text-center check ${cantPermisos > 0 ? 'checked' : ''}"
                     data-original="${cantPermisos > 0 ? 'checked' : 'unchecked'}">
                     <i class="fa ${cantPermisos > 0 ? 'fa-check-square-o' : 'fa-square-o'}"></i>
@@ -57,18 +57,18 @@
 <script type="text/javascript">
 
     $("#tblPermisos").fixedHeaderTable({
-        height    : 263,
-        autoResize: true,
-        footer    : true
+        height     : 263,
+        autoResize : true,
+        footer     : true
     });
 
     $('[title!=""]').qtip({
-        style   : {
-            classes: 'qtip-tipsy'
+        style    : {
+            classes : 'qtip-tipsy'
         },
-        position: {
-            my: "bottom center",
-            at: "top center"
+        position : {
+            my : "bottom center",
+            at : "top center"
         }
     });
 
@@ -97,7 +97,7 @@
     $(".btn-save-perm").click(function () {
         var perfil = "${perfil.id}";
         var data = {
-            accion: ""
+            accion : ""
         };
         $(".checked").each(function () {
             data.accion += $(this).data("id") + ",";
@@ -106,10 +106,10 @@
         data.modulo = "${modulo.id}";
         openLoader();
         $.ajax({
-            type   : "POST",
-            url    : "${createLink(controller:'acciones', action:'guardarPermisos_ajax')}",
-            data   : data,
-            success: function (msg) {
+            type    : "POST",
+            url     : "${createLink(controller:'acciones', action:'guardarPermisos_ajax')}",
+            data    : data,
+            success : function (msg) {
                 $('.qtip').qtip('hide');
                 var parts = msg.split("*");
                 log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)

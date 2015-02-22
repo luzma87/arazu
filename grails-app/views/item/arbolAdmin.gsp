@@ -95,6 +95,13 @@
                 var esItem = nodeType == "item";
                 var esBodega = nodeType == "bodega";
 
+                var crearTipoItem = {
+                    label  : "Nuevo Tipo de Item",
+                    icon   : "fa flaticon-toolbox3 text-success",
+                    action : function () {
+                        createEditTipoItem();
+                    }
+                };
                 var verTipoItem = {
                     label  : "Ver Tipo de Item",
                     icon   : "fa fa-search",
@@ -102,7 +109,29 @@
                         showTipoItem(nodeId);
                     }
                 };
-
+                var editarTipoItem = {
+                    label  : "Modificar Tipo de Item",
+                    icon   : "fa fa-pencil text-info",
+                    action : function () {
+                        createEditTipoItem(nodeId);
+                    }
+                };
+                var crearItem = {
+                    label            : "Nuevo Item",
+                    icon             : "fa flaticon-power30 text-success",
+                    separator_before : true,
+                    action           : function () {
+                        createEditItem(nodeId);
+                    }
+                };
+                var editarItem = {
+                    label            : "Modificar Item",
+                    icon             : "fa fa-pencil text-info",
+                    separator_before : true,
+                    action           : function () {
+                        createEditItem(null, nodeId);
+                    }
+                };
                 var verItem = {
                     label            : "Ver Item",
                     icon             : "fa fa-search",
@@ -127,10 +156,14 @@
                 var items = {};
 
                 if (esRoot) {
+                    items.crearTipoItem = crearTipoItem;
                 } else if (esTipoItem) {
                     items.verTipoItem = verTipoItem;
+                    items.editarTipoItem = editarTipoItem;
+                    items.crearItem = crearItem;
                 } else if (esItem) {
                     items.verItem = verItem;
+                    items.editarItem = editarItem;
                 } else if (esBodega) {
                     items.verDetalles = verDetalles;
                 }
@@ -153,6 +186,120 @@
                 scrollToNode($scrollTo);
             }
 
+            function submitFormTipoItem() {
+                var $form = $("#frmTipoItem");
+                var $btn = $("#dlgcreateEditTipoItem").find("#btnSave");
+                if ($form.valid()) {
+                    $btn.replaceWith(spinner);
+                    openLoader("Guardando tipo de Item");
+                    $.ajax({
+                        type    : "POST",
+                        url     : $form.attr("action"),
+                        data    : $form.serialize(),
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function () {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith($btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
+                } else {
+                    return false;
+                } //else
+            }
+            function deletetipoItem(itemId) {
+                bootbox.dialog({
+                    title   : "Alerta",
+                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
+                              "¿Está seguro que desea eliminar el tipo de Item seleccionado? Esta acción no se puede deshacer.</p>",
+                    buttons : {
+                        cancelar : {
+                            label     : "Cancelar",
+                            className : "btn-primary",
+                            callback  : function () {
+                            }
+                        },
+                        eliminar : {
+                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
+                            className : "btn-danger",
+                            callback  : function () {
+                                openLoader("Eliminando tipo de Item");
+                                $.ajax({
+                                    type    : "POST",
+                                    url     : '${createLink(controller:'tipoItem', action:'delete_ajax')}',
+                                    data    : {
+                                        id : itemId
+                                    },
+                                    success : function (msg) {
+                                        var parts = msg.split("*");
+                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                        if (parts[0] == "SUCCESS") {
+                                            setTimeout(function () {
+                                                location.reload(true);
+                                            }, 1000);
+                                        } else {
+                                            closeLoader();
+                                        }
+                                    },
+                                    error   : function () {
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+            function createEditTipoItem(id) {
+                var title = id ? "Editar" : "Crear";
+                var data = id ? {id : id} : {};
+                openLoader();
+                $.ajax({
+                    type    : "POST",
+                    url     : "${createLink(controller:'tipoItem', action:'form_ajax')}",
+                    data    : data,
+                    success : function (msg) {
+                        closeLoader();
+                        var b = bootbox.dialog({
+                            id    : "dlgcreateEditTipoItem",
+                            title : title + " Tipos de Items",
+
+                            message : msg,
+                            buttons : {
+                                cancelar : {
+                                    label     : "Cancelar",
+                                    className : "btn-primary",
+                                    callback  : function () {
+                                    }
+                                },
+                                guardar  : {
+                                    id        : "btnSave",
+                                    label     : "<i class='fa fa-save'></i> Guardar",
+                                    className : "btn-success",
+                                    callback  : function () {
+                                        return submitFormTipoItem();
+                                    } //callback
+                                } //guardar
+                            } //buttons
+                        }); //dialog
+                        setTimeout(function () {
+                            b.find(".form-control").first().focus()
+                        }, 500);
+                    } //success
+                }); //ajax
+            } //createEdit
             function showTipoItem(id) {
                 openLoader();
                 $.ajax({
@@ -180,6 +327,132 @@
                 });
             }
 
+            function submitFormItem() {
+                var $form = $("#frmItem");
+                var $btn = $("#dlgCreateEditItem").find("#btnSave");
+                if ($form.valid()) {
+                    $btn.replaceWith(spinner);
+                    openLoader("Guardando Item");
+                    var data = $form.serialize();
+                    var maq = "";
+                    $(".maquinas").each(function () {
+                        if (maq != "") {
+                            maq += "_";
+                        }
+                        maq += $(this).data("id");
+                    });
+                    data += "&maquinas=" + maq;
+                    $.ajax({
+                        type    : "POST",
+                        url     : $form.attr("action"),
+                        data    : data,
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function () {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith($btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
+                } else {
+                    return false;
+                } //else
+            }
+            function deleteItem(itemId) {
+                bootbox.dialog({
+                    title   : "Alerta",
+                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
+                              "¿Está seguro que desea eliminar el Item seleccionado? Esta acción no se puede deshacer.</p>",
+                    buttons : {
+                        cancelar : {
+                            label     : "Cancelar",
+                            className : "btn-primary",
+                            callback  : function () {
+                            }
+                        },
+                        eliminar : {
+                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
+                            className : "btn-danger",
+                            callback  : function () {
+                                openLoader("Eliminando Item");
+                                $.ajax({
+                                    type    : "POST",
+                                    url     : '${createLink(controller:'item', action:'delete_ajax')}',
+                                    data    : {
+                                        id : itemId
+                                    },
+                                    success : function (msg) {
+                                        var parts = msg.split("*");
+                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                        if (parts[0] == "SUCCESS") {
+                                            setTimeout(function () {
+                                                location.reload(true);
+                                            }, 1000);
+                                        } else {
+                                            closeLoader();
+                                        }
+                                    },
+                                    error   : function () {
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+            function createEditItem(padreId, id) {
+                var title = id ? "Editar" : "Crear";
+                var data = id ? {id : id} : {};
+                if (padreId) {
+                    data.padre = padreId;
+                }
+                openLoader();
+                $.ajax({
+                    type    : "POST",
+                    url     : "${createLink(controller:'item', action:'form_ajax')}",
+                    data    : data,
+                    success : function (msg) {
+                        closeLoader();
+                        var b = bootbox.dialog({
+                            id    : "dlgCreateEditItem",
+                            title : title + " Item",
+
+                            message : msg,
+                            buttons : {
+                                cancelar : {
+                                    label     : "Cancelar",
+                                    className : "btn-primary",
+                                    callback  : function () {
+                                    }
+                                },
+                                guardar  : {
+                                    id        : "btnSave",
+                                    label     : "<i class='fa fa-save'></i> Guardar",
+                                    className : "btn-success",
+                                    callback  : function () {
+                                        return submitFormItem();
+                                    } //callback
+                                } //guardar
+                            } //buttons
+                        }); //dialog
+                        setTimeout(function () {
+                            b.find(".form-control").first().focus()
+                        }, 500);
+                    } //success
+                }); //ajax
+            } //createEdit
             function showItem(id) {
                 openLoader();
                 $.ajax({
@@ -258,7 +531,7 @@
                         items        : createContextMenu
                     },
                     state       : {
-                        key : "items"
+                        key : "itemsAdmin"
                     },
                     search      : {
                         fuzzy             : false,

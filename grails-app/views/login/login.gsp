@@ -29,7 +29,7 @@
 
                         <g:form name="frmLogin" action="validar">
                             <div class="input-group input-login">
-                                <g:textField name="user" class="form-control required noEspacios" placeholder="Usuario"/>
+                                <g:textField name="user" autocomplete="off" class="form-control required noEspacios" placeholder="Usuario"/>
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
                             </div>
 

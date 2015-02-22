@@ -1,10 +1,9 @@
 <%--
   Created by IntelliJ IDEA.
   User: DELL
-  Date: 18/02/2015
-  Time: 23:14
+  Date: 21/02/2015
+  Time: 22:38
 --%>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
@@ -19,11 +18,11 @@
 
             <div class="btn-toolbar toolbar" style="margin-top: 10px">
                 <div class="btn-group">
-                    <g:link controller="notaDePedido" action="listaJefatura" class="btn btn-default">
+                    <g:link controller="notaDePedido" action="listaJefeCompras" class="btn btn-default">
                         <i class="fa fa-list"></i> Notas de pedido
                     </g:link>
                     <a href="#" class="btn btn-info" id="btnAprobar">
-                        <i class="fa fa-check"></i> Aprobar
+                        <i class="fa fa-check"></i> Aprobar y asignar jefe de compras
                     </a>
                     <a href="#" class="btn btn-danger" id="btnNegar">
                         <i class="fa fa-times"></i> Negar
@@ -77,6 +76,16 @@
 
                 <div class="col-md-2">
                     ${nota.de}
+                </div>
+
+                <div class="col-md-1">
+                    <label class=" control-label">
+                        Aprobado por
+                    </label>
+                </div>
+
+                <div class="col-md-2">
+                    ${nota.firmaJefe.persona}
                 </div>
 
             </div>
@@ -164,7 +173,7 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'aprobarJefatura_ajax')}",
+                        url     : "${createLink(controller:'notaDePedido', action:'aprobarJefeCompras_ajax')}",
                         data    : {
                             id   : "${nota.id}",
                             auth : $("#auth").val(),
@@ -176,7 +185,7 @@
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                             if (parts[0] == "SUCCESS") {
                                 setTimeout(function () {
-                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefatura')}";
+                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefeCompras')}";
                                 }, 1000);
                             } else {
                                 closeLoader();
@@ -190,7 +199,7 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'negarJefatura_ajax')}",
+                        url     : "${createLink(controller:'notaDePedido', action:'negarJefeCompras_ajax')}",
                         data    : {
                             id    : "${nota.id}",
                             auth  : $("#auth").val(),
@@ -201,7 +210,7 @@
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                             if (parts[0] == "SUCCESS") {
                                 setTimeout(function () {
-                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefatura')}";
+                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefeCompras')}";
                                 }, 1000);
                             } else {
                                 closeLoader();
@@ -215,14 +224,14 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'bodegaJefatura_ajax')}",
+                        url     : "${createLink(controller:'notaDePedido', action:'bodegaJefeCompras_ajax')}",
                         data    : $("#frmBodega").serialize() + "&id=${nota.id}",
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                             if (parts[0] == "SUCCESS") {
                                 setTimeout(function () {
-                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefatura')}";
+                                    location.href = "${createLink(conroller:'notaDePedido', action:'listaJefeCompras')}";
                                 }, 1000);
                             } else {
                                 closeLoader();

@@ -105,7 +105,7 @@
                 var $btn = $("#dlgCreateEdit").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando Prfl");
+                    openLoader("Guardando Perfil");
                     $.ajax({
                         type   : "POST",
                         url    : $form.attr("action"),
@@ -144,10 +144,10 @@
                             label    : "<i class='fa fa-trash-o'></i> Eliminar",
                             className: "btn-danger",
                             callback : function () {
-                                openLoader("Eliminando Prfl");
+                                openLoader("Eliminando Perfil");
                                 $.ajax({
                                     type   : "POST",
-                                    url    : '${createLink(controller: 'prfl', action:'delete_ajax')}',
+                                    url    : '${createLink(controller: 'perfil', action:'delete_ajax')}',
                                     data   : {
                                         id: itemId
                                     },
@@ -169,16 +169,18 @@
                 });
             }
             function createEditPerfil(id) {
+                openLoader();
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id: id} : {};
                 $.ajax({
                     type   : "POST",
-                    url    : "${createLink(controller: 'prfl', action:'form_ajax')}",
+                    url    : "${createLink(controller: 'perfil', action:'form_ajax')}",
                     data   : data,
                     success: function (msg) {
+                        closeLoader();
                         var b = bootbox.dialog({
                             id   : "dlgCreateEdit",
-                            title: title + " Prfl",
+                            title: title + " Perfil",
 
                             message: msg,
                             buttons: {

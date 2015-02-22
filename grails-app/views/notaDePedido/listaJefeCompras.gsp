@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Notas de pedido pendientes de aprobación</title>
+        <title>Notas de pedido pendientes de asignación</title>
         <style type="text/css">
         table {
             margin-top : 10px;
@@ -13,7 +13,7 @@
 
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <elm:container tipo="horizontal" titulo="Notas de pedido pendientes de revisión">
+        <elm:container tipo="horizontal" titulo="Notas de pedido pendientes de asignación">
             <table class="table table-striped  table-bordered table-hover table-condensed">
                 <thead>
                     <tr>
@@ -35,7 +35,7 @@
                             <td>${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}</td>
                             <td title="${nota.estadoSolicitud?.descripcion}">${nota.estadoSolicitud}</td>
                             <td style="text-align: center">
-                                <g:link controller="notaDePedido" action="revisarJefatura" title="Revisar" id="${nota.id}" class="btn btn-primary btn-sm">
+                                <g:link controller="notaDePedido" action="revisarJefeCompras" title="Revisar" id="${nota.id}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </td>

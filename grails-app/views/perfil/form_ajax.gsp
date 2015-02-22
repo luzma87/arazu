@@ -8,19 +8,6 @@
         <g:form class="form-horizontal" name="frmPrfl" role="form" action="save_ajax" method="POST">
             <g:hiddenField name="id" value="${prflInstance?.id}"/>
 
-            <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'descripcion', 'error')} required">
-                <span class="grupo">
-                    <label for="descripcion" class="col-md-2 control-label">
-                        Descripción
-                    </label>
-
-                    <div class="col-md-6">
-                        <g:textField name="descripcion" required="" class="form-control input-sm required" value="${prflInstance?.descripcion}"/>
-                    </div>
-                    *
-                </span>
-            </div>
-
             <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'nombre', 'error')} required">
                 <span class="grupo">
                     <label for="nombre" class="col-md-2 control-label">
@@ -30,7 +17,6 @@
                     <div class="col-md-6">
                         <g:textField name="nombre" required="" class="form-control input-sm required" value="${prflInstance?.nombre}"/>
                     </div>
-                    *
                 </span>
             </div>
 
@@ -43,7 +29,18 @@
                     <div class="col-md-6">
                         <g:textField name="codigo" class="form-control input-sm unique noEspacios" value="${prflInstance?.codigo}"/>
                     </div>
+                </span>
+            </div>
 
+            <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'descripcion', 'error')} required">
+                <span class="grupo">
+                    <label for="descripcion" class="col-md-2 control-label">
+                        Descripción
+                    </label>
+
+                    <div class="col-md-6">
+                        <g:textField name="descripcion" required="" class="form-control input-sm required" value="${prflInstance?.descripcion}"/>
+                    </div>
                 </span>
             </div>
 
@@ -56,22 +53,21 @@
                     <div class="col-md-6">
                         <g:textField name="observaciones" required="" class="form-control input-sm required" value="${prflInstance?.observaciones}"/>
                     </div>
-                    *
                 </span>
             </div>
 
-            <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'padre', 'error')} required">
-                <span class="grupo">
-                    <label for="padre" class="col-md-2 control-label">
-                        Padre
-                    </label>
+        %{--<div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'padre', 'error')} required">--}%
+        %{--<span class="grupo">--}%
+        %{--<label for="padre" class="col-md-2 control-label">--}%
+        %{--Padre--}%
+        %{--</label>--}%
 
-                    <div class="col-md-6">
-                        <g:select id="padre" name="padre.id" from="${Prfl.list()}" optionKey="id" required="" value="${prflInstance?.padre?.id}" class="many-to-one form-control input-sm"/>
-                    </div>
-                    *
-                </span>
-            </div>
+        %{--<div class="col-md-6">--}%
+        %{--<g:select id="padre" name="padre.id" from="${Perfil.list()}" optionKey="id" required="" value="${prflInstance?.padre?.id}" class="many-to-one form-control input-sm"/>--}%
+        %{--</div>--}%
+        %{--*--}%
+        %{--</span>--}%
+        %{--</div>--}%
         </g:form>
     </div>
 
@@ -89,9 +85,7 @@
             success        : function (label) {
                 label.parents(".grupo").removeClass('has-error');
                 label.remove();
-            }
-
-            , rules        : {
+            }, rules       : {
 
                 codigo : {
                     remote : {
