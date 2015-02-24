@@ -4,10 +4,16 @@ import arazu.alertas.Alerta
 
 class LoginController {
 
+    /**
+     * Acción que redirecciona a la acción Login
+     */
     def index() {
         redirect(action: 'login')
     }
 
+    /**
+     * Acción que valida que la sesión esté activa
+     */
     def validarSesion() {
         println "sesion creada el:" + new Date(session.getCreationTime()) + " hora actual: " + new Date()
         println "último acceso:" + new Date(session.getLastAccessedTime()) + " hora actual: " + new Date()
@@ -21,6 +27,9 @@ class LoginController {
         }
     }
 
+    /**
+     * Acción que muestra la pantalla de login
+     */
     def login() {
         def usu = session.usuario
         def cn = "inicio"
@@ -34,6 +43,9 @@ class LoginController {
         }
     }
 
+    /**
+     * Acción que valida las credenciales de login. Si el usuario tiene un solo perfil, inicia directamente la sesión, sino muestra la pantalla de selección de perfil
+     */
     def validar() {
         if (!params.user || !params.pass) {
             redirect(controller: "login", action: "login")
@@ -88,6 +100,11 @@ class LoginController {
         }
     }
 
+    /**
+     * Función que hace el login: asigna el perfil y los permisos a la sesión y redirecciona a la pantalla de inicio
+     * @param perfil
+     * @return
+     */
     def doLogin(perfil) {
         session.perfil = perfil
         cargarPermisos()
@@ -100,6 +117,9 @@ class LoginController {
         return
     }
 
+    /**
+     * Acción que muestra la pantalla de selección de perfil
+     */
     def perfiles() {
         def usuarioLog = session.usuario
 //        def perfilesUsr = Sesn.findAllByUsuario(usuarioLog, [sort: 'perfil'])
@@ -118,6 +138,9 @@ class LoginController {
         return [perfiles: perfiles]
     }
 
+    /**
+     * Acción que guarda el perfil y hace el login
+     */
     def savePerfil() {
         if (!params.perfil) {
             redirect(controller: "inicio", action: "perfiles")
@@ -126,31 +149,9 @@ class LoginController {
         doLogin(perfil)
     }
 
-    def savePer() {
-        def sesn = Sesion.get(params.prfl)
-        def perf = sesn.perfil
-        if (perf) {
-            def permisos = Prpf.findAllByPerfil(perf)
-            permisos.each {
-                def perm = PermisoUsuario.findAllByPersonaAndPermisoTramite(session.usuario, it.permiso)
-                perm.each { pr ->
-                    if (pr.estaActivo) {
-                        session.usuario.permisos.add(pr.permisoTramite)
-                    }
-                }
-            }
-            session.perfil = perf
-            cargarPermisos()
-            if (Alerta.cantAlertasPersona(session.usuario) > 0)
-                redirect(controller: 'alerta', action: 'list')
-            else {
-                redirect(controller: "inicio", action: "index")
-            }
-        } else {
-            redirect(action: "login")
-        }
-    }
-
+    /**
+     * Acción que termina la sesión y redirecciona a la pantalla de login
+     */
     def logout() {
         session.usuario = null
         session.perfil = null
@@ -162,10 +163,10 @@ class LoginController {
         redirect(controller: 'login', action: 'login')
     }
 
-    def finDeSesion() {
-
-    }
-
+    /**
+     * Acción que carga los permisos del perfil del usuario en la sesión para validar las pantallas a las que puede acceder
+     * @return
+     */
     def cargarPermisos() {
         def permisos = Permiso.findAllByPerfil(session.perfil)
         def hp = [:]

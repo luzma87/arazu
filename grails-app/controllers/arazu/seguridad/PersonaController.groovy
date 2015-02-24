@@ -388,7 +388,7 @@ class PersonaController extends Shield {
         def usu = Persona.get(session.usuario.id)
         if (usu.mail.equalsIgnoreCase(mail)) {
             def password = org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(7)
-            println password
+//            println password
             def newAuth = password.encodeAsMD5()
             usu.autorizacion = newAuth
             usu.save(flush: true)

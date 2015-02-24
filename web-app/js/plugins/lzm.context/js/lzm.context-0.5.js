@@ -138,7 +138,7 @@
 
         function createContextMenu(items, $element, submenu) {
             var $menu = $("<ul class='lzm-dropdown-menu dropdown-menu'>");
-            if(submenu) {
+            if (submenu) {
                 $menu.addClass("lzm-dropdown-submenu-content");
             }
             $.each(items, function (i, obj) {
@@ -193,9 +193,15 @@
                     }
                     if (obj.action && !disabled) {
                         $a.click(function () {
+                            var r = true;
                             if ($.isFunction(obj.action)) {
-                                obj.action.call(this, $element, $li);
+                                r = obj.action.call(this, $element, $li);
                             }
+                            if ($.isFunction(settings.onHide)) {
+                                settings.onHide.call(this, $element);
+                            }
+                            $(".lzm-dropdown-menu").remove();
+                            return r;
                         });
                     }
                     $li.append($a);

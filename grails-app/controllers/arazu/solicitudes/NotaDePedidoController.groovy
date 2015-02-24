@@ -155,6 +155,18 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que muestra la lista de notas de pedido para que un asistente de compras les asigne cotizaciones
+     */
+    def listaAsistenteCompras() {
+        if (session.perfil.codigo != "ASCM") {
+            response.sendError(403)
+        }
+        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E03")
+        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
+        return [notas: notas]
+    }
+
+    /**
      * Acción que le permite a un jefe revisar una nota de pedido, verificar las existencias en bodegas
      * y aprobar/negar/informar existe en bodegas
      */
@@ -204,6 +216,33 @@ class NotaDePedidoController extends Shield {
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
         return [nota: nota, existencias: existencias]
+    }
+
+    /**
+     * Acción que le permite a un asistente de compras revisar una nota de pedido, verificar las existencias en bodegas
+     * y aprobar/negar/informar existe en bodegas y asignar cotizaciones
+     */
+    def revisarAsistenteCompras() {
+        if (!params.id)
+            response.sendError(404)
+        def nota = Pedido.get(params.id)
+        if (session.perfil.codigo != "ASCM") {
+            response.sendError(403)
+        }
+        if (nota.estadoSolicitud.codigo != "E03") {
+            response.sendError(403)
+        }
+        def existencias = [:]
+        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+            if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
+                existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
+                                                                  unidad: ing.unidad,
+                                                                  total : 0]
+            }
+            existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
+        }
+        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
+        return [nota: nota, existencias: existencias, cots: cots]
     }
 
     /**
@@ -362,18 +401,20 @@ class NotaDePedidoController extends Shield {
             case "BJC": // el jefe de compras indica de q bodega(s) sacar
                 params.each { k, v ->
                     if (k.toString().startsWith("ret")) {
-                        def parts = k.split("_")
-                        def bodega = Bodega.get(parts[1].toLong())
-                        def cantidad = v.toDouble()
+                        if (v) {
+                            def parts = k.split("_")
+                            def bodega = Bodega.get(parts[1].toLong())
+                            def cantidad = v.toDouble()
 
-                        notificacionBodegas += bodega.responsable
-                        notificacionBodegas += bodega.suplente
+                            notificacionBodegas += bodega.responsable
+                            notificacionBodegas += bodega.suplente
 
-                        def bp = new BodegaPedido()
-                        bp.bodega = bodega
-                        bp.pedido = pedido
-                        bp.cantidad = cantidad
-                        bp.save()
+                            def bp = new BodegaPedido()
+                            bp.bodega = bodega
+                            bp.pedido = pedido
+                            bp.cantidad = cantidad
+                            bp.save()
+                        }
                     }
                 }
 
@@ -527,6 +568,11 @@ class NotaDePedidoController extends Shield {
         render cambiarEstadoPedido(params, "BJF")
     }
 
+    /**
+     * Acción que permite revisar una nota de pedido
+     * @deprecated ahora se utilizan las acciones específicas a cada perfil
+     */
+    @Deprecated
     def revisar() {
         if (!params.id)
             response.sendError(404)
@@ -541,7 +587,10 @@ class NotaDePedidoController extends Shield {
         [nota: nota, cots: cots]
     }
 
-    def savaCotizacion() {
+    /**
+     * Acción que guarda una cotización y vuelve a cargar la pantalla de revisión de asistente de compras
+     */
+    def saveCotizacion() {
         println "save cotizacion " + params
         def cotizacion
         if (params.id) {
@@ -555,9 +604,14 @@ class NotaDePedidoController extends Shield {
         if (!cotizacion.save(flush: true)) {
             flash.message = renderErrors(bean: cotizacion)
         }
-        redirect(action: "revisar", id: params.pedido.id)
+        redirect(action: "revisarAsistenteCompras", id: params.pedido.id)
     }
 
+    /**
+     * Acción que envía la nota de pedido después de haberle asignado coizaciones
+     * @deprecated ahora se utilizan las acciones específicas a cada perfil
+     */
+    @Deprecated
     def enviarAprobacion() {
 
         def nota = Pedido.get(params.id)
@@ -573,8 +627,12 @@ class NotaDePedidoController extends Shield {
         }
     }
 
+    /**
+     * Acción que muestra la lista de notas de pedido por aprobar
+     * @deprecated ahora se utilizan las acciones específicas a cada perfil
+     */
+    @Deprecated
     def listaAprobacion() {
-
         def notas = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("E04"), [sort: "numero"])
         [notas: notas]
     }
