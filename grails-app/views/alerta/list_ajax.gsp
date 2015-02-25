@@ -17,7 +17,9 @@
                     <td style="text-align: center"><g:formatDate date="${alertaInstance.fechaEnvio}" format="dd-MM-yyyy"/></td>
                     <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${alertaInstance}" field="mensaje"/></elm:textoBusqueda></td>
                     <td class="text-center">
-                        <g:link controller="alerta" action="showAlerta" id="${alertaInstance.id}" class="btn btn-warning btn-sm">IR</g:link>
+                        <g:link controller="alerta" action="showAlerta" id="${alertaInstance.id}" class="btn btn-warning btn-sm btn-alerta">
+                            IR
+                        </g:link>
                     </td>
                 </tr>
             </g:each>
@@ -36,3 +38,11 @@
         </g:else>
     </tbody>
 </table>
+
+<script type="text/javascript">
+    $(function () {
+        $(".btn-alerta").click(function () {
+            openLoader();
+        });
+    });
+</script>

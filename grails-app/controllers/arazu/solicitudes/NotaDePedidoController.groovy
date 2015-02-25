@@ -150,7 +150,7 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def estadoPendienteAsignacion = EstadoSolicitud.findByCodigo("E02")
-        def notas = Pedido.findAllByEstadoSolicitud(estadoPendienteAsignacion, [sort: "numero"])
+        def notas = Pedido.findAllByEstadoSolicitudAndParaJC(estadoPendienteAsignacion, session.usuario, [sort: "numero"])
         return [notas: notas]
     }
 
@@ -162,7 +162,31 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E03")
-        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
+        def notas = Pedido.findAllByEstadoSolicitudAndParaAC(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
+        return [notas: notas]
+    }
+
+    /**
+     * Acción que muestra la lista de notas de pedido para que un jefe haga la aprobación final
+     */
+    def listaJefe() {
+        if (session.perfil.codigo != "JEFE") {
+            response.sendError(403)
+        }
+        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E04")
+        def notas = Pedido.findAllByEstadoSolicitudAndParaAF(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
+        return [notas: notas]
+    }
+
+    /**
+     * Acción que muestra la lista de notas de pedido para que un gerente haga la aprobación final
+     */
+    def listaGerente() {
+        if (session.perfil.codigo != "GRNT") {
+            response.sendError(403)
+        }
+        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E04")
+        def notas = Pedido.findAllByEstadoSolicitudAndParaAF(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
         return [notas: notas]
     }
 
@@ -246,6 +270,60 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que le permite a un jefe revisar una nota de pedido, verificar las existencias en bodegas
+     * y aprobar/negar/informar existe en bodegas FINAL
+     */
+    def revisarJefe() {
+        if (!params.id)
+            response.sendError(404)
+        def nota = Pedido.get(params.id)
+        if (session.perfil.codigo != "JEFE") {
+            response.sendError(403)
+        }
+        if (nota.estadoSolicitud.codigo != "E04") {
+            response.sendError(403)
+        }
+        def existencias = [:]
+        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+            if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
+                existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
+                                                                  unidad: ing.unidad,
+                                                                  total : 0]
+            }
+            existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
+        }
+        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
+        return [nota: nota, existencias: existencias, cots: cots]
+    }
+
+    /**
+     * Acción que le permite a un gerente revisar una nota de pedido, verificar las existencias en bodegas
+     * y aprobar/negar/informar existe en bodegas FINAL
+     */
+    def revisarGerente() {
+        if (!params.id)
+            response.sendError(404)
+        def nota = Pedido.get(params.id)
+        if (session.perfil.codigo != "GRNT") {
+            response.sendError(403)
+        }
+        if (nota.estadoSolicitud.codigo != "E04") {
+            response.sendError(403)
+        }
+        def existencias = [:]
+        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+            if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
+                existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
+                                                                  unidad: ing.unidad,
+                                                                  total : 0]
+            }
+            existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
+        }
+        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
+        return [nota: nota, existencias: existencias, cots: cots]
+    }
+
+    /**
      * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
      */
     def dlgAprobarJefe_ajax() {
@@ -264,9 +342,53 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
+     */
+    def dlgAprobarAsistenteCompras_ajax() {
+        def nota = Pedido.get(params.id)
+        def jefes = null, gerentes = null
+
+        def total = []
+        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
+        def max = 0
+        cots.eachWithIndex { c, i ->
+            def m = c.valor * nota.cantidad
+            total[i] = m
+            if (m > max) {
+                max = m
+            }
+        }
+
+        if (max < 100) {
+            jefes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JEFE"), [sort: 'apellido'])
+        } else {
+            gerentes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("GRNT"), [sort: 'apellido'])
+        }
+
+        return [nota: nota, jefes: jefes, gerentes: gerentes]
+    }
+
+    /**
+     * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
+     */
+    def dlgAprobarFinal_ajax() {
+        def nota = Pedido.get(params.id)
+        def cots = Cotizacion.findAllByPedido(nota)
+        return [nota: nota, cots: cots]
+    }
+
+    /**
      * Acción que carga una pantalla emergente para completar la información necesaria para negar una nota de pedido
      */
     def dlgNegar_ajax() {
+        def nota = Pedido.get(params.id)
+        return [nota: nota]
+    }
+
+    /**
+     * Acción que carga una pantalla emergente para completar la información necesaria para negar definitivamente una nota de pedido
+     */
+    def dlgNegarFinal_ajax() {
         def nota = Pedido.get(params.id)
         return [nota: nota]
     }
@@ -289,6 +411,110 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al jefe de compras destinatario y al que realizó el pedido
+     */
+    def aprobarJefatura_ajax() {
+        render cambiarEstadoPedido(params, "AJF")
+    }
+
+    /**
+     * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al asistente de compras destinatario y al que realizó el pedido
+     */
+    def aprobarJefeCompras_ajax() {
+        render cambiarEstadoPedido(params, "AJC")
+    }
+
+    /**
+     * Acción que guarda la aprobación de la nota de pedido con las cotizaciones ingresadas para una nota de pedido por un asistente de compras  y envía una alerta y un email al jefe o gerente de compras destinatario y al que realizó el pedido
+     */
+    def aprobarAsistenteCompras_ajax() {
+        render cambiarEstadoPedido(params, "AAC")
+    }
+
+    /**
+     * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
+     */
+    def aprobarFinal_ajax() {
+        render cambiarEstadoPedido(params, "AF")
+    }
+
+    /**
+     * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
+     */
+    def negarJefatura_ajax() {
+        render cambiarEstadoPedido(params, "NJF")
+    }
+
+    /**
+     * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
+     */
+    def negarJefeCompras_ajax() {
+        render cambiarEstadoPedido(params, "NJC")
+    }
+
+    /**
+     * Acción que guarda la negación de una nota de pedido por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
+     */
+    def negarAsistenteCompras_ajax() {
+        render cambiarEstadoPedido(params, "NAC")
+    }
+
+    /**
+     * Acción que guarda la negación final de una nota de pedido por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
+     */
+    def negarFinal_ajax() {
+        render cambiarEstadoPedido(params, "NF")
+    }
+
+    /**
+     * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
+     */
+    def bodegaJefatura_ajax() {
+        render cambiarEstadoPedido(params, "BJF")
+    }
+
+    /**
+     * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
+     */
+    def bodegaJefeCompras_ajax() {
+        render cambiarEstadoPedido(params, "BJC")
+    }
+
+    /**
+     * Acción que guarda la información de las bodegas seleccionadas cuando un asistente de compras notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
+     */
+    def bodegaAsistenteCompras_ajax() {
+        render cambiarEstadoPedido(params, "BAC")
+    }
+
+    /**
+     * Acción que guarda la información de las bodegas seleccionadas cuando un asistente de compras notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
+     */
+    def bodegaFinal_ajax() {
+        render cambiarEstadoPedido(params, "BF")
+    }
+
+    /**
+     * Acción que guarda una cotización y vuelve a cargar la pantalla de revisión de asistente de compras
+     */
+    def saveCotizacion() {
+        println "save cotizacion " + params
+        def cotizacion
+        if (params.id) {
+            cotizacion = Cotizacion.get(params.id)
+            cotizacion.properties = params
+        } else {
+            cotizacion = new Cotizacion(params)
+        }
+        cotizacion.fecha = new Date()
+        cotizacion.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
+        if (!cotizacion.save(flush: true)) {
+            flash.message = renderErrors(bean: cotizacion)
+        }
+        redirect(action: "revisarAsistenteCompras", id: params.pedido.id)
+    }
+
+    /**
      * Función que cambia de estado un pedido y envía las notificaciones necesarias
      * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
@@ -299,6 +525,10 @@ class NotaDePedidoController extends Shield {
      *              AJC: el jefe de compras aprueba la solicitud
      *              NJC: el jefe de compras niega la solicitud
      *              BJC: el jefe de compras indica de q bodega(s) sacar
+     *
+     *              AJC: el asistente de compras aprueba la solicitud y envía las cotizaciones
+     *              NJC: el asistente de compras niega la solicitud
+     *              BJC: el asistente de compras indica de q bodega(s) sacar
      * @return String con los mensajes de error si ocurrieron
      */
     private String cambiarEstadoPedido(params, String tipo) {
@@ -324,20 +554,22 @@ class NotaDePedidoController extends Shield {
                 estadoFinal = EstadoSolicitud.findByCodigo("E02") //estado Pendiente Asignacion
                 concepto = "Aprobación"
                 mensTipo = "aprobado"
-                retTipo = "aprobada"
+                retTipo = "ha sido aprobada"
                 retTipo2 = "aprobarla"
                 firmaPedido = "firmaJefe"
                 accionAlerta = "listaJefeCompras"
 
                 notificacion1Recibe = para
                 notificacion2Recibe = pedido.de
+
+                pedido.paraJC = para
                 break;
             case "NJF": // el jefe niega la solicitud
                 codEstadoInicial = "E01"
                 estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
                 concepto = "Negación"
                 mensTipo = "negado"
-                retTipo = "negada"
+                retTipo = "ha sido negada"
                 retTipo2 = "negarla"
                 firmaPedido = "firmaNiega"
                 accionAlerta = "lista"
@@ -366,7 +598,7 @@ class NotaDePedidoController extends Shield {
                 estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
                 concepto = "Notificación de existencia en bodega"
                 mensTipo = "notificado que existe en bodega"
-                retTipo = "notificada que existe en bodega"
+                retTipo = "ha sido notificada que existe en bodega"
                 retTipo2 = "notificar que existe en bodega"
                 firmaPedido = "firmaBodega"
                 accionAlerta = "lista"
@@ -378,20 +610,22 @@ class NotaDePedidoController extends Shield {
                 estadoFinal = EstadoSolicitud.findByCodigo("E03") //estado Pendientes cotizaciones
                 concepto = "Aprobación"
                 mensTipo = "aprobado"
-                retTipo = "aprobada"
+                retTipo = "ha sido aprobada"
                 retTipo2 = "aprobarla"
                 firmaPedido = "firmaJefeCompras"
                 accionAlerta = "listaAsistenteCompras"
 
                 notificacion1Recibe = para
                 notificacion2Recibe = pedido.de
+
+                pedido.paraAC = para
                 break;
             case "NJC": // el jefe de compras niega la solicitud
                 codEstadoInicial = "E02"
                 estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
                 concepto = "Negación"
                 mensTipo = "negado"
-                retTipo = "negada"
+                retTipo = "ha sido negada"
                 retTipo2 = "negarla"
                 firmaPedido = "firmaNiega"
                 accionAlerta = "lista"
@@ -422,7 +656,135 @@ class NotaDePedidoController extends Shield {
                 estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
                 concepto = "Notificación de existencia en bodega"
                 mensTipo = "notificado que existe en bodega"
-                retTipo = "notificada que existe en bodega"
+                retTipo = "ha sido notificada que existe en bodega"
+                retTipo2 = "notificar que existe en bodega"
+                firmaPedido = "firmaBodega"
+                accionAlerta = "lista"
+
+                notificacion1Recibe = pedido.de
+                break;
+            case "AAC": // el asistente de compras aprueba la solicitud y ya cargó las cotizaciones
+                codEstadoInicial = "E03"
+                estadoFinal = EstadoSolicitud.findByCodigo("E04") //estado Pendiente de aprobacion final
+                concepto = "Cargado de cotizaciones"
+                mensTipo = "cargado de cotizaciones"
+                retTipo = "ha sido aprobada y ha enviado las cotizaciones"
+                retTipo2 = "aprobarla y enviar las cotizaciones"
+                firmaPedido = "firmaAsistenteCompras"
+                def total = []
+                def cots = Cotizacion.findAllByPedido(pedido, [sort: "id"])
+                def max = 0
+                cots.eachWithIndex { c, i ->
+                    def m = c.valor * pedido.cantidad
+                    total[i] = m
+                    if (m > max) {
+                        max = m
+                    }
+                }
+
+                if (max < 100) {
+                    accionAlerta = "listaJefe"
+                } else {
+                    accionAlerta = "listaGerente"
+                }
+
+                notificacion1Recibe = para
+                notificacion2Recibe = pedido.de
+
+                pedido.paraAF = para
+                break;
+            case "NAC": // el asistente de compras niega la solicitud
+                codEstadoInicial = "E03"
+                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                concepto = "Negación"
+                mensTipo = "negado"
+                retTipo = "ha sido negada"
+                retTipo2 = "negarla"
+                firmaPedido = "firmaNiega"
+                accionAlerta = "lista"
+
+                notificacion1Recibe = pedido.de
+                break;
+            case "BAC": // el asistente de compras indica de q bodega(s) sacar
+                params.each { k, v ->
+                    if (k.toString().startsWith("ret")) {
+                        if (v) {
+                            def parts = k.split("_")
+                            def bodega = Bodega.get(parts[1].toLong())
+                            def cantidad = v.toDouble()
+
+                            notificacionBodegas += bodega.responsable
+                            notificacionBodegas += bodega.suplente
+
+                            def bp = new BodegaPedido()
+                            bp.bodega = bodega
+                            bp.pedido = pedido
+                            bp.cantidad = cantidad
+                            bp.save()
+                        }
+                    }
+                }
+
+                codEstadoInicial = "E03"
+                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                concepto = "Notificación de existencia en bodega"
+                mensTipo = "notificado que existe en bodega"
+                retTipo = "ha sido notificada que existe en bodega"
+                retTipo2 = "notificar que existe en bodega"
+                firmaPedido = "firmaBodega"
+                accionAlerta = "lista"
+
+                notificacion1Recibe = pedido.de
+                break;
+            case "AF": // el jefe o gerente aprueba final la solicitud
+                codEstadoInicial = "E04"
+                estadoFinal = EstadoSolicitud.findByCodigo("A01") //estado aprobado
+                concepto = "APROBACIÓN"
+                mensTipo = "APROBADO"
+                retTipo = "HA SIDO APROBADA"
+                retTipo2 = "aprobarla"
+                firmaPedido = "firmaAprueba"
+                accionAlerta = "lista"
+
+                notificacion1Recibe = pedido.de
+                break;
+            case "NF": // el jefe o gerente niega la solicitud
+                codEstadoInicial = "E04"
+                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                concepto = "NEGACIÓN"
+                mensTipo = "NEGADO"
+                retTipo = "HA SIDO NEGADA"
+                retTipo2 = "negarla"
+                firmaPedido = "firmaNiega"
+                accionAlerta = "lista"
+
+                notificacion1Recibe = pedido.de
+                break;
+            case "BF": // el jefe o gerente indica de q bodega(s) sacar
+                params.each { k, v ->
+                    if (k.toString().startsWith("ret")) {
+                        if (v) {
+                            def parts = k.split("_")
+                            def bodega = Bodega.get(parts[1].toLong())
+                            def cantidad = v.toDouble()
+
+                            notificacionBodegas += bodega.responsable
+                            notificacionBodegas += bodega.suplente
+
+                            def bp = new BodegaPedido()
+                            bp.bodega = bodega
+                            bp.pedido = pedido
+                            bp.cantidad = cantidad
+                            bp.save()
+                        }
+                    }
+                }
+
+                codEstadoInicial = "E04"
+                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                concepto = "Notificación de existencia en bodega"
+                mensTipo = "notificado que existe en bodega"
+                retTipo = "ha sido notificada que existe en bodega"
                 retTipo2 = "notificar que existe en bodega"
                 firmaPedido = "firmaBodega"
                 accionAlerta = "lista"
@@ -432,7 +794,16 @@ class NotaDePedidoController extends Shield {
         }
         if (pedido && estadoFinal) {
             if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
-                if (pedido) {
+                if (pedido.save()) {
+
+                    if (tipo == "AF") {
+                        def cotizacionAprobada = Cotizacion.get(params.cot.toLong())
+                        cotizacionAprobada.estadoSolicitud = estadoFinal
+                        if (cotizacionAprobada.save()) {
+                            println "error al aprobar la cotización: " + cotizacionAprobada.errors
+                        }
+                    }
+
                     println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
                     if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
                         def now = new Date()
@@ -505,9 +876,9 @@ class NotaDePedidoController extends Shield {
                                     }
                                 }
                                 if (msg != "") {
-                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
                                 } else {
-                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ha sido ${retTipo} exitosamente"
+                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
                                 }
                                 return msg
                             }
@@ -516,7 +887,7 @@ class NotaDePedidoController extends Shield {
                         return "ERROR*La nota de pedido se encuentra en estado ${pedido.estadoSolicitud.nombre}, no puede ${retTipo2}"
                     }
                 } else {
-                    return "ERROR*No se encontró la nota de pedido"
+                    return "ERROR*Ha ocurrido un error al guardar el nuevo destinatario de la nota de pedido: " + renderErrors(bean: pedido)
                 }
             } else {
                 return "ERROR*Su clave de autorización es incorrecta"
@@ -525,117 +896,4 @@ class NotaDePedidoController extends Shield {
             return "ERROR*Acción no reconocida"
         }
     }
-
-    /**
-     * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al asistente de compras destinatario y al que realizó el pedido
-     */
-    def aprobarJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "AJC")
-    }
-
-    /**
-     * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
-     */
-    def negarJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "NJC")
-    }
-
-    /**
-     * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
-     */
-    def bodegaJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "BJC")
-    }
-
-    /**
-     * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al jefe de compras destinatario y al que realizó el pedido
-     */
-    def aprobarJefatura_ajax() {
-        render cambiarEstadoPedido(params, "AJF")
-    }
-
-    /**
-     * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
-     */
-    def negarJefatura_ajax() {
-        render cambiarEstadoPedido(params, "NJF")
-    }
-
-    /**
-     * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
-     */
-    def bodegaJefatura_ajax() {
-        render cambiarEstadoPedido(params, "BJF")
-    }
-
-    /**
-     * Acción que permite revisar una nota de pedido
-     * @deprecated ahora se utilizan las acciones específicas a cada perfil
-     */
-    @Deprecated
-    def revisar() {
-        if (!params.id)
-            response.sendError(404)
-        def nota = Pedido.get(params.id)
-        if (nota.para.id != session.usuario.id) {
-            response.sendError(403)
-        }
-        if (nota.estadoSolicitud.codigo != "E01") {
-            response.sendError(403)
-        }
-        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
-        [nota: nota, cots: cots]
-    }
-
-    /**
-     * Acción que guarda una cotización y vuelve a cargar la pantalla de revisión de asistente de compras
-     */
-    def saveCotizacion() {
-        println "save cotizacion " + params
-        def cotizacion
-        if (params.id) {
-            cotizacion = Cotizacion.get(params.id)
-            cotizacion.properties = params
-        } else {
-            cotizacion = new Cotizacion(params)
-        }
-        cotizacion.fecha = new Date()
-        cotizacion.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
-        if (!cotizacion.save(flush: true)) {
-            flash.message = renderErrors(bean: cotizacion)
-        }
-        redirect(action: "revisarAsistenteCompras", id: params.pedido.id)
-    }
-
-    /**
-     * Acción que envía la nota de pedido después de haberle asignado coizaciones
-     * @deprecated ahora se utilizan las acciones específicas a cada perfil
-     */
-    @Deprecated
-    def enviarAprobacion() {
-
-        def nota = Pedido.get(params.id)
-        def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
-        if (cots.size() < 1) {
-            flash.message = "Error: Está nota de pedido no tiene al menos una cotización"
-            response.sendError(403)
-        } else {
-            nota.estadoSolicitud = EstadoSolicitud.findByCodigo("E04")
-            nota.save(flush: true)
-            flash.message = "La nota de pedido número ${nota.numero} ha sido enviada para su aprobación"
-            redirect(action: "listaJefatura")
-        }
-    }
-
-    /**
-     * Acción que muestra la lista de notas de pedido por aprobar
-     * @deprecated ahora se utilizan las acciones específicas a cada perfil
-     */
-    @Deprecated
-    def listaAprobacion() {
-        def notas = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("E04"), [sort: "numero"])
-        [notas: notas]
-    }
-
-
 }

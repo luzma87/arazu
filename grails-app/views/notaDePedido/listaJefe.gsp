@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: DELL
-  Date: 23/02/2015
-  Time: 23:21
+  Date: 24/02/2015
+  Time: 23:50
 --%>
 <%@ page import="arazu.solicitudes.Cotizacion" contentType="text/html;charset=UTF-8" %>
 <html>
@@ -60,4 +60,4 @@
         </elm:container>
 
     </body>
-</html>
+</html>>

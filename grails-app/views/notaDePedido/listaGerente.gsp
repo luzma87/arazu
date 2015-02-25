@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: DELL
-  Date: 23/02/2015
-  Time: 23:21
+  Date: 24/02/2015
+  Time: 23:51
 --%>
 <%@ page import="arazu.solicitudes.Cotizacion" contentType="text/html;charset=UTF-8" %>
 <html>
@@ -43,7 +43,7 @@
                             <td title="${nota.estadoSolicitud?.descripcion}">${nota.estadoSolicitud}</td>
                             <td>${Cotizacion.countByPedido(nota)}</td>
                             <td style="text-align: center">
-                                <g:link controller="notaDePedido" action="revisarAsistenteCompras" title="Revisar" id="${nota.id}" class="btn btn-primary btn-sm">
+                                <g:link controller="notaDePedido" action="revisarGerente" title="Revisar" id="${nota.id}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </td>
@@ -58,6 +58,5 @@
                 </tbody>
             </table>
         </elm:container>
-
     </body>
 </html>

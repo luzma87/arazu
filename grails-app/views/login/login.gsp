@@ -39,7 +39,8 @@
                             </div>
 
                             <div class="text-right">
-                                <a href="#" id="btn-login" class="btn btn-primary">Validar <i class="fa fa-unlock"></i>
+                                <a href="#" id="btn-login" class="btn btn-primary">
+                                    Validar <i class="fa fa-unlock"></i>
                                 </a>
                             </div>
                         </g:form>

@@ -33,9 +33,21 @@ class Pedido {
      */
     Persona de
     /**
-     * Persona que recibe el pedido
+     * Persona que recibe el pedido: jefe
      */
     Persona para
+    /**
+     * Persona que recibe el pedido: jefe de compras
+     */
+    Persona paraJC
+    /**
+     * Persona que recibe el pedido: asistente de compras
+     */
+    Persona paraAC
+    /**
+     * Persona que recibe el pedido: jefe o gerente para aprobación final
+     */
+    Persona paraAF
     /**
      * Proyecto para el cual se hace el pedido
      */
@@ -123,6 +135,9 @@ class Pedido {
             fecha column: 'pddofcha'
             de column: 'pddoprde'
             para column: 'pddoprpr'
+            paraJC column: 'pddoprjc'
+            paraAC column: 'pddoprac'
+            paraAF column: 'pddopraf'
             proyecto column: 'proy__id'
             maquinaria column: 'maqn__id'
             cantidad column: 'pddocntd'
@@ -149,6 +164,10 @@ class Pedido {
         codigo maxSize: 10
         maquinaria nullable: true
         aprobacion nullable: true
+
+        paraJC nullable: true
+        paraAC nullable: true
+        paraAF nullable: true
 
         firmaSolicita nullable: true
         firmaJefe nullable: true
