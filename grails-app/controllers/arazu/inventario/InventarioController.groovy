@@ -36,7 +36,7 @@ class InventarioController extends Shield {
         def bodegas = []
         if (params.bodega) {
             bodega = Bodega.get(params.bodega)
-            if (session.usuario.id != bodega.persona.id) {
+            if (session.usuario.id != bodega.responsableId && session.usuario.id != bodega.suplenteId) {
                 flash.message = "Solo el responsable de bodega puede realizar ingresos."
                 response.sendError(403)
             } else {

@@ -18,7 +18,7 @@
         <elm:message tipo="error" contenido="${flash.message}"/>
 
         <div class="row">
-            <div class="col-md-3 col-md-offset-9">
+            <div class="col-md-3 col-md-offset-9 col-sm-5 col-xs-5 col-xs-offset-7">
                 <div class="lzm-tab lzm-tab-left lzm-tab-primary " style="background: none">
                     <div class="lzm-tab-heading" style="background: none">
                         <a href="#" class="selected">Entrada</a>

@@ -1,6 +1,7 @@
 package arazu.reportes
 
 import arazu.inventario.Ingreso
+import arazu.solicitudes.Cotizacion
 import arazu.solicitudes.Pedido
 
 class ReportesInventarioController {
@@ -18,6 +19,7 @@ class ReportesInventarioController {
         def nota = Pedido.get(params.id)
         if (!nota)
             response.sendError(404)
-        [nota: nota]
+        def cots = Cotizacion.findAllByPedido(nota)
+        return [nota: nota, cots: cots]
     }
 }

@@ -1,48 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title>Ingreso a bodega</title>
-
+        <title>Nota de pedido</title>
+        <rep:estilos orientacion="p" pagTitle="Nota de pedido #${nota.numero}"/>
         <style type="text/css">
-        @page {
-            size   : 21cm 29.7cm;  /*width height */
-            margin : 2cm;
-        }
-
-        .hoja {
-            width     : 16.5cm;
-            font-size : 12px;
-        }
-
-        .titulo, .proyecto, .componente {
-            width : 16cm;
-        }
-
-        .hoja {
-            /*background  : #e6e6fa;*/
-            height      : 24.7cm; /*29.7-(1.5*2)*/
-            font-family : arial;
-            font-size   : 11pt;
-        }
-
-        .titulo {
-            height        : .5cm;
-            font-size     : 16pt;
-            font-weight   : bold;
-            text-align    : center;
-            margin-bottom : .5cm;
-        }
 
         .row {
             width      : 100%;
             height     : 14px;
             margin-top : 10px;
-            font-size  : 12px;
         }
 
         .label {
-            width       : 150px;
+            width       : 3cm;
             font-weight : bold;
+        }
+
+        table {
+            width           : 100%;
+            border-collapse : collapse;
+            margin-top      : 15px;
         }
 
         td {
@@ -50,203 +27,310 @@
             border  : 1px solid #fff
         }
 
-        table {
-            font-size : 12px;
-        }
-
         th {
             background-color : #3A5DAA;
             color            : #ffffff;
             font-weight      : bold;
-            font-size        : 12px;
             border           : 1px solid #fff;
             padding          : 3px;
-        }
-
-        .odd {
-            background-color : #d7dfda;
-        }
-
-        .even {
-            background-color : #fff;
-        }
-
-        div.header {
-            display    : block;
-            text-align : center;
-            position   : running(header);
-        }
-
-        div.footer {
-            display    : block;
-            text-align : center;
-            position   : running(footer);
-        }
-
-        div.content {
-            page-break-after : always;
-        }
-
-        @page {
-            @top-center {
-                content : element(header);
-            }
-        }
-
-        @page {
-            @bottom-center {
-                content : element(footer);
-            }
         }
 
         .text-center {
             text-align : center;
         }
 
+        .cotizacion {
+            border : solid 1px #000;
+        }
+
+        .cotizacion th {
+            background-color : #598235;
+        }
+
+        .firma {
+            font-weight : bold;
+            width       : 20%;
+        }
+
         </style>
     </head>
 
     <body>
-        <div class="header">
-            <g:header titulo="Nota de pedido"/>
-        </div>
 
-        <div class="hoja">
-            <div class="row" style="">
-                <div style="width: 130px;height: 20px;float: right;font-weight: bold">
-                    Número
-                </div>
-            </div>
+        <rep:headerFooter title="Nota de pedido #${nota.numero}"/>
 
-            <div class="row" style="">
-                <div style="width: 130px;height: 20px;float: right;border: 1px solid #000000;padding-right: 5px;text-align: right;line-height: 20px">
-                    ${nota.numero}
-                </div>
-            </div>
-            <table style="width: 100%;margin-top: 15px">
-                <tbody>
-                    <tr>
-                        <td class="label">Tipo:</td>
-                        <td>${nota.tipoSolicitud.descripcion}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Fecha:</td>
-                        <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">De:</td>
-                        <td>${nota.de}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Proyecto:</td>
+        %{--Datos--}%
+        <table>
+            <tbody>
+                <tr>
+                    <td class="label">Tipo</td>
+                    <td>${nota.tipoSolicitud.descripcion}</td>
+
+                    <td class="label">Fecha</td>
+                    <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
+                </tr>
+                <tr>
+                    <g:if test="${nota.proyecto}">
+                        <td class="label">Proyecto</td>
                         <td>${nota.proyecto.nombre}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Departamento:</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="label">Equipo:</td>
-                        <td>${nota.maquinaria}</td>
-                    </tr>
-                </tbody>
-            </table>
+                    </g:if>
 
-            <div class="row" style="margin-top: 30px">
-                Solicito se digne disponer se despache las especies que constan a continuación
-            </div>
-            <table style="margin-top: 10px;width: 100%;border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th>Unidad</th>
-                        <th>Descripción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="odd">
-                        <td style="text-align: center">
-                            ${nota.cantidad.toInteger()}
-                        </td>
-                        <td style="text-align: center">
-                            ${nota.unidad}
-                        </td>
-                        <td>
-                            ${nota.item.descripcion}
-                        </td>
+                    <td class="label">Equipo</td>
+                    <td>${nota.maquinaria}</td>
+                </tr>
+                %{--<tr>--}%
+                %{--<td class="label">Solicita</td>--}%
+                %{--<td>${nota.de}</td>--}%
 
-                    </tr>
-                </tbody>
-            </table>
-            <table style="margin-top: 100px;width: 90%;margin-left: 10px">
-                <tbody>
-                    <tr>
-                        <td class="text-center" style="width: 25%;">
-                            <img src="${resource(dir: 'firmas', file: nota.firmaSolicita.path)}" height="100"/>
-                        </td>
-                        <td class="text-center" style="width: 25%">
-                            <g:if test="${nota.firmaJefe}">
-                                <img src="${resource(dir: 'firmas', file: nota.firmaJefe.path)}" height="100"/>
-                            </g:if>
-                            <g:elseif test="${nota.firmaNiega}">
-                                <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
-                            </g:elseif>
-                            <g:elseif test="${nota.firmaBodega}">
-                                <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
-                            </g:elseif>
-                        </td>
-                        <td class="text-center" style="width: 25%">
+                %{--<g:if test="${nota.firmaJefe}">--}%
+                %{--<td class="label">Aprueba</td>--}%
+                %{--<td>${nota.firmaJefe.persona}</td>--}%
+                %{--</g:if>--}%
+                %{--</tr>--}%
+            </tbody>
+        </table>
 
-                        </td>
-                        <td class="text-center" style="width: 25%">
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">
-                            ${nota.de}
-                        </td>
-                        <td class="text-center">
-                            <g:if test="${nota.firmaJefe}">
-                                ${nota.firmaJefe.persona}
-                            </g:if>
-                            <g:elseif test="${nota.firmaNiega}">
-                                ${nota.firmaNiega.persona}
-                            </g:elseif>
-                            <g:elseif test="${nota.firmaBodega}">
-                                ${nota.firmaBodega.persona}
-                            </g:elseif>
-                        </td>
-                        <td class="text-center">
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">
-                            Solicita
-                        </td>
-                        <td class="text-center">
-                            <g:if test="${nota.firmaJefe}">
-                                Aprueba
-                            </g:if>
-                            <g:elseif test="${nota.firmaNiega}">
-                                Niega
-                            </g:elseif>
-                            <g:elseif test="${nota.firmaBodega}">
-                                Notifica existencia en bodega
-                            </g:elseif>
-                        </td>
-                        <td class="text-center">
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        %{--Datos pedido--}%
+        <div class="row" style="margin-top: 20px">
+            Solicito se digne disponer se despache las especies que constan a continuación
         </div>
+        <table style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd">
+                    <td style="text-align: center">
+                        ${nota.cantidad.toInteger()}
+                    </td>
+                    <td style="text-align: center">
+                        ${nota.unidad}
+                    </td>
+                    <td>
+                        ${nota.item.descripcion}
+                    </td>
 
-        <div class="footer">
-            Impreso el ${new java.util.Date().format('dd-MM-yyyy HH:mm:ss')}
-        </div>
+                </tr>
+            </tbody>
+        </table>
 
+    %{--Personas--}%
+    %{--<table>--}%
+    %{--<tbody>--}%
+    %{--<g:if test="${nota.firmaJefeCompras}">--}%
+    %{--<tr>--}%
+    %{--<td class="label">Jefe de compras</td>--}%
+    %{--<td>${nota.firmaJefeCompras.persona}</td>--}%
+
+    %{--<g:if test="${nota.firmaAsistenteCompras}">--}%
+    %{--<td class="label">Asistente de compras</td>--}%
+    %{--<td>${nota.firmaAsistenteCompras.persona}</td>--}%
+    %{--</g:if>--}%
+    %{--</tr>--}%
+    %{--</g:if>--}%
+    %{--</tbody>--}%
+    %{--</table>--}%
+
+    %{--Cotizaciones--}%
+        <g:each in="${cots}" var="cot" status="i">
+            <table class="cotizacion" border="1">
+                <tr>
+                    <th colspan="2">
+                        Cotización #${i + 1}
+                    </th>
+                    <th style="text-align: right;">
+                        ${cot.fecha.format("dd-MM-yyyy HH:mm")}
+                    </th>
+                    <th style="text-align: right; width: 2cm;">
+                        <g:if test="${cot.estadoSolicitud.codigo == 'A01' || cot.estadoSolicitud.codigo == 'N01'}">
+                            ${cot.estadoSolicitud}
+                        </g:if>
+                    </th>
+                </tr>
+                <tr>
+                    <td class="label">Proveedor</td>
+                    <td>${cot.proveedor}</td>
+
+                    <td class="label">Entrega</td>
+                    <td>${cot.diasEntrega} días</td>
+                </tr>
+                <tr>
+                    <td class="label">P. Unitario</td>
+                    <td><g:formatNumber number="${cot.valor}" type="currency"/></td>
+
+                    <td class="label">Total</td>
+                    <td><g:formatNumber number="${cot.valor * nota.cantidad}" type="currency"/></td>
+                </tr>
+            </table>
+        </g:each>
+
+    %{--Personas--}%
+    %{--<table>--}%
+    %{--<tbody>--}%
+    %{--<g:if test="${nota.firmaAprueba}">--}%
+    %{--<tr>--}%
+    %{--<td class="label">Aprueba</td>--}%
+    %{--<td>${nota.firmaAprueba.persona}</td>--}%
+    %{--</tr>--}%
+    %{--</g:if>--}%
+    %{--</tbody>--}%
+    %{--</table>--}%
+
+    %{--Firmas--}%
+        <table>
+            <tbody>
+                <tr>
+                    <td class="text-center">
+                        <img src="${resource(dir: 'firmas', file: nota.firmaSolicita.path)}" height="100"/>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaJefe}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaJefe.path)}" height="100"/>
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaJefeCompras}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaJefeCompras.path)}" height="100"/>
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaAsistenteCompras}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaAsistenteCompras.path)}" height="100"/>
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaAprueba}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaAprueba.path)}" height="100"/>
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                        </g:elseif>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center">
+                        ${nota.de}
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaJefe}">
+                            ${nota.firmaJefe.persona}
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            ${nota.firmaNiega.persona}
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            ${nota.firmaBodega.persona}
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaJefeCompras}">
+                            ${nota.firmaJefeCompras.persona}
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            ${nota.firmaNiega.persona}
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            ${nota.firmaBodega.persona}
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaAsistenteCompras}">
+                            ${nota.firmaAsistenteCompras.persona}
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            ${nota.firmaNiega.persona}
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            ${nota.firmaBodega.persona}
+                        </g:elseif>
+                    </td>
+                    <td class="text-center">
+                        <g:if test="${nota.firmaAprueba}">
+                            ${nota.firmaAprueba.persona}
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            ${nota.firmaNiega.persona}
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            ${nota.firmaBodega.persona}
+                        </g:elseif>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center firma">
+                        Solicita
+                    </td>
+                    <td class="text-center firma">
+                        <g:if test="${nota.firmaJefe}">
+                            Aprueba (${nota.firmaJefe.persona.tipoUsuario})
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            Niega (${nota.firmaNiega.persona.tipoUsuario})
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                        </g:elseif>
+                    </td>
+                    <td class="text-center firma">
+                        <g:if test="${nota.firmaJefeCompras}">
+                            Aprueba (${nota.firmaJefeCompras.persona.tipoUsuario})
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            Niega (${nota.firmaNiega.persona.tipoUsuario})
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                        </g:elseif>
+                    </td>
+                    <td class="text-center firma">
+                        <g:if test="${nota.firmaAsistenteCompras}">
+                            Aprueba (${nota.firmaAsistenteCompras.persona.tipoUsuario})
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            Niega (${nota.firmaNiega.persona.tipoUsuario})
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                        </g:elseif>
+                    </td>
+                    <td class="text-center firma">
+                        <g:if test="${nota.firmaAprueba}">
+                            Aprueba (${nota.firmaAprueba.persona.tipoUsuario})
+                        </g:if>
+                        <g:elseif test="${nota.firmaNiega}">
+                            Niega (${nota.firmaNiega.persona.tipoUsuario})
+                        </g:elseif>
+                        <g:elseif test="${nota.firmaBodega}">
+                            Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                        </g:elseif>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </body>
 </html>

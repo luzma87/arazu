@@ -18,7 +18,7 @@ class PdfController {
             } else {
                 println "sin plugin --> params url " + params.url
                 def url = baseUri + params.url
-                b = pdfService.buildPdf(url)
+                b = pdfService.buildPdf(url, baseUri)
             }
             response.setContentType("application/pdf")
             response.setHeader("Content-disposition", "attachment; filename=" + (params.filename ?: "document.pdf"))
