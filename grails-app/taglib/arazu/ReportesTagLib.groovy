@@ -10,7 +10,7 @@ class ReportesTagLib {
      * genera los estilos básicos para los reportes según la orientación deseada
      */
     def estilos = { attrs ->
-
+        def logoW = 5
         def pags = false
         if (attrs.pags == 1 || attrs.pags == "1" || attrs.pags == "true" || attrs.pags == true || attrs.pags == "si") {
             pags = true
@@ -56,6 +56,11 @@ class ReportesTagLib {
                 "        content : element(header);\n" +
                 "    }\n" +
                 "}"
+//        css += "@page {\n" +
+//                "    @top-left {\n" +
+//                "        content : element(headerLogo);\n" +
+//                "    }\n" +
+//                "}"
         css += "@page {\n" +
                 "    @bottom-right {\n" +
                 "        content : element(footer);\n" +
@@ -72,10 +77,11 @@ class ReportesTagLib {
                     "}"
         }
         css += "#header{\n" +
-                "    width      : 100%;\n" +
-                "    text-align : right;\n" +
                 "    position   : running(header);\n" +
                 "}"
+//        css += "#headerLogo{\n" +
+//                "    position   : running(headerLogo);\n" +
+//                "}"
         css += "#footer{\n" +
                 "    text-align : right;\n" +
                 "    position   : running(footer);\n" +
@@ -94,8 +100,8 @@ class ReportesTagLib {
 //                "    font-family    : 'PT Sans';\n" +
                 "    font-size      : 15pt;\n" +
                 "    font-weight    : bold;\n" +
-                "    color          : #17365D;\n" +
-                "    border-bottom  : solid 1px #4F81BD;\n" +
+                "    color          : #454344;\n" +
+                "    border-bottom  : solid 2px #a3c23f;\n" +
                 "}"
         css += "</style>"
 

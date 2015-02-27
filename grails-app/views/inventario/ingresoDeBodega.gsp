@@ -98,7 +98,7 @@
                 <div class="col-md-3">
                     %{--<input type="text" class="form-control input-sm allCaps" id="item_txt" placeholder="Item" --}%
                     %{--style="width: 100%!important;">--}%
-                    <g:select name="item_txt" from="${Item.list([sort: 'descripcion'])}" optionKey="descripcion"
+                    <g:select name="item_txt" from="${Item.list([sort: 'descripcion'])}" optionKey="id"
                               optionValue="${{ it.descripcion.decodeHTML() }}"
                               class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"
                               data-live-search="true"/>
@@ -178,6 +178,7 @@
         </div>
         <script type="text/javascript">
             var item;
+            var itemId;
             var cantidad;
             var valor;
             var unidad;
@@ -214,6 +215,8 @@
                 tr.append("<td class='unitario numero'>" + number_format(valor, 2, ".", ",") + "</td>");
                 tr.append("<td class='total numero'>" + number_format(valor * cantidad, 2, ".", ",") + "</td>");
                 var boton = $("<a href='#' title='Borrar' class='btn-borrar btn btn-danger btn-sm'><i class='fa fa-trash-o'></i></a>");
+
+                tr.data("id", itemId);
 
                 boton.click(function () {
                     $(this).parent().parent().remove();
@@ -323,25 +326,26 @@
                     cb(matches);
                 };
             };
-            var items = ${items}
-                    $(function () {
-                        $("#agregar").click(function () {
-                            if ($(".item-row").size() > max) {
-                                bootbox.alert({
-                                            message : "Solo puede registrar un item por orden de ingreso",
-                                            title   : "Error",
-                                            class   : "modal-error"
-                                        }
-                                );
-                            } else {
-                                item = $("#item_txt").val();
-                                cantidad = $("#cantidad").val();
-                                valor = $("#valor").val();
-                                valor = str_replace(",", "", valor);
-                                unidad = $("#unidad").find("option:selected").text();
-                                unidadId = $("#unidad").val();
-                                var msg = "";
-                                var nuevo = false;
+            var items = ${items};
+            $(function () {
+                $("#agregar").click(function () {
+                    if ($(".item-row").size() > max) {
+                        bootbox.alert({
+                                    message : "Solo puede registrar un item por orden de ingreso",
+                                    title   : "Error",
+                                    class   : "modal-error"
+                                }
+                        );
+                    } else {
+                        itemId = $("#item_txt").val();
+                        item = $("#item_txt").find("option:selected").text();
+                        cantidad = $("#cantidad").val();
+                        valor = $("#valor").val();
+                        valor = str_replace(",", "", valor);
+                        unidad = $("#unidad").find("option:selected").text();
+                        unidadId = $("#unidad").val();
+                        var msg = "";
+                        var nuevo = false;
 //                                if (item == "") {
 //                                    msg += "Por favor ingrese un Item."
 //                                } else {
@@ -349,35 +353,35 @@
 ////                                    if ($.inArray(item, items) < 0)
 ////                                        nuevo = true
 //                                }
-                                if (cantidad * 1 < 1) {
-                                    msg += "<br>La cantidad debe ser mayor a cero.";
-                                }
-                                if (isNaN(valor))
-                                    msg += "<br>Por favor ingrese el valor unitario.";
+                        if (cantidad * 1 < 1) {
+                            msg += "<br>La cantidad debe ser mayor a cero.";
+                        }
+                        if (isNaN(valor))
+                            msg += "<br>Por favor ingrese el valor unitario.";
 //                                else if (valor * 1 < 1) {
 //                                    msg += "<br>El valor unitario debe ser mayor a cero.";
 //                                }
-                                if (msg == "") {
-                                    valor = valor * 1;
-                                    cantidad = cantidad * 1;
-                                    if (nuevo) {
-                                        openLoader();
-                                        msg = "El item " + item + " no está registrado en el sistema, si desea crear un item nuevo llene los siguientes datos.";
-                                        createEditItem(null, msg, item);
-                                    } else {
-                                        insertRow();
-                                    }
-                                } else {
-                                    bootbox.alert({
-                                                message : msg,
-                                                title   : "Error",
-                                                class   : "modal-error"
-                                            }
-                                    );
-                                }
+                        if (msg == "") {
+                            valor = valor * 1;
+                            cantidad = cantidad * 1;
+                            if (nuevo) {
+                                openLoader();
+                                msg = "El item " + item + " no está registrado en el sistema, si desea crear un item nuevo llene los siguientes datos.";
+                                createEditItem(null, msg, item);
+                            } else {
+                                insertRow();
                             }
+                        } else {
+                            bootbox.alert({
+                                        message : msg,
+                                        title   : "Error",
+                                        class   : "modal-error"
+                                    }
+                            );
+                        }
+                    }
 
-                        });
+                });
 //                        $('#item_txt').typeahead({
 //                                    hint      : true,
 //                                    highlight : true,
@@ -393,44 +397,48 @@
 //                            width : "100%"
 //                        });
 
-                        $("#guardar").click(function () {
-                            if ($(".item-row").size() < 1) {
-                                bootbox.alert({
-                                            message : "Primero ingrese uno o más items.",
-                                            title   : "Error",
-                                            class   : "modal-error"
-                                        }
-                                );
-                            } else {
-                                data = "";
-                                openLoader();
-                                $(".item-row").each(function () {
-                                    var cant = $(this).find(".cantidad").html();
-                                    var desc = $(this).find(".descripcion").html();
-                                    var unitario = $(this).find(".unitario").html();
-                                    unitario = val = str_replace(",", "", unitario);
-                                    var uni = $(this).find(".unidad").attr("iden");
-                                    data += desc + "!!" + cant + "!!" + uni + "!!" + unitario + "||"
-                                });
+                $("#guardar").click(function () {
+                    if ($(".item-row").size() < 1) {
+                        bootbox.alert({
+                                    message : "Primero ingrese uno o más items.",
+                                    title   : "Error",
+                                    class   : "modal-error"
+                                }
+                        );
+                    } else {
+                        data = "";
+                        openLoader();
+                        $(".item-row").each(function () {
+                            var id = $(this).data("id");
+                            var cant = $(this).find(".cantidad").html();
+                            var desc = $(this).find(".descripcion").html();
+                            var unitario = $(this).find(".unitario").html();
+                            unitario = val = str_replace(",", "", unitario);
+                            var uni = $(this).find(".unidad").attr("iden");
+                            data += id + "!!" + cant + "!!" + uni + "!!" + unitario + "||"
+                        });
 
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : "${g.createLink(controller: 'inventario',action: 'saveIngreso')}",
-                                    data    : "bodega=" + $("#bodega").val() + "&data=" + data,
-                                    success : function (msg) {
-                                        closeLoader();
-                                        if (msg == "ok") {
-                                            location.href = "${g.createLink(action: 'inventario')}?id=" + $("#bodega").val()
-                                        }
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "error");
-                                        closeLoader();
-                                    }
-                                });
+                        $.ajax({
+                            type    : "POST",
+                            url     : "${g.createLink(controller: 'inventario',action: 'saveIngreso')}",
+                            data    : "bodega=" + $("#bodega").val() + "&data=" + data,
+                            success : function (msg) {
+                                var parts = msg.split("*");
+                                log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                if (parts[0] == "SUCCESS") {
+                                    location.href = "${g.createLink(action: 'inventario')}?id=" + $("#bodega").val()
+                                } else {
+                                    closeLoader();
+                                }
+                            },
+                            error   : function () {
+                                log("Ha ocurrido un error interno", "error");
+                                closeLoader();
                             }
                         });
-                    });
+                    }
+                });
+            });
 
         </script>
     </body>

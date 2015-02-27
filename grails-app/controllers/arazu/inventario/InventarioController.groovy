@@ -2,9 +2,13 @@ package arazu.inventario
 
 import arazu.items.Item
 import arazu.parametros.Unidad
+import arazu.seguridad.Persona
 import arazu.seguridad.Shield
+import arazu.solicitudes.Firma
 
 class InventarioController extends Shield {
+
+    def firmaService
 
     /**
      * Acción que carga con ajax las unidades disponibles para un item
@@ -57,6 +61,8 @@ class InventarioController extends Shield {
      * Acción que guarda los ingresos a una bodega
      */
     def saveIngreso() {
+        def usu = Persona.get(session.usuario.id)
+        def now = new Date()
         println "save ingreso " + params
         def parts = params.data.split("\\|\\|")
         println "parts " + parts
@@ -66,17 +72,44 @@ class InventarioController extends Shield {
                 println "data " + data
                 def ingreso = new Ingreso()
                 ingreso.bodega = Bodega.get(params.bodega)
-                ingreso.item = Item.findByDescripcion(data[0].trim())
+//                ingreso.item = Item.findByDescripcion(data[0].toString().trim())
+                ingreso.item = Item.get(data[0].toLong())
                 ingreso.cantidad = data[1].toDouble()
                 ingreso.unidad = Unidad.get(data[2])
                 ingreso.valor = data[3].toDouble()
                 ingreso.saldo = data[1].toDouble()
-                if (!ingreso.save(flush: true)) {
+                if (!ingreso.save()) {
                     println "error en el save de ingreso " + ingreso.errors
+                    render "ERROR*" + renderErrors(bean: ingreso)
+                } else {
+                    def firma = new Firma()
+                    firma.persona = usu
+                    firma.fecha = now
+                    firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+                    firma.pdfControlador = "reportesInventario"
+                    firma.pdfAccion = "ingresoDeBodega"
+                    firma.pdfId = ingreso.id
+
+                    if (!firma.save(flush: true)) {
+                        println "Error con la firma"
+                        return "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+                    } else {
+                        ingreso.ingresa = firma
+                        if (!ingreso.save()) {
+                            println "Error al firmar el ingreso: " + ingreso.errors
+                        } else {
+                            def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+                            def firmaRes = firmaService.firmarDocumento(usu.id, usu.autorizacion, firma, baseUri)
+                            if (firmaRes instanceof String) {
+                                render "ERROR*" + firmaRes
+                                return
+                            }
+                        }
+                    }
                 }
             }
         }
-        render "ok"
+        render "SUCCESS*Ingreso registrado exitosamente"
     }
 
     /**

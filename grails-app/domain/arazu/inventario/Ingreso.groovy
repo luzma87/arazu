@@ -2,6 +2,7 @@ package arazu.inventario
 
 import arazu.items.Item
 import arazu.parametros.Unidad
+import arazu.solicitudes.Firma
 import arazu.solicitudes.Pedido
 
 /**
@@ -44,6 +45,10 @@ class Ingreso {
      * Número de factura
      */
     String factura
+    /**
+     * Firma de la persona que hizo el ingreso
+     */
+    Firma ingresa
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -69,6 +74,7 @@ class Ingreso {
             pedido column: 'pddo__id'
             saldo column: 'ingrsldo'
             factura column: 'ingrfact'
+            ingresa column: 'frma__id'
         }
     }
 
@@ -81,24 +87,26 @@ class Ingreso {
         bodega(nullable: false, blank: false)
         fecha(nullable: false, blank: false)
         pedido(nullable: true, blank: true)
-        factura(nullable: true, blank: true,size: 1..50)
+        factura(nullable: true, blank: true, size: 1..50)
+        ingresa nullable: true
     }
 
-    def getEgresos(){
+    def getEgresos() {
         def egresos = Egreso.findAllByIngreso(this)
         return egresos
     }
-    def getCantidadEgresos(){
+
+    def getCantidadEgresos() {
         def egresos = Egreso.findAllByIngreso(this)
         def total = 0
         egresos.each {
-            total+=it.cantidad
+            total += it.cantidad
         }
         return total
     }
 
-    def calcularSaldo(){
-        this.saldo = this.cantidad-getCantidadEgresos()
+    def calcularSaldo() {
+        this.saldo = this.cantidad - getCantidadEgresos()
         this.save(flush: true)
         return this.saldo
     }
