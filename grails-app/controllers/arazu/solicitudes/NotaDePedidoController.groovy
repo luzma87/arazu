@@ -191,6 +191,39 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que muestra la lista de notas de pedido que existen en la bodega del usuario
+     */
+    def listaBodega() {
+        if (session.perfil.codigo != "RSBD") {
+            response.sendError(403)
+        }
+        def estadoBodega = EstadoSolicitud.findByCodigo("B01")
+
+        def usu = Persona.get(session.usuario.id)
+        def bodegasUsu = Bodega.findAllByResponsableOrSuplente(usu, usu)
+
+        def notas = BodegaPedido.withCriteria {
+            inList("bodega", bodegasUsu)
+            pedido {
+                eq("estadoSolicitud", estadoBodega)
+            }
+            order("bodega", "asc")
+        }.pedido.unique()
+
+//        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
+        return [notas: notas]
+    }
+
+    /**
+     * Acción que muestra la lista de notas de pedido aprobadas y permite a los responsables de bodega generar un ingreso
+     */
+    def listaAprobadas() {
+        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("A01")
+        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
+        return [notas: notas]
+    }
+
+    /**
      * Acción que le permite a un jefe revisar una nota de pedido, verificar las existencias en bodegas
      * y aprobar/negar/informar existe en bodegas
      */
@@ -529,6 +562,10 @@ class NotaDePedidoController extends Shield {
      *              AJC: el asistente de compras aprueba la solicitud y envía las cotizaciones
      *              NJC: el asistente de compras niega la solicitud
      *              BJC: el asistente de compras indica de q bodega(s) sacar
+     *
+     *              AF: el jefe/gerente aprueba definitivamente la solicitud
+     *              NF: el jefe/gerente niega definitivamente la solicitud
+     *              BF: el jefe/gerente indica de q bodega(s) sacar
      * @return String con los mensajes de error si ocurrieron
      */
     private String cambiarEstadoPedido(params, String tipo) {

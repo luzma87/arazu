@@ -177,6 +177,13 @@ class BootStrap {
             if (!estado.save(flush: true)) {
                 println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
             }
+            estado = new EstadoSolicitud()
+            estado.codigo = "C01"
+            estado.descripcion = "El item solicitado fue ingresado en una bodega"
+            estado.nombre = "Completada"
+            if (!estado.save(flush: true)) {
+                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
         }
     }
     def destroy = {

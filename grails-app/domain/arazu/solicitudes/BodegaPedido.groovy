@@ -34,7 +34,7 @@ class BodegaPedido {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort fecha: "desc"
+        sort bodega: "asc"
         columns {
             id column: 'bdpd__id'
             bodega column: 'bdga__id'

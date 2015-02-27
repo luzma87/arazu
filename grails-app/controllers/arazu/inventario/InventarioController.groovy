@@ -1,10 +1,13 @@
 package arazu.inventario
 
 import arazu.items.Item
+import arazu.parametros.EstadoSolicitud
 import arazu.parametros.Unidad
 import arazu.seguridad.Persona
 import arazu.seguridad.Shield
+import arazu.solicitudes.Cotizacion
 import arazu.solicitudes.Firma
+import arazu.solicitudes.Pedido
 
 class InventarioController extends Shield {
 
@@ -217,5 +220,58 @@ class InventarioController extends Shield {
         def transfer = Transferencia.get(params.id)
 
         return [transfer: transfer]
+    }
+
+    /**
+     * Acción que crea el ingreso de una nota de pedido
+     */
+    def ingresoNotaPedido() {
+        def usu = Persona.get(session.usuario.id)
+        def now = new Date()
+        def pedido = Pedido.get(params.id)
+        def bodega = Bodega.get(params.bodega)
+        def estadoAprobado = EstadoSolicitud.findByCodigo("A01")
+        def cot = Cotizacion.findAllByPedidoAndEstadoSolicitud(pedido, estadoAprobado)
+        if (cot.size() == 1) {
+            cot = cot.first()
+            def ingreso = new Ingreso()
+            ingreso.bodega = bodega
+            ingreso.item = pedido.item
+            ingreso.cantidad = params.cantidad.toDouble()
+            ingreso.unidad = pedido.unidad
+            ingreso.valor = cot.valor
+            if (!ingreso.save()) {
+                println "error en el save de ingreso " + ingreso.errors
+                flash.tipo = "error"
+                flash.message = renderErrors(bean: ingreso)
+            } else {
+                def firma = new Firma()
+                firma.persona = usu
+                firma.fecha = now
+                firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+                firma.pdfControlador = "reportesInventario"
+                firma.pdfAccion = "ingresoDeBodega"
+                firma.pdfId = ingreso.id
+
+                if (!firma.save(flush: true)) {
+                    println "Error con la firma"
+                    flash.tipo = "error"
+                    flash.message = "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+                } else {
+                    ingreso.ingresa = firma
+                    ingreso.calcularSaldo()
+                    if (!ingreso.save()) {
+                        println "Error al firmar el ingreso: " + ingreso.errors
+                    } else {
+                        def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+                        def firmaRes = firmaService.firmarDocumento(usu.id, usu.autorizacion, firma, baseUri)
+                        if (firmaRes instanceof String) {
+                            flash.tipo = "error"
+                            flash.message = firmaRes
+                        }
+                    }
+                }
+            }
+        }
     }
 }

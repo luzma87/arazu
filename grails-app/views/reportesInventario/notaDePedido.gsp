@@ -39,11 +39,11 @@
             text-align : center;
         }
 
-        .cotizacion {
+        .cotizacion, .bodega {
             border : solid 1px #000;
         }
 
-        .cotizacion th {
+        .cotizacion th, .bodega th {
             background-color : #598235;
         }
 
@@ -168,6 +168,27 @@
             </table>
         </g:each>
 
+    %{--Existencias en bodega--}%
+        <h4>Existencias en bodegas</h4>
+        <g:if test="${bodegas.size() > 0}">
+            <table class="bodega">
+                <thead>
+                    <tr>
+                        <th>Bodega</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <g:each in="${bodegas}" var="bodega">
+                        <tr>
+                            <td>${bodega.bodega}</td>
+                            <td style="text-align: right;">${bodega.cantidad}${bodega.pedido.unidad.codigo}</td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </g:if>
+
     %{--Personas--}%
     %{--<table>--}%
     %{--<tbody>--}%
@@ -181,6 +202,7 @@
     %{--</table>--}%
 
     %{--Firmas--}%
+        <g:set var="sigue" value="${true}"/>
         <table>
             <tbody>
                 <tr>
@@ -193,46 +215,55 @@
                         </g:if>
                         <g:elseif test="${nota.firmaNiega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                         <g:elseif test="${nota.firmaBodega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaJefeCompras}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaJefeCompras.path)}" height="100"/>
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaAsistenteCompras}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaAsistenteCompras.path)}" height="100"/>
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaAprueba}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaAprueba.path)}" height="100"/>
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaNiega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             <img src="${resource(dir: 'firmas', file: nota.firmaBodega.path)}" height="100"/>
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                 </tr>
                 <tr>
+                    <g:set var="sigue" value="${true}"/>
                     <td class="text-center">
                         ${nota.de}
                     </td>
@@ -242,46 +273,55 @@
                         </g:if>
                         <g:elseif test="${nota.firmaNiega}">
                             ${nota.firmaNiega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                         <g:elseif test="${nota.firmaBodega}">
                             ${nota.firmaBodega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaJefeCompras}">
                             ${nota.firmaJefeCompras.persona}
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             ${nota.firmaNiega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             ${nota.firmaBodega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaAsistenteCompras}">
                             ${nota.firmaAsistenteCompras.persona}
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             ${nota.firmaNiega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             ${nota.firmaBodega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center">
                         <g:if test="${nota.firmaAprueba}">
                             ${nota.firmaAprueba.persona}
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             ${nota.firmaNiega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             ${nota.firmaBodega.persona}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                 </tr>
                 <tr>
+                    <g:set var="sigue" value="${true}"/>
                     <td class="text-center firma">
                         Solicita
                     </td>
@@ -291,42 +331,50 @@
                         </g:if>
                         <g:elseif test="${nota.firmaNiega}">
                             Niega (${nota.firmaNiega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                         <g:elseif test="${nota.firmaBodega}">
                             Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center firma">
                         <g:if test="${nota.firmaJefeCompras}">
                             Aprueba (${nota.firmaJefeCompras.persona.tipoUsuario})
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
-                            Niega (${nota.firmaNiega.persona.tipoUsuario})
+                        <g:elseif test="${sigue && nota.firmaNiega}">
+                            Niega (${nota.firmaNiega.persona.tipoUsuario}
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center firma">
                         <g:if test="${nota.firmaAsistenteCompras}">
                             Aprueba (${nota.firmaAsistenteCompras.persona.tipoUsuario})
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             Niega (${nota.firmaNiega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                     <td class="text-center firma">
                         <g:if test="${nota.firmaAprueba}">
                             Aprueba (${nota.firmaAprueba.persona.tipoUsuario})
                         </g:if>
-                        <g:elseif test="${nota.firmaNiega}">
+                        <g:elseif test="${sigue && nota.firmaNiega}">
                             Niega (${nota.firmaNiega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
-                        <g:elseif test="${nota.firmaBodega}">
+                        <g:elseif test="${sigue && nota.firmaBodega}">
                             Notifica existencia en bodega (${nota.firmaBodega.persona.tipoUsuario})
+                            <g:set var="sigue" value="${false}"/>
                         </g:elseif>
                     </td>
                 </tr>
