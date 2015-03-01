@@ -61,6 +61,10 @@ class Pedido {
      */
     Double cantidad
     /**
+     * Cantidad aprobada
+     */
+    Double cantidadAprobada = 0
+    /**
      * Unidad en la cual se hace el pedido
      */
     Unidad unidad
@@ -141,6 +145,7 @@ class Pedido {
             proyecto column: 'proy__id'
             maquinaria column: 'maqn__id'
             cantidad column: 'pddocntd'
+            cantidadAprobada column: 'pddocnap'
             unidad column: 'undd__id'
             item column: 'item__id'
             aprobacion column: 'pddofcap'
@@ -177,5 +182,18 @@ class Pedido {
         firmaNiega nullable: true
         firmaBodega nullable: true
         observaciones blank: true, nullable: true
+    }
+
+    def getObservacionesFormat() {
+        println ">>> " + this.observaciones
+        def parts = this.observaciones.split("\\|\\|")
+        println ">>> " + parts
+        def html = "<ul>"
+        parts.each { p ->
+            html += "<li>" + p + "</li>"
+        }
+        html += "</ul>"
+        println ">>> " + html
+        return html
     }
 }

@@ -21,46 +21,78 @@
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
         <elm:container tipo="horizontal" titulo="Notas de pedido aprobadas">
-            <table class="table table-striped  table-bordered table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th style="width: 50px">Número</th>
-                        <th style="width: 130px">Fecha</th>
-                        <th style="width: 80px">Tipo</th>
-                        <th style="">Item</th>
-                        <th style="width: 150px">Estado</th>
-                        <th style="width: 50px"></th>
-                        <th style="width: 50px"></th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-items">
-                    <g:each in="${notas}" var="nota">
-                        <tr>
-                            <td>${nota.numero}</td>
-                            <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
-                            <td>${nota.tipoSolicitud.descripcion}</td>
-                            <td>${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}</td>
-                            <td title="${nota.estadoSolicitud?.descripcion}">${nota.estadoSolicitud}</td>
-                            <td style="text-align: center">
-                                <a href="#" title="Ingreso" id="${nota.id}" class="btn btn-primary btn-sm btnEg">
-                                    <i class="fa fa-cart-arrow-down"></i>
-                                </a>
-                            </td>
-                            <td style="text-align: center">
-                                <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                                   title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
-                                    <i class="fa fa-print"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </g:each>
-                </tbody>
-            </table>
+            <g:render template="/templates/tablaNotaPedido"
+                      model="[params      : params, strSearch: strSearch, notas: notas, notasCount: notasCount,
+                              ingreso     : true,
+                              linkBusqueda: 'listaAprobadas']"/>
         </elm:container>
 
         <script type="text/javascript">
-            $(function() {
-
+            $(function () {
+                $(".btnIng").click(function () {
+                    var id = $(this).data("id");
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'notaDePedido', action:'dlgIngresoBodega_ajax')}",
+                        data    : {
+                            id : id
+                        },
+                        success : function (msg) {
+                            var b = bootbox.dialog({
+                                id      : "dlgIngreso",
+                                title   : "Ingreso a bodega",
+                                class   : "modal-sm",
+                                message : msg,
+                                buttons : {
+                                    cancelar : {
+                                        label     : "Cancelar",
+                                        className : "btn-primary",
+                                        callback  : function () {
+                                        }
+                                    },
+                                    guardar  : {
+                                        id        : "btnSave",
+                                        label     : "<i class='fa fa-save'></i> Guardar",
+                                        className : "btn-success",
+                                        callback  : function () {
+                                            openLoader();
+                                            var bd = $("#bodega").val();
+                                            $.ajax({
+                                                type    : "POST",
+                                                url     : "${createLink(controller:'inventario', action:'ingresoNotaPedido_ajax')}",
+                                                data    : {
+                                                    id     : id,
+                                                    bodega : bd
+                                                },
+                                                success : function (msg) {
+                                                    var parts = msg.split("*");
+                                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                                    setTimeout(function () {
+                                                        if (parts[0] == "SUCCESS") {
+                                                            location.reload(true);
+                                                        } else {
+                                                            spinner.replaceWith($btn);
+                                                            closeLoader();
+                                                            return false;
+                                                        }
+                                                    }, 1000);
+                                                },
+                                                error   : function () {
+                                                    log("Ha ocurrido un error interno", "Error");
+                                                    closeLoader();
+                                                }
+                                            });
+                                        } //callback
+                                    } //guardar
+                                } //buttons
+                            }); //dialog
+                            setTimeout(function () {
+                                b.find(".form-control").first().focus()
+                            }, 500);
+                        } //success
+                    }); //ajax
+                    return false;
+                });
             });
         </script>
 

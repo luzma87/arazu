@@ -53,9 +53,31 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3">Clave de autorización</div>
+        <div class="col-md-2">Jefe de compras</div>
 
-        <div class="col-md-5">
+        <div class="col-md-3">
+            <g:select name="para" from="${jefesCompras}" class="form-control input-sm required" optionKey="id"
+                      noSelection="['': '']"/>
+        </div>
+
+        <div class="col-md-2">Autorizar pedido de</div>
+
+        <div class="col-md-2">
+            <div class="input-group">
+                <g:textField name="cant" class="form-control input-sm number" value="${0}"/>
+                <span class="input-group-addon">${nota.unidad.codigo}</span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            ${nota.item}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">Clave de autorización</div>
+
+        <div class="col-md-3">
             <div class="grupo">
                 <div class="input-group input-group-sm">
                     <g:passwordField name="auth" class="form-control input-sm required"/>
@@ -68,7 +90,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3">Observaciones</div>
+        <div class="col-md-2">Observaciones</div>
 
         <div class="col-md-9">
             <g:textArea name="obs" class="form-control input-sm"/>
@@ -108,6 +130,7 @@
         var validator = $("#frmBodega").validate({
             errorClass     : "help-block",
             errorPlacement : function (error, element) {
+                console.log(element, error);
                 if (element.parent().hasClass("input-group")) {
                     error.insertAfter(element.parent());
                 } else {
@@ -120,6 +143,20 @@
                 label.remove();
             },
             rules          : {
+                para                : {
+                    required : function (element) {
+                        var c = $.trim($("#cant").val());
+                        console.log(c, c != "", parseFloat(c) > 0, c != "" && parseFloat(c) > 0);
+                        return c != "" && parseFloat(c) > 0;
+                    }
+                },
+                cant                : {
+                    required : function (element) {
+                        var p = $("#para").val();
+                        console.log(p, p != "");
+                        return p != "";
+                    }
+                },
                 <g:each in="${existencias.values()}" var="ex">
                 ret_${ex.bodega.id} : {
                     require_from_group : [1, ".number"]

@@ -36,125 +36,9 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Motivo
-                    </label>
-                </div>
+            <g:render template="/templates/revisarNotaPedido"
+                      model="[nota: nota, existencias: existencias]"/>
 
-                <div class="col-md-2">
-                    ${nota.tipoSolicitud.descripcion}
-                </div>
-
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Número
-                    </label>
-                </div>
-
-                <div class="col-md-2">
-                    ${nota.numero}
-                </div>
-
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Fecha
-                    </label>
-                </div>
-
-                <div class="col-md-3">
-                    ${nota.fecha?.format("dd-MM-yyyy HH:mm:ss")}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        De
-                    </label>
-                </div>
-
-                <div class="col-md-2">
-                    ${nota.de}
-                </div>
-
-            </div>
-
-
-            <div class="row">
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Proyecto
-                    </label>
-                </div>
-
-                <div class="col-md-2">
-                    ${nota.proyecto}
-                </div>
-
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Equipo
-                    </label>
-                </div>
-
-                <div class="col-md-2">
-                    ${nota.maquinaria}
-                </div>
-            </div>
-
-            <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-                <thead>
-                    <tr>
-                        <th style="width: 80px">Cantidad</th>
-                        <th style="width: 150px">Unidad</th>
-                        <th>Descripción</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-items">
-                    <tr>
-                        <td class="cantidad">
-                            ${nota.cantidad.toInteger()}
-                        </td>
-                        <td style="text-align: center">
-                            ${nota.unidad}
-                        </td>
-                        <td>
-                            ${nota.item}
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
-
-            <g:if test="${existencias.size() > 0}">
-                <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
-                    <thead>
-                        <tr>
-                            <th>Bodega</th>
-                            <th>Cantidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <g:each in="${existencias.values()}" var="ex">
-                            <tr>
-                                <td>
-                                    ${ex.bodega}
-                                </td>
-                                <td class="text-right">
-                                    <g:formatNumber number="${ex.total}" maxFractionDigits="2" minFractionDigits="2"/>${ex.unidad.codigo}
-                                </td>
-                            </tr>
-                        </g:each>
-                    </tbody>
-                </table>
-            </g:if>
-            <g:else>
-                <div class='alert alert-warning'>
-                    <i class="fa fa-warning fa-2x"></i> No se encontró ${nota.item} en ninguna bodega
-                </div>
-            </g:else>
         </elm:container>
 
         <script type="text/javascript">
@@ -169,7 +53,8 @@
                             id   : "${nota.id}",
                             auth : $("#auth").val(),
                             para : $("#para").val(),
-                            obs  : $("#obs").val()
+                            obs  : $("#obs").val(),
+                            cant : $("#cant").val()
                         },
                         success : function (msg) {
                             var parts = msg.split("*");
@@ -317,6 +202,7 @@
                             var b = bootbox.dialog({
                                 id      : "dlgBodegaNotaPedido",
                                 title   : "Notificar existencia de items de Nota de Pedido",
+                                class   : "modal-lg",
                                 message : msg,
                                 buttons : {
                                     negar    : {

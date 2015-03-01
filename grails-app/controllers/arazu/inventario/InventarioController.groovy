@@ -223,27 +223,28 @@ class InventarioController extends Shield {
     }
 
     /**
-     * Acción que crea el ingreso de una nota de pedido
+     * Acción llamada con ajaxque crea el ingreso de una nota de pedido
      */
-    def ingresoNotaPedido() {
+    def ingresoNotaPedido_ajax() {
         def usu = Persona.get(session.usuario.id)
         def now = new Date()
         def pedido = Pedido.get(params.id)
         def bodega = Bodega.get(params.bodega)
         def estadoAprobado = EstadoSolicitud.findByCodigo("A01")
+        def estadoCompletado = EstadoSolicitud.findByCodigo("C01")
         def cot = Cotizacion.findAllByPedidoAndEstadoSolicitud(pedido, estadoAprobado)
         if (cot.size() == 1) {
             cot = cot.first()
             def ingreso = new Ingreso()
             ingreso.bodega = bodega
             ingreso.item = pedido.item
-            ingreso.cantidad = params.cantidad.toDouble()
+            ingreso.cantidad = pedido.cantidad
             ingreso.unidad = pedido.unidad
             ingreso.valor = cot.valor
+            ingreso.pedido = pedido
             if (!ingreso.save()) {
                 println "error en el save de ingreso " + ingreso.errors
-                flash.tipo = "error"
-                flash.message = renderErrors(bean: ingreso)
+                render "ERROR*" + renderErrors(bean: ingreso)
             } else {
                 def firma = new Firma()
                 firma.persona = usu
@@ -255,23 +256,31 @@ class InventarioController extends Shield {
 
                 if (!firma.save(flush: true)) {
                     println "Error con la firma"
-                    flash.tipo = "error"
-                    flash.message = "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+                    render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
                 } else {
                     ingreso.ingresa = firma
                     ingreso.calcularSaldo()
                     if (!ingreso.save()) {
                         println "Error al firmar el ingreso: " + ingreso.errors
+                        render "ERROR*Ha ocurrido un error al firmar el ingreso"
                     } else {
                         def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
                         def firmaRes = firmaService.firmarDocumento(usu.id, usu.autorizacion, firma, baseUri)
                         if (firmaRes instanceof String) {
-                            flash.tipo = "error"
-                            flash.message = firmaRes
+                            render "ERROR*" + firmaRes
+                        } else {
+                            pedido.estadoSolicitud = estadoCompletado
+                            if (!pedido.save()) {
+                                render "ERROR*Ha ocurrido un error al completar la nota de pedido"
+                            } else {
+                                render "SUCCESS*Ingreso realizado exitosamente"
+                            }
                         }
                     }
                 }
             }
+        } else {
+            render "ERROR*No se encontró la cotización aprobada de la nota de pedido."
         }
     }
 }

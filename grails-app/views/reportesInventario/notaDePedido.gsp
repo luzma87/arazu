@@ -78,15 +78,10 @@
                     <td class="label">Equipo</td>
                     <td>${nota.maquinaria}</td>
                 </tr>
-                %{--<tr>--}%
-                %{--<td class="label">Solicita</td>--}%
-                %{--<td>${nota.de}</td>--}%
-
-                %{--<g:if test="${nota.firmaJefe}">--}%
-                %{--<td class="label">Aprueba</td>--}%
-                %{--<td>${nota.firmaJefe.persona}</td>--}%
-                %{--</g:if>--}%
-                %{--</tr>--}%
+                <tr>
+                    <td class="label">Observaciones</td>
+                    <td colspan="3">${nota.observacionesFormat}</td>
+                </tr>
             </tbody>
         </table>
 
@@ -104,10 +99,13 @@
             </thead>
             <tbody>
                 <tr class="odd">
-                    <td style="text-align: center">
+                    <td>
                         ${nota.cantidad.toInteger()}
+                        <g:if test="${nota.cantidad != nota.cantidadAprobada}">
+                            (Aprobado ${nota.cantidadAprobada})
+                        </g:if>
                     </td>
-                    <td style="text-align: center">
+                    <td>
                         ${nota.unidad}
                     </td>
                     <td>
@@ -117,23 +115,6 @@
                 </tr>
             </tbody>
         </table>
-
-    %{--Personas--}%
-    %{--<table>--}%
-    %{--<tbody>--}%
-    %{--<g:if test="${nota.firmaJefeCompras}">--}%
-    %{--<tr>--}%
-    %{--<td class="label">Jefe de compras</td>--}%
-    %{--<td>${nota.firmaJefeCompras.persona}</td>--}%
-
-    %{--<g:if test="${nota.firmaAsistenteCompras}">--}%
-    %{--<td class="label">Asistente de compras</td>--}%
-    %{--<td>${nota.firmaAsistenteCompras.persona}</td>--}%
-    %{--</g:if>--}%
-    %{--</tr>--}%
-    %{--</g:if>--}%
-    %{--</tbody>--}%
-    %{--</table>--}%
 
     %{--Cotizaciones--}%
         <g:each in="${cots}" var="cot" status="i">

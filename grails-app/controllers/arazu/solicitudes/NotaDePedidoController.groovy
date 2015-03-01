@@ -4,6 +4,7 @@ import arazu.alertas.Alerta
 import arazu.inventario.Bodega
 import arazu.inventario.Ingreso
 import arazu.items.Item
+import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
@@ -15,6 +16,121 @@ class NotaDePedidoController extends Shield {
     def mailService
     def firmaService
     def notificacionService
+
+    /**
+     * Función que saca la lista de elementos según los parámetros recibidos
+     * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
+     * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
+     * @return lista: de los elementos encontrados, strSearch: String con la descripción de la búsqueda realizada
+     */
+    def getList(params, all) {
+        params = params.clone()
+        params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
+        params.offset = params.offset ?: 0
+        if (all) {
+            params.remove("max")
+            params.remove("offset")
+        }
+        def list
+        def strSearch = ""
+        def desde = null
+        def hasta = null
+        def de = null
+        def maquina = null
+        def item = null
+        def estado = null
+        if (params.search_desde) {
+            desde = new Date().parse("dd-MM-yyyy", params.search_desde)
+            strSearch += "desde el <strong>${params.search_desde}</strong>"
+        }
+        if (params.search_hasta) {
+            hasta = new Date().parse("dd-MM-yyyy", params.search_hasta)
+            if (strSearch != "") {
+                strSearch += " "
+            }
+            strSearch += "hasta el <strong>${params.search_desde}</strong>"
+        }
+        if (!desde && !hasta) {
+            strSearch += "en cualquier fecha"
+        }
+        if (params.search_de) {
+            de = Persona.get(params.search_de.toLong())
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "solicitadas por <strong>" + de + "</strong>"
+        } else {
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "por cualquier persona"
+        }
+        if (params.search_maquina) {
+            maquina = Maquinaria.get(params.search_maquina.toLong())
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "para la maquinaria <strong>" + maquina + "</strong>"
+        } else {
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "para cualquier maquinaria"
+        }
+        if (params.search_item) {
+            item = Item.get(params.search_item.toLong())
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "solicitando <strong>" + item + "</strong>"
+        } else {
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "solicitando culquier item"
+        }
+        if (params.search_estado) {
+            estado = EstadoSolicitud.get(params.search_estado.toLong())
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "que estén en estado <strong>" + estado + "</strong>"
+        } else {
+            if (strSearch != "") {
+                strSearch += ", "
+            }
+            strSearch += "que estén en cualquier estado"
+        }
+        if (!params.sort) {
+            params.sort = "numero"
+        }
+        if (!params.order) {
+            params.order = "asc"
+        }
+        def c = Pedido.createCriteria()
+        list = c.list(params) {
+            if (desde) {
+                ge("fecha", desde)
+            }
+            if (hasta) {
+                le("fecha", hasta)
+            }
+            if (de) {
+                eq("de", de)
+            }
+            if (maquina) {
+                eq('maquina', maquina)
+            }
+            if (item) {
+                eq("item", item)
+            }
+            if (estado) {
+                eq("estadoSolicitud", estado)
+            }
+        }
+        strSearch = "Mostrando las notas de pedido realizadas " + strSearch
+        return [list: list, strSearch: strSearch]
+    }
 
     /**
      * Acción que muestra la pantalla de ingreso de una nueva nota de pedido
@@ -125,9 +241,11 @@ class NotaDePedidoController extends Shield {
      * Acción que muestra la lista de notas de pedido efectuadas por elusuario
      */
     def lista() {
-        def estadoNegado = EstadoSolicitud.findByCodigo("E03")
-        def notas = Pedido.findAllByEstadoSolicitudNotEqual(estadoNegado, [sort: "numero"])
-        return [notas: notas]
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -138,8 +256,12 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def estadoPendienteRevision = EstadoSolicitud.findByCodigo("E01")
-        def notas = Pedido.findAllByEstadoSolicitudAndPara(estadoPendienteRevision, session.usuario, [sort: "numero"])
-        return [notas: notas]
+        params.search_estado = estadoPendienteRevision.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -150,8 +272,12 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def estadoPendienteAsignacion = EstadoSolicitud.findByCodigo("E02")
-        def notas = Pedido.findAllByEstadoSolicitudAndParaJC(estadoPendienteAsignacion, session.usuario, [sort: "numero"])
-        return [notas: notas]
+        params.search_estado = estadoPendienteAsignacion.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -162,8 +288,12 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E03")
-        def notas = Pedido.findAllByEstadoSolicitudAndParaAC(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
-        return [notas: notas]
+        params.search_estado = estadoPendientesCotizaciones.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -173,9 +303,13 @@ class NotaDePedidoController extends Shield {
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
-        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E04")
-        def notas = Pedido.findAllByEstadoSolicitudAndParaAF(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
-        return [notas: notas]
+        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E04")
+        params.search_estado = estadoPendientesAprobacionFinal.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -185,9 +319,13 @@ class NotaDePedidoController extends Shield {
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
         }
-        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E04")
-        def notas = Pedido.findAllByEstadoSolicitudAndParaAF(estadoPendientesCotizaciones, session.usuario, [sort: "numero"])
-        return [notas: notas]
+        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E04")
+        params.search_estado = estadoPendientesAprobacionFinal.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -204,9 +342,6 @@ class NotaDePedidoController extends Shield {
 
         def notas = BodegaPedido.withCriteria {
             inList("bodega", bodegasUsu)
-            pedido {
-                eq("estadoSolicitud", estadoBodega)
-            }
             order("bodega", "asc")
         }.pedido.unique()
 
@@ -218,9 +353,13 @@ class NotaDePedidoController extends Shield {
      * Acción que muestra la lista de notas de pedido aprobadas y permite a los responsables de bodega generar un ingreso
      */
     def listaAprobadas() {
-        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("A01")
-        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
-        return [notas: notas]
+        def estadoAprobada = EstadoSolicitud.findByCodigo("A01")
+        params.search_estado = estadoAprobada.id
+        def r1 = getList(params, false)
+        def strSearch = r1.strSearch
+        def notas = r1.list
+        def notasCount = getList(params, true).list.size()
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
     /**
@@ -440,7 +579,18 @@ class NotaDePedidoController extends Shield {
             }
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
-        return [nota: nota, existencias: existencias]
+        def jefesCompras = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JFCM"), [sort: 'apellido'])
+        return [nota: nota, existencias: existencias, jefesCompras: jefesCompras]
+    }
+
+    /**
+     * Acción que carga una pantalla emergente para completar la información necesaria para hacer el ingreso de una nota de pedido a una bodega
+     */
+    def dlgIngresoBodega_ajax() {
+        def nota = Pedido.get(params.id)
+        def usu = Persona.get(session.usuario.id)
+        def bodegas = Bodega.findAllByResponsableOrSuplente(usu, usu, [sort: 'descripcion'])
+        return [nota: nota, bodegas: bodegas]
     }
 
     /**
@@ -585,254 +735,334 @@ class NotaDePedidoController extends Shield {
         }
         def pedido = Pedido.get(params.id.toLong())
 
-        switch (tipo) {
-            case "AJF": // el jefe aprueba la solicitud
-                codEstadoInicial = "E01"
-                estadoFinal = EstadoSolicitud.findByCodigo("E02") //estado Pendiente Asignacion
-                concepto = "Aprobación"
-                mensTipo = "aprobado"
-                retTipo = "ha sido aprobada"
-                retTipo2 = "aprobarla"
-                firmaPedido = "firmaJefe"
-                accionAlerta = "listaJefeCompras"
-
-                notificacion1Recibe = para
-                notificacion2Recibe = pedido.de
-
-                pedido.paraJC = para
-                break;
-            case "NJF": // el jefe niega la solicitud
-                codEstadoInicial = "E01"
-                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
-                concepto = "Negación"
-                mensTipo = "negado"
-                retTipo = "ha sido negada"
-                retTipo2 = "negarla"
-                firmaPedido = "firmaNiega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "BJF": // el jefe indica de q bodega(s) sacar
-                params.each { k, v ->
-                    if (k.toString().startsWith("ret")) {
-                        def parts = k.split("_")
-                        def bodega = Bodega.get(parts[1].toLong())
-                        def cantidad = v.toDouble()
-
-                        notificacionBodegas += bodega.responsable
-                        notificacionBodegas += bodega.suplente
-
-                        def bp = new BodegaPedido()
-                        bp.bodega = bodega
-                        bp.pedido = pedido
-                        bp.cantidad = cantidad
-                        bp.save()
-                    }
-                }
-
-                codEstadoInicial = "E01"
-                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
-                concepto = "Notificación de existencia en bodega"
-                mensTipo = "notificado que existe en bodega"
-                retTipo = "ha sido notificada que existe en bodega"
-                retTipo2 = "notificar que existe en bodega"
-                firmaPedido = "firmaBodega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "AJC": // el jefe de compras aprueba la solicitud
-                codEstadoInicial = "E02"
-                estadoFinal = EstadoSolicitud.findByCodigo("E03") //estado Pendientes cotizaciones
-                concepto = "Aprobación"
-                mensTipo = "aprobado"
-                retTipo = "ha sido aprobada"
-                retTipo2 = "aprobarla"
-                firmaPedido = "firmaJefeCompras"
-                accionAlerta = "listaAsistenteCompras"
-
-                notificacion1Recibe = para
-                notificacion2Recibe = pedido.de
-
-                pedido.paraAC = para
-                break;
-            case "NJC": // el jefe de compras niega la solicitud
-                codEstadoInicial = "E02"
-                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
-                concepto = "Negación"
-                mensTipo = "negado"
-                retTipo = "ha sido negada"
-                retTipo2 = "negarla"
-                firmaPedido = "firmaNiega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "BJC": // el jefe de compras indica de q bodega(s) sacar
-                params.each { k, v ->
-                    if (k.toString().startsWith("ret")) {
-                        if (v) {
-                            def parts = k.split("_")
-                            def bodega = Bodega.get(parts[1].toLong())
-                            def cantidad = v.toDouble()
-
-                            notificacionBodegas += bodega.responsable
-                            notificacionBodegas += bodega.suplente
-
-                            def bp = new BodegaPedido()
-                            bp.bodega = bodega
-                            bp.pedido = pedido
-                            bp.cantidad = cantidad
-                            bp.save()
-                        }
-                    }
-                }
-
-                codEstadoInicial = "E02"
-                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
-                concepto = "Notificación de existencia en bodega"
-                mensTipo = "notificado que existe en bodega"
-                retTipo = "ha sido notificada que existe en bodega"
-                retTipo2 = "notificar que existe en bodega"
-                firmaPedido = "firmaBodega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "AAC": // el asistente de compras aprueba la solicitud y ya cargó las cotizaciones
-                codEstadoInicial = "E03"
-                estadoFinal = EstadoSolicitud.findByCodigo("E04") //estado Pendiente de aprobacion final
-                concepto = "Cargado de cotizaciones"
-                mensTipo = "cargado de cotizaciones"
-                retTipo = "ha sido aprobada y ha enviado las cotizaciones"
-                retTipo2 = "aprobarla y enviar las cotizaciones"
-                firmaPedido = "firmaAsistenteCompras"
-                def total = []
-                def cots = Cotizacion.findAllByPedido(pedido, [sort: "id"])
-                def max = 0
-                cots.eachWithIndex { c, i ->
-                    def m = c.valor * pedido.cantidad
-                    total[i] = m
-                    if (m > max) {
-                        max = m
-                    }
-                }
-
-                if (max < 100) {
-                    accionAlerta = "listaJefe"
-                } else {
-                    accionAlerta = "listaGerente"
-                }
-
-                notificacion1Recibe = para
-                notificacion2Recibe = pedido.de
-
-                pedido.paraAF = para
-                break;
-            case "NAC": // el asistente de compras niega la solicitud
-                codEstadoInicial = "E03"
-                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
-                concepto = "Negación"
-                mensTipo = "negado"
-                retTipo = "ha sido negada"
-                retTipo2 = "negarla"
-                firmaPedido = "firmaNiega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "BAC": // el asistente de compras indica de q bodega(s) sacar
-                params.each { k, v ->
-                    if (k.toString().startsWith("ret")) {
-                        if (v) {
-                            def parts = k.split("_")
-                            def bodega = Bodega.get(parts[1].toLong())
-                            def cantidad = v.toDouble()
-
-                            notificacionBodegas += bodega.responsable
-                            notificacionBodegas += bodega.suplente
-
-                            def bp = new BodegaPedido()
-                            bp.bodega = bodega
-                            bp.pedido = pedido
-                            bp.cantidad = cantidad
-                            bp.save()
-                        }
-                    }
-                }
-
-                codEstadoInicial = "E03"
-                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
-                concepto = "Notificación de existencia en bodega"
-                mensTipo = "notificado que existe en bodega"
-                retTipo = "ha sido notificada que existe en bodega"
-                retTipo2 = "notificar que existe en bodega"
-                firmaPedido = "firmaBodega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "AF": // el jefe o gerente aprueba final la solicitud
-                codEstadoInicial = "E04"
-                estadoFinal = EstadoSolicitud.findByCodigo("A01") //estado aprobado
-                concepto = "APROBACIÓN"
-                mensTipo = "APROBADO"
-                retTipo = "HA SIDO APROBADA"
-                retTipo2 = "aprobarla"
-                firmaPedido = "firmaAprueba"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "NF": // el jefe o gerente niega la solicitud
-                codEstadoInicial = "E04"
-                estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
-                concepto = "NEGACIÓN"
-                mensTipo = "NEGADO"
-                retTipo = "HA SIDO NEGADA"
-                retTipo2 = "negarla"
-                firmaPedido = "firmaNiega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
-            case "BF": // el jefe o gerente indica de q bodega(s) sacar
-                params.each { k, v ->
-                    if (k.toString().startsWith("ret")) {
-                        if (v) {
-                            def parts = k.split("_")
-                            def bodega = Bodega.get(parts[1].toLong())
-                            def cantidad = v.toDouble()
-
-                            notificacionBodegas += bodega.responsable
-                            notificacionBodegas += bodega.suplente
-
-                            def bp = new BodegaPedido()
-                            bp.bodega = bodega
-                            bp.pedido = pedido
-                            bp.cantidad = cantidad
-                            bp.save()
-                        }
-                    }
-                }
-
-                codEstadoInicial = "E04"
-                estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
-                concepto = "Notificación de existencia en bodega"
-                mensTipo = "notificado que existe en bodega"
-                retTipo = "ha sido notificada que existe en bodega"
-                retTipo2 = "notificar que existe en bodega"
-                firmaPedido = "firmaBodega"
-                accionAlerta = "lista"
-
-                notificacion1Recibe = pedido.de
-                break;
+        if (!params.cant) {
+            params.cant = 0
+        } else {
+            params.cant = params.cant.toDouble()
         }
-        if (pedido && estadoFinal) {
-            if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
-                if (pedido.save()) {
 
+        if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
+            switch (tipo) {
+                case "AJF": // el jefe aprueba la solicitud
+                    codEstadoInicial = "E01"
+                    estadoFinal = EstadoSolicitud.findByCodigo("E02") //estado Pendiente Asignacion
+                    concepto = "Aprobación"
+                    mensTipo = "aprobado"
+                    retTipo = "ha sido aprobada"
+                    retTipo2 = "aprobarla"
+                    firmaPedido = "firmaJefe"
+                    accionAlerta = "listaJefeCompras"
+
+                    notificacion1Recibe = para
+                    notificacion2Recibe = pedido.de
+
+                    pedido.paraJC = para
+                    break;
+                case "NJF": // el jefe niega la solicitud
+                    codEstadoInicial = "E01"
+                    estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                    concepto = "Negación"
+                    mensTipo = "negado"
+                    retTipo = "ha sido negada"
+                    retTipo2 = "negarla"
+                    firmaPedido = "firmaNiega"
+                    accionAlerta = "lista"
+
+                    notificacion1Recibe = pedido.de
+                    break;
+                case "BJF": // el jefe indica de q bodega(s) sacar
+                    params.each { k, v ->
+                        if (k.toString().startsWith("ret")) {
+                            def parts = k.split("_")
+                            def bodega = Bodega.get(parts[1].toLong())
+                            def cantidad = v.toDouble()
+
+                            notificacionBodegas += bodega.responsable
+                            notificacionBodegas += bodega.suplente
+
+                            def bp = new BodegaPedido()
+                            bp.bodega = bodega
+                            bp.pedido = pedido
+                            bp.cantidad = cantidad
+                            bp.save()
+                        }
+                    }
+
+                    codEstadoInicial = "E01"
+                    if (params.cant != 0) {
+                        estadoFinal = EstadoSolicitud.findByCodigo("E02") //estado Pendiente Asignacion
+                        concepto = "Notificación de existencia en bodega y aprobación parcial"
+                        mensTipo = "notificado que existe en bodega y aprobado parcialmente (${params.cant} de ${pedido.cantidad})"
+                        retTipo = "ha sido notificada que existe en bodega y aprobado parcialmente"
+                        retTipo2 = "notificar que existe en bodega y aprobar parcialmente"
+                        firmaPedido = "firmaJefe"
+                        accionAlerta = "listaJefeCompras"
+
+                        notificacion1Recibe = para
+                        notificacion2Recibe = pedido.de
+
+                        pedido.paraJC = para
+                    } else {
+                        estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                        concepto = "Notificación de existencia en bodega"
+                        mensTipo = "notificado que existe en bodega"
+                        retTipo = "ha sido notificada que existe en bodega"
+                        retTipo2 = "notificar que existe en bodega"
+                        firmaPedido = "firmaBodega"
+                        accionAlerta = "lista"
+
+                        notificacion1Recibe = pedido.de
+                    }
+                    break;
+                case "AJC": // el jefe de compras aprueba la solicitud
+                    codEstadoInicial = "E02"
+                    estadoFinal = EstadoSolicitud.findByCodigo("E03") //estado Pendientes cotizaciones
+                    concepto = "Aprobación"
+                    mensTipo = "aprobado"
+                    retTipo = "ha sido aprobada"
+                    retTipo2 = "aprobarla"
+                    firmaPedido = "firmaJefeCompras"
+                    accionAlerta = "listaAsistenteCompras"
+
+                    notificacion1Recibe = para
+                    notificacion2Recibe = pedido.de
+
+                    pedido.paraAC = para
+                    break;
+                case "NJC": // el jefe de compras niega la solicitud
+                    codEstadoInicial = "E02"
+                    estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                    concepto = "Negación"
+                    mensTipo = "negado"
+                    retTipo = "ha sido negada"
+                    retTipo2 = "negarla"
+                    firmaPedido = "firmaNiega"
+                    accionAlerta = "lista"
+
+                    notificacion1Recibe = pedido.de
+                    break;
+                case "BJC": // el jefe de compras indica de q bodega(s) sacar
+                    params.each { k, v ->
+                        if (k.toString().startsWith("ret")) {
+                            if (v) {
+                                def parts = k.split("_")
+                                def bodega = Bodega.get(parts[1].toLong())
+                                def cantidad = v.toDouble()
+
+                                notificacionBodegas += bodega.responsable
+                                notificacionBodegas += bodega.suplente
+
+                                def bp = new BodegaPedido()
+                                bp.bodega = bodega
+                                bp.pedido = pedido
+                                bp.cantidad = cantidad
+                                bp.save()
+                            }
+                        }
+                    }
+
+                    codEstadoInicial = "E02"
+                    if (params.cant != 0) {
+                        estadoFinal = EstadoSolicitud.findByCodigo("E03") //estado Pendientes cotizaciones
+                        concepto = "Notificación de existencia en bodega y aprobación parcial"
+                        mensTipo = "notificado que existe en bodega y aprobado parcialmente (${params.cant} de ${pedido.cantidad})"
+                        retTipo = "ha sido notificada que existe en bodega y aprobado parcialmente"
+                        retTipo2 = "notificar que existe en bodega y aprobar parcialmente"
+                        firmaPedido = "firmaJefeCompras"
+                        accionAlerta = "listaAsistenteCompras"
+
+                        notificacion1Recibe = para
+                        notificacion2Recibe = pedido.de
+
+                        pedido.paraAC = para
+                    } else {
+                        estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                        concepto = "Notificación de existencia en bodega"
+                        mensTipo = "notificado que existe en bodega"
+                        retTipo = "ha sido notificada que existe en bodega"
+                        retTipo2 = "notificar que existe en bodega"
+                        firmaPedido = "firmaBodega"
+                        accionAlerta = "lista"
+
+                        notificacion1Recibe = pedido.de
+                    }
+                    break;
+                case "AAC": // el asistente de compras aprueba la solicitud y ya cargó las cotizaciones
+                    codEstadoInicial = "E03"
+                    estadoFinal = EstadoSolicitud.findByCodigo("E04") //estado Pendiente de aprobacion final
+                    concepto = "Cargado de cotizaciones"
+                    mensTipo = "cargado de cotizaciones"
+                    retTipo = "ha sido aprobada y ha enviado las cotizaciones"
+                    retTipo2 = "aprobarla y enviar las cotizaciones"
+                    firmaPedido = "firmaAsistenteCompras"
+                    def total = []
+                    def cots = Cotizacion.findAllByPedido(pedido, [sort: "id"])
+                    def max = 0
+                    cots.eachWithIndex { c, i ->
+                        def m = c.valor * pedido.cantidad
+                        total[i] = m
+                        if (m > max) {
+                            max = m
+                        }
+                    }
+
+                    if (max < 100) {
+                        accionAlerta = "listaJefe"
+                    } else {
+                        accionAlerta = "listaGerente"
+                    }
+
+                    notificacion1Recibe = para
+                    notificacion2Recibe = pedido.de
+
+                    pedido.paraAF = para
+                    break;
+                case "NAC": // el asistente de compras niega la solicitud
+                    codEstadoInicial = "E03"
+                    estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                    concepto = "Negación"
+                    mensTipo = "negado"
+                    retTipo = "ha sido negada"
+                    retTipo2 = "negarla"
+                    firmaPedido = "firmaNiega"
+                    accionAlerta = "lista"
+
+                    notificacion1Recibe = pedido.de
+                    break;
+                case "BAC": // el asistente de compras indica de q bodega(s) sacar
+                    params.each { k, v ->
+                        if (k.toString().startsWith("ret")) {
+                            if (v) {
+                                def parts = k.split("_")
+                                def bodega = Bodega.get(parts[1].toLong())
+                                def cantidad = v.toDouble()
+
+                                notificacionBodegas += bodega.responsable
+                                notificacionBodegas += bodega.suplente
+
+                                def bp = new BodegaPedido()
+                                bp.bodega = bodega
+                                bp.pedido = pedido
+                                bp.cantidad = cantidad
+                                bp.save()
+                            }
+                        }
+                    }
+
+                    codEstadoInicial = "E03"
+                    if (params.cant != 0) {
+                        estadoFinal = EstadoSolicitud.findByCodigo("E04") //estado Pendiente de aprobacion final
+                        concepto = "Notificación de existencia en bodega, aprobación parcial y cargado cotizaciones"
+                        mensTipo = "notificado que existe en bodega, aprobado parcialmente (${params.cant} de ${pedido.cantidad}) y cargado cotizaciones"
+                        retTipo = "ha sido notificada que existe en bodega, aprobado parcialmente y cargado cotizaciones"
+                        retTipo2 = "notificar que existe en bodega, aprobar parcialmente y cargar cotizaciones"
+                        firmaPedido = "firmaAsistenteCompras"
+                        def total = []
+                        def cots = Cotizacion.findAllByPedido(pedido, [sort: "id"])
+                        def max = 0
+                        cots.eachWithIndex { c, i ->
+                            def m = c.valor * pedido.cantidad
+                            total[i] = m
+                            if (m > max) {
+                                max = m
+                            }
+                        }
+
+                        if (max < 100) {
+                            accionAlerta = "listaJefe"
+                        } else {
+                            accionAlerta = "listaGerente"
+                        }
+
+                        notificacion1Recibe = para
+                        notificacion2Recibe = pedido.de
+
+                        pedido.paraAF = para
+                    } else {
+                        estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                        concepto = "Notificación de existencia en bodega"
+                        mensTipo = "notificado que existe en bodega"
+                        retTipo = "ha sido notificada que existe en bodega"
+                        retTipo2 = "notificar que existe en bodega"
+                        firmaPedido = "firmaBodega"
+                        accionAlerta = "lista"
+
+                        notificacion1Recibe = pedido.de
+                    }
+                    break;
+                case "AF": // el jefe o gerente aprueba final la solicitud
+                    codEstadoInicial = "E04"
+                    estadoFinal = EstadoSolicitud.findByCodigo("A01") //estado aprobado
+                    concepto = "APROBACIÓN"
+                    mensTipo = "APROBADO"
+                    retTipo = "HA SIDO APROBADA"
+                    retTipo2 = "aprobarla"
+                    firmaPedido = "firmaAprueba"
+                    accionAlerta = "lista"
+
+                    notificacion1Recibe = pedido.de
+                    break;
+                case "NF": // el jefe o gerente niega la solicitud
+                    codEstadoInicial = "E04"
+                    estadoFinal = EstadoSolicitud.findByCodigo("N01") //estado Negado
+                    concepto = "NEGACIÓN"
+                    mensTipo = "NEGADO"
+                    retTipo = "HA SIDO NEGADA"
+                    retTipo2 = "negarla"
+                    firmaPedido = "firmaNiega"
+                    accionAlerta = "lista"
+
+                    notificacion1Recibe = pedido.de
+                    break;
+                case "BF": // el jefe o gerente indica de q bodega(s) sacar
+                    params.each { k, v ->
+                        if (k.toString().startsWith("ret")) {
+                            if (v) {
+                                def parts = k.split("_")
+                                def bodega = Bodega.get(parts[1].toLong())
+                                def cantidad = v.toDouble()
+
+                                notificacionBodegas += bodega.responsable
+                                notificacionBodegas += bodega.suplente
+
+                                def bp = new BodegaPedido()
+                                bp.bodega = bodega
+                                bp.pedido = pedido
+                                bp.cantidad = cantidad
+                                bp.save()
+                            }
+                        }
+                    }
+
+                    codEstadoInicial = "E04"
+                    if (params.cant != 0) {
+                        estadoFinal = EstadoSolicitud.findByCodigo("A01") //estado aprobado
+                        concepto = "APROBACIÓN PARCIAL"
+                        mensTipo = "APROBADO PARCIALMENTE (${params.cant} de ${pedido.cantidad})"
+                        retTipo = "HA SIDO APROBADA PARCIALMENTE"
+                        retTipo2 = "aprobarla parcialmente"
+                        firmaPedido = "firmaAprueba"
+                        accionAlerta = "lista"
+
+                        notificacion1Recibe = pedido.de
+                    } else {
+                        estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
+                        concepto = "Notificación de existencia en bodega"
+                        mensTipo = "notificado que existe en bodega"
+                        retTipo = "ha sido notificada que existe en bodega"
+                        retTipo2 = "notificar que existe en bodega"
+                        firmaPedido = "firmaBodega"
+                        accionAlerta = "lista"
+
+                        notificacion1Recibe = pedido.de
+                    }
+                    break;
+            }
+            if (pedido && estadoFinal) {
+                if (params.cant) {
+                    pedido.cantidadAprobada = params.cant.toDouble()
+                }
+                if (pedido.save()) {
                     if (tipo == "AF") {
                         def cotizacionAprobada = Cotizacion.get(params.cot.toLong())
                         cotizacionAprobada.estadoSolicitud = estadoFinal
@@ -841,7 +1071,7 @@ class NotaDePedidoController extends Shield {
                         }
                     }
 
-                    println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
+//                    println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
                     if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
                         def now = new Date()
                         pedido.estadoSolicitud = estadoFinal
@@ -868,7 +1098,7 @@ class NotaDePedidoController extends Shield {
                                 observaciones += ", observaciones: " + params.obs.trim()
                             }
                             if (pedido.observaciones) {
-                                pedido.observaciones = observaciones + " | " + pedido.observaciones
+                                pedido.observaciones = observaciones + " || " + pedido.observaciones
                             } else {
                                 pedido.observaciones = observaciones
                             }
@@ -927,10 +1157,10 @@ class NotaDePedidoController extends Shield {
                     return "ERROR*Ha ocurrido un error al guardar el nuevo destinatario de la nota de pedido: " + renderErrors(bean: pedido)
                 }
             } else {
-                return "ERROR*Su clave de autorización es incorrecta"
+                return "ERROR*Acción no reconocida"
             }
         } else {
-            return "ERROR*Acción no reconocida"
+            return "ERROR*Su clave de autorización es incorrecta"
         }
     }
 }

@@ -26,6 +26,22 @@
     </div>
 
     <div class="row">
+        <div class="col-md-3">Cantidad</div>
+
+        <div class="col-md-3">
+            <div class="input-group">
+                <g:textField name="cant" class="form-control input-sm number"
+                             value="${nota.cantidadAprobada != 0 ? nota.cantidadAprobada : nota.cantidad}"/>
+                <span class="input-group-addon">${nota.unidad.codigo}</span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            ${nota.item}
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-3">Clave de autorización</div>
 
         <div class="col-md-5">

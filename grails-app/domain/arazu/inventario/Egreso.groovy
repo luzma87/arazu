@@ -1,6 +1,7 @@
 package arazu.inventario
 
 import arazu.seguridad.Persona
+import arazu.solicitudes.Pedido
 
 /**
  *  Clase para conectar con la tabla 'egrs' de la base de datos
@@ -34,6 +35,10 @@ class Egreso {
      * Transferencia en caso de que se saque de otra bodega
      */
     Transferencia transferencia
+    /**
+     * Pedido para el cual se hace el egreso
+     */
+    Pedido pedido
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -57,6 +62,7 @@ class Egreso {
             responsable column: 'egrsresp'
             cantidad column: 'egrscant'
             transferencia column: 'trsf__id'
+            pedido column: 'pddo__id'
         }
     }
 
@@ -70,5 +76,6 @@ class Egreso {
         fecha(nullable: false, blank: false)
         responsable(nullable: true, blank: true, size: 1..255)
         transferencia nullable: true
+        pedido nullable: true
     }
 }

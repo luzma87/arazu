@@ -1,56 +1,27 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.items.Item; arazu.items.Maquinaria; arazu.seguridad.Persona; arazu.parametros.EstadoSolicitud" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Notas de pedido del usuario ${session.usuario}</title>
+        <title>Notas de pedido</title>
         <style type="text/css">
         table {
             margin-top : 10px;
             font-size  : 12px;
+        }
+
+        .dp {
+            width : 100px;
         }
         </style>
     </head>
 
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <elm:container tipo="horizontal" titulo="Notas de pedido del usuario: ${session.usuario}">
-
-            <div class="row">
-
-            </div>
-
-            <table class="table table-striped  table-bordered table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th style="width: 50px">Número</th>
-                        <th style="width: 130px">Fecha</th>
-                        <th style="width: 150px">Solicita</th>
-                        <th style="width: 80px">Tipo</th>
-                        <th style="">Item</th>
-                        <th style="width: 150px">Estado</th>
-                        <th style="width: 50px"></th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-items">
-                    <g:each in="${notas}" var="nota">
-                        <tr>
-                            <td>${nota.numero}</td>
-                            <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
-                            <td>${nota.de}</td>
-                            <td>${nota.tipoSolicitud.descripcion}</td>
-                            <td>${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}</td>
-                            <td style="font-weight: bold" title="${nota.estadoSolicitud?.descripcion}">${nota.estadoSolicitud}</td>
-                            <td style="text-align: center">
-                                <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                                   title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
-                                    <i class="fa fa-print"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </g:each>
-                </tbody>
-            </table>
+        <elm:container tipo="horizontal" titulo="Notas de pedido">
+            <g:render template="/templates/tablaNotaPedido"
+                      model="[params      : params, strSearch: strSearch, notas: notas, notasCount: notasCount,
+                              buscarEstado: true,
+                              linkBusqueda: 'lista']"/>
         </elm:container>
-
     </body>
 </html>

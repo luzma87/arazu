@@ -12,38 +12,8 @@
     <p>Una vez enviada la nota de pedido no podrá realizar cambios a las cotizaciones y pasará a un ${jefes ? "jefe" : "gerente"} para su aprobación final</p>
 </div>
 
-<form id="frmAprobar">
-    <div class="row">
-        <div class="col-md-3">${jefes ? "Jefe" : "Gerente"}</div>
-
-        <div class="col-md-5">
-            <g:select name="para" from="${jefes ? jefes : gerentes}" class="form-control input-sm required" optionKey="id"/>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-3">Clave de autorización</div>
-
-        <div class="col-md-5">
-            <div class="grupo">
-                <div class="input-group input-group-sm">
-                    <g:passwordField name="auth" class="form-control input-sm required"/>
-                    <span class="input-group-addon">
-                        <i class="fa fa-unlock-alt"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-3">Observaciones</div>
-
-        <div class="col-md-9">
-            <g:textArea name="obs" class="form-control input-sm"/>
-        </div>
-    </div>
-</form>
+<g:render template="/templates/dlgAprobar"
+          model="[nota: nota, lbl: jefes ? 'Jefe' : 'Gerente', from: jefes ?: gerentes]"/>
 
 <script type="text/javascript">
     $(function () {
