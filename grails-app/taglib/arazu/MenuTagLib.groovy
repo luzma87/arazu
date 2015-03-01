@@ -25,7 +25,7 @@ class MenuTagLib {
 
         def html = ""
         html += "<div class='banner-top ${large}'>"
-        html += "<div class='banner-esquina'>"
+        html += "<div class='banner-esquina hidden-xs hidden-sm'>"
         html += "</div>"
         html += "<div class='banner-title'>HIDALGO NARANJO INGENIEROS & ARQUITECTOS S.A.</div>"
         if (large != "") {

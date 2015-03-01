@@ -185,15 +185,15 @@ class Pedido {
     }
 
     def getObservacionesFormat() {
-        println ">>> " + this.observaciones
-        def parts = this.observaciones.split("\\|\\|")
-        println ">>> " + parts
-        def html = "<ul>"
-        parts.each { p ->
-            html += "<li>" + p + "</li>"
+        def html = ""
+        if (this.observaciones) {
+            def parts = this.observaciones.split("\\|\\|")
+            html = "<ul>"
+            parts.each { p ->
+                html += "<li>" + p + "</li>"
+            }
+            html += "</ul>"
         }
-        html += "</ul>"
-        println ">>> " + html
         return html
     }
 }

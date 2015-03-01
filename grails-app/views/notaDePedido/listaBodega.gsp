@@ -31,7 +31,7 @@
                         <th style="width: 150px">Estado</th>
                         <th style="width: 200px">Detalles</th>
                         <th style="width: 50px">Entregado</th>
-                        <th style="width: 75px"></th>
+                        <th style="width: 75px">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-items">
@@ -59,7 +59,7 @@
                                 </td>
                                 <td style="text-align: center">
                                     <div class="btn-group" role="group">
-                                        <a href="#" title="Egreso" id="${nota.id}" class="btn btn-primary btn-sm btnIng">
+                                        <a href="#" title="Egreso" data-id="${nota.id}" class="btn btn-primary btn-sm btnEg">
                                             <i class="fa fa-shopping-cart"></i>
                                         </a>
                                         <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
@@ -77,7 +77,65 @@
 
         <script type="text/javascript">
             $(function () {
-
+                $(".btnEg").click(function () {
+                    openLoader();
+                    var id = $(this).data("id");
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'inventario', action:'dlgEgreso_ajax')}",
+                        data    : {
+                            id : id
+                        },
+                        success : function (msg) {
+                            closeLoader();
+                            var b = bootbox.dialog({
+                                id      : "dlgEgreso",
+                                title   : "Egreso",
+                                message : msg,
+                                buttons : {
+                                    guardar  : {
+                                        label     : "<i class='fa fa-check'></i> Guardar",
+                                        className : "btn-success",
+                                        callback  : function () {
+                                            openLoader();
+                                            var data = $("#frmEgreso").serialize() + "&id=" + id;
+                                            $.ajax({
+                                                type    : "POST",
+                                                url     : "${createLink(controller:'inventario', action:'egreso_ajax')}",
+                                                data    : data,
+                                                success : function (msg) {
+                                                    var parts = msg.split("*");
+                                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                                    if (parts[0] == "SUCCESS") {
+                                                        setTimeout(function () {
+                                                            location.reload(true);
+                                                        }, 1000);
+                                                    } else {
+                                                        closeLoader();
+                                                    }
+                                                },
+                                                error   : function () {
+                                                    log("Ha ocurrido un error interno", "error");
+                                                    closeLoader();
+                                                }
+                                            });
+                                            return false;
+                                        } //callback
+                                    },
+                                    cancelar : {
+                                        label     : "Cancelar",
+                                        className : "btn-default",
+                                        callback  : function () {
+                                        }
+                                    }
+                                } //buttons
+                            }); //dialog
+                            setTimeout(function () {
+                                b.find(".form-control").first().focus()
+                            }, 500);
+                        } //success
+                    }); //ajax
+                });
             });
         </script>
 

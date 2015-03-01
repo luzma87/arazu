@@ -1,6 +1,7 @@
 package arazu.inventario
 
 import arazu.seguridad.Persona
+import arazu.solicitudes.Firma
 import arazu.solicitudes.Pedido
 
 /**
@@ -39,6 +40,10 @@ class Egreso {
      * Pedido para el cual se hace el egreso
      */
     Pedido pedido
+    /**
+     * Firma del usuario que realizó el egreso
+     */
+    Firma firma
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -63,6 +68,7 @@ class Egreso {
             cantidad column: 'egrscant'
             transferencia column: 'trsf__id'
             pedido column: 'pddo__id'
+            firma column: 'frma__id'
         }
     }
 
@@ -77,5 +83,6 @@ class Egreso {
         responsable(nullable: true, blank: true, size: 1..255)
         transferencia nullable: true
         pedido nullable: true
+        firma nullable: true
     }
 }

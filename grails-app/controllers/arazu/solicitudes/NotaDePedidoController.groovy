@@ -740,7 +740,10 @@ class NotaDePedidoController extends Shield {
         } else {
             params.cant = params.cant.toDouble()
         }
-
+        def str = ""
+        if (params.cant > 0) {
+            str = " (" + params.cant + " " + pedido.unidad.codigo + ")"
+        }
         if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
             switch (tipo) {
                 case "AJF": // el jefe aprueba la solicitud
@@ -757,6 +760,13 @@ class NotaDePedidoController extends Shield {
                     notificacion2Recibe = pedido.de
 
                     pedido.paraJC = para
+
+                    if (str != "") {
+                        concepto += str
+                        mensTipo += str
+                        retTipo += str
+                    }
+
                     break;
                 case "NJF": // el jefe niega la solicitud
                     codEstadoInicial = "E01"
@@ -828,6 +838,11 @@ class NotaDePedidoController extends Shield {
                     notificacion2Recibe = pedido.de
 
                     pedido.paraAC = para
+                    if (str != "") {
+                        concepto += str
+                        mensTipo += str
+                        retTipo += str
+                    }
                     break;
                 case "NJC": // el jefe de compras niega la solicitud
                     codEstadoInicial = "E02"
@@ -916,6 +931,11 @@ class NotaDePedidoController extends Shield {
                     notificacion2Recibe = pedido.de
 
                     pedido.paraAF = para
+                    if (str != "") {
+                        concepto += str
+                        mensTipo += str
+                        retTipo += str
+                    }
                     break;
                 case "NAC": // el asistente de compras niega la solicitud
                     codEstadoInicial = "E03"
@@ -1001,6 +1021,11 @@ class NotaDePedidoController extends Shield {
                     accionAlerta = "lista"
 
                     notificacion1Recibe = pedido.de
+                    if (str != "") {
+                        concepto += str
+                        mensTipo += str
+                        retTipo += str
+                    }
                     break;
                 case "NF": // el jefe o gerente niega la solicitud
                     codEstadoInicial = "E04"
@@ -1070,7 +1095,6 @@ class NotaDePedidoController extends Shield {
                             println "error al aprobar la cotización: " + cotizacionAprobada.errors
                         }
                     }
-
 //                    println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
                     if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
                         def now = new Date()

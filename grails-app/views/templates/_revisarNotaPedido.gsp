@@ -101,18 +101,19 @@
         ${nota.maquinaria}
     </div>
 </div>
+<g:if test="${nota.observaciones}">
+    <div class="row">
+        <div class="col-md-1">
+            <label class="control-label">
+                Observaciones
+            </label>
+        </div>
 
-<div class="row">
-    <div class="col-md-1">
-        <label class="control-label">
-            Observaciones
-        </label>
+        <div class="col-md-11">
+            ${nota.observacionesFormat}
+        </div>
     </div>
-
-    <div class="col-md-11">
-        ${nota.observacionesFormat}
-    </div>
-</div>
+</g:if>
 
 <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
     <thead>
