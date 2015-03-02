@@ -102,8 +102,10 @@
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </g:if>
-                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                               title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
+                            <a href="#"
+                               title="Imprimir" class="btn btn-info btn-sm  ver-doc" data-ref="Nota de pedido #${nota.numero}"
+                               data-file="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                               iden="${nota.id}">
                                 <i class="fa fa-print"></i>
                             </a>
                         </div>
