@@ -9,14 +9,18 @@ import arazu.solicitudes.Pedido
 class InicioController extends Shield {
 
     def index() {
-        def pr = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("E01"))
-        def pa = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("E02"))
-        def aprobadas = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("A01"))
-        def ejecutadas = Pedido.findAllByEstadoSolicitud(EstadoSolicitud.findByCodigo("C01"))
+        def estadoPr = EstadoSolicitud.findByCodigo("E01")
+        def estadoPa = EstadoSolicitud.findByCodigo("E02")
+        def estadoAp = EstadoSolicitud.findByCodigo("A01")
+        def estadoEj = EstadoSolicitud.findByCodigo("C01")
+        def pr = Pedido.findAllByEstadoSolicitud(estadoPr)
+        def pa = Pedido.findAllByEstadoSolicitud(estadoPa)
+        def aprobadas = Pedido.findAllByEstadoSolicitud(estadoAp)
+        def ejecutadas = Pedido.findAllByEstadoSolicitud(estadoEj)
         def alertas = Alerta.findAllByRecibeAndFechaRecibidoIsNull(session.usuario)
         def bodegas = Bodega.findAllByActivo(1)
         def proyectos = Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())
-        [pr:pr,pa:pa,aprobadas:aprobadas,ejecutadas:ejecutadas,alertas:alertas,bodegas:bodegas,proyectos:proyectos]
+        [pr:pr,pa:pa,aprobadas:aprobadas,ejecutadas:ejecutadas,alertas:alertas,bodegas:bodegas,proyectos:proyectos,estadoPr:estadoPr,estadoPa:estadoPa,estadoAp:estadoAp,estadoEj:estadoEj]
     }
 
     def demoUI() {

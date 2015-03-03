@@ -27,25 +27,25 @@
             <div class="card">
                 <div class="titulo-card"><i class="fa fa-newspaper-o"></i> Notas de pedido</div>
 
-                <div class="cardContent">
+                <div class="cardContent" title="${estadoPr.descripcion}">
                     <div class="circle-card ${pr.size()>0?'svt-bg-warning':'card-bg-green'}">${pr.size()}</div>
-                    Pendientes de revision
+                    ${estadoPr.nombre}
                 </div>
-                <div class="cardContent">
+                <div class="cardContent" title="${estadoPa.descripcion}">
                     <div class="circle-card ${pr.size()>0?'svt-bg-warning':'card-bg-green'}">${pa.size()}</div>
-                    Pendientes de aprobacion
+                    ${estadoPa.nombre}
                 </div>
             </div>
             <div class="card">
                 <div class="titulo-card"><i class="fa fa-shopping-cart"></i> Ordenes de compra - Febrero</div>
 
-                <div class="cardContent">
+                <div class="cardContent" title="${estadoAp.descripcion}">
                     <div class="circle-card card-bg-green">${aprobadas.size()}</div>
-                    Emitidas
+                    ${estadoAp.nombre}
                 </div>
-                <div class="cardContent">
+                <div class="cardContent" title="${estadoEj.descripcion}">
                     <div class="circle-card card-bg-green">${ejecutadas.size()}</div>
-                    Ejecutadas
+                    ${estadoEj.nombre}
                 </div>
             </div>
             <div class="card">
