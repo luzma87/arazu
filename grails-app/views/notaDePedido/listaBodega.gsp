@@ -42,14 +42,22 @@
                                 <td>${nota.numero}</td>
                                 <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                                 <td>${nota.tipoSolicitud.descripcion}</td>
-                                <td>${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}</td>
+                                <td>
+                                    ${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}
+                                    <g:if test="${nota.cantidad != nota.cantidadAprobada}">
+                                        (Aprobado ${nota.cantidadAprobada})
+                                    </g:if>
+                                </td>
                                 <td title="${nota.estadoSolicitud?.descripcion}">${nota.estadoSolicitud}</td>
                                 <td>
                                     <g:set var="bps" value="${BodegaPedido.findAllByPedido(nota)}"/>
                                     <g:if test="${bps.size() > 0}">
                                         <ul>
                                             <g:each in="${bps}" var="bp">
-                                                <li>${bp.cantidad}${bp.pedido.unidad.codigo} en ${bp.bodega}</li>
+                                                <li>
+                                                    ${bp.cantidad}${bp.pedido.unidad.codigo} en ${bp.bodega},
+                                                    entregado ${bp.entregado}${bp.pedido.unidad.codigo}
+                                                </li>
                                             </g:each>
                                         </ul>
                                     </g:if>

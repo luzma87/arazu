@@ -291,8 +291,24 @@ class InventarioController extends Shield {
     def dlgEgreso_ajax() {
         def pedido = Pedido.get(params.id)
         def bodegasUsuario = Bodega.findAllByResponsableOrSuplente(session.usuario, session.usuario)
-        def bodegasPedido = BodegaPedido.findAllByPedidoAndBodegaInList(pedido, bodegasUsuario)
+        def bp = BodegaPedido.findAllByPedidoAndBodegaInList(pedido, bodegasUsuario)
+        def bodegasPedido = bp.findAll { it.cantidad - it.entregado > 0 }
         return [pedido: pedido, bodegas: bodegasPedido]
+    }
+
+    def cargarExistenciasBodega_ajax() {
+        def bodegaPedido = BodegaPedido.get(params.id)
+        def bodega = bodegaPedido.bodega
+        def item = bodegaPedido.pedido.item
+
+        def existencias = Ingreso.withCriteria {
+            eq("bodega", bodega)
+            eq("item", item)
+            gt("saldo", 0.toDouble())
+        }
+
+        def existencia = existencias.sum { it.saldo }
+        render existencia
     }
 
     /**

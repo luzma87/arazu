@@ -2,6 +2,7 @@ package arazu.solicitudes
 
 import arazu.alertas.Alerta
 import arazu.inventario.Bodega
+import arazu.inventario.Egreso
 import arazu.inventario.Ingreso
 import arazu.items.Item
 import arazu.items.Maquinaria
@@ -698,6 +699,54 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * función que hace los objetos bodegaPedido y los egresos en estado pendiente
+     */
+    def bodega(Pedido pedido, params) {
+        def now = new Date()
+        def notificacionBodegas = []
+        params.each { k, v ->
+            if (k.toString().startsWith("ret")) {
+                def parts = k.split("_")
+                def bodega = Bodega.get(parts[1].toLong())
+                def cantidad = v.toDouble()
+
+                notificacionBodegas += bodega.responsable
+                notificacionBodegas += bodega.suplente
+
+                def bp = new BodegaPedido()
+                bp.bodega = bodega
+                bp.pedido = pedido
+                bp.cantidad = cantidad
+                bp.save()
+
+                def tot = 0
+                def ingresos = Ingreso.findAllByItemAndSaldoGreaterThan(pedido.item, 0.toDouble())
+                ingresos.each { ing ->
+                    if (tot < cantidad) {
+                        ing.calcularSaldo()
+                        def c
+                        if (ing.saldo > cantidad) {
+                            c = cantidad
+                        } else {
+                            c = ing.saldo
+                        }
+                        tot += c
+                        def egreso = new Egreso()
+                        egreso.ingreso = ing
+                        egreso.pedido = pedido
+                        egreso.fecha = now
+                        egreso.cantidad = c
+                        if (!egreso.save()) {
+                            println "ERROR*Ha ocurrido un error al generar el egreso"
+                        }
+                    }
+                }
+            }
+        }
+        return notificacionBodegas
+    }
+
+    /**
      * Función que cambia de estado un pedido y envía las notificaciones necesarias
      * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
@@ -781,22 +830,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BJF": // el jefe indica de q bodega(s) sacar
-                    params.each { k, v ->
-                        if (k.toString().startsWith("ret")) {
-                            def parts = k.split("_")
-                            def bodega = Bodega.get(parts[1].toLong())
-                            def cantidad = v.toDouble()
-
-                            notificacionBodegas += bodega.responsable
-                            notificacionBodegas += bodega.suplente
-
-                            def bp = new BodegaPedido()
-                            bp.bodega = bodega
-                            bp.pedido = pedido
-                            bp.cantidad = cantidad
-                            bp.save()
-                        }
-                    }
+                    notificacionBodegas = bodega(pedido, params)
 
                     codEstadoInicial = "E01"
                     if (params.cant != 0) {
@@ -857,24 +891,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BJC": // el jefe de compras indica de q bodega(s) sacar
-                    params.each { k, v ->
-                        if (k.toString().startsWith("ret")) {
-                            if (v) {
-                                def parts = k.split("_")
-                                def bodega = Bodega.get(parts[1].toLong())
-                                def cantidad = v.toDouble()
-
-                                notificacionBodegas += bodega.responsable
-                                notificacionBodegas += bodega.suplente
-
-                                def bp = new BodegaPedido()
-                                bp.bodega = bodega
-                                bp.pedido = pedido
-                                bp.cantidad = cantidad
-                                bp.save()
-                            }
-                        }
-                    }
+                    notificacionBodegas = bodega(pedido, params)
 
                     codEstadoInicial = "E02"
                     if (params.cant != 0) {
@@ -950,24 +967,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BAC": // el asistente de compras indica de q bodega(s) sacar
-                    params.each { k, v ->
-                        if (k.toString().startsWith("ret")) {
-                            if (v) {
-                                def parts = k.split("_")
-                                def bodega = Bodega.get(parts[1].toLong())
-                                def cantidad = v.toDouble()
-
-                                notificacionBodegas += bodega.responsable
-                                notificacionBodegas += bodega.suplente
-
-                                def bp = new BodegaPedido()
-                                bp.bodega = bodega
-                                bp.pedido = pedido
-                                bp.cantidad = cantidad
-                                bp.save()
-                            }
-                        }
-                    }
+                    notificacionBodegas = bodega(pedido, params)
 
                     codEstadoInicial = "E03"
                     if (params.cant != 0) {
@@ -1040,24 +1040,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BF": // el jefe o gerente indica de q bodega(s) sacar
-                    params.each { k, v ->
-                        if (k.toString().startsWith("ret")) {
-                            if (v) {
-                                def parts = k.split("_")
-                                def bodega = Bodega.get(parts[1].toLong())
-                                def cantidad = v.toDouble()
-
-                                notificacionBodegas += bodega.responsable
-                                notificacionBodegas += bodega.suplente
-
-                                def bp = new BodegaPedido()
-                                bp.bodega = bodega
-                                bp.pedido = pedido
-                                bp.cantidad = cantidad
-                                bp.save()
-                            }
-                        }
-                    }
+                    notificacionBodegas = bodega(pedido, params)
 
                     codEstadoInicial = "E04"
                     if (params.cant != 0) {

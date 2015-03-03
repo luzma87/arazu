@@ -170,6 +170,8 @@ class Pedido {
         maquinaria nullable: true
         aprobacion nullable: true
 
+        proyecto nullable: true
+
         paraJC nullable: true
         paraAC nullable: true
         paraAF nullable: true

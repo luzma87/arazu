@@ -20,6 +20,10 @@ class BodegaPedido {
      * Cantidad de items a retirar de la bodega
      */
     Double cantidad
+    /**
+     * Cantidad entregada
+     */
+    Double entregado = 0
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -40,6 +44,7 @@ class BodegaPedido {
             bodega column: 'bdga__id'
             pedido column: 'pddo__id'
             cantidad column: 'bdpdcntd'
+            entregado column: 'bdpdentr'
         }
     }
 }
