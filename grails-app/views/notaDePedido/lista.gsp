@@ -24,6 +24,6 @@
                       buscarEstado: true,
                       linkBusqueda: 'lista']"/>
 </elm:container>
-<g:pdfViewer/>
+
 </body>
 </html>

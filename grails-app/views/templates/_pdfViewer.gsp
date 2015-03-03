@@ -2,7 +2,7 @@
 <imp:js src="${resource(dir: 'js/plugins/pdfObject', file: 'pdfobject.min.js')}"/>
 <div class="pdf-viewer">
     <div class="pdf-content" >
-        <iframe class="pdf-container" id="doc"></iframe>
+        <iframe class="pdf-container" id="doc" src="${resource(dir: 'images/spinners',file: 'download.GIF')}"></iframe>
         <div class="pdf-handler" >
             <i class="fa fa-arrow-right"></i>
         </div>
@@ -21,14 +21,18 @@
     function showPdf(div){
         $("#msgNoPDF").show();
         $("#doc").html("")
-        var pathFile = div.data("file")
+        var pathFile = div.data("pp")
         $("#referencia-pdf").html(div.data("ref"))
+
         var path = "${url}"+pathFile;
-        $("#doc").attr("src",path)
+
         $(".pdf-viewer").show("slide",{direction:'right'})
+        $("#doc").attr("src",path)
         $("#data").show()
+        return false
     }
     $(".ver-doc").click(function(){
+
         showPdf($(this))
         return false
     })

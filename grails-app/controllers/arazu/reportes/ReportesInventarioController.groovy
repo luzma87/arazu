@@ -16,7 +16,7 @@ class ReportesInventarioController {
     }
 
     def notaDePedido() {
-        println "nota de pedido " + params
+        //println "nota de pedido " + params
         def nota = Pedido.get(params.id)
         if (!nota)
             response.sendError(404)

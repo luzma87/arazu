@@ -1,4 +1,5 @@
 <%@ page import="arazu.solicitudes.Cotizacion; arazu.parametros.EstadoSolicitud; arazu.items.Item; arazu.items.Maquinaria; arazu.seguridad.Persona" %>
+
 <div class="btn-toolbar toolbar bg-info corner-all"
      style="padding: 5px; margin-top: 10px; margin-left: 0; margin-bottom: 0;">
     <div class="btn-group col-md-2 noPadding dp">
@@ -102,9 +103,10 @@
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </g:if>
-                            <a href="#"
-                               title="Imprimir" class="btn btn-info btn-sm  ver-doc" data-ref="Nota de pedido #${nota.numero}"
-                               data-file="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Nota de pedido #${nota.numero}"
+                               data-pp=""
+                                target="_blank"
                                iden="${nota.id}">
                                 <i class="fa fa-print"></i>
                             </a>
