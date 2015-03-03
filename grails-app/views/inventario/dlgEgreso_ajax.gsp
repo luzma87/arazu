@@ -34,25 +34,6 @@
     </div>
 
     <div class="form-group">
-        <label for="bodega" class="col-sm-2 col-sm-offset-1 control-label">
-            Cantidad
-        </label>
-
-        <div class="col-sm-3">
-            <div class="input-group">
-                <g:textField name="cant" class="form-control"/>
-                <span class="input-group-addon">${pedido.unidad.codigo}</span>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <p class="form-control-static" id="divExist">
-
-            </p>
-        </div>
-    </div>
-
-    <div class="form-group">
         <label for="persona" class="col-sm-2 col-sm-offset-1 control-label">
             Responsable
         </label>
@@ -73,26 +54,3 @@
         </div>
     </div>
 </form>
-
-<script type="text/javascript">
-    function validaBodega() {
-        $("#divExist").html(spinner);
-        var id = $("#bodega").val();
-        $.ajax({
-            type    : "POST",
-            url     : "${createLink(controller:'inventario', action:'cargarExistenciasBodega_ajax')}",
-            data    : {
-                id : id
-            },
-            success : function (msg) {
-                $("#divExist").html(msg + "${pedido.unidad.codigo} en existencia");
-            }
-        });
-    }
-    $(function () {
-        validaBodega();
-        $("#bodega").change(function () {
-            validaBodega();
-        });
-    });
-</script>

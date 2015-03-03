@@ -62,14 +62,24 @@ class InventarioController extends Shield {
     }
 
     /**
+     * Acción que muestra la pantalla para hacer egresos de una bodega
+     */
+    def dlgEgresoDeBodega_ajax() {
+//        println params
+        def ingreso = Ingreso.get(params.id.toLong())
+        ingreso.calcularSaldo()
+        return [ingreso: ingreso]
+    }
+
+    /**
      * Acción que guarda los ingresos a una bodega
      */
     def saveIngreso() {
         def usu = Persona.get(session.usuario.id)
         def now = new Date()
-        println "save ingreso " + params
+//        println "save ingreso " + params
         def parts = params.data.split("\\|\\|")
-        println "parts " + parts
+//        println "parts " + parts
         parts.each {
             if (it != "") {
                 def data = it.split("!!")
@@ -296,93 +306,112 @@ class InventarioController extends Shield {
         return [pedido: pedido, bodegas: bodegasPedido]
     }
 
-    def cargarExistenciasBodega_ajax() {
-        def bodegaPedido = BodegaPedido.get(params.id)
-        def bodega = bodegaPedido.bodega
-        def item = bodegaPedido.pedido.item
-
-        def existencias = Ingreso.withCriteria {
-            eq("bodega", bodega)
-            eq("item", item)
-            gt("saldo", 0.toDouble())
-        }
-
-        def existencia = existencias.sum { it.saldo }
-        render existencia
-    }
-
     /**
      * Acción llamada con ajax que realiza un egreso de nota de pedido
      */
     def egreso_ajax() {
-
         def pedido = Pedido.get(params.id)
 
         def bodegaPedido = BodegaPedido.get(params.bodega.toLong())
         def bodega = bodegaPedido.bodega
 
-        def ingreso = Ingreso.findAllByBodegaAndItem(bodega, pedido.item)
-        if (ingreso.size() == 0) {
-            render "ERROR*No se encontraron ingresos para el item ${pedido.item} en la bodega ${bodega}"
-        } else {
-            def responsable = Persona.get(params.persona.toLong())
-            def obs = params.observaciones?.toString()?.trim()
-            def now = new Date()
-            def necesario = bodegaPedido.cantidad
-            def egresado = 0
-            def msg = ""
-            ingreso.each { ing ->
-                if (egresado < necesario) {
-                    ing.calcularSaldo()
-                    def cant
-                    if (ing.saldo < necesario) {
-                        cant = ing.saldo
-                    } else {
-                        cant = necesario
-                    }
-                    egresado += cant
-                    def egreso = new Egreso()
-                    egreso.ingreso = ing
-                    egreso.pedido = pedido
-                    egreso.persona = responsable
-                    egreso.fecha = now
-                    if (obs != "") {
-                        egreso.observaciones = obs
-                    }
-                    egreso.cantidad = cant
-                    if (!egreso.save()) {
-                        render "ERROR*Ha ocurrido un error al generar el egreso"
-                        return
-                    }
-                    def firma = new Firma()
-                    firma.persona = session.usuario
-                    firma.fecha = now
-                    firma.concepto = "Egreso de bodega de ${egreso.cantidad}${pedido.unidad.codigo} ${pedido.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
-                    firma.pdfControlador = "reportesInventario"
-                    firma.pdfAccion = "egresoDeBodega"
-                    firma.pdfId = egreso.id
+//        def ingreso = Ingreso.findAllByBodegaAndItem(bodega, pedido.item)
+//        if (ingreso.size() == 0) {
+//            render "ERROR*No se encontraron ingresos para el item ${pedido.item} en la bodega ${bodega}"
+//        } else {
+        def responsable = Persona.get(params.persona.toLong())
+        def obs = params.observaciones?.toString()?.trim()
+        def now = new Date()
+        def msg = ""
 
-                    if (!firma.save()) {
-                        println "Error con la firma"
-                        render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
-                        return
-                    } else {
-                        egreso.firma = firma
+        def egresos = Egreso.withCriteria {
+            eq("pedido", pedido)
+            ingreso {
+                eq("bodega", bodega)
+            }
+            isNull("firma")
+        }
+        egresos.each { eg ->
+            eg.fecha = now
+            eg.persona = responsable
+            if (obs != "") {
+                eg.observaciones = obs
+            }
+            def firma = new Firma()
+            firma.persona = session.usuario
+            firma.fecha = now
+            firma.concepto = "Egreso de bodega de ${eg.cantidad}${pedido.unidad.codigo} ${pedido.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+            firma.pdfControlador = "reportesInventario"
+            firma.pdfAccion = "egresoDeBodega"
+            firma.pdfId = eg.id
 
-                        if (egreso.save()) {
-                            ing.calcularSaldo()
-                        } else {
-                            msg += renderErrors(bean: egreso)
-                        }
-                    }
+            if (!firma.save()) {
+                println "Error con la firma"
+                render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+                return
+            } else {
+                eg.firma = firma
+                bodegaPedido.entregado += eg.cantidad
+                if (!eg.save()) {
+                    msg += renderErrors(bean: eg)
                 }
             }
-            if (msg == "") {
-                render "SUCCESS*Se ha realizado el egreso exitosamente"
-            } else {
-                render "ERROR*Ha ocurrido un erro al realizar el egreso: " + msg
-            }
         }
+        if (!bodegaPedido.save()) {
+            println "error en bodega pedido: " + bodegaPedido.errors
+        }
+        if (msg == "") {
+            render "SUCCESS*Se ha realizado el egreso exitosamente"
+        } else {
+            render "ERROR*Ha ocurrido un erro al realizar el egreso: " + msg
+        }
+//        }
     }
 
+    def egresoBodega_ajax() {
+        println "PARAMS " + params
+        def ingreso = Ingreso.get(params.id)
+        def responsable = Persona.get(params.persona)
+        def cant = params.cantidad.toDouble()
+        def obs = params.observaciones?.toString()?.trim()
+        def now = new Date()
+        def msg = ""
+
+        def egreso = new Egreso()
+        egreso.ingreso = ingreso
+        egreso.persona = responsable
+        egreso.fecha = now
+        if (obs != "") {
+            egreso.observaciones = obs
+        }
+        egreso.cantidad = cant
+        if (egreso.save(flush: true)) {
+            def firma = new Firma()
+            firma.persona = session.usuario
+            firma.fecha = now
+            firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+            firma.pdfControlador = "reportesInventario"
+            firma.pdfAccion = "egresoDeBodega"
+            firma.pdfId = egreso.id
+            if (firma.save()) {
+                egreso.firma = firma
+                if (!egreso.save()) {
+                    println "error " + egreso.errors
+                    msg += renderErrors(bean: egreso)
+                }
+            } else {
+                println "error2 " + firma.errors
+                msg += renderErrors(bean: firma)
+            }
+            ingreso.calcularSaldo()
+        } else {
+            println "error3 " + egreso.errors
+            msg += renderErrors(bean: egreso)
+        }
+        if (msg == "") {
+            render "SUCCESS*Egreso realizado exitosamente"
+        } else {
+            render "ERROR*" + msg
+        }
+    }
 }

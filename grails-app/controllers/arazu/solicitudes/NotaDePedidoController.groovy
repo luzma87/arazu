@@ -343,7 +343,9 @@ class NotaDePedidoController extends Shield {
 
         def notas = BodegaPedido.withCriteria {
             inList("bodega", bodegasUsu)
-            order("bodega", "asc")
+            pedido {
+                order("fecha", "asc")
+            }
         }.pedido.unique()
 
 //        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
@@ -379,6 +381,7 @@ class NotaDePedidoController extends Shield {
         }
         def existencias = [:]
         Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+            ing.calcularSaldo()
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -699,34 +702,41 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
-     * función que hace los objetos bodegaPedido y los egresos en estado pendiente
+     * Función que hace los objetos bodegaPedido y los egresos en estado pendiente
+     * @param pedido el pedido que genera los movimientos de bodega
+     * @param params los parametros que indican las bodegas y la cantidad a retirar de cada una
+     * @return un arreglo con los responsables de las bodegas respecitivas
      */
     def bodega(Pedido pedido, params) {
         def now = new Date()
         def notificacionBodegas = []
+
         params.each { k, v ->
             if (k.toString().startsWith("ret")) {
                 def parts = k.split("_")
                 def bodega = Bodega.get(parts[1].toLong())
                 def cantidad = v.toDouble()
+                def tot = 0
 
                 notificacionBodegas += bodega.responsable
                 notificacionBodegas += bodega.suplente
-
                 def bp = new BodegaPedido()
                 bp.bodega = bodega
                 bp.pedido = pedido
                 bp.cantidad = cantidad
                 bp.save()
-
-                def tot = 0
-                def ingresos = Ingreso.findAllByItemAndSaldoGreaterThan(pedido.item, 0.toDouble())
+//                def ingresos = Ingreso.findAllByItemAndSaldoGreaterThan(pedido.item, 0.toDouble())
+                def ingresos = Ingreso.withCriteria {
+                    eq("item", pedido.item)
+                    gt("saldo", 0.toDouble())
+                    eq("bodega", bodega)
+                }
                 ingresos.each { ing ->
                     if (tot < cantidad) {
                         ing.calcularSaldo()
                         def c
-                        if (ing.saldo > cantidad) {
-                            c = cantidad
+                        if (ing.saldo >= (cantidad - tot)) {
+                            c = (cantidad - tot)
                         } else {
                             c = ing.saldo
                         }
@@ -736,7 +746,9 @@ class NotaDePedidoController extends Shield {
                         egreso.pedido = pedido
                         egreso.fecha = now
                         egreso.cantidad = c
-                        if (!egreso.save()) {
+                        if (egreso.save()) {
+                            ing.calcularSaldo()
+                        } else {
                             println "ERROR*Ha ocurrido un error al generar el egreso"
                         }
                     }

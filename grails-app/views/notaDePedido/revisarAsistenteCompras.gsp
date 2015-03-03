@@ -76,7 +76,8 @@
 
                                             <div class="col-md-2">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control input-sm number" name="diasEntrega" style="text-align: right" value="${c.diasEntrega}">
+                                                    <input type="text" class="form-control input-sm number" name="diasEntrega"
+                                                           style="text-align: right" value="${c.diasEntrega}" autocomplete="off">
                                                     <span class="input-group-addon svt-bg-warning">Días</span>
                                                 </div>
                                             </div>
@@ -89,7 +90,9 @@
 
                                             <div class="col-md-2">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control input-sm number money nueva_unitario unitario required" total="p_total_${i}" name="valor" cantidad="${nota.cantidad}" value="${g.formatNumber(number: c.valor, type: 'currency')}">
+                                                    <input type="text" class="form-control input-sm number money nueva_unitario unitario required"
+                                                           total="p_total_${i}" name="valor" autocomplete="off"
+                                                           cantidad="${nota.cantidad}" value="${g.formatNumber(number: c.valor, type: 'currency')}">
 
                                                     <span class="input-group-addon svt-bg-warning">$</span>
                                                 </div>
@@ -141,7 +144,8 @@
                                         </div>
 
                                         <div class="col-md-5">
-                                            <input type="text" class="form-control input-sm nueva_proveedor required" name="proveedor" maxlength="254">
+                                            <input type="text" class="form-control input-sm nueva_proveedor required"
+                                                   name="proveedor" maxlength="254">
                                         </div>
 
                                         <div class="col-md-1">
@@ -150,7 +154,8 @@
 
                                         <div class="col-md-2">
                                             <div class="input-group">
-                                                <input type="text" name="diasEntrega" class="form-control input-sm number nueva_dias required" style="text-align: right">
+                                                <input type="text" name="diasEntrega" class="form-control input-sm number nueva_dias required"
+                                                       style="text-align: right" autocomplete="off">
                                                 <span class="input-group-addon svt-bg-warning">Días</span>
                                             </div>
                                         </div>
@@ -163,7 +168,8 @@
 
                                         <div class="col-md-2">
                                             <div class="input-group">
-                                                <input type="text" class="form-control input-sm number money nueva_unitario unitario required" total="total_n" name="valor" cantidad="${nota.cantidad}">
+                                                <input type="text" class="form-control input-sm number money nueva_unitario unitario required"
+                                                       total="total_n" name="valor" cantidad="${nota.cantidad}" autocomplete="off">
                                                 <span class="input-group-addon svt-bg-warning">$</span>
                                             </div>
                                         </div>

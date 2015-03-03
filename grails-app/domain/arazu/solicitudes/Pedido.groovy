@@ -198,4 +198,8 @@ class Pedido {
         }
         return html
     }
+
+    String toString() {
+        return "Pedido núm. ${this.numero}"
+    }
 }

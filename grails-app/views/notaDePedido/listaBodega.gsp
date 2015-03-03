@@ -36,7 +36,7 @@
                 </thead>
                 <tbody id="tabla-items">
                     <g:each in="${notas}" var="nota">
-                        <g:set var="entregado" value="${Egreso.findAllByPedido(nota).cantidad.sum() ?: 0}"/>
+                        <g:set var="entregado" value="${Egreso.findAllByPedidoAndFirmaIsNotNull(nota).cantidad.sum() ?: 0}"/>
                         <g:if test="${entregado < nota.cantidad}">
                             <tr>
                                 <td>${nota.numero}</td>
@@ -44,7 +44,7 @@
                                 <td>${nota.tipoSolicitud.descripcion}</td>
                                 <td>
                                     ${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}
-                                    <g:if test="${nota.cantidad != nota.cantidadAprobada}">
+                                    <g:if test="${nota.cantidadAprobada > 0 && nota.cantidad != nota.cantidadAprobada}">
                                         (Aprobado ${nota.cantidadAprobada})
                                     </g:if>
                                 </td>
@@ -55,8 +55,10 @@
                                         <ul>
                                             <g:each in="${bps}" var="bp">
                                                 <li>
-                                                    ${bp.cantidad}${bp.pedido.unidad.codigo} en ${bp.bodega},
-                                                    entregado ${bp.entregado}${bp.pedido.unidad.codigo}
+                                                    ${bp.cantidad}${bp.pedido.unidad.codigo} en ${bp.bodega}
+                                                    <g:if test="${bp.entregado > 0}">
+                                                        (entregado ${bp.entregado}${bp.pedido.unidad.codigo})
+                                                    </g:if>
                                                 </li>
                                             </g:each>
                                         </ul>

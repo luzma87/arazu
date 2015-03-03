@@ -171,7 +171,8 @@
                             </td>
                             <td>
                                 <div class="input-group">
-                                    <input type="text" class="form-control input-sm digits required" id="cantidad" style="text-align: right" value="1" name="cantidad">
+                                    <input type="text" class="form-control input-sm digits required" id="cantidad"
+                                           style="text-align: right" value="1" name="cantidad" autocomplete="off">
                                     <span class="input-group-addon svt-bg-warning">#</span>
                                 </div>
                             </td>

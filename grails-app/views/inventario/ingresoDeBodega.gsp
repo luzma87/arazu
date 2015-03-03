@@ -122,7 +122,8 @@
 
                 <div class="col-md-1">
                     <div class="input-group">
-                        <input type="text" class="form-control input-sm digits" id="cantidad" style="text-align: right" value="1">
+                        <input type="text" class="form-control input-sm digits" id="cantidad" style="text-align: right" value="1"
+                               autocomplete="off">
                         <span class="input-group-addon svt-bg-warning">#</span>
                     </div>
                 </div>

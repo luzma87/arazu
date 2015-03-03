@@ -11,6 +11,9 @@
                 <g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Nuevo ingreso a bodega
                 </g:link>
+            %{--<g:link controller="inventario" action="egresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
+            %{--<i class="fa fa-arrow-up"></i> Nuevo egreso de bodega--}%
+            %{--</g:link>--}%
             </div>
         </div>
         <elm:container tipo="horizontal" titulo="Inventario de la bodega ${bodega.descripcion}">
@@ -22,7 +25,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    ${bodega.persona}
+                    ${bodega.responsable}, ${bodega.suplente}
                 </div>
 
                 <div class="col-md-8">
@@ -78,7 +81,7 @@
                     <g:if test="${ingresos.size() > 0}">
                         <g:each in="${ingresos}" var="igg" status="i">
                             <g:set var="ig" value="${igg.value}"/>
-                            <tr>
+                            <tr data-id="${ig.item.id}">
                                 <td>
                                     <elm:textoBusqueda search="${params.search_item}">
                                         ${ig.item.descripcion}

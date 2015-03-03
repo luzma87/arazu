@@ -17,6 +17,9 @@
                 <g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Nuevo ingreso a bodega
                 </g:link>
+            %{--<g:link controller="inventario" action="egresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
+            %{--<i class="fa fa-arrow-up"></i> Nuevo egreso de bodega--}%
+            %{--</g:link>--}%
             </div>
         </div>
         <elm:container tipo="horizontal" titulo="Inventario de la bodega ${bodega.descripcion}">
@@ -145,6 +148,9 @@
                                         <a href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
                                             <i class="fa fa-print"></i>
                                         </a>
+                                        <a href="#" title="Egreso" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
+                                            <i class="fa fa-arrow-up"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             </g:each>
@@ -256,6 +262,33 @@
                 location.href = url;
             }
 
+            function submitEgreso() {
+                if ($("#frmEgreso").valid()) {
+                    openLoader();
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'inventario', action:'egresoBodega_ajax')}",
+                        data    : $("#frmEgreso").serialize(),
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function () {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "error");
+                            closeLoader();
+                        }
+                    });
+                }
+            }
+
             function validarFechaIni($elm, e) {
 //                console.log("validar fecha ini   ", e);
                 $('#search_hasta_input').data("DateTimePicker").setMinDate(e.date);
@@ -271,6 +304,38 @@
                 $(".btnSearch").click(function () {
                     buscar();
                     return false;
+                });
+                $(".btn-eg").click(function () {
+                    var id = $(this).data("id");
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'inventario', action:'dlgEgresoDeBodega_ajax')}",
+                        data    : {
+                            id : id
+                        },
+                        success : function (msg) {
+                            bootbox.dialog({
+                                title   : "Egreso de Bodega",
+                                message : msg,
+                                buttons : {
+                                    ok     : {
+                                        label     : "<i class='fa fa-save'></i> Guardar",
+                                        className : "btn-success",
+                                        callback  : function () {
+                                            submitEgreso();
+                                            return false;
+                                        }
+                                    },
+                                    cancel : {
+                                        label     : "Cancelar",
+                                        className : "btn-default",
+                                        callback  : function () {
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
                 });
                 $(".buscar").keyup(function (ev) {
                     if (ev.keyCode == 13) {
