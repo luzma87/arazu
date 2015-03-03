@@ -28,11 +28,11 @@
                 <div class="titulo-card"><i class="fa fa-newspaper-o"></i> Notas de pedido</div>
 
                 <div class="cardContent">
-                    <div class="circle-card svt-bg-warning">10</div>
+                    <div class="circle-card ${pr.size()>0?'svt-bg-warning':'card-bg-green'}">${pr.size()}</div>
                     Pendientes de revision
                 </div>
                 <div class="cardContent">
-                    <div class="circle-card card-bg-green">3</div>
+                    <div class="circle-card ${pr.size()>0?'svt-bg-warning':'card-bg-green'}">${pa.size()}</div>
                     Pendientes de aprobacion
                 </div>
             </div>
@@ -40,11 +40,11 @@
                 <div class="titulo-card"><i class="fa fa-shopping-cart"></i> Ordenes de compra - Febrero</div>
 
                 <div class="cardContent">
-                    <div class="circle-card card-bg-green">1</div>
+                    <div class="circle-card card-bg-green">${aprobadas.size()}</div>
                     Emitidas
                 </div>
                 <div class="cardContent">
-                    <div class="circle-card card-bg-green">12</div>
+                    <div class="circle-card card-bg-green">${ejecutadas.size()}</div>
                     Ejecutadas
                 </div>
             </div>
@@ -52,11 +52,11 @@
                 <div class="titulo-card"><i class="fa fa-tachometer"></i> Operaciones</div>
 
                 <div class="cardContent">
-                    <div class="circle-card card-bg-green">4</div>
+                    <div class="circle-card card-bg-green">${proyectos.size()}</div>
                     Proyectos activos
                 </div>
                 <div class="cardContent">
-                    <div class="circle-card svt-bg-warning">3</div>
+                    <div class="circle-card ${proyectos.size()>bodegas.size()?'svt-bg-warning':'card-bg-green'}">${bodegas.size()}</div>
                     Bodegas activas
                 </div>
             </div>
@@ -75,26 +75,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                    <g:each in="${proyectos}" var="p">
                         <tr>
-                            <td>Proyecto 1</td>
-                            <td style="text-align: center">30</td>
-                            <td style="text-align: center">4</td>
+                            <td>${p.nombre}</td>
+                            <td style="text-align: center">${arazu.proyectos.Funcion.findAllByProyecto(p).size()}</td>
+                            <td style="text-align: center">${arazu.solicitudes.Pedido.findAllByProyecto(p).size()}</td>
                         </tr>
-                        <tr>
-                            <td>Proyecto 2</td>
-                            <td style="text-align: center">12</td>
-                            <td style="text-align: center">1</td>
-                        </tr>
-                        <tr>
-                            <td>Proyecto 3</td>
-                            <td style="text-align: center">23</td>
-                            <td style="text-align: center">11</td>
-                        </tr>
-                        <tr>
-                            <td>Proyecto 4</td>
-                            <td style="text-align: center">0</td>
-                            <td style="text-align: center">0</td>
-                        </tr>
+                    </g:each>
+
                     </tbody>
                 </table>
             </div>
@@ -103,7 +91,7 @@
                 <div class="titulo-card"><i class="fa fa-warning"></i> Alertas</div>
 
                 <div class="cardContent">
-                    <div class="circle-card svt-bg-danger">2</div>
+                    <div class="circle-card ${alertas.size()>0?'svt-bg-danger':'card-bg-green'}">${alertas.size()}</div>
                     Pendientes
                 </div>
             </div>

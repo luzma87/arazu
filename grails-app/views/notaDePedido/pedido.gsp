@@ -132,7 +132,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <g:select name="proyecto.id" from="${Proyecto.list()}" optionKey="id" optionValue="descripcion"
+                            <g:select name="proyecto.id" from="${Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())}" optionKey="id" optionValue="nombre"
                                       class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"/>
                         </div>
                     </div>
