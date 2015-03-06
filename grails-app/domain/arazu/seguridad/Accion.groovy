@@ -15,7 +15,7 @@ class Accion {
     /**
      * Indica si la acción es o no auditable
      */
-    int accnAuditable
+    int esAuditable
     /**
      * Controlador al cual pertenece la acción
      */
@@ -28,6 +28,14 @@ class Accion {
      * Tipo de acción
      */
     TipoAccion tipo
+    /**
+     * Orden en el cual deben aparecer los items en el menú
+     */
+    Integer orden
+    /**
+     * Clase para el ícono (fontawesome, glyohicons, mfizz, flaticons)
+     */
+    String icono = ""
 
     /**
      * Define las relaciones uno a varios
@@ -51,10 +59,12 @@ class Accion {
             id column: 'accn__id'
             nombre column: 'accnnmbr'
             descripcion column: 'accndscr'
-            accnAuditable column: 'accnaudt'
+            esAuditable column: 'accnaudt'
             control column: 'ctrl__id'
             modulo column: 'mdlo__id'
             tipo column: 'tpac__id'
+            orden column: 'accnordn'
+            icono column: 'accnicno'
         }
     }
 
@@ -63,7 +73,7 @@ class Accion {
      */
     static constraints = {
         nombre(blank: false, size: 0..50)
-        accnAuditable(blank: true, nullable: true)
+        esAuditable(blank: true, nullable: true)
     }
 
     /**

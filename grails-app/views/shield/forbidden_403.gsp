@@ -21,7 +21,7 @@
 
 
             <g:if test="${msn}">
-                <p style="font-size: 16px; margin-top: 25px;text-shadow: none"><b>${msn}.</b></p>
+                <p style="font-size: 16px; margin-top: 25px;text-shadow: none"><b>${msn}</b></p>
             </g:if>
             <g:else>
                 <p style="font-size: 16px; margin-top: 25px;text-shadow: none">La página solicitada no está disponible.</p>
