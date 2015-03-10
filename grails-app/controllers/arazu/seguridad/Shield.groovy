@@ -19,12 +19,13 @@ class Shield {
             session.finalize()
             return false
         } else {
-            if (isAllowed()) {
-                return true
-            } else {
-                redirect(controller: 'shield', action: 'forbidden_403')
-                return false
-            }
+            return true
+//            if (isAllowed()) {
+//                return true
+//            } else {
+//                redirect(controller: 'shield', action: 'forbidden_403')
+//                return false
+//            }
         }
         /*************************************************************************** */
     }
