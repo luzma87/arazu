@@ -95,14 +95,14 @@
                 var esMaquinaria = nodeType == "maquinaria";
 
                 var crearTipoMaquina = {
-                    label  : "Nuevo Tipo de Mquinaria",
+                    label  : "Nuevo Tipo de Maquinaria",
                     icon   : "fa flaticon-construction12  text-success",
                     action : function () {
                         createEditTipoMaquinaria();
                     }
                 };
                 var editarTipoMaquina = {
-                    label  : "Modificar Tipo de Mquinaria",
+                    label  : "Modificar Tipo de Maquinaria",
                     icon   : "fa fa-pencil text-info",
                     action : function () {
                         createEditTipoMaquinaria(nodeId);
