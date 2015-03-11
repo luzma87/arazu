@@ -39,6 +39,10 @@ class Maquinaria {
      * Color de la maquinaria
      */
     Color color
+    /**
+     * Código de la maquinaria
+     */
+    String codigo
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -62,6 +66,7 @@ class Maquinaria {
             marca column: 'maqnmrca'
             observaciones column: 'maqnobsr'
             color column: 'clor__id'
+            codigo column: 'maqncdgo'
         }
     }
 
@@ -76,6 +81,7 @@ class Maquinaria {
         marca(nullable: true, blank: true, size: 1..50)
         modelo(nullable: true, blank: true, size: 1..50)
         color(nullable: false, blank: false)
+        codigo(nullable: true, blank: true)
     }
 
     /**
@@ -83,6 +89,7 @@ class Maquinaria {
      * @return la descripción
      */
     String toString() {
-        "${this.marca} ${this.modelo} ${this.descripcion}"
+        "${this.codigo ? this.codigo + ' - ' : ''}${this.marca} ${this.modelo} " +
+                "${this.descripcion.size() > 40 ? this.descripcion[0..40] + '...' : ''}"
     }
 }

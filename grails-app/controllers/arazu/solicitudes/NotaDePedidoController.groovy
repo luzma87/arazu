@@ -9,7 +9,9 @@ import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
+import arazu.seguridad.Perfil
 import arazu.seguridad.Persona
+import arazu.seguridad.Sesion
 import arazu.seguridad.Shield
 
 class NotaDePedidoController extends Shield {
@@ -226,6 +228,21 @@ class NotaDePedidoController extends Shield {
                             ]
                     ]
                     def msg = notificacionService.notificacionCompleta(usu, solicitud.para, paramsAlerta, paramsMail)
+
+                    def perf = Perfil.findByCodigo("JEFE")
+                    def personas = Sesion.withCriteria {
+                        eq("perfil", perf)
+                        usuario {
+                            ne("id", solicitud.para.id)
+                            eq("activo", 1)
+                        }
+                        projections {
+                            distinct("usuario")
+                        }
+                    }
+                    personas.each { pers ->
+                        msg += notificacionService.notificacionCompleta(usu, pers, paramsAlerta, paramsMail)
+                    }
 
                     flash.tipo = "success"
                     flash.message = "La solicitud <strong>número ${numero}</strong> ha sido enviada exitosamente"
@@ -788,6 +805,8 @@ class NotaDePedidoController extends Shield {
         def notificacion1Recibe = null
         def notificacion2Recibe = null
         def notificacionBodegas = []
+        def perfilNotificacionesExtra = null
+        String mensajeAprobacionFinal = ""
 
         def para = null
         def usu = Persona.get(session.usuario.id)
@@ -828,6 +847,7 @@ class NotaDePedidoController extends Shield {
                         retTipo += str
                     }
 
+                    perfilNotificacionesExtra = "JFCM"
                     break;
                 case "NJF": // el jefe niega la solicitud
                     codEstadoInicial = "E01"
@@ -858,6 +878,7 @@ class NotaDePedidoController extends Shield {
                         notificacion2Recibe = pedido.de
 
                         pedido.paraJC = para
+                        perfilNotificacionesExtra = "JFCM"
                     } else {
                         estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
                         concepto = "Notificación de existencia en bodega"
@@ -889,6 +910,8 @@ class NotaDePedidoController extends Shield {
                         mensTipo += str
                         retTipo += str
                     }
+
+                    perfilNotificacionesExtra = "ASCM"
                     break;
                 case "NJC": // el jefe de compras niega la solicitud
                     codEstadoInicial = "E02"
@@ -919,6 +942,8 @@ class NotaDePedidoController extends Shield {
                         notificacion2Recibe = pedido.de
 
                         pedido.paraAC = para
+
+                        perfilNotificacionesExtra = "ASCM"
                     } else {
                         estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
                         concepto = "Notificación de existencia en bodega"
@@ -952,8 +977,10 @@ class NotaDePedidoController extends Shield {
 
                     if (max < 100) {
                         accionAlerta = "listaJefe"
+                        perfilNotificacionesExtra = "JEFE"
                     } else {
                         accionAlerta = "listaGerente"
+                        perfilNotificacionesExtra = "GRNT"
                     }
 
                     notificacion1Recibe = para
@@ -1002,8 +1029,10 @@ class NotaDePedidoController extends Shield {
 
                         if (max < 100) {
                             accionAlerta = "listaJefe"
+                            perfilNotificacionesExtra = "JEFE"
                         } else {
                             accionAlerta = "listaGerente"
+                            perfilNotificacionesExtra = "GRNT"
                         }
 
                         notificacion1Recibe = para
@@ -1030,7 +1059,7 @@ class NotaDePedidoController extends Shield {
                     retTipo = "HA SIDO APROBADA"
                     retTipo2 = "aprobarla"
                     firmaPedido = "firmaAprueba"
-                    accionAlerta = "lista"
+                    accionAlerta = "listaAprobadas"
 
                     notificacion1Recibe = pedido.de
                     if (str != "") {
@@ -1038,6 +1067,9 @@ class NotaDePedidoController extends Shield {
                         mensTipo += str
                         retTipo += str
                     }
+                    notificacion2Recibe = pedido.paraAC
+                    perfilNotificacionesExtra = "ASCM"
+                    mensajeAprobacionFinal = ". Puede proceder a la compra de ${pedido.cantidad}${pedido.unidad.codigo} ${pedido.item}"
                     break;
                 case "NF": // el jefe o gerente niega la solicitud
                     codEstadoInicial = "E04"
@@ -1062,9 +1094,12 @@ class NotaDePedidoController extends Shield {
                         retTipo = "HA SIDO APROBADA PARCIALMENTE"
                         retTipo2 = "aprobarla parcialmente"
                         firmaPedido = "firmaAprueba"
-                        accionAlerta = "lista"
+                        accionAlerta = "listaAprobadas"
 
                         notificacion1Recibe = pedido.de
+                        notificacion2Recibe = pedido.paraAC
+                        perfilNotificacionesExtra = "ASCM"
+                        mensajeAprobacionFinal = ". Puede proceder a la compra de ${params.cant}${pedido.unidad.codigo} ${pedido.item}"
                     } else {
                         estadoFinal = EstadoSolicitud.findByCodigo("B01") //estado Existente En Bodega
                         concepto = "Notificación de existencia en bodega"
@@ -1130,7 +1165,7 @@ class NotaDePedidoController extends Shield {
                             if (firmaRes instanceof String) {
                                 return "ERROR*" + firmaRes
                             } else {
-                                def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}"
+                                def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
                                         controlador: "notaDePedido",
@@ -1147,6 +1182,23 @@ class NotaDePedidoController extends Shield {
                                         ]
                                 ]
                                 def msg = notificacionService.notificacionCompleta(usu, notificacion1Recibe, paramsAlerta, paramsMail)
+                                if (perfilNotificacionesExtra) {
+                                    def perf = Perfil.findByCodigo(perfilNotificacionesExtra)
+                                    def personas = Sesion.withCriteria {
+                                        eq("perfil", perf)
+                                        usuario {
+                                            ne("id", notificacion1Recibe.id)
+                                            ne("id", notificacion2Recibe.id)
+                                            eq("activo", 1)
+                                        }
+                                        projections {
+                                            distinct("usuario")
+                                        }
+                                    }
+                                    personas.each { pers ->
+                                        msg += notificacionService.notificacionCompleta(usu, pers, paramsAlerta, paramsMail)
+                                    }
+                                }
                                 if (notificacion2Recibe) {
                                     paramsAlerta.accion = "lista"
                                     paramsMail.model.recibe = notificacion2Recibe

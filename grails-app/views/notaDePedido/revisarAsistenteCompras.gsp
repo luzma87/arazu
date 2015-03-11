@@ -92,7 +92,7 @@
                                                 <div class="input-group">
                                                     <input type="text" class="form-control input-sm number money nueva_unitario unitario required"
                                                            total="p_total_${i}" name="valor" autocomplete="off"
-                                                           cantidad="${nota.cantidad}" value="${g.formatNumber(number: c.valor, type: 'currency')}">
+                                                           cantidad="${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}">
 
                                                     <span class="input-group-addon svt-bg-warning">$</span>
                                                 </div>
@@ -105,7 +105,7 @@
                                             <div class="col-md-2">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control input-sm number money " disabled
-                                                           id="p_total_${i}" cantidad="${nota.cantidad}"
+                                                           id="p_total_${i}"
                                                            value="${g.formatNumber(number: c.valor * nota.cantidad, type: 'currency')}">
                                                     <span class="input-group-addon svt-bg-warning">$</span>
                                                 </div>
@@ -169,7 +169,8 @@
                                         <div class="col-md-2">
                                             <div class="input-group">
                                                 <input type="text" class="form-control input-sm number money nueva_unitario unitario required"
-                                                       total="total_n" name="valor" cantidad="${nota.cantidad}" autocomplete="off">
+                                                       total="total_n" name="valor" autocomplete="off"
+                                                       cantidad="${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}">
                                                 <span class="input-group-addon svt-bg-warning">$</span>
                                             </div>
                                         </div>

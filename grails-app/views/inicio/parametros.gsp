@@ -8,21 +8,18 @@
         .fa-ul li {
             margin : 5px;
         }
+
+        .panel-title {
+            font-size : 18px;
+        }
         </style>
     </head>
 
     <body>
 
-        <div class="row">
-            <div class="col-md-8">
-
-            %{--<div class="panel panel-primary">--}%
-            %{--<div class="panel-heading">--}%
-            %{--<h3 class="panel-title">Parámetros del Sistema</h3>--}%
-            %{--</div>--}%
-
-            %{--<div class="panel-body">--}%
-                <elm:container tipo="horizontal" titulo="Parámetros del Sistema">
+        <elm:container tipo="horizontal" titulo="Parámetros del Sistema">
+            <div class="row">
+                <div class="col-md-4">
                     <ul class="fa-ul">
                         <li>
                             <i class="fa-li fa fa-paint-brush text-info"></i>
@@ -72,30 +69,6 @@
                                 <p>Muestra los diferentes estados en los que puede estar una solicitud</p>
                             </div>
                         </li>
-                        %{--<li>--}%
-                        %{--<i class="fa-li fa flaticon-power30 text-info"></i>--}%
-                        %{--<g:link class="over" controller="tipoItem" action="list">--}%
-                        %{--Tipos de ítem--}%
-                        %{--</g:link>--}%
-
-                        %{--<div class="descripcion hidden">--}%
-                        %{--<h4><i class="fa flaticon-power30 fa-2x "></i> Tipos de ítem</h4>--}%
-
-                        %{--<p>Permite registrar los diferentes tipos de ítems</p>--}%
-                        %{--</div>--}%
-                        %{--</li>--}%
-                        %{--<li>--}%
-                        %{--<i class="fa-li fa flaticon-construction12 text-info"></i>--}%
-                        %{--<g:link class="over" controller="tipoMaquinaria" action="list">--}%
-                        %{--Tipos de maquinaria--}%
-                        %{--</g:link>--}%
-
-                        %{--<div class="descripcion hidden">--}%
-                        %{--<h4><i class="fa flaticon-construction12 fa-2x "></i> Tipos de maquinaria</h4>--}%
-
-                        %{--<p>Permite registrar los diferentes tipos de ítems</p>--}%
-                        %{--</div>--}%
-                        %{--</li>--}%
                         <li>
                             <i class="fa-li fa fa-server text-info"></i>
                             <g:link class="over" controller="unidad" action="list">
@@ -109,23 +82,21 @@
                             </div>
                         </li>
                     </ul>
-                </elm:container>
-            %{--</div>--}%
-            %{--</div>--}%
-            </div>
+                </div>
 
-            <div class="col-md-4">
-                <div class="panel panel-info right hidden">
-                    <div class="panel-heading">
-                        <h3 class="panel-title text-shadow"></h3>
-                    </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info right hidden">
+                        <div class="panel-heading">
+                            <h1 class="panel-title text-shadow"></h1>
+                        </div>
 
-                    <div class="panel-body">
+                        <div class="panel-body">
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </elm:container>
 
         <script type="text/javascript">
             $(function () {

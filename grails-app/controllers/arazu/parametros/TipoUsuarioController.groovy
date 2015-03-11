@@ -57,7 +57,7 @@ class TipoUsuarioController extends Shield {
         if (usuario.mail) {
             txt += " - " + usuario.mail
         } else {
-            txt += " - <span class='text-danger'>No ha registrado un e-mail! No podrá reciir notificaciones ni reestablecer contraseñas</span>"
+            txt += " - <span class='text-danger'><i class='fa fa-envelope-o'></i> No ha registrado un e-mail! No podrá recibir notificaciones ni reestablecer contraseñas</span>"
         }
         if (usuario.activo != 1) {
             txt += "</span>"
