@@ -140,7 +140,7 @@
     </tbody>
 </table>
 
-<g:if test="${locked.size() > 0}">
+<g:if test="${locked && locked.size() > 0}">
     <div class="alert alert-success">
         <h4>Existencias reservadas:</h4>
         <ul class="fa-ul">

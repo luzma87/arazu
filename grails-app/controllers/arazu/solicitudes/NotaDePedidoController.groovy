@@ -582,6 +582,14 @@ class NotaDePedidoController extends Shield {
     }
 
     /**
+     * Acción que carga una pantalla emergente para solicitar al asistente de compras que cargue más cotizaciones
+     */
+    def dlgSolicitarCotizaciones_ajax() {
+        def nota = Pedido.get(params.id)
+        return [nota: nota]
+    }
+
+    /**
      * Acción que carga una pantalla emergente para completar la información necesaria para negar una nota de pedido
      */
     def dlgNegar_ajax() {
@@ -651,6 +659,13 @@ class NotaDePedidoController extends Shield {
      */
     def aprobarFinal_ajax() {
         render cambiarEstadoPedido(params, "AF")
+    }
+
+    /**
+     * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
+     */
+    def solicitarCotizaciones_ajax() {
+        render cambiarEstadoPedido(params, "CF")
     }
 
     /**
@@ -1124,6 +1139,27 @@ class NotaDePedidoController extends Shield {
                         notificacion1Recibe = pedido.de
                     }
                     break;
+                case "CF": // el jefe/gerente devuelve al asistente de compras para que cargue nuevas cotizaciones
+                    codEstadoInicial = "E04"
+                    estadoFinal = EstadoSolicitud.findByCodigo("E03") //estado Pendientes cotizaciones
+                    concepto = "Solicitud de recarga de cotizaciones"
+                    mensTipo = "solicitado la recarga de cotizaciones"
+                    retTipo = "ha sido solicitada la recarga de cotizaciones"
+                    retTipo2 = "solicitar recarga de cotizaciones"
+                    firmaPedido = ""
+                    accionAlerta = "listaAsistenteCompras"
+
+                    notificacion1Recibe = pedido.paraAC
+                    notificacion2Recibe = pedido.de
+
+                    if (str != "") {
+                        concepto += str
+                        mensTipo += str
+                        retTipo += str
+                    }
+
+                    perfilNotificacionesExtra = "ASCM"
+                    break;
             }
             if (pedido && estadoFinal) {
                 if (params.cant) {
@@ -1160,7 +1196,9 @@ class NotaDePedidoController extends Shield {
                             println "Error con la firma"
                             return "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
                         } else {
-                            pedido[firmaPedido] = firma
+                            if (firmaPedido != "") {
+                                pedido[firmaPedido] = firma
+                            }
                             def observaciones = "<strong>${usu.toString()}</strong> ha <strong>${mensTipo}</strong> esta nota de pedido " +
                                     "el ${now.format('dd-MM-yyyy')} a las ${now.format('HH:mm')}"
                             if (params.razon && params.razon.trim() != "") {

@@ -205,7 +205,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-2" style="text-align: right">
+                                        <div class="col-md-3" style="text-align: right">
                                             <a href="#" class="btn btn-info guardar_nueva">
                                                 <i class="fa fa-save"></i> Guadar</a>
                                         </div>
