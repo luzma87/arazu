@@ -81,7 +81,7 @@ class Maquinaria {
         marca(nullable: true, blank: true, size: 1..50)
         modelo(nullable: true, blank: true, size: 1..50)
         color(nullable: false, blank: false)
-        codigo(nullable: true, blank: true)
+        codigo(nullable: true, blank: true, size: 1..50)
     }
 
     /**

@@ -38,23 +38,27 @@
                     <g:select id="tipo" name="tipo.id" from="${TipoMaquinaria.list()}" optionKey="id" required="" value="${maquinariaInstance?.tipo?.id}" class="many-to-one form-control "/>
                 </g:else>
                 <hr/>
-                <g:select id="color" name="color.id" from="${Color.list()}" optionKey="id" required="" value="${maquinariaInstance?.color?.id}" class="many-to-one form-control "/>
+                <g:select id="color" name="color.id" from="${Color.list()}" optionKey="id" required=""
+                          value="${maquinariaInstance?.color?.id}" class="many-to-one form-control "/>
             </elm:fieldRapidoDoble>
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Marca" claseField1="col-sm-8"
-                                  claseLabel2="col-sm-4" label2="Modelo" claseField2="col-sm-8">
+                                  claseLabel2="col-sm-4" label2="Año" claseField2="col-sm-8">
                 <g:textField name="marca" maxlength="50" class="form-control " value="${maquinariaInstance?.marca}"/>
                 <hr/>
-                <g:textField name="modelo" maxlength="50" class="form-control " value="${maquinariaInstance?.modelo}"/>
+                <g:select name="anio" from="${anios}" class="form-control" value="${maquinariaInstance.anio ?: current}"/>
             </elm:fieldRapidoDoble>
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Placa" claseField1="col-sm-8"
-                                  claseLabel2="col-sm-4" label2="Año" claseField2="col-sm-8">
+                                  claseLabel2="col-sm-4" label2="Código" claseField2="col-sm-8">
                 <g:textField name="placa" maxlength="20" class="form-control allCaps placa" value="${maquinariaInstance?.placa}"/>
                 <hr/>
-            %{--<g:textField name="anio" value="${maquinariaInstance.anio}" class="digits form-control  required" required=""/>--}%
-                <g:select name="anio" from="${anios}" class="form-control" value="${maquinariaInstance.anio ?: current}"/>
+                <g:textField name="codigo" maxlength="50" class="form-control " value="${maquinariaInstance?.codigo}"/>
             </elm:fieldRapidoDoble>
+
+            <elm:fieldRapido claseLabel="col-sm-2" label="Modelo" claseField="col-sm-10">
+                <g:textField name="modelo" maxlength="50" class="form-control " value="${maquinariaInstance?.modelo}"/>
+            </elm:fieldRapido>
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-10">
                 <g:textArea name="descripcion" cols="40" rows="3" maxlength="255" class="form-control " value="${maquinariaInstance?.descripcion}"/>
