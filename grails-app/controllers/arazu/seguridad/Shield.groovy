@@ -19,22 +19,26 @@ class Shield {
             session.finalize()
             return false
         } else {
-            return true
-//            if (isAllowed()) {
-//                return true
-//            } else {
-//                redirect(controller: 'shield', action: 'forbidden_403')
-//                return false
-//            }
+//            return true
+            if (isAllowed()) {
+                return true
+            } else {
+                redirect(controller: 'shield', action: 'forbidden_403')
+                return false
+            }
         }
         /*************************************************************************** */
     }
 
     boolean isAllowed() {
         try {
-            println "method: " + request.method
-            println "1 " + session.permisos[controllerName.toLowerCase()]
-            println "2 " + actionName.toLowerCase()
+//            println "method: " + request.method
+//            println "0 " + session.permisos
+//            println "1 " + session.permisos[controllerName.toLowerCase()]
+//            println "2 " + controllerName.toLowerCase()
+//            println "3 " + actionName.toLowerCase()
+//            println "4 " + session.permisos[controllerName.toLowerCase()].contains(actionName.toLowerCase())
+
             if (request.method == "POST") {
 //                println "es post no audit"
                 return true

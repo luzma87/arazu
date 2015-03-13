@@ -73,12 +73,14 @@ class AlertaController extends Shield {
         return [alertaInstanceList: alertaInstanceList, alertaInstanceCount: alertaInstanceCount]
     }
 
-
     /**
      * Acción que redirecciona a la acción necesaria según la alerta
      */
     def showAlerta = {
         def alerta = Alerta.get(params.id)
+
+        println "ALERTA:::: " + alerta.id + "  " + alerta.controlador + "/" + alerta.accion
+
         alerta.fechaRecibido = new Date()
         alerta.save(flush: true)
         params.id = alerta.id_remoto

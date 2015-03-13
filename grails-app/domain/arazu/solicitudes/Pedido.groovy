@@ -112,6 +112,10 @@ class Pedido {
      * Observaciones para guardar al momento de cambiar de estado el pedido
      */
     String observaciones
+    /**
+     * Prioridad del pedido (asignada al momento de aprobación final por el jefe o gerente)
+     */
+    String prioridad
 
     /**
      * Define las relaciones uno a varios
@@ -159,6 +163,7 @@ class Pedido {
             firmaBodega column: 'pddofrbd'
             observaciones column: 'pddoobsv'
             observaciones type: "text"
+            prioridad column: 'pddoprrd'
         }
     }
 
@@ -184,6 +189,8 @@ class Pedido {
         firmaNiega nullable: true
         firmaBodega nullable: true
         observaciones blank: true, nullable: true
+
+        prioridad nullable: true
     }
 
     def getObservacionesFormat() {

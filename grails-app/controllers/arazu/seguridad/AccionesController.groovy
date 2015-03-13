@@ -27,6 +27,9 @@ class AccionesController extends Shield {
     def acciones_ajax() {
         def perfil = Perfil.get(params.perf.toLong())
         def modulo = Modulo.get(params.id)
+
+        println modulo
+
         def acciones = Accion.withCriteria {
             eq("modulo", modulo)
             not {
@@ -34,7 +37,14 @@ class AccionesController extends Shield {
                 ilike("nombre", "%old%")
             }
             order("tipo", "asc")
-            order("orden", "asc")
+            if (modulo.nombre == "noAsignado") {
+                control {
+                    order("nombre", "asc")
+                }
+                order("nombre", "asc")
+            } else {
+                order("orden", "asc")
+            }
         }
 
         def acp = acciones.findAll { Permiso.countByAccionAndPerfil(it, perfil) > 0 }

@@ -34,9 +34,8 @@
                     </g:if>
                 </div>
             </div>
-
             <g:render template="/templates/revisarNotaPedido"
-                      model="[nota: nota, existencias: existencias]"/>
+                      model="[nota: nota, existencias: existencias, locked: locked]"/>
         </elm:container>
 
         <script type="text/javascript">

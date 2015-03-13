@@ -36,7 +36,7 @@
             </div>
 
             <g:render template="/templates/revisarNotaPedido"
-                      model="[nota: nota, existencias: existencias]"/>
+                      model="[nota: nota, existencias: existencias, locked: locked]"/>
 
         </elm:container>
         <elm:container tipo="horizontal" titulo="Cotizaciones">
@@ -87,7 +87,7 @@
                                 </div>
 
                                 <div class="col-md-2">
-                                    ${g.formatNumber(number: c.valor * nota.cantidad, type: 'currency')}
+                                    ${g.formatNumber(number: c.valor * (nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad), type: 'currency')}
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,8 @@
                             auth : $("#auth").val(),
                             cot  : $("#cot").val(),
                             obs  : $("#obs").val(),
-                            cant : $("#cant").val()
+                            cant : $("#cant").val(),
+                            prio : $('input[name=prioridad]:checked').val()
                         },
                         success : function (msg) {
                             var parts = msg.split("*");

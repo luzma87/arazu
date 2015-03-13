@@ -57,6 +57,9 @@
 <table class="table table-striped  table-bordered table-hover table-condensed" style="margin-top: 0;">
     <thead>
         <tr>
+            <g:if test="${banderas}">
+                <g:sortableColumn property="prioridad" title="Prioridad" style="width: 50px;"/>
+            </g:if>
             <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
             <g:sortableColumn property="de" title="Solicita" style="width: 150px;"/>
@@ -75,6 +78,19 @@
         <g:if test="${notasCount > 0}">
             <g:each in="${notas}" var="nota">
                 <tr>
+                    <g:if test="${banderas}">
+                        <td>
+                            <g:if test="${nota.prioridad == '1AL'}">
+                                <i class="fa fa-flag text-danger"></i> Alta
+                            </g:if>
+                            <g:elseif test="${nota.prioridad == '2MD'}">
+                                <i class="fa fa-flag text-warning"></i> Media
+                            </g:elseif>
+                            <g:elseif test="${nota.prioridad == '3BJ'}">
+                                <i class="fa fa-flag text-success"></i> Baja
+                            </g:elseif>
+                        </td>
+                    </g:if>
                     <td>${nota.numero}</td>
                     <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${nota.de}</td>
@@ -106,7 +122,7 @@
                             <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
                                title="Imprimir" class="btn btn-info btn-sm " data-ref="Nota de pedido #${nota.numero}"
                                data-pp=""
-                                target="_blank"
+                               target="_blank"
                                iden="${nota.id}">
                                 <i class="fa fa-print"></i>
                             </a>

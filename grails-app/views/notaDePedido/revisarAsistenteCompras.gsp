@@ -38,7 +38,7 @@
             </div>
 
             <g:render template="/templates/revisarNotaPedido"
-                      model="[nota: nota, existencias: existencias]"/>
+                      model="[nota: nota, existencias: existencias, locked: locked]"/>
 
         </elm:container>
 
@@ -85,6 +85,15 @@
 
                                         <div class="row">
                                             <div class="col-md-1">
+                                                <label>Item</label>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                ${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}${nota.unidad.codigo}
+                                                ${nota.item}
+                                            </div>
+
+                                            <div class="col-md-1">
                                                 <label>P. Unitario</label>
                                             </div>
 
@@ -92,7 +101,8 @@
                                                 <div class="input-group">
                                                     <input type="text" class="form-control input-sm number money nueva_unitario unitario required"
                                                            total="p_total_${i}" name="valor" autocomplete="off"
-                                                           cantidad="${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}">
+                                                           cantidad="${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}"
+                                                           value="${g.formatNumber(number: c.valor, type: 'currency')}">
 
                                                     <span class="input-group-addon svt-bg-warning">$</span>
                                                 </div>
@@ -105,8 +115,8 @@
                                             <div class="col-md-2">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control input-sm number money " disabled
-                                                           id="p_total_${i}"
-                                                           value="${g.formatNumber(number: c.valor * nota.cantidad, type: 'currency')}">
+                                                           id="p_total_${i}" cantidad="${nota.cantidad}"
+                                                           value="${g.formatNumber(number: c.valor * (nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad), type: 'currency')}">
                                                     <span class="input-group-addon svt-bg-warning">$</span>
                                                 </div>
                                             </div>
@@ -163,6 +173,15 @@
 
                                     <div class="row">
                                         <div class="col-md-1">
+                                            <label>Item</label>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            ${nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad}${nota.unidad.codigo}
+                                            ${nota.item}
+                                        </div>
+
+                                        <div class="col-md-1">
                                             <label>P. Unitario</label>
                                         </div>
 
@@ -186,7 +205,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3" style="text-align: right">
+                                        <div class="col-md-2" style="text-align: right">
                                             <a href="#" class="btn btn-info guardar_nueva">
                                                 <i class="fa fa-save"></i> Guadar</a>
                                         </div>

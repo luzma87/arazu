@@ -302,6 +302,7 @@ class NotaDePedidoController extends Shield {
      * Acción que muestra la lista de notas de pedido para que un asistente de compras les asigne cotizaciones
      */
     def listaAsistenteCompras() {
+        println ">>> " + session.perfil + "    " + session.perfil.codigo
         if (session.perfil.codigo != "ASCM") {
             response.sendError(403)
         }
@@ -375,6 +376,12 @@ class NotaDePedidoController extends Shield {
     def listaAprobadas() {
         def estadoAprobada = EstadoSolicitud.findByCodigo("A01")
         params.search_estado = estadoAprobada.id
+        if (!params.sort) {
+            params.sort = "prioridad"
+        }
+        if (!params.order) {
+            params.ordeer = "asc"
+        }
         def r1 = getList(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
@@ -390,7 +397,7 @@ class NotaDePedidoController extends Shield {
         if (!params.id)
             response.sendError(404)
         def nota = Pedido.get(params.id)
-        if (nota.para.id != session.usuario.id || session.perfil.codigo != "JEFE") {
+        if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
         if (nota.estadoSolicitud.codigo != "E01") {
@@ -432,7 +439,8 @@ class NotaDePedidoController extends Shield {
             }
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
-        return [nota: nota, existencias: existencias]
+        def locked = Egreso.findAllByPedidoAndFirmaIsNull(nota)
+        return [nota: nota, existencias: existencias, locked: locked]
     }
 
     /**
@@ -459,7 +467,8 @@ class NotaDePedidoController extends Shield {
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
         def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
-        return [nota: nota, existencias: existencias, cots: cots]
+        def locked = Egreso.findAllByPedidoAndFirmaIsNull(nota)
+        return [nota: nota, existencias: existencias, cots: cots, locked: locked]
     }
 
     /**
@@ -486,7 +495,8 @@ class NotaDePedidoController extends Shield {
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
         def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
-        return [nota: nota, existencias: existencias, cots: cots]
+        def locked = Egreso.findAllByPedidoAndFirmaIsNull(nota)
+        return [nota: nota, existencias: existencias, cots: cots, locked: locked]
     }
 
     /**
@@ -513,7 +523,8 @@ class NotaDePedidoController extends Shield {
             existencias[ing.bodegaId + "_" + ing.unidadId]["total"] += ing.saldo
         }
         def cots = Cotizacion.findAllByPedido(nota, [sort: "id"])
-        return [nota: nota, existencias: existencias, cots: cots]
+        def locked = Egreso.findAllByPedidoAndFirmaIsNull(nota)
+        return [nota: nota, existencias: existencias, cots: cots, locked: locked]
     }
 
     /**
@@ -824,6 +835,7 @@ class NotaDePedidoController extends Shield {
         if (params.cant > 0) {
             str = " (" + params.cant + " " + pedido.unidad.codigo + ")"
         }
+
         if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
             switch (tipo) {
                 case "AJF": // el jefe aprueba la solicitud
@@ -1116,6 +1128,12 @@ class NotaDePedidoController extends Shield {
             if (pedido && estadoFinal) {
                 if (params.cant) {
                     pedido.cantidadAprobada = params.cant.toDouble()
+                }
+                if (tipo == "AF") {
+                    if (!params.prio) {
+                        params.prio = "2MD"
+                    }
+                    pedido.prioridad = params.prio
                 }
                 if (pedido.save()) {
                     if (tipo == "AF") {

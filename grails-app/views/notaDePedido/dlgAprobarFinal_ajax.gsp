@@ -18,7 +18,7 @@
             <g:select name="cot" from="${cots}" class="form-control input-sm required" optionKey="id"
                       optionValue="${{
                           it.proveedor + ' (' +
-                                  g.formatNumber(number: it.valor * nota.cantidad, type: 'currency') +
+                                  g.formatNumber(number: it.valor * (nota.cantidadAprobada > 0 ? nota.cantidadAprobada : nota.cantidad), type: 'currency') +
                                   ', ' + it.diasEntrega + ' día' + (it.diasEntrega == 1 ? '' : 's') +
                                   ')'
                       }}"/>
@@ -52,6 +52,24 @@
                         <i class="fa fa-unlock-alt"></i>
                     </span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">Prioridad</div>
+
+        <div class="col-md-6">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" name="prioridad" value="1AL" autocomplete="off"><i class="fa fa-flag text-danger"></i> Alta
+                </label>
+                <label class="btn btn-default active">
+                    <input type="radio" name="prioridad" value="2MD" autocomplete="off" checked><i class="fa fa-flag text-warning"></i> Media
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" name="prioridad" value="3BJ" autocomplete="off"><i class="fa fa-flag text-success"></i> Baja
+                </label>
             </div>
         </div>
     </div>

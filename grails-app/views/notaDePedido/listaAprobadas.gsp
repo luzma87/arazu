@@ -23,7 +23,7 @@
         <elm:container tipo="horizontal" titulo="Notas de pedido aprobadas">
             <g:render template="/templates/tablaNotaPedido"
                       model="[params      : params, strSearch: strSearch, notas: notas, notasCount: notasCount,
-                              ingreso     : true,
+                              ingreso     : true, banderas: true,
                               linkBusqueda: 'listaAprobadas']"/>
         </elm:container>
 

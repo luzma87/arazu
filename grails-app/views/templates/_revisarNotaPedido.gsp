@@ -140,6 +140,21 @@
     </tbody>
 </table>
 
+<g:if test="${locked.size() > 0}">
+    <div class="alert alert-success">
+        <h4>Existencias reservadas:</h4>
+        <ul class="fa-ul">
+            <g:each in="${locked}" var="l">
+                <li>
+                    <i class="fa-li fa fa-dropbox"></i>
+                    ${l.cantidad}${nota.unidad.codigo} ${nota.item}
+                    en la bodega ${l.ingreso.bodega}
+                </li>
+            </g:each>
+        </ul>
+    </div>
+</g:if>
+
 <g:if test="${existencias.size() > 0}">
     <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
         <thead>
