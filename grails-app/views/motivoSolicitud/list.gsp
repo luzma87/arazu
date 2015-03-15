@@ -1,18 +1,9 @@
-<%@ page import="arazu.parametros.Color" %>
+<%@ page import="arazu.parametros.MotivoSolicitud" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Lista de Color</title>
-
-        <style type="text/css">
-        .swatch {
-            width        : 20px;
-            height       : 20px;
-            margin-right : 5px;
-        }
-        </style>
-
+        <title>Lista de MotivoSolicitud</title>
     </head>
 
     <body>
@@ -26,8 +17,9 @@
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
             <div class="btn-group">
-                <g:link controller="inicio" action="parametros" class="btn btn-default">
+                <g:link class="btn btn-default" controller="inicio" action="parametros">
                     <i class="fa fa-cogs"></i> Parámetros
                 </g:link>
             </div>
@@ -36,7 +28,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="color" action="list" class="btn btn-default btn-search">
+                        <g:link controller="motivosolicitud" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -44,25 +36,24 @@
             </div>
         </div>
 
-        <table class="table table-ribbon table-condensed table-bordered table-striped table-hover">
+        <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
 
                     <g:sortableColumn property="nombre" title="Nombre"/>
 
+                    <g:sortableColumn property="descripcion" title="Descripcion"/>
+
                 </tr>
             </thead>
             <tbody>
-                <g:if test="${colorInstanceCount > 0}">
-                    <g:each in="${colorInstanceList}" status="i" var="colorInstance">
-                        <tr data-id="${colorInstance.id}">
+                <g:if test="${motivoSolicitudInstanceCount > 0}">
+                    <g:each in="${motivoSolicitudInstanceList}" status="i" var="motivoSolicitudInstance">
+                        <tr data-id="${motivoSolicitudInstance.id}">
 
-                            <td>
-                                <div class="swatch pull-left" style="background: ${colorInstance.hex}"></div>
-                                <elm:textoBusqueda busca="${params.search}">
-                                    <g:fieldValue bean="${colorInstance}" field="nombre"/>
-                                </elm:textoBusqueda>
-                            </td>
+                            <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${motivoSolicitudInstance}" field="nombre"/></elm:textoBusqueda></td>
+
+                            <td><elm:textoBusqueda busca="${params.search}">${motivoSolicitudInstance.descripcion}</elm:textoBusqueda></td>
 
                         </tr>
                     </g:each>
@@ -82,16 +73,16 @@
             </tbody>
         </table>
 
-        <elm:pagination total="${colorInstanceCount}" params="${params}"/>
+        <elm:pagination total="${motivoSolicitudInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
             var id = null;
-            function submitFormColor() {
-                var $form = $("#frmColor");
-                var $btn = $("#dlgCreateEditColor").find("#btnSave");
+            function submitFormMotivoSolicitud() {
+                var $form = $("#frmMotivoSolicitud");
+                var $btn = $("#dlgCreateEditMotivoSolicitud").find("#btnSave");
                 if ($form.valid()) {
                     $btn.replaceWith(spinner);
-                    openLoader("Guardando Color");
+                    openLoader("Guardando MotivoSolicitud");
                     $.ajax({
                         type    : "POST",
                         url     : $form.attr("action"),
@@ -118,11 +109,11 @@
                     return false;
                 } //else
             }
-            function deleteColor(itemId) {
+            function deleteMotivoSolicitud(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Color seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el MotivoSolicitud seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -134,10 +125,10 @@
                             label     : "<i class='fa fa-trash-o'></i> Eliminar",
                             className : "btn-danger",
                             callback  : function () {
-                                openLoader("Eliminando Color");
+                                openLoader("Eliminando MotivoSolicitud");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'color', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'motivosolicitud', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -162,17 +153,17 @@
                     }
                 });
             }
-            function createEditColor(id) {
+            function createEditMotivoSolicitud(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'color', action:'form_ajax')}",
+                    url     : "${createLink(controller:'motivosolicitud', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEditColor",
-                            title : title + " Color",
+                            id    : "dlgCreateEditMotivoSolicitud",
+                            title : title + " MotivoSolicitud",
 
                             message : msg,
                             buttons : {
@@ -187,7 +178,7 @@
                                     label     : "<i class='fa fa-save'></i> Guardar",
                                     className : "btn-success",
                                     callback  : function () {
-                                        return submitFormColor();
+                                        return submitFormMotivoSolicitud();
                                     } //callback
                                 } //guardar
                             } //buttons
@@ -202,7 +193,7 @@
             $(function () {
 
                 $(".btnCrear").click(function () {
-                    createEditColor();
+                    createEditMotivoSolicitud();
                     return false;
                 });
 
@@ -219,13 +210,13 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(controller:'color', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'motivosolicitud', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title : "Ver Color",
+                                            title : "Ver MotivoSolicitud",
 
                                             message : msg,
                                             buttons : {
@@ -246,7 +237,7 @@
                             icon   : "fa fa-pencil",
                             action : function ($element) {
                                 var id = $element.data("id");
-                                createEditColor(id);
+                                createEditMotivoSolicitud(id);
                             }
                         },
                         eliminar : {
@@ -255,7 +246,7 @@
                             separator_before : true,
                             action           : function ($element) {
                                 var id = $element.data("id");
-                                deleteColor(id);
+                                deleteMotivoSolicitud(id);
                             }
                         }
                     },

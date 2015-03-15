@@ -94,7 +94,7 @@
                     <td>${nota.numero}</td>
                     <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${nota.de}</td>
-                    <td>${nota.tipoSolicitud.descripcion}</td>
+                    <td>${nota.tipoSolicitud.nombre}</td>
                     <td>${nota.maquinaria}</td>
                     <td>
                         ${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}

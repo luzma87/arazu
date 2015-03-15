@@ -23,6 +23,16 @@ class TipoUsuarioController extends Shield {
     }
 
     /**
+     * Acción que muestra la estructura departamental en forma de árbol para administración
+     */
+    def arbolAdmin() {
+        if (!params.inactivos) {
+            params.inactivos = "S"
+        }
+        return [arbol: makeTree(params), params: params]
+    }
+
+    /**
      * Función que genera el árbol de estructura departamental
      */
     private String makeTree(params) {
@@ -105,7 +115,7 @@ class TipoUsuarioController extends Shield {
             if (dpto.activo != 1) {
                 txt += "<span class='text-muted'>"
             }
-            txt += dpto.nombre + " (" + dpto.codigo + ")"
+            txt += dpto.nombre + " (" + dpto.codigo + ") - <span class='text-info small'>" + dpto.descripcion + "</span>"
             if (dpto.activo != 1) {
                 txt += "</span>"
             }

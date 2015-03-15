@@ -1,3 +1,4 @@
+<%@ page import="arazu.seguridad.Perfil" %>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'ui.js')}"></script>
 <g:if test="${!prflInstance}">
     <elm:notFound elem="Prfl" genero="o"/>
@@ -7,10 +8,24 @@
     <div class="modal-contenido">
         <g:form class="form-horizontal" name="frmPrfl" role="form" action="save_ajax" method="POST">
             <g:hiddenField name="id" value="${prflInstance?.id}"/>
+            <g:if test="${!prflInstance.id}">
+                <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'padre', 'error')} required">
+                    <span class="grupo">
+                        <label for="copiar" class="col-md-3 control-label">
+                            Copiar permisos de
+                        </label>
+
+                        <div class="col-md-6">
+                            <g:select name="copiar" from="${Perfil.list()}" optionKey="id" class="form-control input-sm"
+                                      noSelection="['': '- Ninguno -']" data-size="5"/>
+                        </div>
+                    </span>
+                </div>
+            </g:if>
 
             <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'nombre', 'error')} required">
                 <span class="grupo">
-                    <label for="nombre" class="col-md-2 control-label">
+                    <label for="nombre" class="col-md-3 control-label">
                         Nombre
                     </label>
 
@@ -22,19 +37,19 @@
 
             <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'codigo', 'error')} ">
                 <span class="grupo">
-                    <label for="codigo" class="col-md-2 control-label">
+                    <label for="codigo" class="col-md-3 control-label">
                         Código
                     </label>
 
                     <div class="col-md-6">
-                        <g:textField name="codigo" class="form-control input-sm unique noEspacios" value="${prflInstance?.codigo}"/>
+                        <g:textField name="codigo" class="form-control input-sm unique required noEspacios" value="${prflInstance?.codigo}"/>
                     </div>
                 </span>
             </div>
 
             <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'descripcion', 'error')} required">
                 <span class="grupo">
-                    <label for="descripcion" class="col-md-2 control-label">
+                    <label for="descripcion" class="col-md-3 control-label">
                         Descripción
                     </label>
 
@@ -44,30 +59,17 @@
                 </span>
             </div>
 
-            <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'observaciones', 'error')} required">
+            <div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'observaciones', 'error')}">
                 <span class="grupo">
-                    <label for="observaciones" class="col-md-2 control-label">
+                    <label for="observaciones" class="col-md-3 control-label">
                         Observaciones
                     </label>
 
                     <div class="col-md-6">
-                        <g:textField name="observaciones" required="" class="form-control input-sm required" value="${prflInstance?.observaciones}"/>
+                        <g:textField name="observaciones" class="form-control input-sm" value="${prflInstance?.observaciones}"/>
                     </div>
                 </span>
             </div>
-
-        %{--<div class="form-group keeptogether ${hasErrors(bean: prflInstance, field: 'padre', 'error')} required">--}%
-        %{--<span class="grupo">--}%
-        %{--<label for="padre" class="col-md-2 control-label">--}%
-        %{--Padre--}%
-        %{--</label>--}%
-
-        %{--<div class="col-md-6">--}%
-        %{--<g:select id="padre" name="padre.id" from="${Perfil.list()}" optionKey="id" required="" value="${prflInstance?.padre?.id}" class="many-to-one form-control input-sm"/>--}%
-        %{--</div>--}%
-        %{--*--}%
-        %{--</span>--}%
-        %{--</div>--}%
         </g:form>
     </div>
 

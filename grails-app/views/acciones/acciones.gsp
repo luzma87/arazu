@@ -45,7 +45,7 @@
         <ul class="nav nav-pills corner-all" style="border: solid 1px #cccccc; margin-bottom: 10px;">
             <g:each in="${modulos}" var="modulo">
                 <li role="presentation">
-                    <a href="#" class="mdlo" id="${modulo.id}">
+                    <a href="${modulo.id}" class="mdlo" id="${modulo.id}">
                         <g:if test="${modulo.icono}">
                             <i class="${modulo.icono}"></i>
                         </g:if>
@@ -73,9 +73,9 @@
                 <a href="#" id="btnEditarPerfil" class="btn btn-sm btn-info">
                     <i class="fa fa-pencil"></i> Editar perfil
                 </a>
-                <a href="#" id="btnBorrarPerfil" class="btn btn-sm btn-info">
-                    <i class="fa fa-trash-o"></i> Eliminar perfil
-                </a>
+                %{--<a href="#" id="btnBorrarPerfil" class="btn btn-sm btn-info">--}%
+                %{--<i class="fa fa-trash-o"></i> Eliminar perfil--}%
+                %{--</a>--}%
             </div>
 
             <div class="btn-group">
@@ -143,8 +143,8 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Perfil seleccionado (<strong>" + $("#perfil").find("option:selected").text() + "</strong>)? " +
-                              "Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Perfil seleccionado (<strong>" + $("#perfil").find("option:selected").text() + "</strong>)? " +
+                            "Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -252,8 +252,8 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Módulo seleccionado (<strong>" + $.trim($(".active").find(".mdlo").text()) + "</strong>)? " +
-                              "Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Módulo seleccionado (<strong>" + $.trim($(".active").find(".mdlo").text()) + "</strong>)? " +
+                            "Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",

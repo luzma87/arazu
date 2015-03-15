@@ -1,4 +1,4 @@
-<%@ page import="arazu.items.Item; arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.MotivoSolicitud; arazu.items.Item; arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
@@ -75,7 +75,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <g:select name="tipoSolicitud.id" from="${TipoSolicitud.list()}" optionKey="id" optionValue="descripcion"
+                            <g:select name="motivoSolicitud.id" from="${MotivoSolicitud.list()}" optionKey="id" optionValue="nombre"
                                       class="form-control input-sm required select"/>
                         </div>
 

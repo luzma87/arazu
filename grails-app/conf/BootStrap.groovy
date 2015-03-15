@@ -1,6 +1,11 @@
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.MotivoSolicitud
+import arazu.parametros.TipoSolicitud
 import arazu.parametros.TipoUsuario
+import arazu.seguridad.Accion
+import arazu.seguridad.Controlador
 import arazu.seguridad.Modulo
+import arazu.seguridad.Permiso
 import arazu.seguridad.Persona
 import arazu.seguridad.Perfil
 import arazu.seguridad.Sesion
@@ -9,7 +14,6 @@ import arazu.seguridad.TipoAccion
 class BootStrap {
 
     def init = { servletContext ->
-
         if (Modulo.count() == 0) {
             def noAsignado = new Modulo()
             noAsignado.nombre = "noAsignado"
@@ -53,15 +57,15 @@ class BootStrap {
                 println "error al crear tipo de usuario ADMN: " + admins.errors
             }
 
-            def gerentes = new TipoUsuario()
-            gerentes.codigo = "GRNT"
-            gerentes.nombre = "Gerentes"
-            gerentes.descripcion = "Personas que pueden aprobar compras mayores a \$100"
-            gerentes.activo = 1
-            if (gerentes.save(flush: true)) {
-                println "Creado tipo de usuario GRNT"
+            def usu = new TipoUsuario()
+            usu.codigo = "USRO"
+            usu.nombre = "Usuarios"
+            usu.descripcion = "Usuarios normales"
+            usu.activo = 1
+            if (usu.save(flush: true)) {
+                println "Creado tipo de usuario USU"
             } else {
-                println "error al crear tipo de usuario GRNT: " + gerentes.errors
+                println "error al crear tipo de usuario USU: " + usu.errors
             }
 
             def jefes = new TipoUsuario()
@@ -73,6 +77,39 @@ class BootStrap {
                 println "Creado tipo de usuario JEFE"
             } else {
                 println "error al crear tipo de usuario JEFE: " + jefes.errors
+            }
+
+            def jefeC = new TipoUsuario()
+            jefeC.codigo = "JFCM"
+            jefeC.nombre = "Jefes de compras"
+            jefeC.descripcion = "Usuarios que asignan Asistentes de compras"
+            jefeC.activo = 1
+            if (jefeC.save(flush: true)) {
+                println "Creado tipo de usuario JFCM"
+            } else {
+                println "error al crear tipo de usuario JFCM: " + jefeC.errors
+            }
+
+            def asistenteC = new TipoUsuario()
+            asistenteC.codigo = "ASCM"
+            asistenteC.nombre = "Asistentes de compras"
+            asistenteC.descripcion = "Usuarios que cargan cotizaciones"
+            asistenteC.activo = 1
+            if (asistenteC.save(flush: true)) {
+                println "Creado tipo de usuario ASCM"
+            } else {
+                println "error al crear tipo de usuario ASCM: " + asistenteC.errors
+            }
+
+            def gerentes = new TipoUsuario()
+            gerentes.codigo = "GRNT"
+            gerentes.nombre = "Gerentes"
+            gerentes.descripcion = "Personas que pueden aprobar compras mayores a \$100"
+            gerentes.activo = 1
+            if (gerentes.save(flush: true)) {
+                println "Creado tipo de usuario GRNT"
+            } else {
+                println "error al crear tipo de usuario GRNT: " + gerentes.errors
             }
 
             def bodegas = new TipoUsuario()
@@ -90,9 +127,9 @@ class BootStrap {
         if (Persona.count() == 0) {
             def admin = new Persona()
 
-            admin.cedula = "1715068159"
-            admin.nombre = "Luz"
-            admin.apellido = "Unda"
+            admin.cedula = "1234567890"
+            admin.nombre = "Admin"
+            admin.apellido = "Admin"
             admin.sexo = "F"
             admin.fechaNacimiento = new Date().parse("dd-MM-yyyy", "23-01-1987")
             admin.mail = "luzma_87@yahoo.com"
@@ -183,6 +220,106 @@ class BootStrap {
             estado.nombre = "Completada"
             if (!estado.save(flush: true)) {
                 println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
+            }
+        }
+
+        if (TipoSolicitud.count() == 0) {
+            def ts = new TipoSolicitud()
+            ts.codigo = "NTPD"
+            ts.nombre = "Nota de pedido"
+            ts.descripcion = "Notas de pedido de compra de repuestos"
+            if (ts.save(flush: true)) {
+                println "Creado tipo de solicitud ${ts.nombre}"
+            } else {
+                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
+            }
+
+            ts = new TipoSolicitud()
+            ts.codigo = "SMNE"
+            ts.nombre = "Mantenimiento externo"
+            ts.descripcion = "Solicitud de mantenimiento de vehículos y maquinaria externo"
+            if (ts.save(flush: true)) {
+                println "Creado tipo de solicitud ${ts.nombre}"
+            } else {
+                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
+            }
+
+            ts = new TipoSolicitud()
+            ts.codigo = "SMNI"
+            ts.nombre = "Mantenimiento interno"
+            ts.descripcion = "Solicitud de mantenimiento interno"
+            if (ts.save(flush: true)) {
+                println "Creado tipo de solicitud ${ts.nombre}"
+            } else {
+                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
+            }
+        }
+
+        if (MotivoSolicitud.count() == 0) {
+            def mtv = new MotivoSolicitud()
+            mtv.nombre = "Mantenimiento"
+            if (mtv.save(flush: true)) {
+                println "Creado motivo de solicitud ${mtv.nombre}"
+            } else {
+                println "Error al crear motivo de solicitud ${mtv.nombre}: " + mtv.errors
+            }
+
+            mtv = new MotivoSolicitud()
+            mtv.nombre = "Reparación"
+            if (mtv.save(flush: true)) {
+                println "Creado motivo de solicitud ${mtv.nombre}"
+            } else {
+                println "Error al crear motivo de solicitud ${mtv.nombre}: " + mtv.errors
+            }
+
+            mtv = new MotivoSolicitud()
+            mtv.nombre = "Stock"
+            if (mtv.save(flush: true)) {
+                println "Creado motivo de solicitud ${mtv.nombre}"
+            } else {
+                println "Error al crear motivo de solicitud ${mtv.nombre}: " + mtv.errors
+            }
+        }
+
+        if (Permiso.count() == 0) {
+            def controlador = Controlador.findAllByNombre("Acciones")
+            if (controlador.size() == 0) {
+                controlador = new Controlador()
+                controlador.nombre = "Acciones"
+                if (controlador.save(flush: true)) {
+                    println "Creado controlador Acciones"
+                } else {
+                    println "error al crear controlador Acciones: " + controlador.errors
+                }
+            } else {
+                controlador = controlador.first()
+            }
+            if (Accion.countByNombre("acciones") == 0) {
+                def accion = new Accion()
+                accion.nombre = "acciones"
+                accion.descripcion = "Configuración del menú"
+                accion.esAuditable = 1
+                accion.control = controlador
+                accion.modulo = Modulo.findByNombre("noAsignado")
+                accion.tipo = TipoAccion.findByCodigo("M")
+                accion.orden = 1
+                accion.icono = "fa fa-server"
+                if (accion.save(flush: true)) {
+                    println "Creada accion acciones"
+                } else {
+                    println "error al crear accion acciones: " + accion.errors
+                }
+            }
+
+            def admin = Perfil.findByCodigo("ADM")
+
+            def permiso = new Permiso()
+            permiso.accion = Accion.findByNombre("acciones")
+            permiso.perfil = admin
+            if (permiso.save(flush: true)) {
+                println "Creado permiso para acciones para admin"
+            } else {
+                println "error al crear permiso para acciones para admin: " + permiso.errors
             }
         }
     }

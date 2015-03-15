@@ -65,6 +65,15 @@ class ProyectoController extends Shield {
     }
 
     /**
+     * Acción que muestra la lista de elementos para administración
+     */
+    def listAdmin() {
+        def proyectoInstanceList = getList(params, false)
+        def proyectoInstanceCount = getList(params, true).size()
+        return [proyectoInstanceList: proyectoInstanceList, proyectoInstanceCount: proyectoInstanceCount]
+    }
+
+    /**
      * Acción llamada con ajax que permite eliminar un elemento
      */
     def delete_ajax() {

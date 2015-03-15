@@ -1,25 +1,17 @@
-package arazu.seguridad
+package arazu.parametros
 
 /**
- * Clase para conectar con la tabla 'mdlo' de la base de datos
+ * Clase para conectar con la tabla 'mtsl' de la base de datos
  */
-class Modulo {
+class MotivoSolicitud {
     /**
-     * Nombre del módulo
+     * Nombre del motivo de solicitud
      */
     String nombre
     /**
-     * Descripción del módulo
+     * Descripción del motivo de solicitud
      */
     String descripcion
-    /**
-     * Orden del módulo
-     */
-    Integer orden
-    /**
-     * Icono del módulo
-     */
-    String icono = ""
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -30,16 +22,15 @@ class Modulo {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'mdlo'
+        table 'mtsl'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort nombre: "asc"
         columns {
-            id column: 'mdlo__id'
-            nombre column: 'mdlonmbr'
-            descripcion column: 'mdlodscr'
-            orden column: 'mdloordn'
-            icono column: 'mdloicno'
+            id column: 'mtsl__id'
+            nombre column: 'mtslnmbr'
+            descripcion column: 'mtsldscr'
         }
     }
 
@@ -47,9 +38,8 @@ class Modulo {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        icono nullable: true
+        descripcion nullable: true
     }
-
     /**
      * Genera un string para mostrar
      * @return el nombre

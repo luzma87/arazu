@@ -69,16 +69,16 @@ function log(msg, type, title, hide) {
         msg = "";
     }
     new PNotify({
-        title   : title,
-        icon    : icon,
-        buttons : {
+        title    : title,
+        icon     : icon,
+        buttons  : {
             closer_hover  : false,
             sticker_hover : false
         },
-        styling : 'fontawesome',
-        text    : msg,
-        type    : type,
-        hide    : hide
+        styling  : 'fontawesome',
+        text     : msg,
+        type     : type,
+        hide     : hide
     });
 }
 
@@ -102,7 +102,7 @@ function openLoader(msg, title) {
         closeButton : false,
         class       : "modal-sm"
     });
-    $("#dlgLoader").css({zIndex:1061})
+    $("#dlgLoader").css({zIndex : 1061})
 }
 function closeLoader() {
     $("#dlgLoader").modal('hide');

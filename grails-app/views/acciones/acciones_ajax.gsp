@@ -352,7 +352,9 @@
                 $('.qtip').qtip('hide');
                 var parts = msg.split("*");
                 log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                location.reload(true);
+//                location.reload(true);
+                closeLoader();
+                reload();
             }
         });
         return false;

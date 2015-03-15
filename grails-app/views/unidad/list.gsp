@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.parametros.Unidad" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,25 @@
         <meta name="layout" content="main">
         <title>Lista de Unidad</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
+            <div class="btn-group">
+                <g:link controller="inicio" action="parametros" class="btn btn-default">
+                    <i class="fa fa-cogs"></i> Parámetros
+                </g:link>
+            </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -33,36 +40,36 @@
             <thead>
                 <tr>
 
-                    <g:sortableColumn property="padre" title="Padre" />
+                    <g:sortableColumn property="padre" title="Padre"/>
 
-                    <g:sortableColumn property="codigo" title="Código" />
-                    
-                    <g:sortableColumn property="conversion" title="Conversión" />
-                    
-                    <g:sortableColumn property="descripcion" title="Descripción" />
-                    
+                    <g:sortableColumn property="codigo" title="Código"/>
+
+                    <g:sortableColumn property="conversion" title="Conversión"/>
+
+                    <g:sortableColumn property="descripcion" title="Descripción"/>
+
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${unidadInstanceCount > 0}">
                     <g:each in="${unidadInstanceList}" status="i" var="unidadInstance">
                         <tr data-id="${unidadInstance.id}">
-                            
+
                             <td>${unidadInstance.padre}</td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${unidadInstance}" field="codigo"/></elm:textoBusqueda></td>
-                            
+
                             <td><g:fieldValue bean="${unidadInstance}" field="conversion"/></td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${unidadInstance}" field="descripcion"/></elm:textoBusqueda></td>
-                            
+
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="4">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -91,7 +98,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -101,20 +108,20 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteUnidad(itemId) {
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Unidad seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Unidad seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -137,14 +144,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -156,16 +163,16 @@
             }
             function createEditUnidad(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'unidad', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditUnidad",
-                            title   : title + " Unidad",
-                            
+                            id    : "dlgCreateEditUnidad",
+                            title : title + " Unidad",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -193,7 +200,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditUnidad();
                     return false;
                 });
@@ -217,8 +224,8 @@
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver Unidad",
-                                            
+                                            title : "Ver Unidad",
+
                                             message : msg,
                                             buttons : {
                                                 ok : {

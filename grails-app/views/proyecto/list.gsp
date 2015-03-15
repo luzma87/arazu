@@ -13,9 +13,6 @@
         <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
-                <g:link action="form" class="btn btn-default">
-                    <i class="fa fa-file-o"></i> Crear
-                </g:link>
             </div>
 
             <div class="btn-group pull-right col-md-3">
@@ -59,16 +56,12 @@
                                 <g:if test="${!tieneBodegasActivas}">
                                     <g:if test="${bodegas == 0}">
                                         <p>
-                                            <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
-                                                <i class="fa fa-archive"></i> No tiene una bodega asignada
-                                            </g:link>
+                                            <i class="fa fa-archive"></i> No tiene una bodega asignada
                                         </p>
                                     </g:if>
                                     <g:if test="${funciones == 0}">
                                         <p>
-                                            <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
-                                                <i class="fa fa-users"></i> No tiene responsables asignados
-                                            </g:link>
+                                            <i class="fa fa-users"></i> No tiene responsables asignados
                                         </p>
                                     </g:if>
                                 </g:if>
@@ -101,92 +94,21 @@
         <elm:pagination total="${proyectoInstanceCount}" params="${params}"/>
 
         <script type="text/javascript">
-            function deleteProyecto(itemId) {
-                bootbox.dialog({
-                    title   : "Alerta",
-                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Proyecto seleccionado? Esta acción no se puede deshacer.</p>",
-                    buttons : {
-                        cancelar : {
-                            label     : "Cancelar",
-                            className : "btn-primary",
-                            callback  : function () {
-                            }
-                        },
-                        eliminar : {
-                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
-                            className : "btn-danger",
-                            callback  : function () {
-                                openLoader("Eliminando Proyecto");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : '${createLink(controller:'proyecto', action:'delete_ajax')}',
-                                    data    : {
-                                        id : itemId
-                                    },
-                                    success : function (msg) {
-                                        var parts = msg.split("*");
-                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                        if (parts[0] == "SUCCESS") {
-                                            setTimeout(function () {
-                                                location.reload(true);
-                                            }, 1000);
-                                        } else {
-                                            closeLoader();
-                                        }
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
-                                        closeLoader();
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-
             $(function () {
-
                 $("tbody>tr").contextMenu({
                     items  : {
-                        header     : {
+                        header : {
                             label  : "Acciones",
                             header : true
                         },
-                        ver        : {
+                        ver    : {
                             label  : "Ver",
                             icon   : "fa fa-search",
                             action : function ($element) {
                                 var id = $element.data("id");
                                 location.href = "${createLink(controller: 'proyecto', action:'show')}/" + id;
                             }
-                        },
-                        editar     : {
-                            label  : "Editar",
-                            icon   : "fa fa-pencil",
-                            action : function ($element) {
-                                var id = $element.data("id");
-                                location.href = "${createLink(controller: 'proyecto', action:'form')}/" + id;
-                            }
-                        },
-                        configurar : {
-                            label  : "Configurar",
-                            icon   : "fa fa-cogs",
-                            action : function ($element) {
-                                var id = $element.data("id");
-                                location.href = "${createLink(controller: 'proyecto', action:'config')}/" + id;
-                            }
-                        }/*,
-                         eliminar : {
-                         label            : "Eliminar",
-                         icon             : "fa fa-trash-o",
-                         separator_before : true,
-                         action           : function ($element) {
-                         var id = $element.data("id");
-                         deleteProyecto(id);
-                         }
-                         }*/
+                        }
                     },
                     onShow : function ($element) {
                         $element.addClass("success");
@@ -195,64 +117,6 @@
                         $(".success").removeClass("success");
                     }
                 });
-
-                $(".desactivarBodega").click(function () {
-                    var id = $(this).data("id");
-                    openLoader();
-                    $.ajax({
-                        type    : "POST",
-                        url     : "${createLink(controller:'bodega', action:'desactivarUI_ajax')}",
-                        data    : {
-                            id : id
-                        },
-                        success : function (msg) {
-                            closeLoader();
-                            bootbox.dialog({
-                                id      : "dlgDesactivarBodega",
-                                title   : "Desactivar Bodega",
-                                message : msg,
-                                buttons : {
-                                    cancelar : {
-                                        label     : "Cancelar",
-                                        className : "btn-primary",
-                                        callback  : function () {
-                                        }
-                                    },
-                                    mover    : {
-                                        label     : "<i class='fa fa-paper-plane-o'></i> Mover",
-                                        className : "btn-success",
-                                        callback  : function () {
-                                            var data = {};
-                                            $(".bdNew").each(function () {
-                                                data[$(this).attr("name")] = $(this).val();
-                                            });
-                                            openLoader("Moviendo inventario");
-                                            $.ajax({
-                                                type    : "POST",
-                                                url     : "${createLink(controller:'bodega', action:'desactivar_ajax')}",
-                                                data    : data,
-                                                success : function (msg) {
-                                                    var parts = msg.split("*");
-                                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                                    setTimeout(function() {
-                                                        if (parts[0] == "SUCCESS") {
-                                                            location.reload(true);
-                                                        } else {
-                                                           closeLoader();
-                                                            return false;
-                                                        }
-                                                    }, 1000);
-                                                }
-                                            });
-                                        }
-                                    }
-                                } //buttons
-                            }); //dialog
-                        } //success
-                    }); //ajax
-                    return false;
-                });
-
             });
         </script>
 

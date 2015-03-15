@@ -18,6 +18,12 @@
                 </a>
             </div>
 
+            <div class="btn-group">
+                <g:link controller="inicio" action="parametros" class="btn btn-default">
+                    <i class="fa fa-cogs"></i> Parámetros
+                </g:link>
+            </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -115,7 +121,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Cargo seleccionado? Esta acción no se puede deshacer.</p>",
+                            "¿Está seguro que desea eliminar el Cargo seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -157,7 +163,7 @@
             }
             function createEditCargo(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id : id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'cargo', action:'form_ajax')}",

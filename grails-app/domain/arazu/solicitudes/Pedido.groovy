@@ -3,6 +3,7 @@ package arazu.solicitudes
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.MotivoSolicitud
 import arazu.parametros.TipoSolicitud
 import arazu.parametros.Unidad
 import arazu.proyectos.Proyecto
@@ -13,9 +14,13 @@ import arazu.seguridad.Persona
  */
 class Pedido {
     /**
-     * Tipo de solicitud para el pedido
+     * Tipo de solicitud (Nota de pedido, solicitud de mantenimiento externo, solicitud de mantenimiento interno...)
      */
     TipoSolicitud tipoSolicitud
+    /**
+     * Motivo de la solicitud
+     */
+    MotivoSolicitud motivoSolicitud
     /**
      * Estado del pedido
      */
@@ -138,6 +143,7 @@ class Pedido {
         columns {
             id column: 'pddo__id'
             tipoSolicitud column: 'tpsl__id'
+            motivoSolicitud column: 'mtsl__id'
             estadoSolicitud column: 'essl__id'
             codigo column: 'pddocdgo'
             fecha column: 'pddofcha'
@@ -207,6 +213,6 @@ class Pedido {
     }
 
     String toString() {
-        return "Pedido núm. ${this.numero}"
+        return "${this.tipoSolicitud.nombre} núm. ${this.numero}"
     }
 }

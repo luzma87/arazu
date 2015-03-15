@@ -1,6 +1,7 @@
 package arazu.seguridad
 
 import org.springframework.dao.DataIntegrityViolationException
+import sun.misc.Perf
 
 /**
  * Controlador que muestra las pantallas de manejo de Prfl
@@ -117,7 +118,25 @@ class PerfilController extends Shield {
             render "ERROR*Ha ocurrido un error al guardar Perfil: " + renderErrors(bean: prflInstance)
             return
         }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Perfil exitosa."
+        def c = 0
+        def msgExtra = ""
+        if (params.copiar) {
+            def prflCopiar = Perfil.get(params.copiar.toLong())
+            (Permiso.findAllByPerfil(prflCopiar)).each { perm ->
+                def permiso = new Permiso()
+                permiso.perfil = prflInstance
+                permiso.accion = perm.accion
+                if (permiso.save(flush: true)) {
+                    c++
+                } else {
+                    msgExtra += renderErrors(bean: permiso)
+                }
+            }
+            if (c > 0) {
+                msgExtra += "<br/>Se copiaron ${c} permiso${c == 1 ? '' : 's'} del perfil ${prflCopiar.nombre}"
+            }
+        }
+        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Perfil exitosa. " + msgExtra
         return
     } //save para grabar desde ajax
 

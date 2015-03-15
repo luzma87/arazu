@@ -35,8 +35,10 @@
 </div>
 
 <script type="text/javascript">
-    $(".ic").click(function () {
-        $(".selected").removeClass("selected");
-        $(this).toggleClass("selected");
+    $(function () {
+        $(".ic").click(function () {
+            $(".selected").removeClass("selected");
+            $(this).toggleClass("selected");
+        });
     });
 </script>

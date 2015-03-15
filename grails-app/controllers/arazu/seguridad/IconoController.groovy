@@ -6,7 +6,7 @@ class IconoController {
      * Acción llamada con ajax que muestra los iconos disponibles para acciones y módulos
      */
     def dlgIconos_ajax() {
-        def flaticons = [], fontwesome = [], mfizz = []
+        def flaticons = [], fontawesome = [], mfizz = []
 
         def path = servletContext.getRealPath("/") + "fonts/"    //web-app/fonts
 
@@ -28,8 +28,8 @@ class IconoController {
         fontawesomeFile.eachLine { ln ->
             if (ln.startsWith(".fa") && ln.contains("before")) {
                 def parts = ln.split(":")
-                if (!fontwesome.contains(parts[0]))
-                    fontwesome += "fa " + parts[0].replaceFirst("\\.", "")
+                if (!fontawesome.contains(parts[0]))
+                    fontawesome += "fa " + parts[0].replaceFirst("\\.", "")
             }
         }
         mfizzFile.eachLine { ln ->
@@ -39,7 +39,6 @@ class IconoController {
                     mfizz += parts[0].replaceFirst("\\.", "")
             }
         }
-
-        return [icons: flaticons + fontwesome + mfizz, params: params]
+        return [icons: flaticons + fontawesome + mfizz, params: params]
     }
 }

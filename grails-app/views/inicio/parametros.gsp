@@ -46,6 +46,18 @@
                             </div>
                         </li>
                         <li>
+                            <i class="fa-li fa fa-question-circle text-info"></i>
+                            <g:link class="over" controller="motivoSolicitud" action="list">
+                                Motivos de solicitud
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class="fa fa-question-circle fa-2x"></i> Tipos de solicitud</h4>
+
+                                <p>Permite registrar diferentes motivos de creación de solicitudes</p>
+                            </div>
+                        </li>
+                        <li>
                             <i class="fa-li fa fa-file-archive-o text-info"></i>
                             <g:link class="over" controller="tipoSolicitud" action="list">
                                 Tipos de solicitud

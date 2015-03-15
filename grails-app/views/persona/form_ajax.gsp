@@ -86,7 +86,7 @@
                 <div class="row no-margin-top noMargin bg-success">
                     <div class="col-sm-5">
                         <g:select name="perfil" from="${Perfil.list([sort: 'nombre'])}" class="form-control input-sm"
-                                  optionKey="id" optionValue="nombre"/>
+                                  optionKey="id" optionValue="nombre" data-size="3"/>
                     </div>
 
                     <div class="col-sm-2">

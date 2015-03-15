@@ -7,6 +7,7 @@ import arazu.inventario.Ingreso
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.TipoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
 import arazu.seguridad.Perfil
@@ -172,7 +173,10 @@ class NotaDePedidoController extends Shield {
         else
             numero = 1
 
+        def notaPedido = TipoSolicitud.findByCodigo("NTPD")
+
         def solicitud = new Pedido(params)
+        solicitud.tipoSolicitud = notaPedido
         solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
         solicitud.fecha = now
         solicitud.de = usu
