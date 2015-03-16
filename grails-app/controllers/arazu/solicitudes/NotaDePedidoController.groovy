@@ -1,6 +1,5 @@
 package arazu.solicitudes
 
-import arazu.alertas.Alerta
 import arazu.inventario.Bodega
 import arazu.inventario.Egreso
 import arazu.inventario.Ingreso
@@ -9,7 +8,6 @@ import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
 import arazu.parametros.TipoSolicitud
 import arazu.parametros.TipoUsuario
-import arazu.parametros.Unidad
 import arazu.seguridad.Perfil
 import arazu.seguridad.Persona
 import arazu.seguridad.Sesion
@@ -27,7 +25,7 @@ class NotaDePedidoController extends Shield {
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista: de los elementos encontrados, strSearch: String con la descripción de la búsqueda realizada
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -263,10 +261,10 @@ class NotaDePedidoController extends Shield {
      * Acción que muestra la lista de notas de pedido efectuadas por elusuario
      */
     def lista() {
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -279,10 +277,10 @@ class NotaDePedidoController extends Shield {
         }
         def estadoPendienteRevision = EstadoSolicitud.findByCodigo("E01")
         params.search_estado = estadoPendienteRevision.id
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -295,10 +293,10 @@ class NotaDePedidoController extends Shield {
         }
         def estadoPendienteAsignacion = EstadoSolicitud.findByCodigo("E02")
         params.search_estado = estadoPendienteAsignacion.id
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -312,10 +310,10 @@ class NotaDePedidoController extends Shield {
         }
         def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E03")
         params.search_estado = estadoPendientesCotizaciones.id
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -328,10 +326,10 @@ class NotaDePedidoController extends Shield {
         }
         def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E04")
         params.search_estado = estadoPendientesAprobacionFinal.id
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -344,10 +342,10 @@ class NotaDePedidoController extends Shield {
         }
         def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E04")
         params.search_estado = estadoPendientesAprobacionFinal.id
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
+        def notasCount = getList_funcion(params, true).list.size()
         return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
     }
 
@@ -386,11 +384,13 @@ class NotaDePedidoController extends Shield {
         if (!params.order) {
             params.ordeer = "asc"
         }
-        def r1 = getList(params, false)
+        def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
         def notas = r1.list
-        def notasCount = getList(params, true).list.size()
-        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params]
+        def notasCount = getList_funcion(params, true).list.size()
+        def perfil = session.perfil
+        def ingreso = perfil.codigo == "RSBD"
+        return [notas: notas, notasCount: notasCount, strSearch: strSearch, params: params, ingreso: ingreso]
     }
 
     /**
@@ -641,91 +641,91 @@ class NotaDePedidoController extends Shield {
      * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al jefe de compras destinatario y al que realizó el pedido
      */
     def aprobarJefatura_ajax() {
-        render cambiarEstadoPedido(params, "AJF")
+        render cambiarEstadoPedido_funcion(params, "AJF")
     }
 
     /**
      * Acción que guarda la aprobación de una nota de pedido por parte de un jefe, y envía una alerta y un email al asistente de compras destinatario y al que realizó el pedido
      */
     def aprobarJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "AJC")
+        render cambiarEstadoPedido_funcion(params, "AJC")
     }
 
     /**
      * Acción que guarda la aprobación de la nota de pedido con las cotizaciones ingresadas para una nota de pedido por un asistente de compras  y envía una alerta y un email al jefe o gerente de compras destinatario y al que realizó el pedido
      */
     def aprobarAsistenteCompras_ajax() {
-        render cambiarEstadoPedido(params, "AAC")
+        render cambiarEstadoPedido_funcion(params, "AAC")
     }
 
     /**
      * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
      */
     def aprobarFinal_ajax() {
-        render cambiarEstadoPedido(params, "AF")
+        render cambiarEstadoPedido_funcion(params, "AF")
     }
 
     /**
      * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
      */
     def solicitarCotizaciones_ajax() {
-        render cambiarEstadoPedido(params, "CF")
+        render cambiarEstadoPedido_funcion(params, "CF")
     }
 
     /**
      * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
      */
     def negarJefatura_ajax() {
-        render cambiarEstadoPedido(params, "NJF")
+        render cambiarEstadoPedido_funcion(params, "NJF")
     }
 
     /**
      * Acción que guarda la negación de una nota de pedido por parte de un jefe, y envía una alerta y un email al que realizó el pedido
      */
     def negarJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "NJC")
+        render cambiarEstadoPedido_funcion(params, "NJC")
     }
 
     /**
      * Acción que guarda la negación de una nota de pedido por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
      */
     def negarAsistenteCompras_ajax() {
-        render cambiarEstadoPedido(params, "NAC")
+        render cambiarEstadoPedido_funcion(params, "NAC")
     }
 
     /**
      * Acción que guarda la negación final de una nota de pedido por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
      */
     def negarFinal_ajax() {
-        render cambiarEstadoPedido(params, "NF")
+        render cambiarEstadoPedido_funcion(params, "NF")
     }
 
     /**
      * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
      */
     def bodegaJefatura_ajax() {
-        render cambiarEstadoPedido(params, "BJF")
+        render cambiarEstadoPedido_funcion(params, "BJF")
     }
 
     /**
      * Acción que guarda la información de las bodegas seleccionadas cuando un jefe notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
      */
     def bodegaJefeCompras_ajax() {
-        render cambiarEstadoPedido(params, "BJC")
+        render cambiarEstadoPedido_funcion(params, "BJC")
     }
 
     /**
      * Acción que guarda la información de las bodegas seleccionadas cuando un asistente de compras notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
      */
     def bodegaAsistenteCompras_ajax() {
-        render cambiarEstadoPedido(params, "BAC")
+        render cambiarEstadoPedido_funcion(params, "BAC")
     }
 
     /**
      * Acción que guarda la información de las bodegas seleccionadas cuando un asistente de compras notifica que una nota de pedido está disponible en bodegas. Envía una alerta y un email al que realizó el pedido y a los reponsables de bodega correspondientes
      */
     def bodegaFinal_ajax() {
-        render cambiarEstadoPedido(params, "BF")
+        render cambiarEstadoPedido_funcion(params, "BF")
     }
 
     /**
@@ -754,7 +754,7 @@ class NotaDePedidoController extends Shield {
      * @param params los parametros que indican las bodegas y la cantidad a retirar de cada una
      * @return un arreglo con los responsables de las bodegas respecitivas
      */
-    def bodega(Pedido pedido, params) {
+    def bodega_funcion(Pedido pedido, params) {
         def now = new Date()
         def notificacionBodegas = []
 
@@ -826,7 +826,7 @@ class NotaDePedidoController extends Shield {
      *              BF: el jefe/gerente indica de q bodega(s) sacar
      * @return String con los mensajes de error si ocurrieron
      */
-    private String cambiarEstadoPedido(params, String tipo) {
+    private String cambiarEstadoPedido_funcion(params, String tipo) {
         String codEstadoInicial = ""
         EstadoSolicitud estadoFinal = null
         String concepto = "", mensTipo = "", retTipo = "", retTipo2 = ""
@@ -893,7 +893,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BJF": // el jefe indica de q bodega(s) sacar
-                    notificacionBodegas = bodega(pedido, params)
+                    notificacionBodegas = bodega_funcion(pedido, params)
 
                     codEstadoInicial = "E01"
                     if (params.cant != 0) {
@@ -957,7 +957,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BJC": // el jefe de compras indica de q bodega(s) sacar
-                    notificacionBodegas = bodega(pedido, params)
+                    notificacionBodegas = bodega_funcion(pedido, params)
 
                     codEstadoInicial = "E02"
                     if (params.cant != 0) {
@@ -991,7 +991,7 @@ class NotaDePedidoController extends Shield {
                     codEstadoInicial = "E03"
                     estadoFinal = EstadoSolicitud.findByCodigo("E04") //estado Pendiente de aprobacion final
                     concepto = "Cargado de cotizaciones"
-                    mensTipo = "cargado de cotizaciones"
+                    mensTipo = "cargado cotizaciones"
                     retTipo = "ha sido aprobada y ha enviado las cotizaciones"
                     retTipo2 = "aprobarla y enviar las cotizaciones"
                     firmaPedido = "firmaAsistenteCompras"
@@ -1037,7 +1037,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BAC": // el asistente de compras indica de q bodega(s) sacar
-                    notificacionBodegas = bodega(pedido, params)
+                    notificacionBodegas = bodega_funcion(pedido, params)
 
                     codEstadoInicial = "E03"
                     if (params.cant != 0) {
@@ -1115,7 +1115,7 @@ class NotaDePedidoController extends Shield {
                     notificacion1Recibe = pedido.de
                     break;
                 case "BF": // el jefe o gerente indica de q bodega(s) sacar
-                    notificacionBodegas = bodega(pedido, params)
+                    notificacionBodegas = bodega_funcion(pedido, params)
 
                     codEstadoInicial = "E04"
                     if (params.cant != 0) {

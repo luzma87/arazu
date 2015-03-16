@@ -49,7 +49,7 @@
         $("#btnSave").click(function () {
             $.ajax({
                 type    : "POST",
-                url     : "${createLink(action:'resizeCropImage')}",
+                url     : "${createLink(action:'resizeCropImage_ajax')}",
                 data    : $("#preview").data(),
                 success : function (msg) {
                     openLoader("Cargando...");

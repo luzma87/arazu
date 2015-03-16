@@ -7,13 +7,6 @@ class AccionesController extends Shield {
      */
 
     /**
-     * Acción que redirecciona a acciones
-     */
-    def index() {
-        redirect(action: "acciones")
-    }
-
-    /**
      * Acción que muestra un listado de acciones ordenadas por módulo
      */
     def acciones() {
@@ -28,14 +21,8 @@ class AccionesController extends Shield {
         def perfil = Perfil.get(params.perf.toLong())
         def modulo = Modulo.get(params.id)
 
-        println modulo
-
         def acciones = Accion.withCriteria {
             eq("modulo", modulo)
-            not {
-                ilike("nombre", "%ajax%")
-                ilike("nombre", "%old%")
-            }
             order("tipo", "asc")
             if (modulo.nombre == "noAsignado") {
                 control {
@@ -154,10 +141,10 @@ class AccionesController extends Shield {
      * @param lista
      * @param elemento
      */
-    def containsIlike(lista, String elemento) {
+    def containsIlike_funcion(lista, String elemento) {
         def existe = false
         lista.each { String item ->
-            if (item.matches("(?i).*" + elemento + ".*")) {
+            if (elemento.matches("(?i).*" + item + ".*")) {
                 existe = true
             }
         }
@@ -174,11 +161,16 @@ class AccionesController extends Shield {
         def ok = 0
         def okc = 0
         def total = 0
-        def ignoreAcciones = ["afterInterceptor", "beforeInterceptor", "getList"]
-        def ignoreAccionesLike = ["ajax", "old"]
+        def ignoreAcciones = ["afterInterceptor", "beforeInterceptor"]
+        def ignoreAccionesLike = ["ajax", "old", "funcion", "ignore"]
         def ignoreControladores = ["Assets", "Dbdoc", "Shield", "Login", "Pdf"]
         def errores = ""
+
+        def controladoresDelete = Controlador.list().id
+        def accionesDelete = Accion.list().id
+
         grailsApplication.controllerClasses.each { ct ->
+            println ct.getProperties()
             if (!ignoreControladores.contains(ct.getName())) {
                 def t = []
                 ct.getURIs().each {
@@ -186,7 +178,7 @@ class AccionesController extends Shield {
                     if (s.size() > 2) {
                         if (!t.contains(s[2])) {
                             if (!ignoreAcciones.contains(s[2])) {
-                                if (!containsIlike(ignoreAccionesLike, s[2])) {
+                                if (!containsIlike_funcion(ignoreAccionesLike, s[2])) {
                                     if (!(s[2] =~ "Service")) {
                                         def ctrl = Controlador.findByNombreIlike(s[1])
                                         if (!ctrl) {
@@ -198,9 +190,11 @@ class AccionesController extends Shield {
                                                 errores += renderErrors(bean: ctrl)
                                                 println "errores " + ctrl.errors
                                             }
+                                        } else {
+                                            controladoresDelete.remove(ctrl.id)
                                         }
                                         def accn = Accion.findByNombreAndControl(s[2], ctrl)
-                                        //println "si service "+ s[2]+" accion "+accn.id+" url "+it
+//                                        println "si service " + s[2] + " accion " + accn.id + " url " + it
                                         if (accn == null) {
 //                                    println "if 2";
                                             accn = new Accion()
@@ -224,6 +218,8 @@ class AccionesController extends Shield {
                                                 println "errores " + accn.errors
                                             }
                                             total++
+                                        } else {
+                                            accionesDelete.remove(accn.id)
                                         }
                                         t.add(s.getAt(2))
                                     } else {
@@ -248,10 +244,83 @@ class AccionesController extends Shield {
 //                println ct.getName() + " no sale por el ignoreControladores " + ignoreControladores
             }
         }
+
+        def permisosEliminados = 0, accionesEliminadas = 0, controladoresEliminados = 0
+
+        accionesDelete.each { aId ->
+            def permisos = Permiso.findAllByAccion(Accion.get(aId))
+            if (permisos.size() > 0) {
+                permisos.id.each { pid ->
+                    def p = Permiso.get(pid)
+                    try {
+                        println "eliminando permiso " + pid
+                        p.delete(flush: true)
+                        permisosEliminados++
+                    } catch (e) {
+                        println "Error al eliminar permiso"
+                        e.printStackTrace()
+                    }
+                } //elimina permisos
+            }
+            def a = Accion.get(aId)
+            try {
+                println "eliminando accion " + aId
+                a.delete(flush: true)
+                accionesEliminadas++
+            } catch (e) {
+                println "Error al eliminar accion"
+                e.printStackTrace()
+            }
+        }
+        controladoresDelete.each { cId ->
+            def c = Controlador.get(cId)
+            try {
+                println "eliminando controlador " + cId
+                c.delete(flush: true)
+                controladoresEliminados++
+            } catch (e) {
+                println "Error al eliminar controlador"
+                e.printStackTrace()
+            }
+        }
+
+        def msgExtra = ""
+        if (permisosEliminados > 0) {
+            msgExtra += "${permisosEliminados} permiso${permisosEliminados == 1 ? '' : 's'}"
+        }
+        if (accionesEliminadas > 0) {
+            if (msgExtra != "") {
+                msgExtra += ", "
+            }
+            msgExtra += "${accionesEliminadas} acci${accionesEliminadas == 1 ? 'ón' : 'ones'}"
+        }
+        if (controladoresEliminados > 0) {
+            if (msgExtra != "") {
+                msgExtra += ", "
+            }
+            msgExtra += "${controladoresEliminados} controlador${controladoresEliminados == 1 ? '' : 'es'}"
+        }
+
+        def totalEliminados = permisosEliminados + accionesEliminadas + controladoresEliminados
+        if (totalEliminados > 0) {
+            msgExtra = "Se elimin${totalEliminados == 1 ? 'ó' : 'aron'} además " + msgExtra
+            if (accionesEliminadas > 0 && permisosEliminados == 0 && controladoresEliminados == 0) {
+                msgExtra += " obsoleta${totalEliminados == 1 ? '' : 's'}"
+            } else {
+                msgExtra += " obsoleto${totalEliminados == 1 ? '' : 's'}"
+            }
+        }
+
+//        println "" + permisosEliminados + "   " + accionesEliminadas + "    " + controladoresEliminados + "   " + totalEliminados + "    " + msgExtra
+
         if (errores == "") {
-            render("SUCCESS*Se ha${(ok + okc) == 1 ? '' : 'n'} agregado ${ok} acci${ok == 1 ? 'ón' : 'ones'} ${okc == 0 ? '' : (' y ' + okc + ' controlador' + (okc == 1 ? '' : 'es'))}")
+            def msg = "SUCCESS*Se ha${(ok + okc) == 1 ? '' : 'n'} agregado ${ok} acci${ok == 1 ? 'ón' : 'ones'} ${okc == 0 ? '' : (' y ' + okc + ' controlador' + (okc == 1 ? '' : 'es'))}"
+            msg += ". " + msgExtra
+            render msg
         } else {
-            render "ERROR*Se insert${ok == 1 ? 'ó' : 'aron'} ${ok} de ${total} acci${ok == 1 ? 'ón' : 'ones'}: " + errores
+            def msg = "ERROR*Se insert${ok == 1 ? 'ó' : 'aron'} ${ok} de ${total} acci${ok == 1 ? 'ón' : 'ones'}: " + errores
+            msg += ". " + msgExtra
+            render msg
         }
     }
 

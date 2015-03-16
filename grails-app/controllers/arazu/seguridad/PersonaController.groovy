@@ -20,19 +20,12 @@ class PersonaController extends Shield {
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
-     * Acción que redirecciona a la lista (acción "list")
-     */
-    def index() {
-        redirect(action: "list", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -67,19 +60,9 @@ class PersonaController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
-    }
-
-    /**
-     * Acción que muestra la lista de elementos
-     * @return personaInstanceList: la lista de elementos filtrados, personaInstanceCount: la cantidad total de elementos (sin máximo)
-     */
-    def list() {
-        def personaInstanceList = getList(params, false)
-        def personaInstanceCount = getList(params, true).size()
-        return [personaInstanceList: personaInstanceList, personaInstanceCount: personaInstanceCount]
     }
 
     /**
@@ -222,6 +205,7 @@ class PersonaController extends Shield {
             render "ERROR*" + renderErrors(bean: per)
         }
     }
+
     /**
      * Acción llamada con ajax que permite modificar el tipoUsuario de una persona
      */
@@ -438,7 +422,7 @@ class PersonaController extends Shield {
      * Acción que carga la foto de un usuario
      * @return
      */
-    def loadFoto() {
+    def loadFoto_ajax() {
         def usuario = Persona.get(session.usuario.id)
         def path = servletContext.getRealPath("/") + "images/perfiles/" //web-app/archivos
         def img
@@ -459,7 +443,7 @@ class PersonaController extends Shield {
      * Acción que permite subir una foto para la persona
      * @return
      */
-    def uploadFile() {
+    def uploadFile_ajax() {
         def usuario = Persona.get(session.usuario.id)
         def path = servletContext.getRealPath("/") + "images/perfiles/"    //web-app/archivos
         new File(path).mkdirs()
@@ -615,7 +599,7 @@ class PersonaController extends Shield {
      * Acción que redimensiona una imagen
      * @return
      */
-    def resizeCropImage() {
+    def resizeCropImage_ajax() {
         def usuario = Persona.get(session.usuario.id)
         def path = servletContext.getRealPath("/") + "images/perfiles/"    //web-app/archivos
         def fileName = usuario.foto

@@ -14,19 +14,12 @@ class ItemController extends Shield {
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
-     * Acción que redirecciona a la lista (acción "list")
-     */
-    def index() {
-        redirect(action: "list", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -49,18 +42,9 @@ class ItemController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
-    }
-
-    /**
-     * Acción que muestra la lista de elementos
-     */
-    def list() {
-        def itemInstanceList = getList(params, false)
-        def itemInstanceCount = getList(params, true).size()
-        return [itemInstanceList: itemInstanceList, itemInstanceCount: itemInstanceCount]
     }
 
     /**
@@ -209,26 +193,26 @@ class ItemController extends Shield {
      * Acción que muestra los tipos de items, items y bodegas en forma de árbol
      */
     def arbol() {
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
 
     /**
      * Acción que muestra la administración de tipos de items, items y bodegas en forma de árbol
      */
     def arbolAdmin() {
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
 
     /**
      * Función que genera el árbol de items
      */
-    private String makeTree(params) {
+    private String makeTree_funcion(params) {
         def res = ""
         res += "<ul>"
         res += "<li id='root' data-level='0' class='root jstree-open' data-jstree='{\"type\":\"root\"}'>"
         res += "<a href='#' class='label_arbol'>HINSA</a>"
         res += "<ul>"
-        res += imprimeHijos(null, params)
+        res += imprimeHijos_funcion(null, params)
         res += "</li>"
         res += "</ul>"
         return res
@@ -237,7 +221,7 @@ class ItemController extends Shield {
     /**
      * Función que imprime los hijos del árbol
      */
-    private String imprimeHijos(padre, params) {
+    private String imprimeHijos_funcion(padre, params) {
         def arbol = ""
         def hijos = []
         def tipo
@@ -263,7 +247,6 @@ class ItemController extends Shield {
                         hijos[key].saldo += ing.saldo
                     }
                 }
-                println hijos
                 tipo = "bd"
             }
         }
@@ -292,7 +275,7 @@ class ItemController extends Shield {
             arbol += "<a href='#' class='label_arbol'>${label}</a>"
             if (tipo != "bd") {
                 arbol += "<ul>"
-                arbol += imprimeHijos(hijo, params)
+                arbol += imprimeHijos_funcion(hijo, params)
                 arbol += "</ul>"
             }
             arbol += "</li>"

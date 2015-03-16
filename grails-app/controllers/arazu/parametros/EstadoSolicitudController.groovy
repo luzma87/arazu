@@ -12,19 +12,12 @@ class EstadoSolicitudController extends Shield {
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
-     * Acción que redirecciona a la lista (acción "list")
-     */
-    def index() {
-        redirect(action: "list", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -49,7 +42,7 @@ class EstadoSolicitudController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
     }
@@ -58,8 +51,8 @@ class EstadoSolicitudController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
-        def estadoSolicitudInstanceList = getList(params, false)
-        def estadoSolicitudInstanceCount = getList(params, true).size()
+        def estadoSolicitudInstanceList = getList_funcion(params, false)
+        def estadoSolicitudInstanceCount = getList_funcion(params, true).size()
         return [estadoSolicitudInstanceList: estadoSolicitudInstanceList, estadoSolicitudInstanceCount: estadoSolicitudInstanceCount]
     }
 

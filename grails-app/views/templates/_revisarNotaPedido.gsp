@@ -6,7 +6,7 @@
     </div>
 
     <div class="col-md-2">
-        ${nota.tipoSolicitud.descripcion}
+        ${nota.motivoSolicitud.nombre}
     </div>
 
     <div class="col-md-1">

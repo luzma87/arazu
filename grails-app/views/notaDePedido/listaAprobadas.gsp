@@ -23,7 +23,7 @@
         <elm:container tipo="horizontal" titulo="Notas de pedido aprobadas">
             <g:render template="/templates/tablaNotaPedido"
                       model="[params      : params, strSearch: strSearch, notas: notas, notasCount: notasCount,
-                              ingreso     : true, banderas: true,
+                              ingreso     : ingreso, banderas: true,
                               linkBusqueda: 'listaAprobadas']"/>
         </elm:container>
 
@@ -71,7 +71,6 @@
                                                         if (parts[0] == "SUCCESS") {
                                                             location.reload(true);
                                                         } else {
-                                                            spinner.replaceWith($btn);
                                                             closeLoader();
                                                             return false;
                                                         }

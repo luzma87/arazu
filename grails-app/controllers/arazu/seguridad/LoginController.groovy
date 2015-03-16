@@ -1,15 +1,6 @@
 package arazu.seguridad
 
-import arazu.alertas.Alerta
-
 class LoginController {
-
-    /**
-     * Acción que redirecciona a la acción Login
-     */
-    def index() {
-        redirect(action: 'login')
-    }
 
     /**
      * Acción que valida que la sesión esté activa
@@ -92,7 +83,7 @@ class LoginController {
             session.time = new Date()
             session.departamento = user.tipoUsuario
             if (perfiles.size() == 1) {
-                doLogin(perfiles.first().perfil)
+                doLogin_funcion(perfiles.first().perfil)
             } else {
                 redirect(action: "perfiles")
                 return
@@ -105,7 +96,7 @@ class LoginController {
      * @param perfil
      * @return
      */
-    def doLogin(perfil) {
+    def doLogin_funcion(perfil) {
         session.perfil = perfil
         cargarPermisos()
 
@@ -146,7 +137,7 @@ class LoginController {
             redirect(controller: "inicio", action: "perfiles")
         }
         def perfil = Perfil.get(params.perfil)
-        doLogin(perfil)
+        doLogin_funcion(perfil)
     }
 
     /**
@@ -165,7 +156,6 @@ class LoginController {
 
     /**
      * Acción que carga los permisos del perfil del usuario en la sesión para validar las pantallas a las que puede acceder
-     * @return
      */
     def cargarPermisos() {
         def permisos = Permiso.findAllByPerfil(session.perfil)

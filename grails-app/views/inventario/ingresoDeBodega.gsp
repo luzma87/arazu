@@ -421,7 +421,7 @@
 
                         $.ajax({
                             type    : "POST",
-                            url     : "${g.createLink(controller: 'inventario',action: 'saveIngreso')}",
+                            url     : "${g.createLink(controller: 'inventario',action: 'saveIngreso_ajax')}",
                             data    : "bodega=" + $("#bodega").val() + "&data=" + data,
                             success : function (msg) {
                                 var parts = msg.split("*");

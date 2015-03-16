@@ -13,19 +13,12 @@ class ProyectoController extends Shield {
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
-     * Acción que redirecciona a la lista (acción "list")
-     */
-    def index() {
-        redirect(action: "list", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -50,7 +43,7 @@ class ProyectoController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
     }
@@ -59,8 +52,8 @@ class ProyectoController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
-        def proyectoInstanceList = getList(params, false)
-        def proyectoInstanceCount = getList(params, true).size()
+        def proyectoInstanceList = getList_funcion(params, false)
+        def proyectoInstanceCount = getList_funcion(params, true).size()
         return [proyectoInstanceList: proyectoInstanceList, proyectoInstanceCount: proyectoInstanceCount]
     }
 
@@ -68,8 +61,8 @@ class ProyectoController extends Shield {
      * Acción que muestra la lista de elementos para administración
      */
     def listAdmin() {
-        def proyectoInstanceList = getList(params, false)
-        def proyectoInstanceCount = getList(params, true).size()
+        def proyectoInstanceList = getList_funcion(params, false)
+        def proyectoInstanceCount = getList_funcion(params, true).size()
         return [proyectoInstanceList: proyectoInstanceList, proyectoInstanceCount: proyectoInstanceCount]
     }
 
@@ -115,7 +108,7 @@ class ProyectoController extends Shield {
     /**
      * Acción que guarda la información de un elemento
      */
-    def save() {
+    def save_ignore() {
         def proyectoInstance = new Proyecto()
         if (params.id) {
             proyectoInstance = Proyecto.get(params.id)
@@ -137,7 +130,7 @@ class ProyectoController extends Shield {
         flash.tipo = "success"
         redirect(action: "list")
         return
-    } //save para grabar desde ajax
+    }
 
     /**
      * Acción llamada con ajax que muestra la información de un elemento particular
@@ -154,7 +147,7 @@ class ProyectoController extends Shield {
             flash.message = "No se encontró el proyecto"
             flash.tipo = "error"
         }
-    } //show para cargar con ajax en un dialog
+    }
 
     /**
      * Acción que muestra la antalla de configuración del proyecto: asignación de funciones,

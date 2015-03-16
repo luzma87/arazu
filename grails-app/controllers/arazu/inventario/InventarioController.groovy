@@ -74,7 +74,7 @@ class InventarioController extends Shield {
     /**
      * Acción que guarda los ingresos a una bodega
      */
-    def saveIngreso() {
+    def saveIngreso_ajax() {
         def usu = Persona.get(session.usuario.id)
         def now = new Date()
 //        println "save ingreso " + params
@@ -225,16 +225,7 @@ class InventarioController extends Shield {
     }
 
     /**
-     * Acción que muestra la pantalla de recepción de una transferencia de una bodega a otra
-     */
-    def transferencia() {
-        def transfer = Transferencia.get(params.id)
-
-        return [transfer: transfer]
-    }
-
-    /**
-     * Acción llamada con ajaxque crea el ingreso de una nota de pedido
+     * Acción llamada con ajax que crea el ingreso de una nota de pedido
      */
     def ingresoNotaPedido_ajax() {
         def usu = Persona.get(session.usuario.id)
@@ -368,6 +359,9 @@ class InventarioController extends Shield {
 //        }
     }
 
+    /**
+     * Acción llamada con ajax que realiza un egreso de bodega
+     */
     def egresoBodega_ajax() {
         println "PARAMS " + params
         def ingreso = Ingreso.get(params.id)

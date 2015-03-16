@@ -13,19 +13,12 @@ class MaquinariaController extends Shield {
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
     /**
-     * Acción que redirecciona a la lista (acción "list")
-     */
-    def index() {
-        redirect(action: "list", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -52,18 +45,9 @@ class MaquinariaController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
-    }
-
-    /**
-     * Acción que muestra la lista de elementos
-     */
-    def list() {
-        def maquinariaInstanceList = getList(params, false)
-        def maquinariaInstanceCount = getList(params, true).size()
-        return [maquinariaInstanceList: maquinariaInstanceList, maquinariaInstanceCount: maquinariaInstanceCount]
     }
 
     /**
@@ -216,25 +200,25 @@ class MaquinariaController extends Shield {
      * Acción que muestra la administración de tipos de items, items y bodegas en forma de árbol
      */
     def arbol() {
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
     /**
      * Acción que muestra los tipos de items, items y bodegas en forma de árbol
      */
     def arbolAdmin() {
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
 
     /**
      * Función que genera el árbol de items
      */
-    private String makeTree(params) {
+    private String makeTree_funcion(params) {
         def res = ""
         res += "<ul>"
         res += "<li id='root' data-level='0' class='root jstree-open' data-jstree='{\"type\":\"root\"}'>"
         res += "<a href='#' class='label_arbol'>HINSA</a>"
         res += "<ul>"
-        res += imprimeHijos(null, params)
+        res += imprimeHijos_funcion(null, params)
         res += "</li>"
         res += "</ul>"
         return res
@@ -243,7 +227,7 @@ class MaquinariaController extends Shield {
     /**
      * Función que imprime los hijos del árbol
      */
-    private String imprimeHijos(padre, params) {
+    private String imprimeHijos_funcion(padre, params) {
         def arbol = ""
         def hijos = []
         def tipo
@@ -276,7 +260,7 @@ class MaquinariaController extends Shield {
             arbol += "<a href='#' class='label_arbol'>${label}</a>"
             if (tipo != "bd") {
                 arbol += "<ul>"
-                arbol += imprimeHijos(hijo, params)
+                arbol += imprimeHijos_funcion(hijo, params)
                 arbol += "</ul>"
             }
             arbol += "</li>"
@@ -314,8 +298,8 @@ class MaquinariaController extends Shield {
      * Acción llamada con ajax que muestra una pantalla emergente con la lista de maquinaria para seleccionar
      */
     def list_ajax() {
-        def maquinariaInstanceList = getList([:], false)
-        def maquinariaInstanceCount = getList([:], true).size()
+        def maquinariaInstanceList = getList_funcion([:], false)
+        def maquinariaInstanceCount = getList_funcion([:], true).size()
         return [maquinariaInstanceList: maquinariaInstanceList, maquinariaInstanceCount: maquinariaInstanceCount]
     }
 

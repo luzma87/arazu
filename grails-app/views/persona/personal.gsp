@@ -262,7 +262,7 @@
                 $("#auth_actual").val("");
 
                 $('#file').fileupload({
-                    url              : '${createLink(action:'uploadFile')}',
+                    url              : '${createLink(action:'uploadFile_ajax')}',
                     dataType         : 'json',
                     maxNumberOfFiles : 1,
                     acceptFileTypes  : /(\.|\/)(jpe?g|png)$/i,
@@ -325,7 +325,7 @@
                 function loadFoto() {
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(action: 'loadFoto')}",
+                        url     : "${createLink(action: 'loadFoto_ajax')}",
                         success : function (msg) {
                             $("#divFoto").html(msg);
                         }

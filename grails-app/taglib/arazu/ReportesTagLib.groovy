@@ -91,6 +91,9 @@ class ReportesTagLib {
                 "    orphans    : 4;\n" +
                 "    widows     : 2;\n" +
                 "}"
+        css += ".no-break {\n" +
+                "    page-break-inside : avoid;\n" +
+                "}"
         css += "table {\n" +
                 "    page-break-inside : avoid;\n" +
                 "}"

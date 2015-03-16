@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <g:form class="form-horizontal" name="frmProyecto" id="${proyectoInstance?.id}"
-                                role="form" action="save" method="POST">
+                                role="form" action="save_ignore" method="POST">
 
                             <g:hiddenField name="latitud" class="required" required=""/>
                             <g:hiddenField name="longitud"/>

@@ -72,7 +72,7 @@
                                         <a href="#" title="Egreso" data-id="${nota.id}" class="btn btn-primary btn-sm btnEg">
                                             <i class="fa fa-shopping-cart"></i>
                                         </a>
-                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesInventario', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
                                            title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
                                             <i class="fa fa-print"></i>
                                         </a>

@@ -19,7 +19,7 @@ class TipoUsuarioController extends Shield {
         if (!params.inactivos) {
             params.inactivos = "S"
         }
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
 
     /**
@@ -29,19 +29,19 @@ class TipoUsuarioController extends Shield {
         if (!params.inactivos) {
             params.inactivos = "S"
         }
-        return [arbol: makeTree(params), params: params]
+        return [arbol: makeTree_funcion(params), params: params]
     }
 
     /**
      * Función que genera el árbol de estructura departamental
      */
-    private String makeTree(params) {
+    private String makeTree_funcion(params) {
         def res = ""
         res += "<ul>"
         res += "<li id='root' data-level='0' class='root jstree-open' data-jstree='{\"type\":\"root\"}'>"
         res += "<a href='#' class='label_arbol'>HINSA</a>"
         res += "<ul>"
-        res += imprimeTipoUsuarios(null, params)
+        res += imprimeTipoUsuarios_funcion(null, params)
         res += "</li>"
         res += "</ul>"
         return res
@@ -50,7 +50,7 @@ class TipoUsuarioController extends Shield {
     /**
      * Función que genera las hojas tipo tipoUsuario del árbol de un padre específico
      */
-    private String imprimeUsuario(Persona usuario, params) {
+    private String imprimeUsuario_funcion(Persona usuario, params) {
         def txt = ""
 
         def rel = "usuario"
@@ -81,7 +81,7 @@ class TipoUsuarioController extends Shield {
     /**
      * Función que genera las hojas tipo tipoUsuario del árbol de un padre específico
      */
-    private String imprimeTipoUsuarios(TipoUsuario dpto, params) {
+    private String imprimeTipoUsuarios_funcion(TipoUsuario dpto, params) {
         def txt = ""
         def activos = [1]
         if (params.inactivos == "S") {
@@ -123,10 +123,10 @@ class TipoUsuarioController extends Shield {
             txt += "<ul>"
         }
         usuarios.each { usu ->
-            txt += imprimeUsuario(usu, params)
+            txt += imprimeUsuario_funcion(usu, params)
         }
         tipoUsuarios.each { h ->
-            txt += imprimeTipoUsuarios(h, params)
+            txt += imprimeTipoUsuarios_funcion(h, params)
         }
         if (dpto) {
             txt += "</ul>"
@@ -188,19 +188,12 @@ class TipoUsuarioController extends Shield {
     }
 
     /**
-     * Acción que redirecciona al árbol
-     */
-    def index() {
-        redirect(action: "arbol", params: params)
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList(params, all) {
+    def getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -225,18 +218,9 @@ class TipoUsuarioController extends Shield {
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
-            list = getList(params, all)
+            list = getList_funcion(params, all)
         }
         return list
-    }
-
-    /**
-     * Acción que muestra la lista de elementos
-     */
-    def list() {
-        def tipoUsuarioInstanceList = getList(params, false)
-        def tipoUsuarioInstanceCount = getList(params, true).size()
-        return [tipoUsuarioInstanceList: tipoUsuarioInstanceList, tipoUsuarioInstanceCount: tipoUsuarioInstanceCount]
     }
 
     /**
