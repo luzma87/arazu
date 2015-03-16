@@ -273,10 +273,18 @@
                     },
                     ingreso    : {
                         label  : "Nuevo ingreso a bodega",
-                        icon   : "fa fa-file-o",
+                        icon   : "fa fa-cart-arrow-down",
                         action : function ($element) {
                             var id = $element.data("id");
                             location.href = "${createLink(controller: 'inventario', action: 'ingresoDeBodega')}?bodega=" + id;
+                        }
+                    },
+                    egreso    : {
+                        label  : "Nuevo egreso de bodega",
+                        icon   : "fa fa-upload",
+                        action : function ($element) {
+                            var id = $element.data("id");
+                            location.href = "${createLink(controller: 'inventario', action: 'egresoDeBodega')}?bodega=" + id;
                         }
                     }
 

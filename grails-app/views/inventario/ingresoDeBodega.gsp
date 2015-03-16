@@ -54,7 +54,7 @@
             </g:if>
         </div>
 
-        <elm:container tipo="horizontal" titulo="Ingreso a bodega">
+        <elm:container tipo="horizontal" titulo="Ingreso a ${bodega ? 'la bodega ' + bodega : 'bodega'}">
             <div class="row">
                 <div class="col-md-1">
                     <label class=" control-label">
@@ -327,7 +327,7 @@
                     cb(matches);
                 };
             };
-            var items = ${items};
+            %{--var items = ${items};--}%
             $(function () {
                 $("#agregar").click(function () {
                     if ($(".item-row").size() > max) {

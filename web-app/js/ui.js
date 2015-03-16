@@ -60,6 +60,10 @@ $(function () {
         return validarEspacios(ev);
     });
 
+    $(".noNumeros").keydown(function (ev) {
+        return validarLetras(ev);
+    });
+
     $(".money").inputmask({
         alias          : 'numeric',
         placeholder    : '0',

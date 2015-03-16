@@ -377,6 +377,11 @@
                                     var parts = msg.split("*");
                                     log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                     $(".mdlo").first().click();
+                                },
+                                error   : function (jqXHR, textStatus, errorThrown) {
+                                    log("Ha ocurrido un error interno", "error");
+                                    closeLoader();
+//                                    console.log(jqXHR, textStatus, errorThrown);
                                 }
                             });
                         }

@@ -42,6 +42,16 @@ function validarInt(ev) {
 }
 
 /**
+ * retorna true en caso de q la tecla presionada no sea un numero (teclado numerico o no)
+ * @param ev
+ * @returns {boolean}
+ */
+function validarLetras(ev) {
+    return !((ev.keyCode >= 48 && ev.keyCode <= 57) ||
+             (ev.keyCode >= 96 && ev.keyCode <= 105));
+}
+
+/**
  * retorna true en caso de q la tecla presionada no sea espacio
  * @param ev
  * @returns {boolean}
@@ -69,16 +79,16 @@ function log(msg, type, title, hide) {
         msg = "";
     }
     new PNotify({
-        title    : title,
-        icon     : icon,
-        buttons  : {
+        title   : title,
+        icon    : icon,
+        buttons : {
             closer_hover  : false,
             sticker_hover : false
         },
-        styling  : 'fontawesome',
-        text     : msg,
-        type     : type,
-        hide     : hide
+        styling : 'fontawesome',
+        text    : msg,
+        type    : type,
+        hide    : hide
     });
 }
 

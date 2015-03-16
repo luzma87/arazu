@@ -155,7 +155,7 @@ class AccionesController extends Shield {
      * Acción llamada con ajax que itera sobre todos los controladores creados en el proyecto, analiza las acciones de cada controlador, las busca en la base de datos y si no las encuentra las inserta en la tabla representada por el dominio Accn
      */
     def cargarAcciones_ajax() {
-//        println "cargar acciones"
+        println "cargar acciones"
         def ac = []
         def accs = [:]
         def ok = 0
@@ -170,7 +170,6 @@ class AccionesController extends Shield {
         def accionesDelete = Accion.list().id
 
         grailsApplication.controllerClasses.each { ct ->
-            println ct.getProperties()
             if (!ignoreControladores.contains(ct.getName())) {
                 def t = []
                 ct.getURIs().each {

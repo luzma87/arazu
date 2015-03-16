@@ -59,197 +59,196 @@
     </head>
 
     <body>
-        <div class="form-group">
-            <div class="alert alert-info">
-                Datos del usuario: <strong>${usuario.nombre} ${usuario.apellido} (${usuario.login})</strong>
-            </div>
-        </div>
 
-        <div class="panel-group" id="accordion">
+        <elm:container tipo="horizontal" titulo="Datos del usuario: ${usuario.nombre}${usuario.apellido} (${usuario.login})">
 
-            <g:set var="abierto" value="${false}"/>
+            <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-            <g:set var="abierto" value="${true}"/>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapsePass">
-                            Cambiar contraseña
-                        </a>
-                    </h4>
-                </div>
+            <div class="panel-group" id="accordion" style="margin-top: 15px;">
 
-                <div id="collapsePass" class="panel-collapse collapse  ${params.tipo == 'foto' ? '' : 'in'}">
-                    <div class="panel-body">
-                        <g:form class="form-horizontal" name="frmPass" role="form" action="savePass_ajax" method="POST">
-                            <div class="form-group required">
-                                %{--<div class="form-group required">--}%
-                                %{--<span class="grupo">--}%
-                                <span class="form-grup col-md-3">
-                                    <label for="password_actual" class="control-label text-info">
-                                        Contraseña actual
-                                    </label>
+                <g:set var="abierto" value="${false}"/>
 
-                                    %{--<div class="col-md-2">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="password_actual" class="form-control required"/>
-                                        <span class="input-group-addon"><i class="fa fa-unlock"></i></span>
-                                    </div>
+                <g:set var="abierto" value="${true}"/>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapsePass">
+                                Cambiar contraseña
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div id="collapsePass" class="panel-collapse collapse  ${params.tipo == 'foto' ? '' : 'in'}">
+                        <div class="panel-body">
+                            <g:form class="form-horizontal" name="frmPass" role="form" action="savePass_ajax" method="POST">
+                                <div class="form-group required">
+                                    %{--<div class="form-group required">--}%
+                                    %{--<span class="grupo">--}%
+                                    <span class="form-grup col-md-3">
+                                        <label for="password_actual" class="control-label text-info">
+                                            Contraseña actual
+                                        </label>
+
+                                        %{--<div class="col-md-2">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="password_actual" class="form-control required"/>
+                                            <span class="input-group-addon"><i class="fa fa-unlock"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
                                     %{--</div>--}%
-                                </span>
-                                %{--</div>--}%
 
-                                <span class="form-grup col-md-3">
-                                    <label for="password" class="control-label text-info">
-                                        Nueva contraseña
-                                    </label>
+                                    <span class="form-grup col-md-3">
+                                        <label for="password" class="control-label text-info">
+                                            Nueva contraseña
+                                        </label>
 
-                                    %{--<div class="col-md-3">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="password" class="form-control required"/>
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                    </div>
-                                    %{--</div>--}%
-                                </span>
-                                <span class="form-grup col-md-3">
-                                    <label for="password_again" class="control-label text-info">
-                                        Confirme la contraseña
-                                    </label>
+                                        %{--<div class="col-md-3">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="password" class="form-control required"/>
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
+                                    <span class="form-grup col-md-3">
+                                        <label for="password_again" class="control-label text-info">
+                                            Confirme la contraseña
+                                        </label>
 
-                                    %{--<div class="col-md-3">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="password_again" class="form-control required" equalTo="#password"/>
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                    </div>
-                                    %{--</div>--}%
-                                </span>
+                                        %{--<div class="col-md-3">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="password_again" class="form-control required" equalTo="#password"/>
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
 
-                                <div class="col-md-3" style="margin-top: 20px;">
-                                    <div class="btn-group" role="group" aria-label="...">
-                                        <a href="#" class="btn btn-success" id="btnPass">
-                                            <i class="fa fa-save"></i> Guardar
-                                        </a>
+                                    <div class="col-md-3" style="margin-top: 20px;">
+                                        <div class="btn-group" role="group" aria-label="...">
+                                            <a href="#" class="btn btn-success" id="btnPass">
+                                                <i class="fa fa-save"></i> Guardar
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </g:form>
+                            </g:form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseAuth">
-                            Cambiar clave de autorización
-                        </a>
-                    </h4>
-                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseAuth">
+                                Cambiar clave de autorización
+                            </a>
+                        </h4>
+                    </div>
 
-                <div id="collapseAuth" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <g:form class="form-horizontal" name="frmAuth" role="form" action="savePass_ajax" method="POST">
-                            <div class="form-group required">
-                                %{--<div class="form-group required">--}%
-                                %{--<span class="grupo">--}%
-                                <span class="form-grup col-md-3">
-                                    <label for="password_actual" class="control-label text-info">
-                                        Autorización actual
-                                    </label>
+                    <div id="collapseAuth" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <g:form class="form-horizontal" name="frmAuth" role="form" action="savePass_ajax" method="POST">
+                                <div class="form-group required">
+                                    %{--<div class="form-group required">--}%
+                                    %{--<span class="grupo">--}%
+                                    <span class="form-grup col-md-3">
+                                        <label for="password_actual" class="control-label text-info">
+                                            Autorización actual
+                                        </label>
 
-                                    %{--<div class="col-md-2">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="auth_actual" class="form-control required"/>
-                                        <span class="input-group-addon"><i class="fa fa-unlock-alt"></i></span>
-                                    </div>
+                                        %{--<div class="col-md-2">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="auth_actual" class="form-control required"/>
+                                            <span class="input-group-addon"><i class="fa fa-unlock-alt"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
                                     %{--</div>--}%
-                                </span>
-                                %{--</div>--}%
 
-                                <span class="form-grup col-md-3">
-                                    <label for="password" class="control-label text-info">
-                                        Nueva autorización
-                                    </label>
+                                    <span class="form-grup col-md-3">
+                                        <label for="password" class="control-label text-info">
+                                            Nueva autorización
+                                        </label>
 
-                                    %{--<div class="col-md-3">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="auth" class="form-control required"/>
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                    </div>
-                                    %{--</div>--}%
-                                </span>
-                                <span class="form-grup col-md-3">
-                                    <label for="password_again" class="control-label text-info">
-                                        Confirme la autorización
-                                    </label>
+                                        %{--<div class="col-md-3">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="auth" class="form-control required"/>
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
+                                    <span class="form-grup col-md-3">
+                                        <label for="password_again" class="control-label text-info">
+                                            Confirme la autorización
+                                        </label>
 
-                                    %{--<div class="col-md-3">--}%
-                                    <div class="input-group">
-                                        <g:passwordField name="auth_again" class="form-control required" equalTo="#auth"/>
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                    </div>
-                                    %{--</div>--}%
-                                </span>
+                                        %{--<div class="col-md-3">--}%
+                                        <div class="input-group">
+                                            <g:passwordField name="auth_again" class="form-control required" equalTo="#auth"/>
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        </div>
+                                        %{--</div>--}%
+                                    </span>
 
-                                <div class="col-md-3" style="margin-top: 20px;">
-                                    <div class="btn-group" role="group" aria-label="...">
-                                        <a href="#" class="btn btn-success" id="btnAuth">
-                                            <i class="fa fa-save"></i> Guardar
-                                        </a>
-                                        <a href="#" class="btn btn-info" id="btnOlvidoAuth">
-                                            <i class="fa fa-question-circle"></i> Olvidé mi autorización
-                                        </a>
+                                    <div class="col-md-3" style="margin-top: 20px;">
+                                        <div class="btn-group" role="group" aria-label="...">
+                                            <a href="#" class="btn btn-success" id="btnAuth">
+                                                <i class="fa fa-save"></i> Guardar
+                                            </a>
+                                            <a href="#" class="btn btn-info" id="btnOlvidoAuth">
+                                                <i class="fa fa-question-circle"></i> Olvidé mi autorización
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+                            </g:form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFoto">
+                                Cambiar foto
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div id="collapseFoto" class="panel-collapse collapse ${params.tipo == 'foto' || !abierto ? 'in' : ''} ">
+                        <div class="panel-body">
+                            <div class="btn btn-success fileinput-button" style="margin-bottom: 10px;">
+                                <i class="fa fa-plus"></i>
+                                <span>Seleccionar imagen</span>
+                                <!-- The file input field used as target for the file up3 widget -->
+                                <input type="file" name="file" id="file">
                             </div>
-                        </g:form>
+
+                            <div class="alert alert-warning" style="float: right; width: 600px;">
+                                <i class="fa fa-warning fa-3x pull-left"></i>
+                                Si la foto subida es muy grande, se mostrará un área de selección para recortar la imagen al formato requerido.
+                            </div>
+                            <g:if test="${usuario.foto && usuario.foto != ''}">
+                                <div id="divFoto">
+                                </div>
+                            </g:if>
+                            <g:else>
+                                <div class="alert alert-info">
+                                    <i class="fa fa-picture-o fa-2x"></i>
+                                    No ha subido ninguna fotografía
+                                </div>
+                            </g:else>
+
+                            <div id="progress" class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-success"></div>
+                            </div>
+
+                            <div id="files"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFoto">
-                            Cambiar foto
-                        </a>
-                    </h4>
-                </div>
-
-                <div id="collapseFoto" class="panel-collapse collapse ${params.tipo == 'foto' || !abierto ? 'in' : ''} ">
-                    <div class="panel-body">
-                        <div class="btn btn-success fileinput-button" style="margin-bottom: 10px;">
-                            <i class="fa fa-plus"></i>
-                            <span>Seleccionar imagen</span>
-                            <!-- The file input field used as target for the file up3 widget -->
-                            <input type="file" name="file" id="file">
-                        </div>
-
-                        <div class="alert alert-warning" style="float: right; width: 600px;">
-                            <i class="fa fa-warning fa-3x pull-left"></i>
-                            Si la foto subida es muy grande, se mostrará un área de selección para recortar la imagen al formato requerido.
-                        </div>
-                        <g:if test="${usuario.foto && usuario.foto != ''}">
-                            <div id="divFoto">
-                            </div>
-                        </g:if>
-                        <g:else>
-                            <div class="alert alert-info">
-                                <i class="fa fa-picture-o fa-2x"></i>
-                                No ha subido ninguna fotografía
-                            </div>
-                        </g:else>
-
-                        <div id="progress" class="progress progress-striped active">
-                            <div class="progress-bar progress-bar-success"></div>
-                        </div>
-
-                        <div id="files"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        </elm:container>
 
         <script type="text/javascript">
             $(function () {
@@ -305,7 +304,7 @@
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     $('#progress .progress-bar').css(
                             'width',
-                                    progress + '%'
+                            progress + '%'
                     );
                 }).on('fileuploaddone', function (e, data) {
 //                    closeLoader();

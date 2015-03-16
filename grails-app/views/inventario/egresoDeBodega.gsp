@@ -1,11 +1,20 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Luz
+  Date: 3/15/2015
+  Time: 7:20 PM
+--%>
+<%@ page import="arazu.items.Item; arazu.parametros.Unidad" contentType="text/html;charset=UTF-8" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Inventario de la bodega ${bodega.descripcion}</title>
+        <title>Egreso de bodega</title>
     </head>
 
     <body>
+        <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
+
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <g:link controller="bodega" action="list" class="btn btn-default btnCrear">
@@ -13,27 +22,17 @@
                 </g:link>
             </div>
 
-            <div class="btn-group">
-                <g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">
-                    <i class="fa fa-file-o"></i> Nuevo ingreso a bodega
-                </g:link>
-            %{--<g:link controller="inventario" action="egresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
-            %{--<i class="fa fa-arrow-up"></i> Nuevo egreso de bodega--}%
+            %{--<g:if test="${bodega}">--}%
+            %{--<div class="btn-group">--}%
+            %{--<g:link controller="inventario" action="inventario" id="${bodega.id}" class="btn btn-default btnCrear">--}%
+            %{--<i class="fa fa-shopping-cart"></i> Inventario de bodega--}%
             %{--</g:link>--}%
-            </div>
+            %{--</div>--}%
+            %{--</g:if>--}%
         </div>
-        <elm:container tipo="horizontal" titulo="Inventario de la bodega ${bodega.descripcion}">
+
+        <elm:container tipo="horizontal" titulo="Egreso de ${bodega ? 'la bodega ' + bodega : 'bodega'}">
             <div class="row">
-                <div class="col-md-1">
-                    <label class=" control-label">
-                        Responsables
-                    </label>
-                </div>
-
-                <div class="col-md-3">
-                    <strong>${bodega.responsable}</strong>, ${bodega.suplente}
-                </div>
-
                 <div class="col-md-8">
                     <div class="btn-group btn-group-sm" role="group">
                         <a href="#" class="btn btn-info" id="btn-show-search">
@@ -44,12 +43,6 @@
                                 <i class="fa fa-search-plus"></i> Mostrar opciones búsqueda
                             </g:else>
                         </a>
-                    </div>
-
-                    <div class="btn-group btn-group-sm" role="group">
-                        <g:link action="inventarioResumen" id="${bodega.id}" class="btn btn-default">
-                            <i class="fa fa-th-list"></i> Mostrar resumen
-                        </g:link>
                     </div>
                 </div>
             </div>
@@ -78,11 +71,16 @@
                                      value="${params.search_item}" placeholder="Item"/>
                     </div>
 
+                    <div class="form-group">
+                        <g:textField name="search_bodega" class="form-control input-sm buscar noNumeros"
+                                     value="${params.search_bodega}" placeholder="Bodega"/>
+                    </div>
+
                     <div class="btn-group btn-group-sm" role="group">
-                        <g:link controller="inventario" action="inventario" id="${bodega.id}" class="btn btn-info btnSearch bsc">
+                        <g:link controller="inventario" action="egresoDeBodega" id="${bodega?.id}" class="btn btn-info btnSearch bsc">
                             <i class="fa fa-search"></i> Buscar
                         </g:link>
-                        <g:link controller="inventario" action="inventario" id="${bodega.id}" class="btn btn-default bsc">
+                        <g:link controller="inventario" action="egresoDeBodega" id="${bodega?.id}" class="btn btn-default bsc">
                             <i class="fa fa-times"></i> Borrar búsqueda
                         </g:link>
                     </div>
@@ -93,6 +91,7 @@
                 <table class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr>
+                            <g:sortableColumn property="bodega" title="Bodega"/>
                             <g:sortableColumn property="fecha" title="Fecha"/>
                             <g:sortableColumn property="pedido" title="Pedido"/>
                             <g:sortableColumn property="item" title="Item"/>
@@ -114,6 +113,11 @@
                                 <g:set var="totalCantidad" value="${totalCantidad + ig.cantidad}"/>
                                 <g:set var="totalSaldo" value="${totalSaldo + ig.saldo}"/>
                                 <tr>
+                                    <td>
+                                        <elm:textoBusqueda search="${params.search_bodega}">
+                                            ${ig.bodega}
+                                        </elm:textoBusqueda>
+                                    </td>
                                     <td>
                                         ${ig.fecha.format("dd-MM-yyyy hh:mm:ss")}
                                     </td>
@@ -197,6 +201,12 @@
                     }
                     params += "search_pedido=${params.search_pedido}";
                 }
+                if ("${params.search_bodega}" != "") {
+                    if (params != "") {
+                        params += "&";
+                    }
+                    params += "search_bodega=${params.search_bodega}";
+                }
                 if ("${params.search_desde}" != "") {
                     if (params != "") {
                         params += "&";
@@ -229,6 +239,7 @@
                 var desde = $.trim($("#search_desde_input").val());
                 var hasta = $.trim($("#search_hasta_input").val());
                 var item = $.trim($("#search_item").val());
+                var bodega = $.trim($("#search_bodega").val());
                 var pedido = $.trim($("#search_pedido").val());
                 if (desde != "") {
                     str += "search_desde=" + desde;
@@ -244,6 +255,12 @@
                         str += "&";
                     }
                     str += "search_item=" + item;
+                }
+                if (item != "") {
+                    if (str != "") {
+                        str += "&";
+                    }
+                    str += "search_bodega=" + bodega;
                 }
                 if (pedido != "") {
                     if (str != "") {
@@ -286,11 +303,9 @@
             }
 
             function validarFechaIni($elm, e) {
-//                console.log("validar fecha ini   ", e);
                 $('#search_hasta_input').data("DateTimePicker").setMinDate(e.date);
             }
             function validarFechaFin($elm, e) {
-//                console.log("validar fecha fin   ", e, e.date);
                 $('#search_desde_input').data("DateTimePicker").setMaxDate(e.date);
             }
             $(function () {

@@ -348,6 +348,9 @@ class ElementosTagLib {
 
         def img = attrs.img ?: "fa fa-calendar"
 
+        def style = attrs.style ?: ""
+        def placeholder = attrs.placeholder ?: ""
+
         if (value instanceof Date) {
             value = value.format(format)
         }
@@ -384,7 +387,7 @@ class ElementosTagLib {
         def br = "\n"
 
         def textfield = "<input type='text' name='${nameInput}' id='${id}' " + (readonly ? "readonly=''" : "") + " value='${value}'" +
-                " class='${clase}' data-date-format='${formatJS}'/>"
+                " class='${clase}' data-date-format='${formatJS}' placeholder='${placeholder}' style='${style}'/>"
 
         def hiddenDay = "<input type='hidden' name='${nameHiddenDay}' id='${nameHiddenDay}' value='${valueDay}'/>"
         def hiddenMonth = "<input type='hidden' name='${nameHiddenMonth}' id='${nameHiddenMonth}' value='${valueMonth}'/>"

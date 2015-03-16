@@ -237,46 +237,52 @@ class InventarioController extends Shield {
         def cot = Cotizacion.findAllByPedidoAndEstadoSolicitud(pedido, estadoAprobado)
         if (cot.size() == 1) {
             cot = cot.first()
-            def ingreso = new Ingreso()
-            ingreso.bodega = bodega
-            ingreso.item = pedido.item
-            ingreso.cantidad = pedido.cantidad
-            ingreso.unidad = pedido.unidad
-            ingreso.valor = cot.valor
-            ingreso.pedido = pedido
-            if (!ingreso.save()) {
-                println "error en el save de ingreso " + ingreso.errors
-                render "ERROR*" + renderErrors(bean: ingreso)
-            } else {
-                def firma = new Firma()
-                firma.persona = usu
-                firma.fecha = now
-                firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
-                firma.pdfControlador = "reportesInventario"
-                firma.pdfAccion = "ingresoDeBodega"
-                firma.pdfId = ingreso.id
 
-                if (!firma.save(flush: true)) {
-                    println "Error con la firma"
-                    render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+            def firma = new Firma()
+            firma.persona = usu
+            firma.fecha = now
+//            firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+            firma.pdfControlador = "reportesInventario"
+            firma.pdfAccion = "ingresoDeBodega"
+//            firma.pdfId = ingreso.id
+            firma.concepto = ""
+            firma.pdfId = 0
+
+            if (!firma.save(flush: true)) {
+                println "Error con la firma"
+                render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+            } else {
+                def ingreso = new Ingreso()
+                ingreso.bodega = bodega
+                ingreso.item = pedido.item
+                ingreso.cantidad = pedido.cantidad
+                ingreso.unidad = pedido.unidad
+                ingreso.valor = cot.valor
+                ingreso.pedido = pedido
+
+                ingreso.ingresa = firma
+                ingreso.calcularSaldo()
+                if (!ingreso.save()) {
+                    println "Error al firmar el ingreso: " + ingreso.errors
+                    render "ERROR*Ha ocurrido un error al firmar el ingreso"
                 } else {
-                    ingreso.ingresa = firma
-                    ingreso.calcularSaldo()
-                    if (!ingreso.save()) {
-                        println "Error al firmar el ingreso: " + ingreso.errors
-                        render "ERROR*Ha ocurrido un error al firmar el ingreso"
+
+                    firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+                    firma.pdfId = ingreso.id
+                    if (!firma.save(flush: true)) {
+                        println "Error al vincular firma con ingreso: " + firma.errors
+                    }
+
+                    def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+                    def firmaRes = firmaService.firmarDocumento(usu.id, usu.autorizacion, firma, baseUri)
+                    if (firmaRes instanceof String) {
+                        render "ERROR*" + firmaRes
                     } else {
-                        def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
-                        def firmaRes = firmaService.firmarDocumento(usu.id, usu.autorizacion, firma, baseUri)
-                        if (firmaRes instanceof String) {
-                            render "ERROR*" + firmaRes
+                        pedido.estadoSolicitud = estadoCompletado
+                        if (!pedido.save()) {
+                            render "ERROR*Ha ocurrido un error al completar la nota de pedido"
                         } else {
-                            pedido.estadoSolicitud = estadoCompletado
-                            if (!pedido.save()) {
-                                render "ERROR*Ha ocurrido un error al completar la nota de pedido"
-                            } else {
-                                render "SUCCESS*Ingreso realizado exitosamente"
-                            }
+                            render "SUCCESS*Ingreso realizado exitosamente"
                         }
                     }
                 }
@@ -407,5 +413,65 @@ class InventarioController extends Shield {
         } else {
             render "ERROR*" + msg
         }
+    }
+
+    /**
+     * Acción que muestra una pantalla que permite realizar búsquedas de ítems en una bodega para realizar un egreso
+     */
+    def egresoDeBodega() {
+        def bodega = null
+        def bodegas = []
+        if (params.bodega) {
+            bodega = Bodega.get(params.bodega)
+            if (session.usuario.id != bodega.responsableId && session.usuario.id != bodega.suplenteId) {
+                flash.message = "Solo el responsable de bodega puede realizar egresos."
+                response.sendError(403)
+            } else {
+                bodegas.add(bodega)
+            }
+        } else {
+//            bodegas = Bodega.findAllByResponsableOrSuplente(session.usuario, session.usuario)
+            bodegas = Bodega.withCriteria {
+                and {
+                    or {
+                        eq("responsable", session.usuario)
+                        eq("suplente", session.usuario)
+                    }
+                    if (params.search_bodega) {
+                        ilike("descripcion", "%" + params.search_bodega.toString().trim() + "%")
+                    }
+                }
+            }
+//            if (params.search_bodega) {
+//                println "******************** " + params.search_bodega
+//                bodegas = bodegas.findAll { it.descripcion.toLowerCase().contains(params.search_bodega.toString().toLowerCase()) }
+//            }
+        }
+        println params
+        def desde = null
+        def hasta = null
+        if (params.search_desde) {
+            desde = new Date().parse("dd-MM-yyyy", params.search_desde)
+        }
+        if (params.search_hasta) {
+            hasta = new Date().parse("dd-MM-yyyy", params.search_hasta)
+        }
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
+            inList("bodega", bodegas)
+            gt("saldo", 0.toDouble())
+            if (desde) {
+                ge("fecha", desde)
+            }
+            if (hasta) {
+                le("fecha", hasta)
+            }
+            if (params.search_item) {
+                item {
+                    ilike("descripcion", "%" + params.search_item + "%")
+                }
+            }
+        }
+        return [ingresos: ingresos, bodega: bodega, params: params, bodega: bodega]
     }
 }

@@ -215,7 +215,7 @@
                     cb(matches);
                 };
             };
-            var items = ${items};
+            %{--var items = ${items};--}%
             $(function () {
                 $("#maquina").val("");
 

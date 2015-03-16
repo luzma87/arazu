@@ -138,6 +138,15 @@ class NotaDePedidoController extends Shield {
      * Acción que muestra la pantalla de ingreso de una nueva nota de pedido
      */
     def pedido() {
+        def usu = Persona.get(session.usuario.id)
+        if (!usu.autorizacion) {
+            flash.message = "Tiene que establecer una clave de autorización para poder firmar los documentos. " +
+                    "<br/>Presione el botón 'Olvidé mi autorización' e ingrese su e-mail registrado para recibir una clave temporal que puede después modificar." +
+                    "<br/>Si no tiene un e-mail registrado contáctese con un administrador del sistema."
+            flash.tipo = "error"
+            redirect(controller: "persona", action: "personal")
+            return
+        }
         def numero = Pedido.list([sort: "numero", order: "desc", limit: 1])
         if (numero.size() > 0)
             numero = numero.first().numero + 1
@@ -173,37 +182,40 @@ class NotaDePedidoController extends Shield {
 
         def notaPedido = TipoSolicitud.findByCodigo("NTPD")
 
-        def solicitud = new Pedido(params)
-        solicitud.tipoSolicitud = notaPedido
-        solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
-        solicitud.fecha = now
-        solicitud.de = usu
-        solicitud.numero = numero
-        solicitud.codigo = "NP-" + numero
-        if (!solicitud.save(flush: true)) {
-            println "error  " + solicitud.errors
+        def firma = new Firma()
+        firma.persona = usu
+        firma.fecha = now
+//        firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+        firma.pdfControlador = "reportesInventario"
+        firma.pdfAccion = "notaDePedido"
+//        firma.pdfId = solicitud.id
+        firma.concepto = ""
+        firma.pdfId = 0
+
+        if (!firma.save(flush: true)) {
+            println "Error con la firma"
             flash.tipo = "error"
-            flash.message = "Ha ocurrido un error al guardar la solicitud:" + renderErrors(bean: solicitud)
+            flash.message = "Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
             redirect(action: "pedido")
         } else {
-
-            def firma = new Firma()
-            firma.persona = usu
-            firma.fecha = now
-            firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
-            firma.pdfControlador = "reportesInventario"
-            firma.pdfAccion = "notaDePedido"
-            firma.pdfId = solicitud.id
-
-            if (!firma.save(flush: true)) {
-                println "Error con la firma"
+            def solicitud = new Pedido(params)
+            solicitud.tipoSolicitud = notaPedido
+            solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
+            solicitud.fecha = now
+            solicitud.de = usu
+            solicitud.numero = numero
+            solicitud.codigo = "NP-" + numero
+            solicitud.firmaSolicita = firma
+            if (!solicitud.save(flush: true)) {
+                println "error  " + solicitud.errors
                 flash.tipo = "error"
-                flash.message = "Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
+                flash.message = "Ha ocurrido un error al guardar la solicitud:" + renderErrors(bean: solicitud)
                 redirect(action: "pedido")
             } else {
-                solicitud.firmaSolicita = firma
-                if (!solicitud.save(flush: true)) {
-                    println "Error al guardar firma en solicitud " + solicitud.errors
+                firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                firma.pdfId = solicitud.id
+                if (!firma.save(flush: true)) {
+                    println "error al asociar firma con solicitud: " + firma.errors
                 }
 
                 def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
@@ -255,6 +267,8 @@ class NotaDePedidoController extends Shield {
                 }
             }
         }
+
+
     }
 
     /**

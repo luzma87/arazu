@@ -370,7 +370,7 @@ class PersonaController extends Shield {
     def resetAuth_ajax() {
         def mail = params.mail.toString().trim()
         def usu = Persona.get(session.usuario.id)
-        if (usu.mail.equalsIgnoreCase(mail)) {
+        if (usu.mail && usu.mail.equalsIgnoreCase(mail)) {
             def password = org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(7)
 //            println password
             def newAuth = password.encodeAsMD5()
@@ -397,8 +397,8 @@ class PersonaController extends Shield {
             }
             render "SUCCESS*Se ha enviado el e-mail con su nueva clave de autorización."
         } else {
-            render "ERROR*El e-mail ingresado no coincide con el registrado. Si olvidó su e-mail contáactese con un administrador " +
-                    "del sistema para restablecerlo."
+            render "ERROR*El e-mail ingresado no coincide con el registrado. Si olvidó su e-mail o no tiene uno registrado " +
+                    "contáctese con un administrador del sistema para reestablecerlo."
         }
     }
 
