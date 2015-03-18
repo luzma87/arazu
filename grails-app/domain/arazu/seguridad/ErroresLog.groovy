@@ -3,7 +3,7 @@ package arazu.seguridad
 /**
  * Clase para conectar con la tabla 'logf' de la base de datos
  */
-class ErrorLog {
+class ErroresLog {
     /**
      * Fecha del log de error
      */

@@ -785,7 +785,7 @@ class NotaDePedidoController extends Shield {
                 bp.bodega = bodega
                 bp.pedido = pedido
                 bp.cantidad = cantidad
-                bp.save()
+                bp.save(flush: true)
 //                def ingresos = Ingreso.findAllByItemAndSaldoGreaterThan(pedido.item, 0.toDouble())
                 def ingresos = Ingreso.withCriteria {
                     eq("item", pedido.item)
@@ -807,7 +807,7 @@ class NotaDePedidoController extends Shield {
                         egreso.pedido = pedido
                         egreso.fecha = now
                         egreso.cantidad = c
-                        if (egreso.save()) {
+                        if (egreso.save(flush: true)) {
                             ing.calcularSaldo()
                         } else {
                             println "ERROR*Ha ocurrido un error al generar el egreso"
@@ -1189,11 +1189,11 @@ class NotaDePedidoController extends Shield {
                     }
                     pedido.prioridad = params.prio
                 }
-                if (pedido.save()) {
+                if (pedido.save(flush: true)) {
                     if (tipo == "AF") {
                         def cotizacionAprobada = Cotizacion.get(params.cot.toLong())
                         cotizacionAprobada.estadoSolicitud = estadoFinal
-                        if (cotizacionAprobada.save()) {
+                        if (cotizacionAprobada.save(flush: true)) {
                             println "error al aprobar la cotización: " + cotizacionAprobada.errors
                         }
                     }

@@ -117,7 +117,7 @@ class AccionesController extends Shield {
     def accionCambiarOrden_ajax() {
         def accion = Accion.get(params.id)
         accion.orden = params.orden.toInteger()
-        if (accion.save()) {
+        if (accion.save(flush: true)) {
             render "SUCCESS*Se ha cambiado el orden exitosamente"
         } else {
             render "ERROR*" + renderErrors(bean: accion)
@@ -183,7 +183,7 @@ class AccionesController extends Shield {
                                         if (!ctrl) {
                                             ctrl = new Controlador()
                                             ctrl.nombre = s[1].toString().capitalize()
-                                            if (ctrl.save()) {
+                                            if (ctrl.save(flush: true)) {
                                                 okc++
                                             } else {
                                                 errores += renderErrors(bean: ctrl)
@@ -207,10 +207,10 @@ class AccionesController extends Shield {
 //                                    else
 //                                        accn.tipo = TipoAccion.findByCodigo("M")
                                             accn.modulo = Modulo.findByNombre("noAsignado")
-                                            if (accn.save()) {
+                                            if (accn.save(flush: true)) {
                                                 accn.orden = accn.id
                                                 accn.icono = ""
-                                                accn.save()
+                                                accn.save(flush: true)
                                                 ok++
                                             } else {
                                                 errores += renderErrors(bean: accn)

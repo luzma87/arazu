@@ -92,7 +92,7 @@ class InventarioController extends Shield {
                 ingreso.unidad = Unidad.get(data[2])
                 ingreso.valor = data[3].toDouble()
                 ingreso.saldo = data[1].toDouble()
-                if (!ingreso.save()) {
+                if (!ingreso.save(flush: true)) {
                     println "error en el save de ingreso " + ingreso.errors
                     render "ERROR*" + renderErrors(bean: ingreso)
                 } else {
@@ -109,7 +109,7 @@ class InventarioController extends Shield {
                         return "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
                     } else {
                         ingreso.ingresa = firma
-                        if (!ingreso.save()) {
+                        if (!ingreso.save(flush: true)) {
                             println "Error al firmar el ingreso: " + ingreso.errors
                         } else {
                             def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
@@ -262,7 +262,7 @@ class InventarioController extends Shield {
 
                 ingreso.ingresa = firma
                 ingreso.calcularSaldo()
-                if (!ingreso.save()) {
+                if (!ingreso.save(flush: true)) {
                     println "Error al firmar el ingreso: " + ingreso.errors
                     render "ERROR*Ha ocurrido un error al firmar el ingreso"
                 } else {
@@ -279,7 +279,7 @@ class InventarioController extends Shield {
                         render "ERROR*" + firmaRes
                     } else {
                         pedido.estadoSolicitud = estadoCompletado
-                        if (!pedido.save()) {
+                        if (!pedido.save(flush: true)) {
                             render "ERROR*Ha ocurrido un error al completar la nota de pedido"
                         } else {
                             render "SUCCESS*Ingreso realizado exitosamente"
@@ -342,19 +342,19 @@ class InventarioController extends Shield {
             firma.pdfAccion = "egresoDeBodega"
             firma.pdfId = eg.id
 
-            if (!firma.save()) {
+            if (!firma.save(flush: true)) {
                 println "Error con la firma"
                 render "ERROR*Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
                 return
             } else {
                 eg.firma = firma
                 bodegaPedido.entregado += eg.cantidad
-                if (!eg.save()) {
+                if (!eg.save(flush: true)) {
                     msg += renderErrors(bean: eg)
                 }
             }
         }
-        if (!bodegaPedido.save()) {
+        if (!bodegaPedido.save(flush: true)) {
             println "error en bodega pedido: " + bodegaPedido.errors
         }
         if (msg == "") {
@@ -393,9 +393,9 @@ class InventarioController extends Shield {
             firma.pdfControlador = "reportesInventario"
             firma.pdfAccion = "egresoDeBodega"
             firma.pdfId = egreso.id
-            if (firma.save()) {
+            if (firma.save(flush: true)) {
                 egreso.firma = firma
-                if (!egreso.save()) {
+                if (!egreso.save(flush: true)) {
                     println "error " + egreso.errors
                     msg += renderErrors(bean: egreso)
                 }
