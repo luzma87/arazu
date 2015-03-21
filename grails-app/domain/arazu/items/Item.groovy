@@ -1,5 +1,7 @@
 package arazu.items
 
+import arazu.inventario.Bodega
+import arazu.inventario.Ingreso
 import arazu.parametros.TipoItem
 import arazu.parametros.Unidad
 
@@ -56,4 +58,39 @@ class Item {
     String toString() {
         return "${this.descripcion}"
     }
+
+    def getIngresos() {
+        return Ingreso.withCriteria {
+            eq("item", this)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 0)
+        }
+    }
+
+    def getIngresosByBodega(Bodega bodega) {
+        return Ingreso.withCriteria {
+            eq("item", this)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 0)
+            eq("bodega", bodega)
+        }
+    }
+
+    def getIngresosDesecho() {
+        return Ingreso.withCriteria {
+            eq("item", this)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 1)
+        }
+    }
+
+    def getIngresosDesechoByBodega(Bodega bodega) {
+        return Ingreso.withCriteria {
+            eq("item", this)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 1)
+            eq("bodega", bodega)
+        }
+    }
+
 }

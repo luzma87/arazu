@@ -145,7 +145,7 @@
                                             <i class="fa fa-print"></i>
                                         </a>
                                         <a href="#" title="Egreso" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
-                                            <i class="fa fa-arrow-up"></i>
+                                            <i class="fa fa-upload"></i>
                                         </a>
                                     </td>
                                 </tr>

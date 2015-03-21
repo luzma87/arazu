@@ -85,6 +85,20 @@
         </div>
     </div>
 
+    <div class="checkbox col-sm-offset-1">
+        <label>
+            <input type="checkbox" value="ok" name="desecho" id="desecho"/>
+            <strong>Ingresa igual cantidad de desecho</strong>
+        </label>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 alert alert-danger">
+            <i class="fa fa-warning"></i> Si no se realiza un ingreso con la misma cantidad de desecho que el egreso que se está realizando
+        se generará un alerta y un e-mail a los usuarios de tipo gerencia.
+        </div>
+    </div>
+
     <div class="form-group">
         <label for="observaciones" class="col-sm-2 col-sm-offset-1 control-label">
             Observaciones
@@ -113,6 +127,18 @@
             }
         });
         var validator = $("#frmEgreso").validate({
+            rules          : {
+                observaciones : {
+                    required : function () {
+                        return !$("#desecho").is(":checked");
+                    }
+                }
+            },
+            messages       : {
+                observaciones : {
+                    required : "Debe indicar la razón por la cual no se realiza el ingreso para desecho"
+                }
+            },
             errorClass     : "help-block",
             errorPlacement : function (error, element) {
                 if (element.parent().hasClass("input-group")) {

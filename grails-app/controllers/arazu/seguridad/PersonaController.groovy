@@ -264,9 +264,15 @@ class PersonaController extends Shield {
         if (params.input2 == params.input3) {
             if (params.tipo == "pass") {
                 persona.password = params.input2.encodeAsMD5()
+                if (!persona.save(flush: true)) {
+                    render "ERROR*" + renderErrors(bean: persona)
+                }
             } else {
                 if (persona.autorizacion == params.input1.trim().encodeAsMD5()) {
                     persona.autorizacion = params.input2.encodeAsMD5()
+                    if (!persona.save(flush: true)) {
+                        render "ERROR*" + renderErrors(bean: persona)
+                    }
                 } else {
                     render "ERROR*La autorización actual es incorrecta"
                     return

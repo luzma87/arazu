@@ -264,6 +264,9 @@ class ItemController extends Shield {
                 clase = "jstree-open"
                 rel = "item"
                 label = hijo.descripcion
+                if (hijo.desecho == 1) {
+                    label += " (Desecho)"
+                }
             } else if (tipo == "bd") {
                 id = "liBd_" + hijo.key
                 clase = ""

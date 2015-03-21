@@ -157,7 +157,7 @@
                         </g:if>
                         <g:else>
                             <tr class="danger">
-                                <td class="text-center" colspan="8">
+                                <td class="text-center" colspan="10">
                                     <g:if test="${(params.search_desde && params.search_desde != '') ||
                                             (params.search_hasta && params.search_hasta != '') ||
                                             (params.search_item && params.search_item != '')}">
@@ -172,7 +172,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="4" class="text-right">TOTAL</th>
+                            <th colspan="5" class="text-right">TOTAL</th>
                             <th class="text-right">
                                 <g:formatNumber number="${totalCantidad.toDouble()}" maxFractionDigits="2" minFractionDigits="2"/>
                             </th>
@@ -183,6 +183,7 @@
                             <th class="text-right">
                                 <g:formatNumber number="${totalValor.toDouble()}" type="currency"/>
                             </th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>

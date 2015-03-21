@@ -422,7 +422,8 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             ing.calcularSaldo()
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
@@ -449,7 +450,8 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -476,7 +478,8 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -504,7 +507,8 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -532,7 +536,8 @@ class NotaDePedidoController extends Shield {
             response.sendError(403)
         }
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -629,7 +634,8 @@ class NotaDePedidoController extends Shield {
     def dlgBodega_ajax() {
         def nota = Pedido.get(params.id)
         def existencias = [:]
-        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+//        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
+        nota.item.getIngresos().each { ing ->
             if (!existencias[ing.bodegaId + "_" + ing.unidadId]) {
                 existencias[ing.bodegaId + "_" + ing.unidadId] = [bodega: ing.bodega,
                                                                   unidad: ing.unidad,
@@ -787,11 +793,13 @@ class NotaDePedidoController extends Shield {
                 bp.cantidad = cantidad
                 bp.save(flush: true)
 //                def ingresos = Ingreso.findAllByItemAndSaldoGreaterThan(pedido.item, 0.toDouble())
-                def ingresos = Ingreso.withCriteria {
-                    eq("item", pedido.item)
-                    gt("saldo", 0.toDouble())
-                    eq("bodega", bodega)
-                }
+//                def ingresos = Ingreso.withCriteria {
+//                    eq("item", pedido.item)
+//                    gt("saldo", 0.toDouble())
+//                    eq("bodega", bodega)
+//                    eq("desecho", 0)
+//                }
+                def ingresos = pedido.item.getIngresosByBodega(bodega)
                 ingresos.each { ing ->
                     if (tot < cantidad) {
                         ing.calcularSaldo()

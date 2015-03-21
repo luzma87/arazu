@@ -49,6 +49,10 @@ class Ingreso {
      * Firma de la persona que hizo el ingreso
      */
     Firma ingresa
+    /**
+     * Define si el ingreso es desecho o no (1: es desecho, 0: es nuevo)
+     */
+    Integer desecho = 0
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -75,6 +79,7 @@ class Ingreso {
             saldo column: 'ingrsldo'
             factura column: 'ingrfact'
             ingresa column: 'frma__id'
+            desecho column: 'ingrdsch'
         }
     }
 

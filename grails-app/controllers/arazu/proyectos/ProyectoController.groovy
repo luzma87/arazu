@@ -128,7 +128,11 @@ class ProyectoController extends Shield {
         }
         flash.message = "${params.id ? 'Actualización' : 'Creación'} de Proyecto exitosa."
         flash.tipo = "success"
-        redirect(action: "list")
+        if (session.permisos["proyecto"].contains("listadmin")) {
+            redirect(action: "listAdmin")
+        } else {
+            redirect(action: "list")
+        }
         return
     }
 

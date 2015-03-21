@@ -179,6 +179,7 @@ class BodegaController extends Shield {
             eq("item", item)
             eq("unidad", unidad)
             gt("saldo", 0.toDouble())
+            eq("desecho", 0)
         }
         return [ingresos: ingresos, bodega: bodega, item: item, unidad: unidad]
     }
@@ -236,7 +237,12 @@ class BodegaController extends Shield {
     }
 
     def desactivarBodega(Bodega bodegaAntigua, Bodega bodegaNueva) {
-        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodegaAntigua, 0)
+//        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodegaAntigua, 0)
+        def ingresos = Ingreso.withCriteria {
+            eq("bodega", bodegaAntigua)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 0)
+        }
         def errores = ""
 
         bodegaAntigua.activo = 0

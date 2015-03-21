@@ -2,6 +2,7 @@ package arazu.inventario
 
 import arazu.items.Item
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
 import arazu.seguridad.Persona
 import arazu.seguridad.Shield
@@ -13,6 +14,7 @@ import arazu.solicitudes.Pedido
 class InventarioController extends Shield {
 
     def firmaService
+    def notificacionService
 
     /**
      * Acción que carga con ajax las unidades disponibles para un item
@@ -40,6 +42,16 @@ class InventarioController extends Shield {
      * Acción que muestra la pantalla para hacer ingresos a una bodega
      */
     def ingresoDeBodega() {
+        def usu = Persona.get(session.usuario.id)
+        if (!usu.autorizacion) {
+            flash.message = "Tiene que establecer una clave de autorización para poder firmar los documentos. " +
+                    "<br/>Presione el botón 'Olvidé mi autorización' e ingrese su e-mail registrado para recibir una clave temporal que puede después modificar." +
+                    "<br/>Si no tiene un e-mail registrado contáctese con un administrador del sistema."
+            flash.tipo = "error"
+            redirect(controller: "persona", action: "personal")
+            return
+        }
+
         def bodega = null
         def bodegas = []
         if (params.bodega) {
@@ -53,6 +65,12 @@ class InventarioController extends Shield {
         } else {
             bodegas = Bodega.findAllByResponsableOrSuplente(session.usuario, session.usuario)
         }
+
+        if (bodegas.size() == 0) {
+            flash.message = "No está asignado como responsable o suplente en ninguna bodega."
+            response.sendError(403)
+        }
+
         def items = Item.list([sort: "descripcion"])
         def itemStr = ""
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
@@ -146,6 +164,7 @@ class InventarioController extends Shield {
         def ingresos = c.list(params) {
             eq("bodega", bodega)
             gt("saldo", 0.toDouble())
+            eq("desecho", 0)
             if (desde) {
                 ge("fecha", desde)
             }
@@ -173,6 +192,7 @@ class InventarioController extends Shield {
         def ingresos = c.list(params) {
             eq("bodega", bodega)
             gt("saldo", 0.toDouble())
+            eq("desecho", 0)
             if (params.search_item) {
                 item {
                     ilike("descripcion", "%" + params.search_item + "%")
@@ -207,6 +227,7 @@ class InventarioController extends Shield {
         def ingresos = c.list(params) {
             eq("bodega", bodega)
             gt("saldo", 0.toDouble())
+            eq("desecho", 0)
         }
 
         def res = [:]
@@ -307,6 +328,8 @@ class InventarioController extends Shield {
      * Acción llamada con ajax que realiza un egreso de nota de pedido
      */
     def egreso_ajax() {
+        def usu = session.usuario
+
         def pedido = Pedido.get(params.id)
 
         def bodegaPedido = BodegaPedido.get(params.bodega.toLong())
@@ -328,6 +351,8 @@ class InventarioController extends Shield {
             }
             isNull("firma")
         }
+        def mailGerentes = false
+        def msgGerentes = ""
         egresos.each { eg ->
             eg.fecha = now
             eg.persona = responsable
@@ -351,7 +376,76 @@ class InventarioController extends Shield {
                 bodegaPedido.entregado += eg.cantidad
                 if (!eg.save(flush: true)) {
                     msg += renderErrors(bean: eg)
+                } else {
+                    if (params.desecho == "ok") {
+                        def firmaDesecho = new Firma()
+                        firmaDesecho.persona = usu
+                        firmaDesecho.fecha = now
+                        firmaDesecho.concepto = ""
+                        firmaDesecho.pdfControlador = "reportesInventario"
+                        firmaDesecho.pdfAccion = "ingresoDeDesecho"
+                        firmaDesecho.pdfId = 0
+
+                        if (firmaDesecho.save(flush: true)) {
+                            def ingresoDesecho = new Ingreso()
+                            ingresoDesecho.unidad = eg.ingreso.unidad
+                            ingresoDesecho.item = eg.ingreso.item
+                            ingresoDesecho.bodega = eg.ingreso.bodega
+                            ingresoDesecho.fecha = new Date()
+                            ingresoDesecho.cantidad = eg.cantidad
+                            ingresoDesecho.valor = 1
+                            ingresoDesecho.saldo = eg.cantidad
+                            ingresoDesecho.ingresa = firmaDesecho
+                            ingresoDesecho.desecho = 1
+                            if (ingresoDesecho.save(flush: true)) {
+                                firmaDesecho.concepto = "Ingreso de desecho de ${eg.cantidad}${eg.ingreso.unidad.codigo} ${eg.ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+                                firmaDesecho.pdfId = ingresoDesecho.id
+                                firmaDesecho.save(flush: true)
+                            }
+                        } else {
+                            render "ERROR*" + renderErrors(bean: firmaDesecho)
+                        }
+                    } else {
+                        mailGerentes = true
+                        if (msgGerentes != "") {
+                            msgGerentes += ", "
+                        }
+                        msgGerentes += "${eg.cantidad}${eg.ingreso.unidad.codigo} ${eg.ingreso.item}"
+                    }
                 }
+            }
+        }
+        if (mailGerentes) {
+            def tipoGerente = TipoUsuario.findByCodigo("GRNT")
+            def gerentes = Persona.findAllByTipoUsuario(tipoGerente)
+            def msgGrnt = ""
+
+            def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+            def mens = usu.nombre + " " + usu.apellido + " ha realizado un egreso de bodega de " + msgGerentes+" sin un ingreso de desecho"
+            def paramsAlerta = [
+                    mensaje    : mens,
+                    controlador: "inventario",
+                    accion     : "listaEgresosSinDesecho"
+            ]
+            def paramsMail = [
+                    subject : "Egreso sin desecho",
+                    template: '/mail/egresoSinDesecho',
+                    model   : [
+                            recibe : usu,
+                            mensaje: mens,
+                            now    : now,
+                            link   : baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
+                    ]
+            ]
+
+            gerentes.each { grnt ->
+                paramsMail.model.recibe = grnt
+                msgGrnt += notificacionService.notificacionCompleta(usu, grnt, paramsAlerta, paramsMail)
+            }
+            if (msgGrnt == "") {
+                render "SUCCESS*Egreso realizado exitosamente"
+            } else {
+                render "SUCCESS*Se realizó correctamente el egreso, pero " + msgGrnt
             }
         }
         if (!bodegaPedido.save(flush: true)) {
@@ -369,7 +463,10 @@ class InventarioController extends Shield {
      * Acción llamada con ajax que realiza un egreso de bodega
      */
     def egresoBodega_ajax() {
-        println "PARAMS " + params
+        def usu = session.usuario
+//        println "EGRESO PARAMS " + params
+//        EGRESO PARAMS [id:2, cantidad:4, observaciones:no tiene, persona:1, action:egresoBodega_ajax, format:null, controller:inventario]
+//        EGRESO PARAMS [id:2, cantidad:4, desecho:ok, observaciones:todo ok, persona:1, action:egresoBodega_ajax, format:null, controller:inventario]
         def ingreso = Ingreso.get(params.id)
         def responsable = Persona.get(params.persona)
         def cant = params.cantidad.toDouble()
@@ -377,48 +474,135 @@ class InventarioController extends Shield {
         def now = new Date()
         def msg = ""
 
-        def egreso = new Egreso()
-        egreso.ingreso = ingreso
-        egreso.persona = responsable
-        egreso.fecha = now
-        if (obs != "") {
-            egreso.observaciones = obs
-        }
-        egreso.cantidad = cant
-        if (egreso.save(flush: true)) {
-            def firma = new Firma()
-            firma.persona = session.usuario
-            firma.fecha = now
-            firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
-            firma.pdfControlador = "reportesInventario"
-            firma.pdfAccion = "egresoDeBodega"
-            firma.pdfId = egreso.id
-            if (firma.save(flush: true)) {
-                egreso.firma = firma
-                if (!egreso.save(flush: true)) {
-                    println "error " + egreso.errors
-                    msg += renderErrors(bean: egreso)
-                }
+//        def egreso = new Egreso()
+//        egreso.ingreso = ingreso
+//        egreso.persona = responsable
+//        egreso.fecha = now
+//        if (obs != "") {
+//            egreso.observaciones = obs
+//        }
+//        egreso.cantidad = cant
+//        if (egreso.save(flush: true)) {
+        def firma = new Firma()
+        firma.persona = usu
+        firma.fecha = now
+//        firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+        firma.concepto = ""
+        firma.pdfControlador = "reportesInventario"
+        firma.pdfAccion = "egresoDeBodega"
+        firma.pdfId = 0
+        if (firma.save(flush: true)) {
+            def egreso = new Egreso()
+            egreso.ingreso = ingreso
+            egreso.persona = responsable
+            egreso.fecha = now
+            if (obs != "") {
+                egreso.observaciones = obs
+            }
+            egreso.cantidad = cant
+            egreso.firma = firma
+            if (egreso.save(flush: true)) {
+                firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+                firma.pdfId = egreso.id
             } else {
-                println "error2 " + firma.errors
-                msg += renderErrors(bean: firma)
+                println "error " + egreso.errors
+                msg += renderErrors(bean: egreso)
             }
             ingreso.calcularSaldo()
+
+            if (params.desecho == "ok") {
+                def firmaDesecho = new Firma()
+                firmaDesecho.persona = usu
+                firmaDesecho.fecha = now
+                firmaDesecho.concepto = ""
+                firmaDesecho.pdfControlador = "reportesInventario"
+                firmaDesecho.pdfAccion = "ingresoDeDesecho"
+                firmaDesecho.pdfId = 0
+
+                if (firmaDesecho.save(flush: true)) {
+                    def ingresoDesecho = new Ingreso()
+                    ingresoDesecho.unidad = ingreso.unidad
+                    ingresoDesecho.item = ingreso.item
+                    ingresoDesecho.bodega = ingreso.bodega
+                    ingresoDesecho.fecha = new Date()
+                    ingresoDesecho.cantidad = egreso.cantidad
+                    ingresoDesecho.valor = 1
+                    ingresoDesecho.saldo = egreso.cantidad
+                    ingresoDesecho.ingresa = firmaDesecho
+                    ingresoDesecho.desecho = 1
+                    if (ingresoDesecho.save(flush: true)) {
+                        firmaDesecho.concepto = "Ingreso de desecho de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+                        firmaDesecho.pdfId = ingresoDesecho.id
+                        firmaDesecho.save(flush: true)
+                    }
+                } else {
+                    render "ERROR*" + renderErrors(bean: firmaDesecho)
+                }
+            } else {
+                def tipoGerente = TipoUsuario.findByCodigo("GRNT")
+                def gerentes = Persona.findAllByTipoUsuario(tipoGerente)
+                def msgGrnt = ""
+
+                def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
+                def mens = usu.nombre + " " + usu.apellido + " ha realizado un egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} sin un ingreso de desecho"
+                def paramsAlerta = [
+                        mensaje    : mens,
+                        controlador: "inventario",
+                        accion     : "listaEgresosSinDesecho"
+                ]
+                def paramsMail = [
+                        subject : "Egreso sin desecho",
+                        template: '/mail/egresoSinDesecho',
+                        model   : [
+                                recibe : usu,
+                                mensaje: mens,
+                                now    : now,
+                                link   : baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
+                        ]
+                ]
+
+                gerentes.each { grnt ->
+                    paramsMail.model.recibe = grnt
+                    msgGrnt += notificacionService.notificacionCompleta(usu, grnt, paramsAlerta, paramsMail)
+                }
+                if (msgGrnt == "") {
+                    render "SUCCESS*Egreso realizado exitosamente"
+                } else {
+                    render "SUCCESS*Se realizó correctamente el egreso, pero " + msgGrnt
+                }
+            }
+
+            if (msg == "") {
+                render "SUCCESS*Egreso realizado exitosamente"
+            } else {
+                render "ERROR*" + msg
+            }
         } else {
-            println "error3 " + egreso.errors
-            msg += renderErrors(bean: egreso)
-        }
-        if (msg == "") {
-            render "SUCCESS*Egreso realizado exitosamente"
-        } else {
+            println "error2 " + firma.errors
+            msg += renderErrors(bean: firma)
             render "ERROR*" + msg
         }
+//        } else {
+//            println "error3 " + egreso.errors
+//            msg += renderErrors(bean: egreso)
+//        }
     }
 
     /**
      * Acción que muestra una pantalla que permite realizar búsquedas de ítems en una bodega para realizar un egreso
      */
     def egresoDeBodega() {
+
+        def usu = Persona.get(session.usuario.id)
+        if (!usu.autorizacion) {
+            flash.message = "Tiene que establecer una clave de autorización para poder firmar los documentos. " +
+                    "<br/>Presione el botón 'Olvidé mi autorización' e ingrese su e-mail registrado para recibir una clave temporal que puede después modificar." +
+                    "<br/>Si no tiene un e-mail registrado contáctese con un administrador del sistema."
+            flash.tipo = "error"
+            redirect(controller: "persona", action: "personal")
+            return
+        }
+
         def bodega = null
         def bodegas = []
         if (params.bodega) {
@@ -447,7 +631,12 @@ class InventarioController extends Shield {
 //                bodegas = bodegas.findAll { it.descripcion.toLowerCase().contains(params.search_bodega.toString().toLowerCase()) }
 //            }
         }
-        println params
+
+        if (bodegas.size() == 0) {
+            flash.message = "No está asignado como responsable o suplente en ninguna bodega."
+            response.sendError(403)
+        }
+
         def desde = null
         def hasta = null
         if (params.search_desde) {
@@ -460,6 +649,7 @@ class InventarioController extends Shield {
         def ingresos = c.list(params) {
             inList("bodega", bodegas)
             gt("saldo", 0.toDouble())
+            eq("desecho", 0)
             if (desde) {
                 ge("fecha", desde)
             }
@@ -473,5 +663,9 @@ class InventarioController extends Shield {
             }
         }
         return [ingresos: ingresos, bodega: bodega, params: params, bodega: bodega]
+    }
+
+    def listaEgresosSinDesecho() {
+
     }
 }

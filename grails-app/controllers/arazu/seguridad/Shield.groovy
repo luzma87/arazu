@@ -15,6 +15,7 @@ class Shield {
 //        return true
         /** **************************************************************************/
         if (!session.usuario) {
+            println "intenta acceder a " + controllerName + "/" + actionName + "  params: " + params + " pero no tiene sesion"
             redirect(controller: 'login', action: 'login')
             session.finalize()
             return false
@@ -23,6 +24,7 @@ class Shield {
             if (isAllowed()) {
                 return true
             } else {
+                println "intenta acceder a " + controllerName + "/" + actionName + "  params: " + params + " pero no tiene permiso"
                 redirect(controller: 'shield', action: 'forbidden_403')
                 return false
             }
