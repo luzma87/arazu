@@ -4,7 +4,6 @@ import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
 import arazu.parametros.MotivoSolicitud
-import arazu.parametros.TipoSolicitud
 import arazu.parametros.Unidad
 import arazu.proyectos.Proyecto
 import arazu.seguridad.Persona
@@ -12,11 +11,7 @@ import arazu.seguridad.Persona
 /**
  * Clase para conectar con la tabla 'pddo' de la base de datos
  */
-class Pedido {
-    /**
-     * Tipo de solicitud (Nota de pedido, solicitud de mantenimiento externo, solicitud de mantenimiento interno...)
-     */
-    TipoSolicitud tipoSolicitud
+class NotaPedido {
     /**
      * Motivo de la solicitud
      */
@@ -142,7 +137,6 @@ class Pedido {
         sort fecha: "desc"
         columns {
             id column: 'pddo__id'
-            tipoSolicitud column: 'tpsl__id'
             motivoSolicitud column: 'mtsl__id'
             estadoSolicitud column: 'essl__id'
             codigo column: 'pddocdgo'
@@ -213,6 +207,6 @@ class Pedido {
     }
 
     String toString() {
-        return "${this.tipoSolicitud.nombre} núm. ${this.numero}"
+        return "Nota de pedido núm. ${this.numero}"
     }
 }

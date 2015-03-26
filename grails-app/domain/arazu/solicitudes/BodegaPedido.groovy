@@ -1,7 +1,6 @@
 package arazu.solicitudes
 
 import arazu.inventario.Bodega
-import arazu.parametros.Unidad
 
 /**
  * Clase para conectar con la tabla 'bdpd' de la base de datos
@@ -13,9 +12,9 @@ class BodegaPedido {
      */
     Bodega bodega
     /**
-     * Pedido para el cual se van a retirar los items
+     * NotaPedido para el cual se van a retirar los items
      */
-    Pedido pedido
+    NotaPedido pedido
     /**
      * Cantidad de items a retirar de la bodega
      */

@@ -1,6 +1,5 @@
 import arazu.parametros.EstadoSolicitud
 import arazu.parametros.MotivoSolicitud
-import arazu.parametros.TipoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.seguridad.Accion
 import arazu.seguridad.Controlador
@@ -220,38 +219,6 @@ class BootStrap {
 //            estado.nombre = "Completada"
 //            if (!estado.save(flush: true)) {
 //                println "ocurrio un error al guardar ${estado.nombre}: " + estado.errors
-//            }
-//        }
-//
-//        if (TipoSolicitud.count() == 0) {
-//            def ts = new TipoSolicitud()
-//            ts.codigo = "NTPD"
-//            ts.nombre = "Nota de pedido"
-//            ts.descripcion = "Notas de pedido de compra de repuestos"
-//            if (ts.save(flush: true)) {
-//                println "Creado tipo de solicitud ${ts.nombre}"
-//            } else {
-//                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
-//            }
-//
-//            ts = new TipoSolicitud()
-//            ts.codigo = "SMNE"
-//            ts.nombre = "Mantenimiento externo"
-//            ts.descripcion = "Solicitud de mantenimiento de vehículos y maquinaria externo"
-//            if (ts.save(flush: true)) {
-//                println "Creado tipo de solicitud ${ts.nombre}"
-//            } else {
-//                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
-//            }
-//
-//            ts = new TipoSolicitud()
-//            ts.codigo = "SMNI"
-//            ts.nombre = "Mantenimiento interno"
-//            ts.descripcion = "Solicitud de mantenimiento interno"
-//            if (ts.save(flush: true)) {
-//                println "Creado tipo de solicitud ${ts.nombre}"
-//            } else {
-//                println "Error al crear tipo de solicitud ${ts.nombre}: " + ts.errors
 //            }
 //        }
 //

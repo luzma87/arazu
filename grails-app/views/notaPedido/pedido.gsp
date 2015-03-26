@@ -1,4 +1,4 @@
-<%@ page import="arazu.parametros.MotivoSolicitud; arazu.items.Item; arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.parametros.TipoSolicitud; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.MotivoSolicitud; arazu.items.Item; arazu.parametros.TipoMaquinaria; arazu.parametros.Unidad; arazu.proyectos.Proyecto; arazu.seguridad.Persona; arazu.items.Maquinaria; arazu.parametros.TipoUsuario" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">

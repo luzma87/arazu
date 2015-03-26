@@ -41,7 +41,7 @@
                             <tr>
                                 <td>${nota.numero}</td>
                                 <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
-                                <td>${nota.tipoSolicitud.descripcion}</td>
+                                <td>${nota.motivoSolicitud}</td>
                                 <td>
                                     ${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}
                                     <g:if test="${nota.cantidadAprobada > 0 && nota.cantidad != nota.cantidadAprobada}">

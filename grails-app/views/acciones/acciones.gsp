@@ -49,7 +49,7 @@
                         <g:if test="${modulo.icono}">
                             <i class="${modulo.icono}"></i>
                         </g:if>
-                        ${modulo.nombre}
+                        ${modulo.nombre} (${modulo.orden})
                     </a>
                 </li>
             </g:each>

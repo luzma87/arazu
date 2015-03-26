@@ -8,9 +8,9 @@ import arazu.parametros.EstadoSolicitud
 class Cotizacion {
 
     /**
-     * Pedido para el cual se hace la cotización
+     * NotaPedido para el cual se hace la cotización
      */
-    Pedido pedido
+    NotaPedido pedido
     /**
      * Fecha en la que se hace la cotización
      */

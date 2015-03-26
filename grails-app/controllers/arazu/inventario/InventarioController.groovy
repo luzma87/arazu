@@ -9,7 +9,7 @@ import arazu.seguridad.Shield
 import arazu.solicitudes.BodegaPedido
 import arazu.solicitudes.Cotizacion
 import arazu.solicitudes.Firma
-import arazu.solicitudes.Pedido
+import arazu.solicitudes.NotaPedido
 
 class InventarioController extends Shield {
 
@@ -251,7 +251,7 @@ class InventarioController extends Shield {
     def ingresoNotaPedido_ajax() {
         def usu = Persona.get(session.usuario.id)
         def now = new Date()
-        def pedido = Pedido.get(params.id)
+        def pedido = NotaPedido.get(params.id)
         def bodega = Bodega.get(params.bodega)
         def estadoAprobado = EstadoSolicitud.findByCodigo("A01")
         def estadoCompletado = EstadoSolicitud.findByCodigo("C01")
@@ -317,7 +317,7 @@ class InventarioController extends Shield {
      * Acción llamada con ajax que carga un dialog para llenar la información necesaria para realizar un egreso de nota de pedido
      */
     def dlgEgreso_ajax() {
-        def pedido = Pedido.get(params.id)
+        def pedido = NotaPedido.get(params.id)
         def bodegasUsuario = Bodega.findAllByResponsableOrSuplente(session.usuario, session.usuario)
         def bp = BodegaPedido.findAllByPedidoAndBodegaInList(pedido, bodegasUsuario)
         def bodegasPedido = bp.findAll { it.cantidad - it.entregado > 0 }
@@ -330,7 +330,7 @@ class InventarioController extends Shield {
     def egreso_ajax() {
         def usu = session.usuario
 
-        def pedido = Pedido.get(params.id)
+        def pedido = NotaPedido.get(params.id)
 
         def bodegaPedido = BodegaPedido.get(params.bodega.toLong())
         def bodega = bodegaPedido.bodega

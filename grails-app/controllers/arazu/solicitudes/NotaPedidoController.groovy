@@ -2,20 +2,17 @@ package arazu.solicitudes
 
 import arazu.inventario.Bodega
 import arazu.inventario.Egreso
-import arazu.inventario.Ingreso
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
-import arazu.parametros.TipoSolicitud
 import arazu.parametros.TipoUsuario
 import arazu.seguridad.Perfil
 import arazu.seguridad.Persona
 import arazu.seguridad.Sesion
 import arazu.seguridad.Shield
 
-class NotaDePedidoController extends Shield {
+class NotaPedidoController extends Shield {
 
-    def mailService
     def firmaService
     def notificacionService
 
@@ -109,7 +106,7 @@ class NotaDePedidoController extends Shield {
         if (!params.order) {
             params.order = "asc"
         }
-        def c = Pedido.createCriteria()
+        def c = NotaPedido.createCriteria()
         list = c.list(params) {
             if (desde) {
                 ge("fecha", desde)
@@ -147,7 +144,7 @@ class NotaDePedidoController extends Shield {
             redirect(controller: "persona", action: "personal")
             return
         }
-        def numero = Pedido.list([sort: "numero", order: "desc", limit: 1])
+        def numero = NotaPedido.list([sort: "numero", order: "desc", limit: 1])
         if (numero.size() > 0)
             numero = numero.first().numero + 1
         else
@@ -174,13 +171,11 @@ class NotaDePedidoController extends Shield {
 //        params.remove("item")
 //        params["item.id"] = item.id
 
-        def numero = Pedido.list([sort: "numero", order: "desc", limit: 1])
+        def numero = NotaPedido.list([sort: "numero", order: "desc", limit: 1])
         if (numero.size() > 0)
             numero = numero.first().numero + 1
         else
             numero = 1
-
-        def notaPedido = TipoSolicitud.findByCodigo("NTPD")
 
         def firma = new Firma()
         firma.persona = usu
@@ -198,8 +193,7 @@ class NotaDePedidoController extends Shield {
             flash.message = "Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
             redirect(action: "pedido")
         } else {
-            def solicitud = new Pedido(params)
-            solicitud.tipoSolicitud = notaPedido
+            def solicitud = new NotaPedido(params)
             solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
             solicitud.fecha = now
             solicitud.de = usu
@@ -382,7 +376,7 @@ class NotaDePedidoController extends Shield {
             }
         }.pedido.unique()
 
-//        def notas = Pedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
+//        def notas = NotaPedido.findAllByEstadoSolicitud(estadoPendientesCotizaciones, [sort: "numero"])
         return [notas: notas]
     }
 
@@ -414,7 +408,7 @@ class NotaDePedidoController extends Shield {
     def revisarJefatura() {
         if (!params.id)
             response.sendError(404)
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
@@ -442,7 +436,7 @@ class NotaDePedidoController extends Shield {
     def revisarJefeCompras() {
         if (!params.id)
             response.sendError(404)
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JFCM") {
             response.sendError(403)
         }
@@ -470,7 +464,7 @@ class NotaDePedidoController extends Shield {
     def revisarAsistenteCompras() {
         if (!params.id)
             response.sendError(404)
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "ASCM") {
             response.sendError(403)
         }
@@ -499,7 +493,7 @@ class NotaDePedidoController extends Shield {
     def revisarJefe() {
         if (!params.id)
             response.sendError(404)
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
@@ -528,7 +522,7 @@ class NotaDePedidoController extends Shield {
     def revisarGerente() {
         if (!params.id)
             response.sendError(404)
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
         }
@@ -554,7 +548,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
      */
     def dlgAprobarJefe_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def jefesCompras = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JFCM"), [sort: 'apellido'])
         return [nota: nota, jefesCompras: jefesCompras]
     }
@@ -563,7 +557,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
      */
     def dlgAprobarJefeCompras_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def asistentesCompras = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("ASCM"), [sort: 'apellido'])
         return [nota: nota, asistentesCompras: asistentesCompras]
     }
@@ -572,7 +566,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
      */
     def dlgAprobarAsistenteCompras_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def jefes = null, gerentes = null
 
         def total = []
@@ -599,7 +593,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una nota de pedido
      */
     def dlgAprobarFinal_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def cots = Cotizacion.findAllByPedido(nota)
         return [nota: nota, cots: cots]
     }
@@ -608,7 +602,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para solicitar al asistente de compras que cargue más cotizaciones
      */
     def dlgSolicitarCotizaciones_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         return [nota: nota]
     }
 
@@ -616,7 +610,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para negar una nota de pedido
      */
     def dlgNegar_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         return [nota: nota]
     }
 
@@ -624,7 +618,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para negar definitivamente una nota de pedido
      */
     def dlgNegarFinal_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         return [nota: nota]
     }
 
@@ -632,7 +626,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para notificar que el item de una nota de pedido está disponible en bodegas y seleccionar de cual se dese sacar para notificar al responsable de bodega
      */
     def dlgBodega_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def existencias = [:]
 //        Ingreso.findAllByItemAndSaldoGreaterThan(nota.item, 0).each { ing ->
         nota.item.getIngresos().each { ing ->
@@ -651,7 +645,7 @@ class NotaDePedidoController extends Shield {
      * Acción que carga una pantalla emergente para completar la información necesaria para hacer el ingreso de una nota de pedido a una bodega
      */
     def dlgIngresoBodega_ajax() {
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         def usu = Persona.get(session.usuario.id)
         def bodegas = Bodega.findAllByResponsableOrSuplente(usu, usu, [sort: 'descripcion'])
         return [nota: nota, bodegas: bodegas]
@@ -774,7 +768,7 @@ class NotaDePedidoController extends Shield {
      * @param params los parametros que indican las bodegas y la cantidad a retirar de cada una
      * @return un arreglo con los responsables de las bodegas respecitivas
      */
-    def bodega_funcion(Pedido pedido, params) {
+    def bodega_funcion(NotaPedido pedido, params) {
         def now = new Date()
         def notificacionBodegas = []
 
@@ -865,7 +859,7 @@ class NotaDePedidoController extends Shield {
         if (params.para) {
             para = Persona.get(params.para.toLong())
         }
-        def pedido = Pedido.get(params.id.toLong())
+        def pedido = NotaPedido.get(params.id.toLong())
 
         if (!params.cant) {
             params.cant = 0

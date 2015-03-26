@@ -58,18 +58,6 @@
                             </div>
                         </li>
                         <li>
-                            <i class="fa-li fa fa-file-archive-o text-info"></i>
-                            <g:link class="over" controller="tipoSolicitud" action="list">
-                                Tipos de solicitud
-                            </g:link>
-
-                            <div class="descripcion hidden">
-                                <h4><i class="fa fa-file-archive-o fa-2x"></i> Tipos de solicitud</h4>
-
-                                <p>Muestra los diferentes tipos de solicitud</p>
-                            </div>
-                        </li>
-                        <li>
                             <i class="fa-li fa fa-check-square-o text-info"></i>
                             <g:link class="over" controller="estadoSolicitud" action="list">
                                 Estados de solicitud
@@ -79,6 +67,18 @@
                                 <h4><i class="fa fa-check-square-o fa-2x "></i> Estados de solicitud</h4>
 
                                 <p>Muestra los diferentes estados en los que puede estar una solicitud</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-li fa fa-car text-info"></i>
+                            <g:link class="over" controller="tipoTrabajo" action="list">
+                                Tipos de trabajo
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class=" fa fa-car fa-2x"></i> Tipos de trabajo</h4>
+
+                                <p>Permite registrar los tipos de trabajo disponibles en las solicitudes de mantenimiento</p>
                             </div>
                         </li>
                         <li>

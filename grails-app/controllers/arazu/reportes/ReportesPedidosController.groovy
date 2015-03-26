@@ -2,13 +2,13 @@ package arazu.reportes
 
 import arazu.solicitudes.BodegaPedido
 import arazu.solicitudes.Cotizacion
-import arazu.solicitudes.Pedido
+import arazu.solicitudes.NotaPedido
 
 class ReportesPedidosController {
 
     def notaDePedido() {
         //println "nota de pedido " + params
-        def nota = Pedido.get(params.id)
+        def nota = NotaPedido.get(params.id)
         if (!nota)
             response.sendError(404)
         def cots = Cotizacion.findAllByPedido(nota)

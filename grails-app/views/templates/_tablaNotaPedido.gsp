@@ -41,10 +41,10 @@
     </g:if>
 
     <div class="btn-group">
-        <g:link controller="notaDePedido" action="${linkBusqueda}" class="btn btn-sm btn-default btnSearch btnBuscar">
+        <g:link controller="notaPedido" action="${linkBusqueda}" class="btn btn-sm btn-default btnSearch btnBuscar">
             <i class="fa fa-search"></i> Buscar
         </g:link>
-        <g:link controller="notaDePedido" action="${linkBusqueda}" class="btn btn-sm btn-default btnSearch">
+        <g:link controller="notaPedido" action="${linkBusqueda}" class="btn btn-sm btn-default btnSearch">
             <i class="fa fa-close"></i> Borrar búsqueda
         </g:link>
     </div><!-- /input-group -->
@@ -63,7 +63,7 @@
             <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
             <g:sortableColumn property="de" title="Solicita" style="width: 150px;"/>
-            <g:sortableColumn property="tipoSolicitud" title="Tipo" style="width: 80px;"/>
+            <g:sortableColumn property="motivoSolicitud" title="Motivo" style="width: 80px;"/>
             <g:sortableColumn property="maquinaria" title="Maquinaria" style="width: 150px;"/>
             <g:sortableColumn property="item" title="Item"/>
             <g:sortableColumn property="estadoSolicitud" title="Estado" style="width: 150px;"/>
@@ -94,7 +94,7 @@
                     <td>${nota.numero}</td>
                     <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${nota.de}</td>
-                    <td>${nota.tipoSolicitud.nombre}</td>
+                    <td>${nota.motivoSolicitud}</td>
                     <td>${nota.maquinaria}</td>
                     <td>
                         ${nota.cantidad.toInteger()}${nota.unidad.codigo} ${nota.item}
@@ -114,7 +114,7 @@
                                 </a>
                             </g:if>
                             <g:if test="${revisar}">
-                                <g:link controller="notaDePedido" action="${revisar}" title="Revisar" id="${nota.id}"
+                                <g:link controller="notaPedido" action="${revisar}" title="Revisar" id="${nota.id}"
                                         class="btn btn-primary btn-sm">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>

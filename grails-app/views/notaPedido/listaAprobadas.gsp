@@ -33,7 +33,7 @@
                     var id = $(this).data("id");
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'dlgIngresoBodega_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'dlgIngresoBodega_ajax')}",
                         data    : {
                             id : id
                         },

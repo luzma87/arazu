@@ -18,7 +18,7 @@
                 </a>
             </div>
 
-            <div class="btn-group pull-right col-md-3">
+            <div class="btn-group pull-right col-md-3 col-sm-4">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">

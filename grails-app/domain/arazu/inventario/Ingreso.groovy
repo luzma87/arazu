@@ -3,7 +3,7 @@ package arazu.inventario
 import arazu.items.Item
 import arazu.parametros.Unidad
 import arazu.solicitudes.Firma
-import arazu.solicitudes.Pedido
+import arazu.solicitudes.NotaPedido
 
 /**
  *  Clase para conectar con la tabla 'ingr' de la base de datos
@@ -34,9 +34,9 @@ class Ingreso {
      */
     Double valor = 1
     /**
-     * Pedido que origina el ingreso
+     * NotaPedido que origina el ingreso
      */
-    Pedido pedido
+    NotaPedido pedido
     /**
      * Saldo del ingreso por cantidad
      */

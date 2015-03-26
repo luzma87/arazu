@@ -4,7 +4,7 @@ import arazu.alertas.Alerta
 import arazu.inventario.Bodega
 import arazu.parametros.EstadoSolicitud
 import arazu.proyectos.Proyecto
-import arazu.solicitudes.Pedido
+import arazu.solicitudes.NotaPedido
 
 class InicioController extends Shield {
 
@@ -13,10 +13,10 @@ class InicioController extends Shield {
         def estadoPa = EstadoSolicitud.findByCodigo("E02")
         def estadoAp = EstadoSolicitud.findByCodigo("A01")
         def estadoEj = EstadoSolicitud.findByCodigo("C01")
-        def pr = Pedido.findAllByEstadoSolicitud(estadoPr)
-        def pa = Pedido.findAllByEstadoSolicitud(estadoPa)
-        def aprobadas = Pedido.findAllByEstadoSolicitud(estadoAp)
-        def ejecutadas = Pedido.findAllByEstadoSolicitud(estadoEj)
+        def pr = NotaPedido.findAllByEstadoSolicitud(estadoPr)
+        def pa = NotaPedido.findAllByEstadoSolicitud(estadoPa)
+        def aprobadas = NotaPedido.findAllByEstadoSolicitud(estadoAp)
+        def ejecutadas = NotaPedido.findAllByEstadoSolicitud(estadoEj)
         def alertas = Alerta.findAllByRecibeAndFechaRecibidoIsNull(session.usuario)
         def bodegas = Bodega.findAllByActivo(1)
         def proyectos = Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())

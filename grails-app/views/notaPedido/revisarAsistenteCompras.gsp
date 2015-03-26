@@ -18,7 +18,7 @@
 
             <div class="btn-toolbar toolbar" style="margin-top: 10px">
                 <div class="btn-group">
-                    <g:link controller="notaDePedido" action="listaAsistenteCompras" class="btn btn-default">
+                    <g:link controller="notaPedido" action="listaAsistenteCompras" class="btn btn-default">
                         <i class="fa fa-list"></i> Notas de pedido
                     </g:link>
                     <g:if test="${cots.size() > 0}">
@@ -225,7 +225,7 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'aprobarAsistenteCompras_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'aprobarAsistenteCompras_ajax')}",
                         data    : {
                             id   : "${nota.id}",
                             auth : $("#auth").val(),
@@ -252,7 +252,7 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'negarAsistenteCompras_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'negarAsistenteCompras_ajax')}",
                         data    : {
                             id    : "${nota.id}",
                             auth  : $("#auth").val(),
@@ -277,7 +277,7 @@
                     openLoader();
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'bodegaAsistenteCompras_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'bodegaAsistenteCompras_ajax')}",
                         data    : $("#frmBodega").serialize() + "&id=${nota.id}",
                         success : function (msg) {
                             var parts = msg.split("*");
@@ -326,7 +326,7 @@
                 $("#btnAprobar").click(function () {
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'dlgAprobarAsistenteCompras_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'dlgAprobarAsistenteCompras_ajax')}",
                         data    : {
                             id : "${nota.id}"
                         },
@@ -362,7 +362,7 @@
                 $("#btnNegar").click(function () {
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'dlgNegar_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'dlgNegar_ajax')}",
                         data    : {
                             id : "${nota.id}"
                         },
@@ -398,7 +398,7 @@
                 $("#btnBodega").click(function () {
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'notaDePedido', action:'dlgBodega_ajax')}",
+                        url     : "${createLink(controller:'notaPedido', action:'dlgBodega_ajax')}",
                         data    : {
                             id : "${nota.id}"
                         },

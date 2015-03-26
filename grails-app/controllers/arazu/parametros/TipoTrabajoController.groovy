@@ -5,9 +5,9 @@ import arazu.seguridad.Shield
 
 
 /**
- * Controlador que muestra las pantallas de manejo de TipoSolicitud
+ * Controlador que muestra las pantallas de manejo de TipoTrabajo
  */
-class TipoSolicitudController extends Shield {
+class TipoTrabajoController extends Shield {
 
     static allowedMethods = [save_ajax: "POST", delete_ajax: "POST"]
 
@@ -27,18 +27,17 @@ class TipoSolicitudController extends Shield {
         }
         def list
         if (params.search) {
-            def c = TipoSolicitud.createCriteria()
+            def c = TipoTrabajo.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
 
                     ilike("codigo", "%" + params.search + "%")
-                    ilike("descripcion", "%" + params.search + "%")
                     ilike("nombre", "%" + params.search + "%")
                 }
             }
         } else {
-            list = TipoSolicitud.list(params)
+            list = TipoTrabajo.list(params)
         }
         if (!all && params.offset.toInteger() > 0 && list.size() == 0) {
             params.offset = params.offset.toInteger() - 1
@@ -51,9 +50,9 @@ class TipoSolicitudController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
-        def tipoSolicitudInstanceList = getList_funcion(params, false)
-        def tipoSolicitudInstanceCount = getList_funcion(params, true).size()
-        return [tipoSolicitudInstanceList: tipoSolicitudInstanceList, tipoSolicitudInstanceCount: tipoSolicitudInstanceCount]
+        def tipoTrabajoInstanceList = getList_funcion(params, false)
+        def tipoTrabajoInstanceCount = getList_funcion(params, true).size()
+        return [tipoTrabajoInstanceList: tipoTrabajoInstanceList, tipoTrabajoInstanceCount: tipoTrabajoInstanceCount]
     }
 
     /**
@@ -61,14 +60,14 @@ class TipoSolicitudController extends Shield {
      */
     def show_ajax() {
         if (params.id) {
-            def tipoSolicitudInstance = TipoSolicitud.get(params.id)
-            if (!tipoSolicitudInstance) {
-                render "ERROR*No se encontró TipoSolicitud."
+            def tipoTrabajoInstance = TipoTrabajo.get(params.id)
+            if (!tipoTrabajoInstance) {
+                render "ERROR*No se encontró TipoTrabajo."
                 return
             }
-            return [tipoSolicitudInstance: tipoSolicitudInstance]
+            return [tipoTrabajoInstance: tipoTrabajoInstance]
         } else {
-            render "ERROR*No se encontró TipoSolicitud."
+            render "ERROR*No se encontró TipoTrabajo."
         }
     } //show para cargar con ajax en un dialog
 
@@ -76,36 +75,36 @@ class TipoSolicitudController extends Shield {
      * Acción llamada con ajax que muestra un formaulario para crear o modificar un elemento
      */
     def form_ajax() {
-        def tipoSolicitudInstance = new TipoSolicitud()
+        def tipoTrabajoInstance = new TipoTrabajo()
         if (params.id) {
-            tipoSolicitudInstance = TipoSolicitud.get(params.id)
-            if (!tipoSolicitudInstance) {
-                render "ERROR*No se encontró TipoSolicitud."
+            tipoTrabajoInstance = TipoTrabajo.get(params.id)
+            if (!tipoTrabajoInstance) {
+                render "ERROR*No se encontró TipoTrabajo."
                 return
             }
         }
-        tipoSolicitudInstance.properties = params
-        return [tipoSolicitudInstance: tipoSolicitudInstance]
+        tipoTrabajoInstance.properties = params
+        return [tipoTrabajoInstance: tipoTrabajoInstance]
     } //form para cargar con ajax en un dialog
 
     /**
      * Acción llamada con ajax que guarda la información de un elemento
      */
     def save_ajax() {
-        def tipoSolicitudInstance = new TipoSolicitud()
+        def tipoTrabajoInstance = new TipoTrabajo()
         if (params.id) {
-            tipoSolicitudInstance = TipoSolicitud.get(params.id)
-            if (!tipoSolicitudInstance) {
-                render "ERROR*No se encontró TipoSolicitud."
+            tipoTrabajoInstance = TipoTrabajo.get(params.id)
+            if (!tipoTrabajoInstance) {
+                render "ERROR*No se encontró TipoTrabajo."
                 return
             }
         }
-        tipoSolicitudInstance.properties = params
-        if (!tipoSolicitudInstance.save(flush: true)) {
-            render "ERROR*Ha ocurrido un error al guardar TipoSolicitud: " + renderErrors(bean: tipoSolicitudInstance)
+        tipoTrabajoInstance.properties = params
+        if (!tipoTrabajoInstance.save(flush: true)) {
+            render "ERROR*Ha ocurrido un error al guardar TipoTrabajo: " + renderErrors(bean: tipoTrabajoInstance)
             return
         }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de TipoSolicitud exitosa."
+        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de TipoTrabajo exitosa."
         return
     } //save para grabar desde ajax
 
@@ -114,21 +113,21 @@ class TipoSolicitudController extends Shield {
      */
     def delete_ajax() {
         if (params.id) {
-            def tipoSolicitudInstance = TipoSolicitud.get(params.id)
-            if (!tipoSolicitudInstance) {
-                render "ERROR*No se encontró TipoSolicitud."
+            def tipoTrabajoInstance = TipoTrabajo.get(params.id)
+            if (!tipoTrabajoInstance) {
+                render "ERROR*No se encontró TipoTrabajo."
                 return
             }
             try {
-                tipoSolicitudInstance.delete(flush: true)
-                render "SUCCESS*Eliminación de TipoSolicitud exitosa."
+                tipoTrabajoInstance.delete(flush: true)
+                render "SUCCESS*Eliminación de TipoTrabajo exitosa."
                 return
             } catch (DataIntegrityViolationException e) {
-                render "ERROR*Ha ocurrido un error al eliminar TipoSolicitud"
+                render "ERROR*Ha ocurrido un error al eliminar TipoTrabajo"
                 return
             }
         } else {
-            render "ERROR*No se encontró TipoSolicitud."
+            render "ERROR*No se encontró TipoTrabajo."
             return
         }
     } //delete para eliminar via ajax
@@ -140,16 +139,16 @@ class TipoSolicitudController extends Shield {
     def validar_unique_codigo_ajax() {
         params.codigo = params.codigo.toString().trim()
         if (params.id) {
-            def obj = TipoSolicitud.get(params.id)
+            def obj = TipoTrabajo.get(params.id)
             if (obj.codigo.toLowerCase() == params.codigo.toLowerCase()) {
                 render true
                 return
             } else {
-                render TipoSolicitud.countByCodigoIlike(params.codigo) == 0
+                render TipoTrabajo.countByCodigoIlike(params.codigo) == 0
                 return
             }
         } else {
-            render TipoSolicitud.countByCodigoIlike(params.codigo) == 0
+            render TipoTrabajo.countByCodigoIlike(params.codigo) == 0
             return
         }
     }

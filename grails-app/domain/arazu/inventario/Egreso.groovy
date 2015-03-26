@@ -2,7 +2,7 @@ package arazu.inventario
 
 import arazu.seguridad.Persona
 import arazu.solicitudes.Firma
-import arazu.solicitudes.Pedido
+import arazu.solicitudes.NotaPedido
 
 /**
  *  Clase para conectar con la tabla 'egrs' de la base de datos
@@ -37,9 +37,9 @@ class Egreso {
      */
     Transferencia transferencia
     /**
-     * Pedido para el cual se hace el egreso
+     * NotaPedido para el cual se hace el egreso
      */
-    Pedido pedido
+    NotaPedido pedido
     /**
      * Firma del usuario que realizó el egreso
      */

@@ -63,6 +63,8 @@ grails.project.dependency.resolution = {
         compile ':cache:1.1.8'
         compile ":asset-pipeline:1.9.9"
 
+        compile ":mysql-connectorj:5.1.22.1"
+
         compile ":mail:1.0.7"
         compile ":qr-code:0.1.4"
 
