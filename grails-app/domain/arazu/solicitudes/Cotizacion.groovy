@@ -52,7 +52,7 @@ class Cotizacion {
         sort fecha: "desc"
         columns {
             id column: 'ctzn__id'
-            pedido column: 'pddo__id'
+            pedido column: 'ntpd__id'
             fecha column: 'ctznfcha'
             proveedor column: 'ctznprvd'
             valor column: 'ctznvlor'

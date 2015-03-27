@@ -38,7 +38,7 @@
 
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <g:form class="frmNota" action="saveSolicitud">
+        <g:form class="frmNota" action="saveSolicitud_ignore">
             <elm:container tipo="horizontal" titulo="Nueva nota de pedido">
                 <input type="hidden" name="data" id="data">
 

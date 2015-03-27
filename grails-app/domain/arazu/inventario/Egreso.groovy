@@ -67,7 +67,7 @@ class Egreso {
             responsable column: 'egrsresp'
             cantidad column: 'egrscant'
             transferencia column: 'trsf__id'
-            pedido column: 'pddo__id'
+            pedido column: 'ntpd__id'
             firma column: 'frma__id'
         }
     }

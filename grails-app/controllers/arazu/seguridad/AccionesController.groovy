@@ -170,11 +170,13 @@ class AccionesController extends Shield {
         def accionesDelete = Accion.list().id
 
         grailsApplication.controllerClasses.each { ct ->
+//            println "intenta con controller " + ct.getName()
             if (!ignoreControladores.contains(ct.getName())) {
                 def t = []
                 ct.getURIs().each {
                     def s = it.split("/")
                     if (s.size() > 2) {
+//                        println "\tintenta con " + s
                         if (!t.contains(s[2])) {
                             if (!ignoreAcciones.contains(s[2])) {
                                 if (!containsIlike_funcion(ignoreAccionesLike, s[2])) {
@@ -222,7 +224,7 @@ class AccionesController extends Shield {
                                         }
                                         t.add(s.getAt(2))
                                     } else {
-//                                println "no sale por el service "+s[2]+" "+it
+//                                        println "no sale por el service " + s[2] + " " + it
                                     }
                                 } else {
 //                                    println s[2] + " no sale por el ignoreAccionesLike " + ignoreAccionesLike
@@ -231,10 +233,10 @@ class AccionesController extends Shield {
 //                                println s[2] + " no sale por el ignoreAcciones " + ignoreAcciones
                             }
                         } else {
-                            //println "no sale por el contains t  "+it+"   "+t
+//                            println "no sale por el contains t  " + it + "   " + t
                         }
                     } else {
-                        // println "no sele por el size "+it
+//                        println "no sele por el size " + it
                     }
                 }
                 accs.put(ct.getName(), t)
@@ -252,7 +254,7 @@ class AccionesController extends Shield {
                 permisos.id.each { pid ->
                     def p = Permiso.get(pid)
                     try {
-                        println "eliminando permiso " + pid
+                        println "eliminando permiso " + pid + "   (" + p.accion + " - " + p.perfil + ")"
                         p.delete(flush: true)
                         permisosEliminados++
                     } catch (e) {
@@ -263,7 +265,7 @@ class AccionesController extends Shield {
             }
             def a = Accion.get(aId)
             try {
-                println "eliminando accion " + aId
+                println "eliminando accion " + aId + "      (" + a.control.nombre + "    " + a.nombre + ")"
                 a.delete(flush: true)
                 accionesEliminadas++
             } catch (e) {
@@ -274,7 +276,7 @@ class AccionesController extends Shield {
         controladoresDelete.each { cId ->
             def c = Controlador.get(cId)
             try {
-                println "eliminando controlador " + cId
+                println "eliminando controlador " + cId + "     (" + c.nombre + ")"
                 c.delete(flush: true)
                 controladoresEliminados++
             } catch (e) {

@@ -200,6 +200,15 @@ class ItemController extends Shield {
      * Acción que muestra la administración de tipos de items, items y bodegas en forma de árbol
      */
     def arbolAdmin() {
+        params.desecho = 0
+        return [arbol: makeTree_funcion(params), params: params]
+    }
+
+    /**
+     * Acción que muestra los tipos de items, items de desecho y bodegas en forma de árbol
+     */
+    def arbolItemsDesecho() {
+        params.desecho = 1
         return [arbol: makeTree_funcion(params), params: params]
     }
 
@@ -233,16 +242,22 @@ class ItemController extends Shield {
                 hijos = Item.findAllByTipo(padre)
                 tipo = "it"
             } else if (padre instanceof Item) {
-                def res = Ingreso.findAllByItemAndSaldoGreaterThan(padre, 0)
+//                def res = Ingreso.findAllByItemAndSaldoGreaterThan(padre, 0)
+                def res = Ingreso.withCriteria {
+                    eq("item", padre)
+                    gt("saldo", 0.toDouble())
+                    eq("desecho", params.desecho.toInteger())
+                }
                 hijos = [:]
                 res.each { ing ->
-                    def key = ing.bodega.id + "-" + ing.item.id + "-" + ing.unidad.id
+                    def key = ing.bodega.id + "-" + ing.item.id + "-" + ing.unidad.id + "-" + ing.desecho
                     if (!hijos[key]) {
                         hijos[key] = [:]
                         hijos[key].bodega = ing.bodega
                         hijos[key].item = ing.item
                         hijos[key].unidad = ing.unidad
                         hijos[key].saldo = ing.saldo
+                        hijos[key].desecho = ing.desecho
                     } else {
                         hijos[key].saldo += ing.saldo
                     }
@@ -264,14 +279,11 @@ class ItemController extends Shield {
                 clase = "jstree-open"
                 rel = "item"
                 label = hijo.descripcion
-                if (hijo.desecho == 1) {
-                    label += " (Desecho)"
-                }
             } else if (tipo == "bd") {
                 id = "liBd_" + hijo.key
                 clase = ""
                 rel = "bodega"
-                label = hijo.value.bodega.descripcion + " (${hijo.value.saldo.toInteger()} ${hijo.value.unidad.codigo})"
+                label = hijo.value.bodega.descripcion + " (${hijo.value.saldo.toInteger()} ${hijo.value.unidad.codigo} ${hijo.value.desecho == 1 ? '- desecho' : ''})"
             }
 
             arbol += "<li id='${id}' data-level='0' class='${clase}' data-jstree='{\"type\":\"${rel}\"}'>"

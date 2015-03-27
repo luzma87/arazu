@@ -271,6 +271,15 @@
                             location.href = "${createLink(controller: 'inventario', action:'inventario')}/" + id;
                         }
                     },
+                    desechos : {
+                        label            : "Inventario de desechos",
+                        icon             : " fa fa-shopping-cart",
+                        separator_bedore : true,
+                        action           : function ($element) {
+                            var id = $element.data("id");
+                            location.href = "${createLink(controller: 'inventario', action:'inventario')}/" + id;
+                        }
+                    },
                     ingreso    : {
                         label  : "Nuevo ingreso a bodega",
                         icon   : "fa fa-cart-arrow-down",

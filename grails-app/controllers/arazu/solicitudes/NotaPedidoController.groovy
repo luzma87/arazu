@@ -161,7 +161,7 @@ class NotaPedidoController extends Shield {
     /**
      * Acción que guarda la nota de pedido, genera la firma del solicitante y envía una alerta y un email al jefe destinatario
      */
-    def saveSolicitud() {
+    def saveSolicitud_ignore() {
 //        println "Save solicitud " + params
 
         def now = new Date()
@@ -182,7 +182,7 @@ class NotaPedidoController extends Shield {
         firma.fecha = now
 //        firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
         firma.pdfControlador = "reportesInventario"
-        firma.pdfAccion = "notaDePedido"
+        firma.pdfAccion = "notaPedido"
 //        firma.pdfId = solicitud.id
         firma.concepto = ""
         firma.pdfId = 0
@@ -222,7 +222,7 @@ class NotaPedidoController extends Shield {
                     def mens = usu.nombre + " " + usu.apellido + " ha realizado la nota de pedido núm. ${solicitud.numero}"
                     def paramsAlerta = [
                             mensaje    : mens,
-                            controlador: "notaDePedido",
+                            controlador: "notaPedido",
                             accion     : "listaJefatura"
                     ]
                     def paramsMail = [
@@ -745,7 +745,7 @@ class NotaPedidoController extends Shield {
     /**
      * Acción que guarda una cotización y vuelve a cargar la pantalla de revisión de asistente de compras
      */
-    def saveCotizacion() {
+    def saveCotizacion_ignore() {
         println "save cotizacion " + params
         def cotizacion
         if (params.id) {
@@ -1209,7 +1209,7 @@ class NotaPedidoController extends Shield {
                         firma.fecha = now
                         firma.concepto = "${concepto} de Nota de pedido núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                         firma.pdfControlador = "reportesInventario"
-                        firma.pdfAccion = "notaDePedido"
+                        firma.pdfAccion = "notaPedido"
                         firma.pdfId = pedido.id
 
                         if (!firma.save(flush: true)) {
@@ -1244,7 +1244,7 @@ class NotaPedidoController extends Shield {
                                 def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
-                                        controlador: "notaDePedido",
+                                        controlador: "notaPedido",
                                         accion     : accionAlerta
                                 ]
                                 def paramsMail = [

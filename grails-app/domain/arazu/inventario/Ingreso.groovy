@@ -53,6 +53,10 @@ class Ingreso {
      * Define si el ingreso es desecho o no (1: es desecho, 0: es nuevo)
      */
     Integer desecho = 0
+    /**
+     * Egreso que generó el ingreso del desecho, si no se hizo un ingreso de desecho este valor es != null pero desecho = 1
+     */
+    Egreso egreso
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -75,11 +79,12 @@ class Ingreso {
             fecha column: 'ingrfcha'
             cantidad column: 'ingrcant'
             valor column: 'ingrvlor'
-            pedido column: 'pddo__id'
+            pedido column: 'n__id'
             saldo column: 'ingrsldo'
             factura column: 'ingrfact'
             ingresa column: 'frma__id'
             desecho column: 'ingrdsch'
+            egreso column: 'egrs__id'
         }
     }
 
@@ -94,6 +99,7 @@ class Ingreso {
         pedido(nullable: true, blank: true)
         factura(nullable: true, blank: true, size: 1..50)
         ingresa nullable: true
+        egreso nullable: true
     }
 
     def getEgresos() {

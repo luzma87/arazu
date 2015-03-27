@@ -179,9 +179,9 @@ class BodegaController extends Shield {
             eq("item", item)
             eq("unidad", unidad)
             gt("saldo", 0.toDouble())
-            eq("desecho", 0)
+            eq("desecho", params.desecho.toInteger())
         }
-        return [ingresos: ingresos, bodega: bodega, item: item, unidad: unidad]
+        return [ingresos: ingresos, bodega: bodega, item: item, unidad: unidad, desecho: params.desecho]
     }
 
     /**

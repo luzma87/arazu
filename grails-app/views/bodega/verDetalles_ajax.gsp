@@ -2,6 +2,9 @@
     Ingresos en <strong>${unidad.descripcion}</strong>
     de <strong>${item.descripcion}</strong>
     en la bodega <strong>${bodega.descripcion}</strong>
+    <g:if test="${desecho.toString() == '1'}">
+        (<strong>DESECHOS</strong>)
+    </g:if>
 </div>
 
 <table class="table table-striped table-hover table-bordered">

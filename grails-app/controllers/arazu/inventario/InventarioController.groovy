@@ -397,6 +397,7 @@ class InventarioController extends Shield {
                             ingresoDesecho.saldo = eg.cantidad
                             ingresoDesecho.ingresa = firmaDesecho
                             ingresoDesecho.desecho = 1
+                            ingresoDesecho.egreso = eg
                             if (ingresoDesecho.save(flush: true)) {
                                 firmaDesecho.concepto = "Ingreso de desecho de ${eg.cantidad}${eg.ingreso.unidad.codigo} ${eg.ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
                                 firmaDesecho.pdfId = ingresoDesecho.id
@@ -421,7 +422,7 @@ class InventarioController extends Shield {
             def msgGrnt = ""
 
             def baseUri = request.scheme + "://" + request.serverName + ":" + request.serverPort
-            def mens = usu.nombre + " " + usu.apellido + " ha realizado un egreso de bodega de " + msgGerentes+" sin un ingreso de desecho"
+            def mens = usu.nombre + " " + usu.apellido + " ha realizado un egreso de bodega de " + msgGerentes + " sin un ingreso de desecho"
             def paramsAlerta = [
                     mensaje    : mens,
                     controlador: "inventario",
@@ -530,6 +531,7 @@ class InventarioController extends Shield {
                     ingresoDesecho.saldo = egreso.cantidad
                     ingresoDesecho.ingresa = firmaDesecho
                     ingresoDesecho.desecho = 1
+                    ingresoDesecho.egreso = egreso
                     if (ingresoDesecho.save(flush: true)) {
                         firmaDesecho.concepto = "Ingreso de desecho de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
                         firmaDesecho.pdfId = ingresoDesecho.id
@@ -666,6 +668,7 @@ class InventarioController extends Shield {
     }
 
     def listaEgresosSinDesecho() {
+
 
     }
 }

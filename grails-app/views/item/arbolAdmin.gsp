@@ -75,6 +75,7 @@
             ${raw(arbol)}
         </div>
 
+
         <script type="text/javascript">
             var searchRes = [];
             var posSearchShow = 0;
@@ -145,10 +146,10 @@
                     icon             : "fa fa-list-ol",
                     separator_before : true,
                     action           : function () {
-                        //bodega-item-unidad
+                        //bodega-item-unidad-desecho
                         var parts = nodeId.split("-");
-                        if (parts.length == 3) {
-                            verDetallesBodega(parts[0], parts[1], parts[2]);
+                        if (parts.length == 4) {
+                            verDetallesBodega(parts[0], parts[1], parts[2], parts[3]);
                         }
                     }
                 };
@@ -181,7 +182,7 @@
                 scrollToNode($scrollTo);
             }
             function scrollToSearchRes() {
-                var $scrollTo = $(searchRes[posSearchShow]).parents("li").first();
+                var $scrollTo = $(searchRes[posSearchShow]);
                 $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + searchRes.length);
                 scrollToNode($scrollTo);
             }
@@ -480,15 +481,16 @@
                 });
             }
 
-            function verDetallesBodega(bodega, item, unidad) {
+            function verDetallesBodega(bodega, item, unidad, desecho) {
                 openLoader();
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'bodega', action:'verDetalles_ajax')}",
                     data    : {
-                        bodega : bodega,
-                        item   : item,
-                        unidad : unidad
+                        bodega  : bodega,
+                        item    : item,
+                        unidad  : unidad,
+                        desecho : desecho
                     },
                     success : function (msg) {
                         closeLoader();
@@ -512,9 +514,14 @@
 
                 $treeContainer.on("loaded.jstree", function () {
                     $("#loading").hide();
-                    $("#tree").removeClass("hidden");
-                }).on("select_node.jstree", function (node, selected, event) {
-//                    $('#tree').jstree('toggle_node', selected.selected[0]);
+                    $treeContainer.removeClass("hidden");
+                }).on("search.jstree", function (event, res) {
+                    searchRes = res.nodes;
+                    var cantRes = searchRes.length;
+                    posSearchShow = 0;
+                    $("#divSearchRes").removeClass("hidden");
+                    $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + cantRes);
+                    scrollToSearchRes();
                 }).jstree({
                     plugins     : ["types", "state", "contextmenu", "search"],
                     core        : {
@@ -534,26 +541,7 @@
                         key : "itemsAdmin"
                     },
                     search      : {
-                        fuzzy             : false,
-                        show_only_matches : false,
-                        ajax              : {
-                            url     : "${createLink(action:'arbolSearch_ajax')}",
-                            success : function (msg) {
-                                var json = $.parseJSON(msg);
-                                $.each(json, function (i, obj) {
-                                    $('#tree').jstree("open_node", obj);
-                                });
-                                setTimeout(function () {
-                                    searchRes = $(".jstree-search");
-                                    var cantRes = searchRes.length;
-                                    posSearchShow = 0;
-                                    $("#divSearchRes").removeClass("hidden");
-                                    $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + cantRes);
-                                    scrollToSearchRes();
-                                }, 300);
-
-                            }
-                        }
+                        fuzzy : false
                     },
                     types       : {
                         root     : {

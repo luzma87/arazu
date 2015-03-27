@@ -28,7 +28,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
                     <span class="input-group-btn">
-                        <g:link controller="motivosolicitud" action="list" class="btn btn-default btn-search">
+                        <g:link controller="motivoSolicitud" action="list" class="btn btn-default btn-search">
                             <i class="fa fa-search"></i>&nbsp;
                         </g:link>
                     </span>
@@ -128,7 +128,7 @@
                                 openLoader("Eliminando MotivoSolicitud");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : '${createLink(controller:'motivosolicitud', action:'delete_ajax')}',
+                                    url     : '${createLink(controller:'motivoSolicitud', action:'delete_ajax')}',
                                     data    : {
                                         id : itemId
                                     },
@@ -158,7 +158,7 @@
                 var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'motivosolicitud', action:'form_ajax')}",
+                    url     : "${createLink(controller:'motivoSolicitud', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
@@ -210,7 +210,7 @@
                                 var id = $element.data("id");
                                 $.ajax({
                                     type    : "POST",
-                                    url     : "${createLink(controller:'motivosolicitud', action:'show_ajax')}",
+                                    url     : "${createLink(controller:'motivoSolicitud', action:'show_ajax')}",
                                     data    : {
                                         id : id
                                     },

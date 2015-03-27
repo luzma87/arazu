@@ -41,7 +41,7 @@ class BodegaPedido {
         columns {
             id column: 'bdpd__id'
             bodega column: 'bdga__id'
-            pedido column: 'pddo__id'
+            pedido column: 'ntpd__id'
             cantidad column: 'bdpdcntd'
             entregado column: 'bdpdentr'
         }

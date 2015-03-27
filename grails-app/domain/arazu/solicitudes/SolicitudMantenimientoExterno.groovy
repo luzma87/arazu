@@ -1,27 +1,20 @@
 package arazu.solicitudes
 
-import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
-import arazu.parametros.MotivoSolicitud
-import arazu.parametros.Unidad
 import arazu.proyectos.Proyecto
 import arazu.seguridad.Persona
 
 /**
- * Clase para conectar con la tabla 'ntpd' de la base de datos
+ * Clase para conectar con la tabla 'smex' de la base de datos
  */
-class NotaPedido {
-    /**
-     * Motivo de la solicitud
-     */
-    MotivoSolicitud motivoSolicitud
+class SolicitudMantenimientoExterno {
     /**
      * Estado del pedido
      */
     EstadoSolicitud estadoSolicitud
     /**
-     * CÃ³digo del pedido
+     * Código del pedido
      */
     String codigo
     /**
@@ -33,10 +26,6 @@ class NotaPedido {
      */
     Persona de
     /**
-     * Persona que recibe el pedido: jefe
-     */
-    Persona para
-    /**
      * Persona que recibe el pedido: jefe de compras
      */
     Persona paraJC
@@ -45,7 +34,7 @@ class NotaPedido {
      */
     Persona paraAC
     /**
-     * Persona que recibe el pedido: jefe o gerente para aprobaciÃ³n final
+     * Persona que recibe el pedido: jefe o gerente para aprobación final
      */
     Persona paraAF
     /**
@@ -57,37 +46,17 @@ class NotaPedido {
      */
     Maquinaria maquinaria
     /**
-     * Cantidad del item que se requiere
-     */
-    Double cantidad
-    /**
-     * Cantidad aprobada
-     */
-    Double cantidadAprobada = 0
-    /**
-     * Unidad en la cual se hace el pedido
-     */
-    Unidad unidad
-    /**
-     * Item requerido
-     */
-    Item item
-    /**
      * Fecha en la que fue aprobado el pedido
      */
     Date aprobacion
     /**
-     * NÃºmero de solicitud
+     * Número de solicitud
      */
     int numero = 0
     /**
      * Firma del que pide
      */
     Firma firmaSolicita
-    /**
-     * Firma del jefe
-     */
-    Firma firmaJefe
     /**
      * Firma del jefe de compras
      */
@@ -97,7 +66,7 @@ class NotaPedido {
      */
     Firma firmaAsistenteCompras
     /**
-     * Firma del que aprueba (jefe si <100, gerente si >=100)
+     * Firma del que aprueba (jefe si <200, gerente si >=200)
      */
     Firma firmaAprueba
     /**
@@ -105,17 +74,25 @@ class NotaPedido {
      */
     Firma firmaNiega
     /**
-     * Firma del que notifica q existe en bodega
-     */
-    Firma firmaBodega
-    /**
      * Observaciones para guardar al momento de cambiar de estado el pedido
      */
     String observaciones
     /**
-     * Prioridad del pedido (asignada al momento de aprobaciÃ³n final por el jefe o gerente)
+     * Localización
      */
-    String prioridad
+    String localizacion
+    /**
+     * Horómetro
+     */
+    Double horometro
+    /**
+     * Kilometraje
+     */
+    Double kilometraje
+    /**
+     * Detalles del trabajo a realizar
+     */
+    String detalles
 
     /**
      * Define las relaciones uno a varios
@@ -130,40 +107,36 @@ class NotaPedido {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'ntpd'
+        table 'smex'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
         sort fecha: "desc"
         columns {
-            id column: 'ntpd__id'
-            motivoSolicitud column: 'mtsl__id'
+            id column: 'smex__id'
             estadoSolicitud column: 'essl__id'
-            codigo column: 'ntpdcdgo'
-            fecha column: 'ntpdfcha'
-            de column: 'ntpdprde'
-            para column: 'ntpdprpr'
-            paraJC column: 'ntpdprjc'
-            paraAC column: 'ntpdprac'
-            paraAF column: 'ntpdpraf'
+            codigo column: 'smexcdgo'
+            fecha column: 'smexfcha'
+            de column: 'smexprde'
+            paraJC column: 'smexprjc'
+            paraAC column: 'smexprac'
+            paraAF column: 'smexpraf'
             proyecto column: 'proy__id'
             maquinaria column: 'maqn__id'
-            cantidad column: 'ntpdcntd'
-            cantidadAprobada column: 'ntpdcnap'
-            unidad column: 'undd__id'
-            item column: 'item__id'
-            aprobacion column: 'ntpdfcap'
-            numero column: 'ntpdnmro'
-            firmaSolicita column: 'ntpdfrsl'
-            firmaJefe column: 'ntpdfrjf'
-            firmaJefeCompras column: 'ntpdfrjc'
-            firmaAsistenteCompras column: 'ntpdfrac'
-            firmaAprueba column: 'ntpdfrap'
-            firmaNiega column: 'ntpdfrng'
-            firmaBodega column: 'ntpdfrbd'
-            observaciones column: 'ntpdobsv'
+            aprobacion column: 'smexfcap'
+            numero column: 'smexnmro'
+            firmaSolicita column: 'smexfrsl'
+            firmaJefeCompras column: 'smexfrjc'
+            firmaAsistenteCompras column: 'smexfrac'
+            firmaAprueba column: 'smexfrap'
+            firmaNiega column: 'smexfrng'
+            observaciones column: 'smexobsv'
             observaciones type: "text"
-            prioridad column: 'ntpdprrd'
+            localizacion column: 'smexlclz'
+            horometro column: 'smexhrmt'
+            kilometraje column: 'smexklmt'
+            detalles column: 'smexdtll'
+            detalles type: 'text'
         }
     }
 
@@ -182,15 +155,11 @@ class NotaPedido {
         paraAF nullable: true
 
         firmaSolicita nullable: true
-        firmaJefe nullable: true
         firmaJefeCompras nullable: true
         firmaAsistenteCompras nullable: true
         firmaAprueba nullable: true
         firmaNiega nullable: true
-        firmaBodega nullable: true
         observaciones blank: true, nullable: true
-
-        prioridad nullable: true
     }
 
     def getObservacionesFormat() {
@@ -207,6 +176,6 @@ class NotaPedido {
     }
 
     String toString() {
-        return "Nota de pedido nÃºm. ${this.numero}"
+        return "Solicitud de mantenimiento externo núm. ${this.numero}"
     }
 }

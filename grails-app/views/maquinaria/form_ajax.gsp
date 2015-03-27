@@ -46,7 +46,7 @@
                                   claseLabel2="col-sm-4" label2="Año" claseField2="col-sm-8">
                 <g:textField name="marca" maxlength="50" class="form-control " value="${maquinariaInstance?.marca}"/>
                 <hr/>
-                <g:select name="anio" from="${anios}" class="form-control" value="${maquinariaInstance.anio ?: current}"/>
+                <g:select name="anio" from="${anios}" class="form-control" data-size="6" value="${maquinariaInstance.anio ?: current}"/>
             </elm:fieldRapidoDoble>
 
             <elm:fieldRapidoDoble claseLabel1="col-sm-4" label1="Placa" claseField1="col-sm-8"

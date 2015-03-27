@@ -30,7 +30,7 @@ class DetalleTrabajo {
         sort nombre: "asc"
         columns {
             id column: 'dttr__id'
-            pedido column: 'pddo__id'
+            pedido column: 'ntpd__id'
             tipoTrabajo column: 'tptr__id'
         }
     }

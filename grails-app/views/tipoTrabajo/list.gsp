@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.parametros.TipoTrabajo" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,25 @@
         <meta name="layout" content="main">
         <title>Lista de TipoTrabajo</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
+            <div class="btn-group">
+                <g:link controller="inicio" action="parametros" class="btn btn-default">
+                    <i class="fa fa-cogs"></i> Parámetros
+                </g:link>
+            </div>
+
             <div class="btn-group pull-right col-md-3 col-sm-4">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -32,29 +39,29 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    
-                    <g:sortableColumn property="codigo" title="Codigo" />
-                    
-                    <g:sortableColumn property="nombre" title="Nombre" />
-                    
+
+                    <g:sortableColumn property="codigo" title="Codigo"/>
+
+                    <g:sortableColumn property="nombre" title="Nombre"/>
+
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${tipoTrabajoInstanceCount > 0}">
                     <g:each in="${tipoTrabajoInstanceList}" status="i" var="tipoTrabajoInstance">
                         <tr data-id="${tipoTrabajoInstance.id}">
-                            
+
                             <td>${tipoTrabajoInstance.codigo}</td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoTrabajoInstance}" field="nombre"/></elm:textoBusqueda></td>
-                            
+
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="2">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -83,7 +90,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -93,14 +100,14 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteTipoTrabajo(itemId) {
                 bootbox.dialog({
@@ -129,14 +136,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -148,16 +155,16 @@
             }
             function createEditTipoTrabajo(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'tipoTrabajo', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditTipoTrabajo",
-                            title   : title + " TipoTrabajo",
-                            
+                            id    : "dlgCreateEditTipoTrabajo",
+                            title : title + " TipoTrabajo",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -185,7 +192,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditTipoTrabajo();
                     return false;
                 });
@@ -209,8 +216,8 @@
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver TipoTrabajo",
-                                            
+                                            title : "Ver TipoTrabajo",
+
                                             message : msg,
                                             buttons : {
                                                 ok : {
