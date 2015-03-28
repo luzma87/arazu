@@ -86,10 +86,39 @@
         </elm:container>
 
         <script type="text/javascript">
+
+            function submitEgreso(id) {
+                var $frm = $("#frmEgreso");
+                if ($frm.valid()) {
+                    openLoader();
+                    var data = $frm.serialize() + "&id=" + id;
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'inventario', action:'egreso_ajax')}",
+                        data    : data,
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            if (parts[0] == "SUCCESS") {
+                                setTimeout(function () {
+                                    location.reload(true);
+                                }, 1000);
+                            } else {
+                                closeLoader();
+                            }
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "error");
+                            closeLoader();
+                        }
+                    });
+                }
+            }
+
             $(function () {
                 $(".btnEg").click(function () {
-                    openLoader();
                     var id = $(this).data("id");
+                    openLoader();
                     $.ajax({
                         type    : "POST",
                         url     : "${createLink(controller:'inventario', action:'dlgEgreso_ajax')}",
@@ -107,28 +136,7 @@
                                         label     : "<i class='fa fa-check'></i> Guardar",
                                         className : "btn-success",
                                         callback  : function () {
-                                            openLoader();
-                                            var data = $("#frmEgreso").serialize() + "&id=" + id;
-                                            $.ajax({
-                                                type    : "POST",
-                                                url     : "${createLink(controller:'inventario', action:'egreso_ajax')}",
-                                                data    : data,
-                                                success : function (msg) {
-                                                    var parts = msg.split("*");
-                                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                                    if (parts[0] == "SUCCESS") {
-                                                        setTimeout(function () {
-                                                            location.reload(true);
-                                                        }, 1000);
-                                                    } else {
-                                                        closeLoader();
-                                                    }
-                                                },
-                                                error   : function () {
-                                                    log("Ha ocurrido un error interno", "error");
-                                                    closeLoader();
-                                                }
-                                            });
+                                            submitEgreso(id);
                                             return false;
                                         } //callback
                                     },
@@ -145,6 +153,7 @@
                             }, 500);
                         } //success
                     }); //ajax
+                    return false;
                 });
             });
         </script>

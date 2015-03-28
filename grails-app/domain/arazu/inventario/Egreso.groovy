@@ -44,6 +44,10 @@ class Egreso {
      * Firma del usuario que realizó el egreso
      */
     Firma firma
+    /**
+     * Ingreso de desecho generado
+     */
+    Ingreso ingresoDesecho
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -69,6 +73,7 @@ class Egreso {
             transferencia column: 'trsf__id'
             pedido column: 'ntpd__id'
             firma column: 'frma__id'
+            ingresoDesecho column: 'ingrdsch'
         }
     }
 
@@ -84,5 +89,6 @@ class Egreso {
         transferencia nullable: true
         pedido nullable: true
         firma nullable: true
+        ingresoDesecho nullable: true
     }
 }

@@ -164,6 +164,14 @@
                         <g:textArea name="detalles" class="form-control" style="height: 200px;"/>
                     </div>
                 </div>
+
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-md-1">
+                        <a href="#" class="btn btn-primary" id="guardar">
+                            <i class="fa fa-paper-plane-o"></i> Enviar
+                        </a>
+                    </div>
+                </div>
             </elm:container>
         </g:form>
 

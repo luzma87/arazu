@@ -156,7 +156,11 @@
 </g:if>
 
 <g:if test="${existencias.size() > 0}">
-    <table class="table table-striped table-hover table-bordered" style="margin-top: 10px">
+    <div class="alert alert-warning">
+        <strong>La nota de pedido está disponible en la(s) siguiente(s) bodega(s)</strong>
+    </div>
+
+    <table class="table table-striped table-hover table-bordered" style="margin-top: 10px; width:50%;">
         <thead>
             <tr>
                 <th>Bodega</th>

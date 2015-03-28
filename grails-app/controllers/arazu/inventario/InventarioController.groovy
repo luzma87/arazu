@@ -282,11 +282,11 @@ class InventarioController extends Shield {
                 ingreso.pedido = pedido
 
                 ingreso.ingresa = firma
-                ingreso.calcularSaldo()
                 if (!ingreso.save(flush: true)) {
                     println "Error al firmar el ingreso: " + ingreso.errors
                     render "ERROR*Ha ocurrido un error al firmar el ingreso"
                 } else {
+                    ingreso.calcularSaldo()
 
                     firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
                     firma.pdfId = ingreso.id
@@ -402,6 +402,8 @@ class InventarioController extends Shield {
                                 firmaDesecho.concepto = "Ingreso de desecho de ${eg.cantidad}${eg.ingreso.unidad.codigo} ${eg.ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
                                 firmaDesecho.pdfId = ingresoDesecho.id
                                 firmaDesecho.save(flush: true)
+                                eg.ingresoDesecho = ingresoDesecho
+                                eg.save(flush: true)
                             }
                         } else {
                             render "ERROR*" + renderErrors(bean: firmaDesecho)
@@ -465,9 +467,6 @@ class InventarioController extends Shield {
      */
     def egresoBodega_ajax() {
         def usu = session.usuario
-//        println "EGRESO PARAMS " + params
-//        EGRESO PARAMS [id:2, cantidad:4, observaciones:no tiene, persona:1, action:egresoBodega_ajax, format:null, controller:inventario]
-//        EGRESO PARAMS [id:2, cantidad:4, desecho:ok, observaciones:todo ok, persona:1, action:egresoBodega_ajax, format:null, controller:inventario]
         def ingreso = Ingreso.get(params.id)
         def responsable = Persona.get(params.persona)
         def cant = params.cantidad.toDouble()
@@ -536,6 +535,9 @@ class InventarioController extends Shield {
                         firmaDesecho.concepto = "Ingreso de desecho de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
                         firmaDesecho.pdfId = ingresoDesecho.id
                         firmaDesecho.save(flush: true)
+
+                        egreso.ingresoDesecho = ingresoDesecho
+                        egreso.save(flush: true)
                     }
                 } else {
                     render "ERROR*" + renderErrors(bean: firmaDesecho)
@@ -668,7 +670,7 @@ class InventarioController extends Shield {
     }
 
     def listaEgresosSinDesecho() {
-
-
+        def egresos = Egreso.findAllByIngresoDesechoIsNull()
+        return [egresos: egresos]
     }
 }

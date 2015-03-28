@@ -46,7 +46,7 @@
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="margin-top: 20px">
                 <g:if test="${cots.size() > 0}">
                     <g:each in="${cots}" var="c" status="i">
-                        <g:form class="frmCotizacion" action="saveCotizacion">
+                        <g:form class="frmCotizacion" action="saveCotizacion_ignore">
                             <input type="hidden" value="${nota.id}" name="pedido.id">
                             <input type="hidden" value="${c.id}" name="id">
 
@@ -134,7 +134,7 @@
                     </g:each>
                 </g:if>
                 <g:if test="${cots.size() < 3}">
-                    <g:form class="frmCotizacion" action="saveCotizacion">
+                    <g:form class="frmCotizacion" action="saveCotizacion_ignore">
                         <input type="hidden" value="${nota.id}" name="pedido.id">
 
                         <div class="panel panel-success">
