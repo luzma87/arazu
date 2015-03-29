@@ -5,7 +5,7 @@
   Time: 10:52 AM
 --%>
 
-<%@ page import="arazu.parametros.TipoTrabajo; arazu.proyectos.Proyecto" contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.seguridad.Persona; arazu.parametros.Unidad; arazu.parametros.TipoTrabajo; arazu.proyectos.Proyecto" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main"/>
@@ -13,6 +13,10 @@
         <style type="text/css">
         .clickable {
             cursor : pointer;
+        }
+
+        body {
+            padding-bottom : 150px;
         }
         </style>
     </head>
@@ -128,31 +132,36 @@
                     <div class="col-md-2 grupo">
                         <g:textField name="kilometraje" class="form-control input-sm number required"/>
                     </div>
-                </div>
 
-                <div class="row grupo">
-                <div class="row">
-                    <div class="col-md-12 text-info">
-                        <h3>Trabajos a realizar <small>Seleccione todos los que apliquen</small></h3>
-                        <a href="#" id="selectNone" class="btn btn-danger btn-xs">Quitar toda la selección</a>
+
+                    <div class="col-md-2">
+                        <elm:datepicker name="fechaPers2" id="fecPer2" class="datepicker form-control input-sm"/>
                     </div>
                 </div>
 
-                <g:each in="${TipoTrabajo.list([sort: 'nombre'])}" var="tipo" status="i">
-                    <g:if test="${i % 4 == 0}">
-                        <g:if test="${i > 0}">
-                            </div>
-                        </g:if>
-                        <div class='row'>
-                    </g:if>
-                    <div class="col-md-3">
-                        <span class="clickable" data-state="off" data-id="${tipo.id}">
-                            <i class="fa fa-square-o"></i> ${tipo}
-                        </span>
+                <div class="grupo">
+                    <div class="row">
+                        <div class="col-md-12 text-info">
+                            <h3>Trabajos a realizar <small>Seleccione todos los que apliquen</small></h3>
+                            <a href="#" id="selectNone" class="btn btn-danger btn-xs">Quitar toda la selección</a>
+                        </div>
                     </div>
-                </g:each>
-                </div>
-                <g:hiddenField name="trabajos" class="required"/>
+
+                    %{--<g:each in="${TipoTrabajo.list([sort: 'nombre'])}" var="tipo" status="i">--}%
+                    %{--<g:if test="${i % 4 == 0}">--}%
+                    %{--<g:if test="${i > 0}">--}%
+                    %{--</div>--}%
+                    %{--</g:if>--}%
+                    %{--<div class='row'>--}%
+                    %{--</g:if>--}%
+                    %{--<div class="col-md-3">--}%
+                    %{--<span class="clickable" data-state="off" data-id="${tipo.id}">--}%
+                    %{--<i class="fa fa-square-o"></i> ${tipo}--}%
+                    %{--</span>--}%
+                    %{--</div>--}%
+                    %{--</g:each>--}%
+                    %{--</div>--}%
+                    <g:hiddenField name="trabajos" class="required"/>
                 </div>
 
                 <div class="row">
@@ -164,6 +173,96 @@
                 <div class="row">
                     <div class="col-md-12 grupo ">
                         <g:textArea name="detalles" class="form-control required" style="height: 200px;"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-info">
+                        <h3>Repuestos y materiales a utilizar</h3>
+                    </div>
+                </div>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Cantidad</th>
+                            <th style="width: 100px;">Unidad</th>
+                            <th style="width: 300px;">Descripción</th>
+                            <th style="width: 150px;">Código o N. parte</th>
+                            <th style="width: 150px;">Marca</th>
+                            <th style="width: 300px;">Observaciones</th>
+                            <th style="width: 35px;"></th>
+                        </tr>
+                        <tr class="success">
+                            <td>
+                                <g:textField name="cantidad" class="form-control input-sm number"/>
+                            </td>
+                            <td>
+                                <g:select name="unidad" from="${Unidad.list([sort: 'descripcion'])}" data-width="90px"/>
+                            </td>
+                            <td>
+                                <g:textField name="descripcion" class="form-control input-sm"/>
+                            </td>
+                            <td>
+                                <g:textField name="codigo" class="form-control input-sm"/>
+                            </td>
+                            <td>
+                                <g:textField name="marca" class="form-control input-sm"/>
+                            </td>
+                            <td>
+                                <g:textField name="observaciones" class="form-control input-sm"/>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-success" id="btnAddMaterial">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <div class="row">
+                    <div class="col-md-12 text-info">
+                        <h3>Mano de obra</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 150px;">Persona</th>
+                                    <th style="width: 100px;">Horas de trabajo</th>
+                                    <th style="width: 150px;">Fecha</th>
+                                    <th style="width: 300px;">Observaciones</th>
+                                    <th style="width: 35px;"></th>
+                                </tr>
+                                <tr class="success">
+                                    <td>
+                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true" data-width="150px"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="horas" class="form-control input-sm number"/>
+                                    </td>
+                                    <td class="col-md-2">
+                                        <elm:datepicker name="fechaPers" id="fecPer" class="datepicker form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="observaciones" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-success" id="btnAddPersona">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

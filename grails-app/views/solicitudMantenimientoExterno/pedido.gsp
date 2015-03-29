@@ -130,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="row grupo">
+                <div class="grupo">
                 <div class="row">
                     <div class="col-md-12 text-info">
                         <h3>Trabajos a realizar <small>Seleccione todos los que apliquen</small></h3>

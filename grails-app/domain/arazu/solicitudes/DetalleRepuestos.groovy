@@ -1,6 +1,7 @@
 package arazu.solicitudes
 
 import arazu.items.Item
+import arazu.parametros.Unidad
 
 /**
  * Clase para conectar con la tabla 'dtrp' de la base de datos
@@ -14,6 +15,10 @@ class DetalleRepuestos {
      * Cantidad de repuesto utilizado
      */
     Double cantidad
+    /**
+     * Unidad para el repuesto utilizado
+     */
+    Unidad unidad
     /**
      * Repuesto utilizado
      */
@@ -45,6 +50,7 @@ class DetalleRepuestos {
             id column: 'dtrp__id'
             solicitud column: 'smin__id'
             cantidad column: 'dtrpcntd'
+            unidad column: 'undd__id'
             item column: 'item__id'
             codigo column: 'dtrpcdgo'
             marca column: 'dtrpmrca'

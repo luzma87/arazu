@@ -56,7 +56,7 @@ class EstadoSolicitudController extends Shield {
         }
         def estadoSolicitudInstanceList = getList_funcion(params, false)
         def estadoSolicitudInstanceCount = getList_funcion(params, true).size()
-        return [editable: true, estadoSolicitudInstanceList: estadoSolicitudInstanceList, estadoSolicitudInstanceCount: estadoSolicitudInstanceCount]
+        return [editable: false, estadoSolicitudInstanceList: estadoSolicitudInstanceList, estadoSolicitudInstanceCount: estadoSolicitudInstanceCount]
     }
 
     /**
