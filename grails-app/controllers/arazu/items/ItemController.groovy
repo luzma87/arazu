@@ -324,4 +324,13 @@ class ItemController extends Shield {
         }
     }
 
+    def desechar_ajax(){
+        println "desechar ajax "+params
+        def tipos = [:]
+        tipos.put("1","Venta")
+        tipos.put("2","Desecho")
+        tipos.put("3","Stock")
+        [tipos:tipos]
+    }
+
 }

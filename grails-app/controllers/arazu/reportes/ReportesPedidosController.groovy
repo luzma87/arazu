@@ -1,5 +1,9 @@
 package arazu.reportes
 
+import arazu.items.Item
+import arazu.items.Maquinaria
+import arazu.proyectos.Proyecto
+import arazu.seguridad.Persona
 import arazu.solicitudes.BodegaPedido
 import arazu.solicitudes.Cotizacion
 import arazu.solicitudes.NotaPedido
@@ -26,4 +30,107 @@ class ReportesPedidosController {
         def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud)
         return [solicitud: solicitud, cots: cots]
     }
+
+    def notasDePedido(){
+        def now = new Date()
+        [now:now]
+    }
+    def reporteNotasDePedido_ajax(){
+        //println "reporte "+params
+        def notas = NotaPedido.withCriteria {
+            if(params.persona && params.persona!="-1"){
+                eq("de",Persona.get(params.persona))
+            }
+            if(params.proyecto && params.proyecto!="-1"){
+                eq("proyecto",Proyecto.get(params.proyecto))
+            }
+            if(params.maquinaria && params.maquinaria!="-1"){
+                eq("maquinaria",Maquinaria.get(params.maquinaria))
+            }
+            if(params.item && params.item!="-1"){
+                eq("item",Item.get(params.item))
+            }
+            if(params.desde && params.desde!=""){
+                ge("fecha",new Date().parse("dd-MM-yyyy",params.desde))
+            }
+            if(params.hasta && params.hasta!=""){
+                le("fecha",new Date().parse("dd-MM-yyyy",params.hasta))
+            }
+        }
+        [notas:notas]
+    }
+    def reporteNotasDePedidoPdf(){
+        println "reporte pdf"+params
+        def notas = NotaPedido.withCriteria {
+            if(params.persona && params.persona!="-1"){
+                eq("de",Persona.get(params.persona))
+            }
+            if(params.proyecto && params.proyecto!="-1"){
+                eq("proyecto",Proyecto.get(params.proyecto))
+            }
+            if(params.maquinaria && params.maquinaria!="-1"){
+                eq("maquinaria",Maquinaria.get(params.maquinaria))
+            }
+            if(params.item && params.item!="-1"){
+                eq("item",Item.get(params.item))
+            }
+            if(params.desde && params.desde!=""){
+                ge("fecha",new Date().parse("dd-MM-yyyy",params.desde))
+            }
+            if(params.hasta && params.hasta!=""){
+                le("fecha",new Date().parse("dd-MM-yyyy",params.hasta))
+            }
+        }
+        [notas:notas]
+    }
+
+    def mantenimietoExterno(){
+        def now = new Date()
+        [now:now]
+    }
+    def reporteMantenimietoExterno_ajax(){
+        //println "reporte "+params
+        def notas = SolicitudMantenimientoExterno.withCriteria {
+            if(params.persona && params.persona!="-1"){
+                eq("de",Persona.get(params.persona))
+            }
+            if(params.proyecto && params.proyecto!="-1"){
+                eq("proyecto",Proyecto.get(params.proyecto))
+            }
+            if(params.maquinaria && params.maquinaria!="-1"){
+                eq("maquinaria",Maquinaria.get(params.maquinaria))
+            }
+
+            if(params.desde && params.desde!=""){
+                ge("fecha",new Date().parse("dd-MM-yyyy",params.desde))
+            }
+            if(params.hasta && params.hasta!=""){
+                le("fecha",new Date().parse("dd-MM-yyyy",params.hasta))
+            }
+        }
+        [notas:notas]
+    }
+    def reporteMantenimietoExternoPdf(){
+        println "reporte pdf"+params
+        def notas = SolicitudMantenimientoExterno.withCriteria {
+            if(params.persona && params.persona!="-1"){
+                eq("de",Persona.get(params.persona))
+            }
+            if(params.proyecto && params.proyecto!="-1"){
+                eq("proyecto",Proyecto.get(params.proyecto))
+            }
+            if(params.maquinaria && params.maquinaria!="-1"){
+                eq("maquinaria",Maquinaria.get(params.maquinaria))
+            }
+
+            if(params.desde && params.desde!=""){
+                ge("fecha",new Date().parse("dd-MM-yyyy",params.desde))
+            }
+            if(params.hasta && params.hasta!=""){
+                le("fecha",new Date().parse("dd-MM-yyyy",params.hasta))
+            }
+        }
+        [notas:notas]
+    }
+
 }
