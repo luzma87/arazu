@@ -31,10 +31,10 @@ class EstadoSolicitudController extends Shield {
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
-
                     ilike("codigo", "%" + params.search + "%")
                     ilike("descripcion", "%" + params.search + "%")
                     ilike("nombre", "%" + params.search + "%")
+                    ilike("tipo", "%" + params.search + "%")
                 }
             }
         } else {
@@ -51,9 +51,12 @@ class EstadoSolicitudController extends Shield {
      * Acción que muestra la lista de elementos
      */
     def list() {
+        if (!params.sort) {
+            params.sort = "codigo"
+        }
         def estadoSolicitudInstanceList = getList_funcion(params, false)
         def estadoSolicitudInstanceCount = getList_funcion(params, true).size()
-        return [estadoSolicitudInstanceList: estadoSolicitudInstanceList, estadoSolicitudInstanceCount: estadoSolicitudInstanceCount]
+        return [editable: true, estadoSolicitudInstanceList: estadoSolicitudInstanceList, estadoSolicitudInstanceCount: estadoSolicitudInstanceCount]
     }
 
     /**

@@ -9,7 +9,7 @@ class DetalleTrabajo {
     /**
      * NotaPedido que genera el detalle
      */
-    NotaPedido pedido
+    SolicitudMantenimientoExterno solicitud
     /**
      * Tipo de trabajo a realizar
      */
@@ -27,10 +27,10 @@ class DetalleTrabajo {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort nombre: "asc"
+        sort tipoTrabajo: "asc"
         columns {
             id column: 'dttr__id'
-            pedido column: 'ntpd__id'
+            solicitud column: 'smex__id'
             tipoTrabajo column: 'tptr__id'
         }
     }

@@ -5,6 +5,7 @@ import arazu.inventario.Egreso
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.Parametros
 import arazu.parametros.TipoUsuario
 import arazu.seguridad.Perfil
 import arazu.seguridad.Persona
@@ -38,18 +39,35 @@ class NotaPedidoController extends Shield {
         def maquina = null
         def item = null
         def estado = null
+        def numero = null
+        if (params.search_numero) {
+            strSearch += "con número <strong>${params.search_numero}</strong>"
+            numero = params.search_numero.toInteger()
+        }
         if (params.search_desde) {
+            if (strSearch != "") {
+                strSearch += ", realizadas "
+            } else {
+                strSearch += " realizadas"
+            }
             desde = new Date().parse("dd-MM-yyyy", params.search_desde)
             strSearch += "desde el <strong>${params.search_desde}</strong>"
         }
         if (params.search_hasta) {
             hasta = new Date().parse("dd-MM-yyyy", params.search_hasta)
             if (strSearch != "") {
-                strSearch += " "
+                strSearch += ", realizadas "
+            } else {
+                strSearch += " realizadas"
             }
             strSearch += "hasta el <strong>${params.search_desde}</strong>"
         }
         if (!desde && !hasta) {
+            if (strSearch != "") {
+                strSearch += ", realizadas "
+            } else {
+                strSearch += " realizadas "
+            }
             strSearch += "en cualquier fecha"
         }
         if (params.search_de) {
@@ -108,6 +126,9 @@ class NotaPedidoController extends Shield {
         }
         def c = NotaPedido.createCriteria()
         list = c.list(params) {
+            if (numero) {
+                eq("numero", numero)
+            }
             if (desde) {
                 ge("fecha", desde)
             }
@@ -127,7 +148,7 @@ class NotaPedidoController extends Shield {
                 eq("estadoSolicitud", estado)
             }
         }
-        strSearch = "Mostrando las notas de pedido realizadas " + strSearch
+        strSearch = "Mostrando las notas de pedido " + strSearch
         return [list: list, strSearch: strSearch]
     }
 
@@ -145,10 +166,11 @@ class NotaPedidoController extends Shield {
             return
         }
         def numero = NotaPedido.list([sort: "numero", order: "desc", limit: 1])
-        if (numero.size() > 0)
+        if (numero.size() > 0) {
             numero = numero.first().numero + 1
-        else
+        } else {
             numero = 1
+        }
         def items = Item.list([sort: "descripcion"])
         def itemStr = ""
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
@@ -172,17 +194,18 @@ class NotaPedidoController extends Shield {
 //        params["item.id"] = item.id
 
         def numero = NotaPedido.list([sort: "numero", order: "desc", limit: 1])
-        if (numero.size() > 0)
+        if (numero.size() > 0) {
             numero = numero.first().numero + 1
-        else
+        } else {
             numero = 1
+        }
 
         def firma = new Firma()
         firma.persona = usu
         firma.fecha = now
 //        firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
-        firma.pdfControlador = "reportesInventario"
-        firma.pdfAccion = "notaPedido"
+        firma.pdfControlador = "reportesPedidos"
+        firma.pdfAccion = "notaDePedido"
 //        firma.pdfId = solicitud.id
         firma.concepto = ""
         firma.pdfId = 0
@@ -200,6 +223,7 @@ class NotaPedidoController extends Shield {
             solicitud.numero = numero
             solicitud.codigo = "NP-" + numero
             solicitud.firmaSolicita = firma
+            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la nota de pedido #${solicitud.numero} el " + now.format("dd-MM-yyyy HH:mm")
             if (!solicitud.save(flush: true)) {
                 println "error  " + solicitud.errors
                 flash.tipo = "error"
@@ -253,7 +277,7 @@ class NotaPedidoController extends Shield {
                     }
 
                     flash.tipo = "success"
-                    flash.message = "La solicitud <strong>número ${numero}</strong> ha sido enviada exitosamente"
+                    flash.message = "La nota de pedido <strong>número ${numero}</strong> ha sido enviada exitosamente"
                     if (msg != "") {
                         flash.message += "<ul>" + msg + "</ul>"
                     }
@@ -261,8 +285,6 @@ class NotaPedidoController extends Shield {
                 }
             }
         }
-
-
     }
 
     /**
@@ -312,7 +334,6 @@ class NotaPedidoController extends Shield {
      * Acción que muestra la lista de notas de pedido para que un asistente de compras les asigne cotizaciones
      */
     def listaAsistenteCompras() {
-        println ">>> " + session.perfil + "    " + session.perfil.codigo
         if (session.perfil.codigo != "ASCM") {
             response.sendError(403)
         }
@@ -406,8 +427,9 @@ class NotaPedidoController extends Shield {
      * y aprobar/negar/informar existe en bodegas
      */
     def revisarJefatura() {
-        if (!params.id)
+        if (!params.id) {
             response.sendError(404)
+        }
         def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
@@ -434,8 +456,9 @@ class NotaPedidoController extends Shield {
      * y aprobar/negar/informar existe en bodegas
      */
     def revisarJefeCompras() {
-        if (!params.id)
+        if (!params.id) {
             response.sendError(404)
+        }
         def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JFCM") {
             response.sendError(403)
@@ -462,8 +485,9 @@ class NotaPedidoController extends Shield {
      * y aprobar/negar/informar existe en bodegas y asignar cotizaciones
      */
     def revisarAsistenteCompras() {
-        if (!params.id)
+        if (!params.id) {
             response.sendError(404)
+        }
         def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "ASCM") {
             response.sendError(403)
@@ -491,8 +515,9 @@ class NotaPedidoController extends Shield {
      * y aprobar/negar/informar existe en bodegas FINAL
      */
     def revisarJefe() {
-        if (!params.id)
+        if (!params.id) {
             response.sendError(404)
+        }
         def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
@@ -520,8 +545,9 @@ class NotaPedidoController extends Shield {
      * y aprobar/negar/informar existe en bodegas FINAL
      */
     def revisarGerente() {
-        if (!params.id)
+        if (!params.id) {
             response.sendError(404)
+        }
         def nota = NotaPedido.get(params.id)
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
@@ -580,7 +606,7 @@ class NotaPedidoController extends Shield {
             }
         }
 
-        if (max < 100) {
+        if (max < Parametros.maxNotaPedido) {
             jefes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JEFE"), [sort: 'apellido'])
         } else {
             gerentes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("GRNT"), [sort: 'apellido'])
@@ -666,21 +692,21 @@ class NotaPedidoController extends Shield {
     }
 
     /**
-     * Acción que guarda la aprobación de la nota de pedido con las cotizaciones ingresadas para una nota de pedido por un asistente de compras  y envía una alerta y un email al jefe o gerente de compras destinatario y al que realizó el pedido
+     * Acción que guarda la aprobación de la nota de pedido con las cotizaciones ingresadas por un asistente de compras  y envía una alerta y un email al jefe o gerente de compras destinatario y al que realizó el pedido
      */
     def aprobarAsistenteCompras_ajax() {
         render cambiarEstadoPedido_funcion(params, "AAC")
     }
 
     /**
-     * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
+     * Acción que guarda la aprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
      */
     def aprobarFinal_ajax() {
         render cambiarEstadoPedido_funcion(params, "AF")
     }
 
     /**
-     * Acción que guarda laaprobación final de una nota de pedido por un asistente de compras  y envía una alerta y un email al que realizó el pedido
+     * Acción que devuelve una nota de pedido a un asistente de compras para que cargue más cotizaciones y envía una alerta y un email al que realizó el pedido
      */
     def solicitarCotizaciones_ajax() {
         render cambiarEstadoPedido_funcion(params, "CF")
@@ -746,7 +772,6 @@ class NotaPedidoController extends Shield {
      * Acción que guarda una cotización y vuelve a cargar la pantalla de revisión de asistente de compras
      */
     def saveCotizacion_ignore() {
-        println "save cotizacion " + params
         def cotizacion
         if (params.id) {
             cotizacion = Cotizacion.get(params.id)
@@ -853,6 +878,8 @@ class NotaPedidoController extends Shield {
         def notificacionBodegas = []
         def perfilNotificacionesExtra = null
         String mensajeAprobacionFinal = ""
+
+        def maxNp = Parametros.maxNotaPedido
 
         def para = null
         def usu = Persona.get(session.usuario.id)
@@ -1022,7 +1049,7 @@ class NotaPedidoController extends Shield {
                         }
                     }
 
-                    if (max < 100) {
+                    if (max < maxNp) {
                         accionAlerta = "listaJefe"
                         perfilNotificacionesExtra = "JEFE"
                     } else {
@@ -1074,7 +1101,7 @@ class NotaPedidoController extends Shield {
                             }
                         }
 
-                        if (max < 100) {
+                        if (max < maxNp) {
                             accionAlerta = "listaJefe"
                             perfilNotificacionesExtra = "JEFE"
                         } else {

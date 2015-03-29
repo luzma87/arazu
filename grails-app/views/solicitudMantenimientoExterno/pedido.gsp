@@ -19,14 +19,12 @@
 
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <g:form class="frmNota" action="saveSolicitud_ignore">
+        <g:form class="frmSolicitud" action="saveSolicitud_ignore">
             <elm:container tipo="horizontal" titulo="Nueva solicitud de mantenimiento externo">
                 <div class="alert alert-info" style="margin-top: 10px;">
                     <strong>Nota:</strong> el número mostrado en esta pantalla es un número tentativo que puede cambiar al momento de guardar.
                 Se le informará el número final de su solicitud después de guardar.
                 </div>
-
-                <g:hiddenField name="maquinaria.id" id="maquina"/>
 
                 <div class="row">
                     <div class="col-md-1">
@@ -35,12 +33,13 @@
                         </label>
                     </div>
 
-                    <div class="col-md-5">
+                    <div class="col-md-5 grupo">
                         <div class="input-group">
                             <input type="text" class="form-control" id="maquina_input" readonly/>
                             <span class="input-group-addon svt-bg-warning">
                                 <i class="fa fa-keyboard-o"></i>
                             </span>
+                            <g:hiddenField name="maquinaria.id" id="maquina" class="required"/>
                         </div><!-- /input-group -->
                     </div>
 
@@ -83,7 +82,7 @@
                     </div>
 
                     <div class="col-md-2">
-                        <g:select name="para.id" from="${jefes}" optionKey="id"
+                        <g:select name="paraJC.id" from="${jefes}" optionKey="id"
                                   class="form-control input-sm required select" required=""/>
                     </div>
 
@@ -95,7 +94,7 @@
 
                     <div class="col-md-2">
                         <g:select name="proyecto.id" from="${Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())}" optionKey="id" optionValue="nombre"
-                                  class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"/>
+                                  class="form-control input-sm select" noSelection="['': '-- Seleccione --']"/>
                     </div>
 
                     <div class="col-md-1">
@@ -104,8 +103,8 @@
                         </label>
                     </div>
 
-                    <div class="col-md-2">
-                        <g:textField name="localizacion" class="form-control input-sm "/>
+                    <div class="col-md-2 grupo">
+                        <g:textField name="localizacion" class="form-control input-sm required"/>
                     </div>
                 </div>
 
@@ -116,8 +115,8 @@
                         </label>
                     </div>
 
-                    <div class="col-md-2">
-                        <g:textField name="horometro" class="form-control input-sm "/>
+                    <div class="col-md-2 grupo">
+                        <g:textField name="horometro" class="form-control input-sm number required"/>
                     </div>
 
                     <div class="col-md-1">
@@ -126,11 +125,12 @@
                         </label>
                     </div>
 
-                    <div class="col-md-2">
-                        <g:textField name="kilometraje" class="form-control input-sm "/>
+                    <div class="col-md-2 grupo">
+                        <g:textField name="kilometraje" class="form-control input-sm number required"/>
                     </div>
                 </div>
 
+                <div class="row grupo">
                 <div class="row">
                     <div class="col-md-12 text-info">
                         <h3>Trabajos a realizar <small>Seleccione todos los que apliquen</small></h3>
@@ -146,11 +146,13 @@
                         <div class='row'>
                     </g:if>
                     <div class="col-md-3">
-                        <span class="clickable" data-state="off">
+                        <span class="clickable" data-state="off" data-id="${tipo.id}">
                             <i class="fa fa-square-o"></i> ${tipo}
                         </span>
                     </div>
                 </g:each>
+                </div>
+                <g:hiddenField name="trabajos" class="required"/>
                 </div>
 
                 <div class="row">
@@ -160,8 +162,8 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12">
-                        <g:textArea name="detalles" class="form-control" style="height: 200px;"/>
+                    <div class="col-md-12 grupo ">
+                        <g:textArea name="detalles" class="form-control required" style="height: 200px;"/>
                     </div>
                 </div>
 
@@ -193,6 +195,7 @@
 
             $(function () {
                 $("#maquina").val("");
+                $("#trabajos").val("");
 
                 $("#maquina_input").val("").click(function () {
                     openLoader();
@@ -238,6 +241,48 @@
                         deselect($(this));
                     }
                 });
+
+                $(".frmSolicitud").validate({
+                    ignore         : [], //para que valide los hiddens
+                    errorClass     : "help-block",
+                    errorPlacement : function (error, element) {
+                        if (element.parent().hasClass("input-group")) {
+                            error.insertAfter(element.parent());
+                        } else {
+                            error.insertAfter(element);
+                        }
+                        element.parents(".grupo").addClass('has-error');
+                    },
+                    success        : function (label) {
+                        label.parents(".grupo").removeClass('has-error');
+                        label.remove();
+                    },
+                    messages       : {
+                        trabajos       : {
+                            required : "Por favor seleccione al menos un trabajo a realizar"
+                        },
+                        "maquina\\.id" : {
+                            required : "Por favor seleccione el equipo al cual se le va a realizar el mantenimiento"
+                        }
+                    }
+                });
+
+                $("#guardar").click(function () {
+                    var trabajos = "";
+                    $(".clickable").each(function () {
+                        if ($(this).data("state") == "on") {
+                            trabajos += $(this).data("id") + ",";
+                        }
+                    });
+                    var $frm = $(".frmSolicitud");
+                    $("#trabajos").val(trabajos);
+                    if ($frm.valid()) {
+                        openLoader("Generando solicitud");
+                        $frm.submit();
+                    }
+                    return false;
+                });
+
             });
         </script>
 

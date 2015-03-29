@@ -191,31 +191,6 @@
         </g:form>
 
         <script type="text/javascript">
-
-            var substringMatcher = function (strs) {
-                return function findMatches(q, cb) {
-                    var matches, substrRegex;
-
-                    // an array that will be populated with substring matches
-                    matches = [];
-
-                    // regex used to determine if a string contains the substring `q`
-                    substrRegex = new RegExp(q, 'i');
-
-                    // iterate through the pool of strings and for any string that
-                    // contains the substring `q`, add it to the `matches` array
-                    $.each(strs, function (i, str) {
-                        if (substrRegex.test(str)) {
-                            // the typeahead jQuery plugin expects suggestions to a
-                            // JavaScript object, refer to typeahead docs for more info
-                            matches.push({value : str});
-                        }
-                    });
-
-                    cb(matches);
-                };
-            };
-            %{--var items = ${items};--}%
             $(function () {
                 $("#maquina").val("");
 
@@ -248,7 +223,7 @@
                     return false;
                 });
 
-                var validator = $(".frmNota").validate({
+                $(".frmNota").validate({
                     errorClass     : "help-block",
                     errorPlacement : function (error, element) {
                         if (element.parent().hasClass("input-group")) {
@@ -262,44 +237,13 @@
                         label.parents(".grupo").removeClass('has-error');
                         label.remove();
                     }
-
-                });
-
-//                $('#item_txt').on('typeahead:cursorchanged', function (evt, item) {
-//                    console.log("cc", evt, item);
-//                    // do what you want with the item here
-//                }).on('typeahead:selected', function (evt, item) {
-//                    console.log("s", evt, item);
-//                    // do what you want with the item here
-//                }).typeahead({
-//                            hint      : true,
-//                            highlight : true,
-//                            minLength : 1
-//                        },
-//                        {
-//                            name       : 'states',
-//                            displayKey : 'value',
-//                            source     : substringMatcher(items)
-//                        });
-
-                $(".twitter-typeahead").css({
-                    width : "100%"
                 });
 
                 $("#guardar").click(function () {
                     openLoader("Generando solicitud");
                     $(".frmNota").submit();
                 });
-
-                //                $('.select').selectpicker({
-                //
-                //                });
-                //                $('#maquinaria').selectpicker({
-                //
-                //                });
             })
-            ;
-
         </script>
     </body>
 </html>

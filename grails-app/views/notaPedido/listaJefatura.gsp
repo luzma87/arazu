@@ -3,12 +3,6 @@
     <head>
         <meta name="layout" content="main">
         <title>Notas de pedido pendientes de aprobación</title>
-        <style type="text/css">
-        table {
-            margin-top : 10px;
-            font-size  : 12px;
-        }
-        </style>
     </head>
 
     <body>

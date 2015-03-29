@@ -7,10 +7,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title>Nota de pedido</title>
-        <rep:estilos orientacion="p" pagTitle="Nota de pedido #${nota.numero}"/>
-        <style type="text/css">
+        <g:set var="titleCorto" value="${nota.codigo}" scope="request"/>
+        <meta name="layout" content="reporte_vertical"/>
 
+        <title>Nota de pedido #${nota.numero}</title>
+
+        <style type="text/css">
         .row {
             width      : 100%;
             height     : 14px;
@@ -58,13 +60,14 @@
             width       : 20%;
         }
 
+        ul, ul li {
+            margin  : 10px;
+            padding : 0;
+        }
         </style>
     </head>
 
     <body>
-
-        <rep:headerFooter title="Nota de pedido #${nota.numero}"/>
-
         %{--Datos--}%
         <table>
             <tbody>

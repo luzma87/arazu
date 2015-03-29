@@ -17,6 +17,10 @@ class EstadoSolicitud {
      * Descripción del tipo de solicitud
      */
     String descripcion
+    /**
+     * Tipo: indica si el estado aplica a notas de pedido (NP), solicitudes de mantenimiento externo (MX) o solicitudes de mantenimiento interno (MI)
+     */
+    String tipo
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -37,6 +41,7 @@ class EstadoSolicitud {
             codigo column: 'esslcdgo'
             nombre column: 'esslnmbr'
             descripcion column: 'essldscr'
+            tipo column: 'essltipo'
         }
     }
 
@@ -46,6 +51,7 @@ class EstadoSolicitud {
     static constraints = {
         descripcion nullable: true
         codigo maxSize: 4
+        tipo maxSize: 2, inList: ['NP', 'MX', 'MI']
     }
 
     /**

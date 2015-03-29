@@ -93,6 +93,18 @@
                                 <p>Permite registrar las unidades para el inventario</p>
                             </div>
                         </li>
+                        <li>
+                            <i class="fa-li fa fa-connectdevelop text-info"></i>
+                            <g:link class="over" controller="parametros" action="list">
+                                Parámetros
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class=" fa fa-connectdevelop fa-2x"></i> Parámetros</h4>
+
+                                <p>Permite modificar los parámetros globales, como los valores máximos que pueden autorizar los jefes</p>
+                            </div>
+                        </li>
                     </ul>
                 </div>
 

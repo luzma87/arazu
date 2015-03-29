@@ -13,6 +13,7 @@ class InicioController extends Shield {
         def estadoPa = EstadoSolicitud.findByCodigo("E02")
         def estadoAp = EstadoSolicitud.findByCodigo("A01")
         def estadoEj = EstadoSolicitud.findByCodigo("C01")
+
         def pr = NotaPedido.findAllByEstadoSolicitud(estadoPr)
         def pa = NotaPedido.findAllByEstadoSolicitud(estadoPa)
         def aprobadas = NotaPedido.findAllByEstadoSolicitud(estadoAp)
@@ -20,7 +21,7 @@ class InicioController extends Shield {
         def alertas = Alerta.findAllByRecibeAndFechaRecibidoIsNull(session.usuario)
         def bodegas = Bodega.findAllByActivo(1)
         def proyectos = Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())
-        [pr:pr,pa:pa,aprobadas:aprobadas,ejecutadas:ejecutadas,alertas:alertas,bodegas:bodegas,proyectos:proyectos,estadoPr:estadoPr,estadoPa:estadoPa,estadoAp:estadoAp,estadoEj:estadoEj]
+        [pr: pr, pa: pa, aprobadas: aprobadas, ejecutadas: ejecutadas, alertas: alertas, bodegas: bodegas, proyectos: proyectos, estadoPr: estadoPr, estadoPa: estadoPa, estadoAp: estadoAp, estadoEj: estadoEj]
     }
 
     def demoUI() {

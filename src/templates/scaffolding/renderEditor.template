@@ -67,7 +67,7 @@
                     sb << ' unique'
                 }
                 sb << '"'
-                 sb << ' value="${' << "${domainInstance}?.${property.name}" << '}"'
+                sb << ' value="${' << "${domainInstance}?.${property.name}" << '}"'
                 sb << '/>'
             } else if (cp.inList) {
                 sb << '<g:select name="' << property.name << '"'

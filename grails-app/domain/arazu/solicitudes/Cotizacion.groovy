@@ -8,9 +8,13 @@ import arazu.parametros.EstadoSolicitud
 class Cotizacion {
 
     /**
-     * NotaPedido para el cual se hace la cotización
+     * Nota de Pedido para el cual se hace la cotización
      */
     NotaPedido pedido
+    /**
+     * Solicitud de mantenimiento externo para el cual se hace la cotización
+     */
+    SolicitudMantenimientoExterno solicitudMantenimientoExterno
     /**
      * Fecha en la que se hace la cotización
      */
@@ -62,6 +66,8 @@ class Cotizacion {
         }
     }
     static constraints = {
+        pedido nullable: true
+        solicitudMantenimientoExterno nullable: true
         proveedor(nullable: false, blank: false, size: 1..255)
         fechaFin nullable: true
     }
