@@ -13,15 +13,12 @@
         <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
-                <a href="#" class="btn btn-default btnCrear">
-                    <i class="fa fa-file-o"></i> Crear
-                </a>
-            </div>
-
-            <div class="btn-group">
                 <g:link class="btn btn-default" controller="inicio" action="parametros">
                     <i class="fa fa-cogs"></i> Parámetros
                 </g:link>
+                <a href="#" class="btn btn-default btnCrear">
+                    <i class="fa fa-file-o"></i> Crear
+                </a>
             </div>
 
             <div class="btn-group pull-right col-md-3 col-sm-4">
@@ -113,7 +110,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el MotivoSolicitud seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el MotivoSolicitud seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",

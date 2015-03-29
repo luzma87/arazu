@@ -12,17 +12,14 @@
 
         <!-- botones -->
         <div class="btn-toolbar toolbar">
-            <div class="btn-group">
-                <a href="#" class="btn btn-default btnCrear">
-                    <i class="fa fa-file-o"></i> Crear
-                </a>
-            </div>
-
-            <div class="btn-group">
-                <g:link controller="inicio" action="parametros" class="btn btn-default">
-                    <i class="fa fa-cogs"></i> Parámetros
-                </g:link>
-            </div>
+        <div class="btn-group">
+            <g:link class="btn btn-default" controller="inicio" action="parametros">
+                <i class="fa fa-cogs"></i> Parámetros
+            </g:link>
+            <a href="#" class="btn btn-default btnCrear">
+                <i class="fa fa-file-o"></i> Crear
+            </a>
+        </div>
 
             <div class="btn-group pull-right col-md-3 col-sm-4">
                 <div class="input-group">

@@ -65,6 +65,10 @@ class Firma {
             pdfId column: 'frmapdfi'
         }
     }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
     static constraints = {
         key nullable: true
         path nullable: true

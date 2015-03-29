@@ -7,9 +7,13 @@ import arazu.parametros.TipoTrabajo
  */
 class DetalleTrabajo {
     /**
-     * NotaPedido que genera el detalle
+     * Solicitud de mantenimiento externo que genera el detalle
      */
-    SolicitudMantenimientoExterno solicitud
+    SolicitudMantenimientoExterno solicitudMantenimientoExterno
+    /**
+     * Solicitud de mantenimiento interno que genera el detalle
+     */
+    SolicitudMantenimientoInterno solicitudMantenimientoInterno
     /**
      * Tipo de trabajo a realizar
      */
@@ -30,8 +34,17 @@ class DetalleTrabajo {
         sort tipoTrabajo: "asc"
         columns {
             id column: 'dttr__id'
-            solicitud column: 'smex__id'
+            solicitudMantenimientoExterno column: 'smex__id'
+            solicitudMantenimientoInterno column: 'smin__id'
             tipoTrabajo column: 'tptr__id'
         }
+    }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
+    static constraints = {
+        solicitudMantenimientoExterno nullable: true
+        solicitudMantenimientoInterno nullable: true
     }
 }

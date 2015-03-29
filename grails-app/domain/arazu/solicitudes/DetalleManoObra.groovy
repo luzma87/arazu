@@ -1,31 +1,31 @@
 package arazu.solicitudes
 
-import arazu.items.Item
+import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'dtrp' de la base de datos
  */
-class DetalleRepuestos {
+class DetalleManoObra {
     /**
      * Solicitud de mantenimiento que genera el detalle
      */
     SolicitudMantenimientoInterno solicitud
     /**
-     * Cantidad de repuesto utilizado
+     * Persona
      */
-    Double cantidad
+    Persona persona
     /**
-     * Repuesto utilizado
+     * Horas de trabajo
      */
-    Item item
+    Double horasTrabajo
     /**
-     * Código o número de parte
+     * Fecha
      */
-    String codigo
+    Date fecha
     /**
-     * Marca
+     * Observaciones
      */
-    String marca
+    String observaciones
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -36,7 +36,7 @@ class DetalleRepuestos {
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'dtrp'
+        table 'dtmo'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
@@ -44,10 +44,18 @@ class DetalleRepuestos {
         columns {
             id column: 'dtrp__id'
             solicitud column: 'smin__id'
-            cantidad column: 'dtrpcntd'
-            item column: 'item__id'
-            codigo column: 'dtrpcdgo'
-            marca column: 'dtrpmrca'
+            persona column: 'prsn__id'
+            horasTrabajo column: 'dtmohrtr'
+            fecha column: 'dtmofcha'
+            observaciones column: 'dtmoobsv'
+            observaciones type: 'text'
         }
+    }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
+    static constraints = {
+        observaciones blank: true, nullable: true
     }
 }

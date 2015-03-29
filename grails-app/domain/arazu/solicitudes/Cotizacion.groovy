@@ -65,6 +65,10 @@ class Cotizacion {
             fechaFin column: 'ctznfcfn'
         }
     }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
     static constraints = {
         pedido nullable: true
         solicitudMantenimientoExterno nullable: true

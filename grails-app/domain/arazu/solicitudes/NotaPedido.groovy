@@ -29,7 +29,7 @@ class NotaPedido {
      */
     Date fecha
     /**
-     * Persona que hacce el pedido
+     * Persona que hace el pedido
      */
     Persona de
     /**
@@ -72,10 +72,6 @@ class NotaPedido {
      * Item requerido
      */
     Item item
-    /**
-     * Fecha en la que fue aprobado el pedido
-     */
-    Date aprobacion
     /**
      * Número de solicitud
      */
@@ -152,7 +148,6 @@ class NotaPedido {
             cantidadAprobada column: 'ntpdcnap'
             unidad column: 'undd__id'
             item column: 'item__id'
-            aprobacion column: 'ntpdfcap'
             numero column: 'ntpdnmro'
             firmaSolicita column: 'ntpdfrsl'
             firmaJefe column: 'ntpdfrjf'
@@ -173,7 +168,6 @@ class NotaPedido {
     static constraints = {
         codigo maxSize: 10
         maquinaria nullable: true
-        aprobacion nullable: true
 
         proyecto nullable: true
 

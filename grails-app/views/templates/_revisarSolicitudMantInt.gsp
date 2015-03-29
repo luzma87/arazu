@@ -31,30 +31,6 @@
     <div class="col-md-2">
         ${solicitud.de}
     </div>
-
-    <g:if test="${solicitud.firmaJefeCompras}">
-        <div class="col-md-1">
-            <label class=" control-label">
-                Asignado por
-            </label>
-        </div>
-
-        <div class="col-md-2">
-            ${solicitud.firmaJefeCompras.persona}
-        </div>
-    </g:if>
-
-    <g:if test="${solicitud.firmaAsistenteCompras}">
-        <div class="col-md-1">
-            <label class=" control-label">
-                Cotizaciones por
-            </label>
-        </div>
-
-        <div class="col-md-2">
-            ${solicitud.firmaAsistenteCompras.persona}
-        </div>
-    </g:if>
 </div>
 
 <div class="row">
@@ -87,7 +63,7 @@
     </div>
 
     <div class="col-md-11">
-        ${DetalleTrabajo.findAllBySolicitudMantenimientoExterno(solicitud).tipoTrabajo.join(", ")}
+        ${DetalleTrabajo.findAllBySolicitudMantenimientoInterno(solicitud).tipoTrabajo.join(", ")}
     </div>
 </div>
 

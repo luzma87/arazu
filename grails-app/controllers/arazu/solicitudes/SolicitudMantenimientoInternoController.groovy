@@ -1,6 +1,5 @@
 package arazu.solicitudes
 
-import arazu.inventario.Egreso
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
@@ -12,16 +11,15 @@ import arazu.seguridad.Persona
 import arazu.seguridad.Sesion
 import arazu.seguridad.Shield
 
-class SolicitudMantenimientoExternoController extends Shield {
-
+class SolicitudMantenimientoInternoController extends Shield {
     def firmaService
     def notificacionService
 
     /**
-     * FunciÃ³n que saca la lista de elementos segÃºn los parÃ¡metros recibidos
-     * @param params objeto que contiene los parÃ¡metros para la bÃºsqueda:: max: el mÃ¡ximo de respuestas, offset: Ã­ndice del primer elemento (para la paginaciÃ³n), search: para efectuar bÃºsquedas
-     * @param all boolean que indica si saca todos los resultados, ignorando el parÃ¡metro max (true) o no (false)
-     * @return lista: de los elementos encontrados, strSearch: String con la descripciÃ³n de la bÃºsqueda realizada
+     * Función que saca la lista de elementos según los parámetros recibidos
+     * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
+     * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
+     * @return lista: de los elementos encontrados, strSearch: String con la descripción de la búsqueda realizada
      */
     def getList_funcion(params, all) {
         params = params.clone()
@@ -41,7 +39,7 @@ class SolicitudMantenimientoExternoController extends Shield {
         def estado = null
         def numero = null
         if (params.search_numero) {
-            strSearch += "con nÃºmero <strong>${params.search_numero}</strong>"
+            strSearch += "con número <strong>${params.search_numero}</strong>"
             numero = params.search_numero.toInteger()
         }
         if (params.search_desde) {
@@ -99,12 +97,12 @@ class SolicitudMantenimientoExternoController extends Shield {
             if (strSearch != "") {
                 strSearch += ", "
             }
-            strSearch += "que estÃ©n en estado <strong>" + estado + "</strong>"
+            strSearch += "que estén en estado <strong>" + estado + "</strong>"
         } else {
             if (strSearch != "") {
                 strSearch += ", "
             }
-            strSearch += "que estÃ©n en cualquier estado"
+            strSearch += "que estén en cualquier estado"
         }
         if (!params.sort) {
             params.sort = "numero"
@@ -112,7 +110,7 @@ class SolicitudMantenimientoExternoController extends Shield {
         if (!params.order) {
             params.order = "asc"
         }
-        def c = SolicitudMantenimientoExterno.createCriteria()
+        def c = SolicitudMantenimientoInterno.createCriteria()
         list = c.list(params) {
             if (numero) {
                 eq("numero", numero)
@@ -133,24 +131,24 @@ class SolicitudMantenimientoExternoController extends Shield {
                 eq("estadoSolicitud", estado)
             }
         }
-        strSearch = "Mostrando las solicitudes de mantenimiento externo " + strSearch
+        strSearch = "Mostrando las solicitudes de mantenimiento interno " + strSearch
         return [list: list, strSearch: strSearch]
     }
 
     /**
-     * AcciÃ³n que muestra la pantalla de ingreso de una nueva nsolicitud de mantenimiento externo
+     * Acción que muestra la pantalla de ingreso de una nueva nsolicitud de mantenimiento externo
      */
     def pedido() {
         def usu = Persona.get(session.usuario.id)
         if (!usu.autorizacion) {
-            flash.message = "Tiene que establecer una clave de autorizaciÃ³n para poder firmar los documentos. " +
-                    "<br/>Presione el botÃ³n 'OlvidÃ© mi autorizaciÃ³n' e ingrese su e-mail registrado para recibir una clave temporal que puede despuÃ©s modificar." +
-                    "<br/>Si no tiene un e-mail registrado contÃ¡ctese con un administrador del sistema."
+            flash.message = "Tiene que establecer una clave de autorización para poder firmar los documentos. " +
+                    "<br/>Presione el botón 'Olvidé mi autorización' e ingrese su e-mail registrado para recibir una clave temporal que puede después modificar." +
+                    "<br/>Si no tiene un e-mail registrado contáctese con un administrador del sistema."
             flash.tipo = "error"
             redirect(controller: "persona", action: "personal")
             return
         }
-        def numero = SolicitudMantenimientoExterno.list([sort: "numero", order: "desc", limit: 1])
+        def numero = SolicitudMantenimientoInterno.list([sort: "numero", order: "desc", limit: 1])
         if (numero.size() > 0) {
             numero = numero.first().numero + 1
         } else {
@@ -160,19 +158,20 @@ class SolicitudMantenimientoExternoController extends Shield {
         def itemStr = ""
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
 
-        def jefes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JFCM"), [sort: 'apellido'])
+        def ls = [TipoUsuario.findByCodigo("JFCM"), TipoUsuario.findByCodigo("GRNT")]
+        def jefes = Persona.findAllByTipoUsuarioInList(ls, [sort: 'apellido'])
 
         return [numero: numero, items: itemStr, jefes: jefes]
     }
 
     /**
-     * AcciÃ³n que guarda una solicitud de mantenimiento externo y redirecciona a la lista
+     * Acción que guarda una solicitud de mantenimiento externo y redirecciona a la lista
      */
     def saveSolicitud_ignore() {
         def now = new Date()
         def usu = Persona.get(session.usuario.id)
 
-        def numero = SolicitudMantenimientoExterno.list([sort: "numero", order: "desc", limit: 1])
+        def numero = SolicitudMantenimientoInterno.list([sort: "numero", order: "desc", limit: 1])
         if (numero.size() > 0) {
             numero = numero.first().numero + 1
         } else {
@@ -183,7 +182,7 @@ class SolicitudMantenimientoExternoController extends Shield {
         firma.persona = usu
         firma.fecha = now
         firma.pdfControlador = "reportesPedidos"
-        firma.pdfAccion = "solicitudMantExt"
+        firma.pdfAccion = "solicitudMantInt"
         firma.concepto = ""
         firma.pdfId = 0
 
@@ -193,31 +192,31 @@ class SolicitudMantenimientoExternoController extends Shield {
             flash.message = "Ha ocurrido un error al firmar la solicitud:" + renderErrors(bean: firma)
             redirect(action: "pedido")
         } else {
-            def solicitud = new SolicitudMantenimientoExterno(params)
-            solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E11")
+            def solicitud = new SolicitudMantenimientoInterno(params)
+            solicitud.estadoSolicitud = EstadoSolicitud.findByCodigo("E21")
             solicitud.fecha = now
             solicitud.de = usu
             solicitud.numero = numero
-            solicitud.codigo = "MX-" + numero
+            solicitud.codigo = "MI-" + numero
             solicitud.firmaSolicita = firma
-            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la solicitud de mantenimiento externo #${solicitud.numero} el " + now.format("dd-MM-yyyy HH:mm")
+            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la solicitud de mantenimiento interno #${solicitud.numero} el " + now.format("dd-MM-yyyy HH:mm")
             if (!solicitud.save(flush: true)) {
                 println "error  " + solicitud.errors
                 flash.tipo = "error"
-                flash.message = "Ha ocurrido un error al guardar la solicitud de mantenimiento externo:" + renderErrors(bean: solicitud)
+                flash.message = "Ha ocurrido un error al guardar la solicitud de mantenimiento interno:" + renderErrors(bean: solicitud)
                 redirect(action: "pedido")
             } else {
                 def trabajosIds = params.trabajos.split(",")
                 trabajosIds.each { tid ->
                     def detalle = new DetalleTrabajo()
-                    detalle.solicitudMantenimientoExterno = solicitud
+                    detalle.solicitudMantenimientoInterno = solicitud
                     detalle.tipoTrabajo = TipoTrabajo.get(tid.toLong())
                     if (!detalle.save(flush: true)) {
                         println "Error al grabar el detalle de trabajo de la solicitud"
                     }
                 }
 
-                firma.concepto = "Solicitud de mantenimiento externo nÃºm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                firma.concepto = "Solicitud de mantenimiento interno núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = solicitud.id
                 if (!firma.save(flush: true)) {
                     println "error al asociar firma con solicitud: " + firma.errors
@@ -230,23 +229,23 @@ class SolicitudMantenimientoExternoController extends Shield {
                     flash.message = firmaRes
                     redirect(action: "pedido")
                 } else {
-                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la solicitud de mantenimiento externo nÃºm. ${solicitud.numero}"
+                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la solicitud de mantenimiento interno núm. ${solicitud.numero}"
                     def paramsAlerta = [
                             mensaje    : mens,
-                            controlador: "solicitudMantenimientoExterno",
-                            accion     : "listaJefeCompras"
+                            controlador: "solicitudMantenimientoInterno",
+                            accion     : "listaJefe"
                     ]
                     def paramsMail = [
-                            subject : "Nueva solicitud de mantenimiento externo",
+                            subject : "Nueva solicitud de mantenimiento interno",
                             template: '/mail/notaPedido',
                             model   : [
-                                    recibe : solicitud.paraJC,
+                                    recibe : solicitud.paraAF,
                                     mensaje: mens,
                                     now    : now,
                                     link   : baseUri + createLink(controller: paramsAlerta.controlador, action: paramsAlerta.accion)
                             ]
                     ]
-                    def msg = notificacionService.notificacionCompleta(usu, solicitud.paraJC, paramsAlerta, paramsMail)
+                    def msg = notificacionService.notificacionCompleta(usu, solicitud.paraAF, paramsAlerta, paramsMail)
 
                     def perf = Perfil.findByCodigo("JFCM")
                     def personas = Sesion.withCriteria {
@@ -264,7 +263,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                     }
 
                     flash.tipo = "success"
-                    flash.message = "La solicitud de mantenimiento externo <strong>nÃºmero ${numero}</strong> ha sido enviada exitosamente"
+                    flash.message = "La solicitud de mantenimiento externo <strong>número ${numero}</strong> ha sido enviada exitosamente"
                     if (msg != "") {
                         flash.message += "<ul>" + msg + "</ul>"
                     }
@@ -275,26 +274,7 @@ class SolicitudMantenimientoExternoController extends Shield {
     }
 
     /**
-     * AcciÃ³n que guarda una cotizaciÃ³n y vuelve a cargar la pantalla de revisiÃ³n de asistente de compras
-     */
-    def saveCotizacion_ignore() {
-        def cotizacion
-        if (params.id) {
-            cotizacion = Cotizacion.get(params.id)
-            cotizacion.properties = params
-        } else {
-            cotizacion = new Cotizacion(params)
-        }
-        cotizacion.fecha = new Date()
-        cotizacion.estadoSolicitud = EstadoSolicitud.findByCodigo("E01")
-        if (!cotizacion.save(flush: true)) {
-            flash.message = renderErrors(bean: cotizacion)
-        }
-        redirect(action: "revisarAsistenteCompras", id: params.solicitudMantenimientoExterno.id)
-    }
-
-    /**
-     * AcciÃ³n que muestra la lista de todas las solicitudes de mantenimiento externo
+     * Acción que muestra la lista de todas las solicitudes de mantenimiento interno
      */
     def lista() {
         def r1 = getList_funcion(params, false)
@@ -305,10 +285,10 @@ class SolicitudMantenimientoExternoController extends Shield {
     }
 
     /**
-     * AcciÃ³n que muestra la lista de solicitud de mantenimiento externo aprobadas
+     * Acción que muestra la lista de solicitud de mantenimiento interno aprobadas
      */
     def listaAprobadas() {
-        def estadoAprobada = EstadoSolicitud.findByCodigo("A11")
+        def estadoAprobada = EstadoSolicitud.findByCodigo("A21")
         params.search_estado = estadoAprobada.id
         if (!params.order) {
             params.ordeer = "asc"
@@ -321,45 +301,13 @@ class SolicitudMantenimientoExternoController extends Shield {
     }
 
     /**
-     * AcciÃ³n que muestra la lista de solicitudes de mantenimiento externo para que un jefe de compras les asigne un asistente de compras
-     */
-    def listaJefeCompras() {
-        if (session.perfil.codigo != "JFCM") {
-            response.sendError(403)
-        }
-        def estadoPendienteAsignacion = EstadoSolicitud.findByCodigo("E11")
-        params.search_estado = estadoPendienteAsignacion.id
-        def r1 = getList_funcion(params, false)
-        def strSearch = r1.strSearch
-        def solicitudes = r1.list
-        def solicitudesCount = getList_funcion(params, true).list.size()
-        return [solicitudes: solicitudes, solicitudesCount: solicitudesCount, strSearch: strSearch, params: params]
-    }
-
-    /**
-     * AcciÃ³n que muestra la lista de solicitudes de mantenimiento externo para que un asistente de compras les asigne cotizaciones
-     */
-    def listaAsistenteCompras() {
-        if (session.perfil.codigo != "ASCM") {
-            response.sendError(403)
-        }
-        def estadoPendientesCotizaciones = EstadoSolicitud.findByCodigo("E12")
-        params.search_estado = estadoPendientesCotizaciones.id
-        def r1 = getList_funcion(params, false)
-        def strSearch = r1.strSearch
-        def solicitudes = r1.list
-        def solicitudesCount = getList_funcion(params, true).list.size()
-        return [solicitudes: solicitudes, solicitudesCount: solicitudesCount, strSearch: strSearch, params: params]
-    }
-
-    /**
-     * AcciÃ³n que muestra la lista de solicitudes de mantenimiento externo para que un jefe haga la aprobaciÃ³n final
+     * Acción que muestra la lista de solicitudes de mantenimiento interno para que un jefe haga la aprobación final
      */
     def listaJefe() {
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
-        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E13")
+        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E21")
         params.search_estado = estadoPendientesAprobacionFinal.id
         def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
@@ -369,13 +317,13 @@ class SolicitudMantenimientoExternoController extends Shield {
     }
 
     /**
-     * AcciÃ³n que muestra la lista de solicitudes de mantenimiento externo para que un gerente haga la aprobaciÃ³n final
+     * Acción que muestra la lista de solicitudes de mantenimiento interno para que un gerente haga la aprobación final
      */
     def listaGerente() {
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
         }
-        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E13")
+        def estadoPendientesAprobacionFinal = EstadoSolicitud.findByCodigo("E21")
         params.search_estado = estadoPendientesAprobacionFinal.id
         def r1 = getList_funcion(params, false)
         def strSearch = r1.strSearch
@@ -385,62 +333,26 @@ class SolicitudMantenimientoExternoController extends Shield {
     }
 
     /**
-     * AcciÃ³n que le permite a un jefe de compras revisar una solicitud de mantenimiento externo y aprobar/negar
-     */
-    def revisarJefeCompras() {
-        if (!params.id) {
-            response.sendError(404)
-        }
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        if (session.perfil.codigo != "JFCM") {
-            response.sendError(403)
-        }
-        if (solicitud.estadoSolicitud.codigo != "E11") {
-            response.sendError(403)
-        }
-        return [solicitud: solicitud]
-    }
-
-    /**
-     * AcciÃ³n que le permite a un asistente de compras revisar una solicitud de mantenimiento externo, aprobar/negar y asignar cotizaciones
-     */
-    def revisarAsistenteCompras() {
-        if (!params.id) {
-            response.sendError(404)
-        }
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        if (session.perfil.codigo != "ASCM") {
-            response.sendError(403)
-        }
-        if (solicitud.estadoSolicitud.codigo != "E12") {
-            response.sendError(403)
-        }
-        def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud, [sort: "id"])
-        return [solicitud: solicitud, cots: cots]
-    }
-
-    /**
-     * AcciÃ³n que le permite a un jefe revisar una solicitud de mantenimiento externo
+     * Acción que le permite a un jefe revisar una solicitud de mantenimiento interno
      * y aprobar/negar FINAL
      */
     def revisarJefe() {
         if (!params.id) {
             response.sendError(404)
         }
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
         if (session.perfil.codigo != "JEFE") {
             response.sendError(403)
         }
-        if (solicitud.estadoSolicitud.codigo != "E13") {
+        if (solicitud.estadoSolicitud.codigo != "E21") {
             response.sendError(403)
         }
 
-        def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud, [sort: "id"])
-        return [solicitud: solicitud, cots: cots]
+        return [solicitud: solicitud]
     }
 
     /**
-     * AcciÃ³n que le permite a un gerente revisar una solicitud de mantenimiento externo
+     * Acción que le permite a un gerente revisar una solicitud de mantenimiento interno
      * y aprobar/negar FINAL
      */
     def revisarGerente() {
@@ -451,144 +363,32 @@ class SolicitudMantenimientoExternoController extends Shield {
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
         }
-        if (solicitud.estadoSolicitud.codigo != "E13") {
+        if (solicitud.estadoSolicitud.codigo != "E21") {
             response.sendError(403)
         }
 
-        def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud, [sort: "id"])
-        return [solicitud: solicitud, cots: cots]
+        return [solicitud: solicitud]
     }
 
     /**
-     * AcciÃ³n que carga una pantalla emergente para completar la informaciÃ³n necesaria para aprobar una solicitud de mantenimiento externo
-     */
-    def dlgAprobarJefeCompras_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        def asistentesCompras = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("ASCM"), [sort: 'apellido'])
-        return [solicitud: solicitud, asistentesCompras: asistentesCompras]
-    }
-
-    /**
-     * AcciÃ³n que carga una pantalla emergente para completar la informaciÃ³n necesaria para aprobar una solicitud de mantenimiento externo
-     */
-    def dlgAprobarAsistenteCompras_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        def jefes = null, gerentes = null
-
-        def total = []
-        def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud, [sort: "id"])
-        def max = 0
-        cots.eachWithIndex { c, i ->
-            def m = c.valor
-            total[i] = m
-            if (m > max) {
-                max = m
-            }
-        }
-
-        if (max < Parametros.maxSolicitudMantExt) {
-            jefes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JEFE"), [sort: 'apellido'])
-        } else {
-            gerentes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("GRNT"), [sort: 'apellido'])
-        }
-
-        return [solicitud: solicitud, jefes: jefes, gerentes: gerentes]
-    }
-
-    /**
-     * AcciÃ³n que carga una pantalla emergente para completar la informaciÃ³n necesaria para aprobar una solicitud de mantenimiento externo
+     * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una solicitud de mantenimiento interno
      */
     def dlgAprobarFinal_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(solicitud)
-        return [solicitud: solicitud, cots: cots]
-    }
-
-    /**
-     * AcciÃ³n que carga una pantalla emergente para solicitar al asistente de compras que cargue mÃ¡s cotizaciones
-     */
-    def dlgSolicitarCotizaciones_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
         return [solicitud: solicitud]
     }
 
     /**
-     * AcciÃ³n que carga una pantalla emergente para completar la informaciÃ³n necesaria para negar una solicitud de mantenimiento externo
-     */
-    def dlgNegar_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        return [solicitud: solicitud]
-    }
-
-    /**
-     * AcciÃ³n que carga una pantalla emergente para completar la informaciÃ³n necesaria para negar definitivamente una solicitud de mantenimiento externo
-     */
-    def dlgNegarFinal_ajax() {
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
-        return [solicitud: solicitud]
-    }
-
-    /**
-     * AcciÃ³n que guarda la aprobaciÃ³n de una solicitud de mantenimiento externo por parte de un jefe, y envÃ­a una alerta y un email al asistente de compras destinatario y al que realizÃ³ el pedido
-     */
-    def aprobarJefeCompras_ajax() {
-        render cambiarEstadoPedido_funcion(params, "AJC")
-    }
-
-    /**
-     * AcciÃ³n que guarda la aprobaciÃ³n de la solicitud de mantenimiento externo con las cotizaciones ingresadas por un asistente de compras  y envÃ­a una alerta y un email al jefe o gerente de compras destinatario y al que realizÃ³ el pedido
-     */
-    def aprobarAsistenteCompras_ajax() {
-        render cambiarEstadoPedido_funcion(params, "AAC")
-    }
-
-    /**
-     * AcciÃ³n que guarda la aprobaciÃ³n final de solicitud de mantenimiento externo por un asistente de compras  y envÃ­a una alerta y un email al que realizÃ³ el pedido
+     * Acción que guarda la aprobación final de solicitud de mantenimiento interno y envía una alerta y un email al que realizó el pedido
      */
     def aprobarFinal_ajax() {
         render cambiarEstadoPedido_funcion(params, "AF")
     }
 
     /**
-     * AcciÃ³n que devuelve una solicitud de mantenimiento externo a un asistente de compras para que cargue mÃ¡s cotizaciones y envÃ­a una alerta y un email al que realizÃ³ el pedido
-     */
-    def solicitarCotizaciones_ajax() {
-        render cambiarEstadoPedido_funcion(params, "CF")
-    }
-
-    /**
-     * AcciÃ³n que guarda la negaciÃ³n de una nota de pedido por parte de un jefe, y envÃ­a una alerta y un email al que realizÃ³ el pedido
-     */
-    def negarJefeCompras_ajax() {
-        render cambiarEstadoPedido_funcion(params, "NJC")
-    }
-
-    /**
-     * AcciÃ³n que guarda la negaciÃ³n de una solicitud de mantenimiento externo por parte de un asistente de compras, y envÃ­a una alerta y un email al que realizÃ³ el pedido
-     */
-    def negarAsistenteCompras_ajax() {
-        render cambiarEstadoPedido_funcion(params, "NAC")
-    }
-
-    /**
-     * AcciÃ³n que guarda la negaciÃ³n final de una solicitud de mantenimiento externo por parte de un asistente de compras, y envÃ­a una alerta y un email al que realizÃ³ el pedido
-     */
-    def negarFinal_ajax() {
-        render cambiarEstadoPedido_funcion(params, "NF")
-    }
-
-    /**
-     * FunciÃ³n que cambia de estado una solicitud de mantenimiento externo y envÃ­a las notificaciones necesarias
-     * @param params los parÃ¡metros que llegan del cliente
+     * Función que cambia de estado una solicitud de mantenimiento interno y envía las notificaciones necesarias
+     * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
-     *              AJC: el jefe de compras aprueba la solicitud
-     *              NJC: el jefe de compras niega la solicitud
-     *              BJC: el jefe de compras indica de q bodega(s) sacar
-     *
-     *              AJC: el asistente de compras aprueba la solicitud y envÃ­a las cotizaciones
-     *              NJC: el asistente de compras niega la solicitud
-     *              BJC: el asistente de compras indica de q bodega(s) sacar
-     *
      *              AF: el jefe/gerente aprueba definitivamente la solicitud
      *              NF: el jefe/gerente niega definitivamente la solicitud
      *              BF: el jefe/gerente indica de q bodega(s) sacar
@@ -605,106 +405,21 @@ class SolicitudMantenimientoExternoController extends Shield {
         def perfilNotificacionesExtra = null
         String mensajeAprobacionFinal = ""
 
-        def maxMx = Parametros.maxSolicitudMantExt
-
         def para = null
         def usu = Persona.get(session.usuario.id)
         if (params.para) {
             para = Persona.get(params.para.toLong())
         }
-        def pedido = SolicitudMantenimientoExterno.get(params.id.toLong())
+        def pedido = SolicitudMantenimientoInterno.get(params.id.toLong())
 
         def str = ""
 
         if (params.auth.toString().encodeAsMD5() == usu.autorizacion) {
             switch (tipo) {
-                case "AJC": // el jefe de compras aprueba la solicitud
-                    codEstadoInicial = "E11"
-                    estadoFinal = EstadoSolicitud.findByCodigo("E12") //estado Pendientes cotizaciones
-                    concepto = "AprobaciÃ³n"
-                    mensTipo = "aprobado"
-                    retTipo = "ha sido aprobada"
-                    retTipo2 = "aprobarla"
-                    firmaPedido = "firmaJefeCompras"
-                    accionAlerta = "listaAsistenteCompras"
-
-                    notificacion1Recibe = para
-                    notificacion2Recibe = pedido.de
-
-                    pedido.paraAC = para
-                    if (str != "") {
-                        concepto += str
-                        mensTipo += str
-                        retTipo += str
-                    }
-
-                    perfilNotificacionesExtra = "ASCM"
-                    break;
-                case "NJC": // el jefe de compras niega la solicitud
-                    codEstadoInicial = "E11"
-                    estadoFinal = EstadoSolicitud.findByCodigo("N11") //estado Negado
-                    concepto = "NegaciÃ³n"
-                    mensTipo = "negado"
-                    retTipo = "ha sido negada"
-                    retTipo2 = "negarla"
-                    firmaPedido = "firmaNiega"
-                    accionAlerta = "lista"
-
-                    notificacion1Recibe = pedido.de
-                    break;
-                case "AAC": // el asistente de compras aprueba la solicitud y ya cargÃ³ las cotizaciones
-                    codEstadoInicial = "E12"
-                    estadoFinal = EstadoSolicitud.findByCodigo("E13") //estado Pendiente de aprobacion final
-                    concepto = "Cargado de cotizaciones"
-                    mensTipo = "cargado cotizaciones"
-                    retTipo = "ha sido aprobada y ha enviado las cotizaciones"
-                    retTipo2 = "aprobarla y enviar las cotizaciones"
-                    firmaPedido = "firmaAsistenteCompras"
-                    def total = []
-                    def cots = Cotizacion.findAllBySolicitudMantenimientoExterno(pedido, [sort: "id"])
-                    def max = 0
-                    cots.eachWithIndex { c, i ->
-                        def m = c.valor
-                        total[i] = m
-                        if (m > max) {
-                            max = m
-                        }
-                    }
-
-                    if (max < maxMx) {
-                        accionAlerta = "listaJefe"
-                        perfilNotificacionesExtra = "JEFE"
-                    } else {
-                        accionAlerta = "listaGerente"
-                        perfilNotificacionesExtra = "GRNT"
-                    }
-
-                    notificacion1Recibe = para
-                    notificacion2Recibe = pedido.de
-
-                    pedido.paraAF = para
-                    if (str != "") {
-                        concepto += str
-                        mensTipo += str
-                        retTipo += str
-                    }
-                    break;
-                case "NAC": // el asistente de compras niega la solicitud
-                    codEstadoInicial = "E12"
-                    estadoFinal = EstadoSolicitud.findByCodigo("N11") //estado Negado
-                    concepto = "NegaciÃ³n"
-                    mensTipo = "negado"
-                    retTipo = "ha sido negada"
-                    retTipo2 = "negarla"
-                    firmaPedido = "firmaNiega"
-                    accionAlerta = "lista"
-
-                    notificacion1Recibe = pedido.de
-                    break;
                 case "AF": // el jefe o gerente aprueba final la solicitud
-                    codEstadoInicial = "E13"
-                    estadoFinal = EstadoSolicitud.findByCodigo("A11") //estado aprobado
-                    concepto = "APROBACIÃ“N"
+                    codEstadoInicial = "E21"
+                    estadoFinal = EstadoSolicitud.findByCodigo("A21") //estado aprobado
+                    concepto = "APROBACIÓN"
                     mensTipo = "APROBADO"
                     retTipo = "HA SIDO APROBADA"
                     retTipo2 = "aprobarla"
@@ -720,9 +435,9 @@ class SolicitudMantenimientoExternoController extends Shield {
                     mensajeAprobacionFinal = ". Puede proceder al mantenimiento solicitado."
                     break;
                 case "NF": // el jefe o gerente niega la solicitud
-                    codEstadoInicial = "E13"
-                    estadoFinal = EstadoSolicitud.findByCodigo("N11") //estado Negado
-                    concepto = "NEGACIÃ“N"
+                    codEstadoInicial = "E21"
+                    estadoFinal = EstadoSolicitud.findByCodigo("N21") //estado Negado
+                    concepto = "NEGACIÓN"
                     mensTipo = "NEGADO"
                     retTipo = "HA SIDO NEGADA"
                     retTipo2 = "negarla"
@@ -759,7 +474,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                         def cotizacionAprobada = Cotizacion.get(params.cot.toLong())
                         cotizacionAprobada.estadoSolicitud = estadoFinal
                         if (cotizacionAprobada.save(flush: true)) {
-                            println "error al aprobar la cotizaciÃ³n: " + cotizacionAprobada.errors
+                            println "error al aprobar la cotización: " + cotizacionAprobada.errors
                         }
                     }
 //                    println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
@@ -770,7 +485,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                         def firma = new Firma()
                         firma.persona = usu
                         firma.fecha = now
-                        firma.concepto = "${concepto} de Solicitud de mantenimiento externo nÃºm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                        firma.concepto = "${concepto} de Solicitud de mantenimiento externo núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                         firma.pdfControlador = "reportesPedidos"
                         firma.pdfAccion = "solicitudMantenimientoExterno"
                         firma.pdfId = pedido.id
@@ -786,7 +501,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                                     "solicitud de mantenimiento externo " +
                                     "el ${now.format('dd-MM-yyyy')} a las ${now.format('HH:mm')}"
                             if (params.razon && params.razon.trim() != "") {
-                                observaciones += ", razÃ³n: " + params.razon.trim()
+                                observaciones += ", razón: " + params.razon.trim()
                             }
                             if (params.obs && params.obs.trim() != "") {
                                 observaciones += ", observaciones: " + params.obs.trim()
@@ -806,7 +521,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                                 return "ERROR*" + firmaRes
                             } else {
                                 def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la " +
-                                        "solicitud de mantenimiento externo nÃºm. ${pedido.numero}" + mensajeAprobacionFinal
+                                        "solicitud de mantenimiento externo núm. ${pedido.numero}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
                                         controlador: "solicitudMantenimientoExterno",
@@ -847,9 +562,9 @@ class SolicitudMantenimientoExternoController extends Shield {
                                     msg += notificacionService.notificacionCompleta(usu, notificacion2Recibe, paramsAlerta, paramsMail)
                                 }
                                 if (msg != "") {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>nÃºmero ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
                                 } else {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>nÃºmero ${pedido.numero}</strong> ${retTipo} exitosamente"
+                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
                                 }
                                 return msg
                             }
@@ -861,10 +576,10 @@ class SolicitudMantenimientoExternoController extends Shield {
                     return "ERROR*Ha ocurrido un error al guardar el nuevo destinatario de la solicitud de mantenimiento externo: " + renderErrors(bean: pedido)
                 }
             } else {
-                return "ERROR*AcciÃ³n no reconocida"
+                return "ERROR*Acción no reconocida"
             }
         } else {
-            return "ERROR*Su clave de autorizaciÃ³n es incorrecta"
+            return "ERROR*Su clave de autorización es incorrecta"
         }
     }
 }

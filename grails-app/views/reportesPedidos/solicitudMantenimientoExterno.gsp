@@ -97,7 +97,7 @@
                 </tr>
                 <tr>
                     <td class="label">Trabajos a realizar</td>
-                    <td colspan="3">${DetalleTrabajo.findAllBySolicitud(solicitud).tipoTrabajo.join(", ")}</td>
+                    <td colspan="3">${DetalleTrabajo.findAllBySolicitudMantenimientoExterno(solicitud).tipoTrabajo.join(", ")}</td>
                 </tr>
                 <tr>
                     <td class="label">Detalles</td>
