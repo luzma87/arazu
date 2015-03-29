@@ -379,10 +379,25 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
+     * Acción que carga una pantalla emergente para completar la información necesaria para negar definitivamente una solicitud de mantenimiento interno
+     */
+    def dlgNegarFinal_ajax() {
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
+        return [solicitud: solicitud]
+    }
+
+    /**
      * Acción que guarda la aprobación final de solicitud de mantenimiento interno y envía una alerta y un email al que realizó el pedido
      */
     def aprobarFinal_ajax() {
         render cambiarEstadoPedido_funcion(params, "AF")
+    }
+
+    /**
+     * Acción que guarda la negación final de una solicitud de mantenimiento interno por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
+     */
+    def negarFinal_ajax() {
+        render cambiarEstadoPedido_funcion(params, "NF")
     }
 
     /**
@@ -446,37 +461,9 @@ class SolicitudMantenimientoInternoController extends Shield {
 
                     notificacion1Recibe = pedido.de
                     break;
-                case "CF": // el jefe/gerente devuelve al asistente de compras para que cargue nuevas cotizaciones
-                    codEstadoInicial = "E13"
-                    estadoFinal = EstadoSolicitud.findByCodigo("E12") //estado Pendientes cotizaciones
-                    concepto = "Solicitud de recarga de cotizaciones"
-                    mensTipo = "solicitado la recarga de cotizaciones"
-                    retTipo = "ha sido solicitada la recarga de cotizaciones"
-                    retTipo2 = "solicitar recarga de cotizaciones"
-                    firmaPedido = ""
-                    accionAlerta = "listaAsistenteCompras"
-
-                    notificacion1Recibe = pedido.paraAC
-                    notificacion2Recibe = pedido.de
-
-                    if (str != "") {
-                        concepto += str
-                        mensTipo += str
-                        retTipo += str
-                    }
-
-                    perfilNotificacionesExtra = "ASCM"
-                    break;
             }
             if (pedido && estadoFinal) {
                 if (pedido.save(flush: true)) {
-                    if (tipo == "AF") {
-                        def cotizacionAprobada = Cotizacion.get(params.cot.toLong())
-                        cotizacionAprobada.estadoSolicitud = estadoFinal
-                        if (cotizacionAprobada.save(flush: true)) {
-                            println "error al aprobar la cotización: " + cotizacionAprobada.errors
-                        }
-                    }
 //                    println ">>>>> " + pedido + "   " + pedido.estadoSolicitud.codigo + "      " + codEstadoInicial
                     if (pedido.estadoSolicitud.codigo == codEstadoInicial) {
                         def now = new Date()
@@ -485,9 +472,9 @@ class SolicitudMantenimientoInternoController extends Shield {
                         def firma = new Firma()
                         firma.persona = usu
                         firma.fecha = now
-                        firma.concepto = "${concepto} de Solicitud de mantenimiento externo núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                        firma.concepto = "${concepto} de Solicitud de mantenimiento interno núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                         firma.pdfControlador = "reportesPedidos"
-                        firma.pdfAccion = "solicitudMantenimientoExterno"
+                        firma.pdfAccion = "solicitudMantenimientoInterno"
                         firma.pdfId = pedido.id
 
                         if (!firma.save(flush: true)) {
@@ -498,7 +485,7 @@ class SolicitudMantenimientoInternoController extends Shield {
                                 pedido[firmaPedido] = firma
                             }
                             def observaciones = "<strong>${usu.toString()}</strong> ha <strong>${mensTipo}</strong> esta " +
-                                    "solicitud de mantenimiento externo " +
+                                    "solicitud de mantenimiento interno " +
                                     "el ${now.format('dd-MM-yyyy')} a las ${now.format('HH:mm')}"
                             if (params.razon && params.razon.trim() != "") {
                                 observaciones += ", razón: " + params.razon.trim()
@@ -521,14 +508,14 @@ class SolicitudMantenimientoInternoController extends Shield {
                                 return "ERROR*" + firmaRes
                             } else {
                                 def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la " +
-                                        "solicitud de mantenimiento externo núm. ${pedido.numero}" + mensajeAprobacionFinal
+                                        "solicitud de mantenimiento interno núm. ${pedido.numero}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
-                                        controlador: "solicitudMantenimientoExterno",
+                                        controlador: "solicitudMantenimientoInterno",
                                         accion     : accionAlerta
                                 ]
                                 def paramsMail = [
-                                        subject : "${concepto} de solicitud de mantenimiento externo",
+                                        subject : "${concepto} de solicitud de mantenimiento interno",
                                         template: '/mail/notaPedido',
                                         model   : [
                                                 recibe : notificacion1Recibe,
@@ -562,18 +549,18 @@ class SolicitudMantenimientoInternoController extends Shield {
                                     msg += notificacionService.notificacionCompleta(usu, notificacion2Recibe, paramsAlerta, paramsMail)
                                 }
                                 if (msg != "") {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                    msg = "SUCCESS*La solicitud de mantenimiento interno <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
                                 } else {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
+                                    msg = "SUCCESS*La solicitud de mantenimiento interno <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
                                 }
                                 return msg
                             }
                         }
                     } else {
-                        return "ERROR*La solicitud de mantenimiento externo se encuentra en estado ${pedido.estadoSolicitud.nombre}, no puede ${retTipo2}"
+                        return "ERROR*La solicitud de mantenimiento interno se encuentra en estado ${pedido.estadoSolicitud.nombre}, no puede ${retTipo2}"
                     }
                 } else {
-                    return "ERROR*Ha ocurrido un error al guardar el nuevo destinatario de la solicitud de mantenimiento externo: " + renderErrors(bean: pedido)
+                    return "ERROR*Ha ocurrido un error al guardar el nuevo destinatario de la solicitud de mantenimiento interno: " + renderErrors(bean: pedido)
                 }
             } else {
                 return "ERROR*Acción no reconocida"
