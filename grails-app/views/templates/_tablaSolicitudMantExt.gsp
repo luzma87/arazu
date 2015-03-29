@@ -67,7 +67,7 @@ table {
 <div class="alert alert-info" style="padding: 5px; margin-top: 2px; margin-bottom: 8px;">
     ${strSearch}
 </div>
-<g:set var="colspan" value="8"/>
+<g:set var="colspan" value="9"/>
 <table class="table table-striped  table-bordered table-hover table-condensed" style="margin-top: 0;">
     <thead>
         <tr>
@@ -81,7 +81,7 @@ table {
             <g:sortableColumn property="estadoSolicitud" title="Estado" style="width: 150px;"/>
             <g:if test="${cotizaciones}">
                 <th style="width: 90px">Cotizaciones</th>
-                <g:set var="colspan" value="9"/>
+                <g:set var="colspan" value="${colspan + 1}"/>
             </g:if>
             <th style="width: 75px">Acciones</th>
         </tr>

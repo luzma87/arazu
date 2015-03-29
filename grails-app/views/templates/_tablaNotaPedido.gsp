@@ -84,6 +84,7 @@ table {
         <tr>
             <g:if test="${banderas}">
                 <g:sortableColumn property="prioridad" title="Prioridad" style="width: 50px;"/>
+                <g:set var="colspan" value="${colspan + 1}"/>
             </g:if>
             <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
@@ -94,7 +95,7 @@ table {
             <g:sortableColumn property="estadoSolicitud" title="Estado" style="width: 150px;"/>
             <g:if test="${cotizaciones}">
                 <th style="width: 90px">Cotizaciones</th>
-                <g:set var="colspan" value="9"/>
+                <g:set var="colspan" value="${colspan + 1}"/>
             </g:if>
             <th style="width: 75px">Acciones</th>
         </tr>
