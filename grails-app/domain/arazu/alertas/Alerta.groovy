@@ -3,7 +3,9 @@ package arazu.alertas
 import arazu.seguridad.Persona
 
 /**
- * Clase para conectar con la tabla 'alertas' de la base de datos
+ * Clase para conectar con la tabla 'alertas' de la base de datos.
+ * Esta tabla guarda las alertas generadas a los usuarios para notificarles de acciones que deben tomar,
+ * por ejemplo, cuando se crea una nota de pedido y un usuario debe autorizarla.
  */
 class Alerta {
 
