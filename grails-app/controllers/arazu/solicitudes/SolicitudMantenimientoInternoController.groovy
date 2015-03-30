@@ -171,9 +171,27 @@ class SolicitudMantenimientoInternoController extends Shield {
      */
     def completarPedido() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
-        def detalleManoObra = DetalleManoObra.findAllBySolicitud(solicitud)
-        def detalleMaterial = DetalleRepuestos.findAllBySolicitud(solicitud)
-        return [solicitud: solicitud, detalleManoObra: detalleManoObra, detalleMaterial: detalleMaterial]
+        if (solicitud.estadoSolicitud.codigo == 'A21') { //aprobada
+            def detalleManoObra = DetalleManoObra.findAllBySolicitud(solicitud)
+            def detalleMaterial = DetalleRepuestos.findAllBySolicitud(solicitud)
+            return [solicitud: solicitud, detalleManoObra: detalleManoObra, detalleMaterial: detalleMaterial]
+        } else {
+            redirect(action: 'lista')
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que marca un mantenimiento interno como completo
+     */
+    def marcarCompleto_ajax() {
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
+        def estadoCompletado = EstadoSolicitud.findByCodigo("C21")
+        solicitud.estadoSolicitud = estadoCompletado
+        if (solicitud.save(flush: true)) {
+            render "SUCCESS*Mantenimiento interno completado exitosamente"
+        } else {
+            render "ERROR*" + renderErrors(bean: solicitud)
+        }
     }
 
     /**
@@ -215,7 +233,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acciån llamada con ajax que elimina un detalle de material/repuesto
+     * Acción llamada con ajax que elimina un detalle de material/repuesto
      */
     def deleteMaterial_ajax() {
         def detalle = DetalleRepuestos.get(params.id)
@@ -225,6 +243,21 @@ class SolicitudMantenimientoInternoController extends Shield {
             return
         } catch (DataIntegrityViolationException e) {
             render "ERROR*Ha ocurrido un error al eliminar el detalle de repuesto"
+            return
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que elimina un detalle de mano de obra
+     */
+    def deletePersona_ajax() {
+        def detalle = DetalleManoObra.get(params.id)
+        try {
+            detalle.delete(flush: true)
+            render "SUCCESS*Eliminación de detalle de mano de obra."
+            return
+        } catch (DataIntegrityViolationException e) {
+            render "ERROR*Ha ocurrido un error al eliminar el detalle de mano de obra."
             return
         }
     }

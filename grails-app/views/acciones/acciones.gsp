@@ -366,26 +366,26 @@
                 });
 
                 $("#btnCargarAcc").click(function () {
-                    bootbox.confirm("¿Está seguro de querer cargar las acciones desde Grails?", function (result) {
-                        if (result) {
-                            openLoader();
-                            $.ajax({
-                                type    : "POST",
-                                url     : "${createLink(controller:'acciones', action:'cargarAcciones_ajax')}",
-                                success : function (msg) {
-                                    closeLoader();
-                                    var parts = msg.split("*");
-                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                    $(".mdlo").first().click();
-                                },
-                                error   : function (jqXHR, textStatus, errorThrown) {
-                                    log("Ha ocurrido un error interno", "error");
-                                    closeLoader();
+//                    bootbox.confirm("¿Está seguro de querer cargar las acciones desde Grails?", function (result) {
+//                        if (result) {
+                    openLoader();
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'acciones', action:'cargarAcciones_ajax')}",
+                        success : function (msg) {
+                            closeLoader();
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            $(".mdlo").first().click();
+                        },
+                        error   : function (jqXHR, textStatus, errorThrown) {
+                            log("Ha ocurrido un error interno", "error");
+                            closeLoader();
 //                                    console.log(jqXHR, textStatus, errorThrown);
-                                }
-                            });
                         }
                     });
+//                        }
+//                    });
                     return false;
                 });
             });

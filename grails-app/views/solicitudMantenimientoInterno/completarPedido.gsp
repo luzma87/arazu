@@ -11,10 +11,6 @@
         <meta name="layout" content="main"/>
         <title>Solicitud de mantenimiento interno</title>
         <style type="text/css">
-        .clickable {
-            cursor : pointer;
-        }
-
         body {
             padding-bottom : 50px;
         }
@@ -152,7 +148,6 @@
 
             </g:form>
 
-
             <div class="row">
                 <div class="col-md-12 text-info">
                     <h3>Mano de obra</h3>
@@ -173,7 +168,8 @@
                                 </tr>
                                 <tr class="success">
                                     <td>
-                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true" data-width="150px"/>
+                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true"
+                                                  data-width="150px" optionKey="id"/>
                                     </td>
                                     <td>
                                         <g:textField name="horas" class="form-control input-sm number"/>
@@ -192,6 +188,23 @@
                                 </tr>
                             </thead>
                             <tbody id="tbPersona">
+                                <g:each in="${detalleManoObra}" var="dt">
+                                    <tr data-id="${dt.id}"
+                                        data-persona="${dt.personaId}"
+                                        data-horas="${dt.horasTrabajo}"
+                                        data-fecha="${dt.fecha.format('dd-MM-yyyy')}"
+                                        data-observaciones="${dt.observaciones}">
+                                        <td>${dt.persona}</td>
+                                        <td>${dt.horasTrabajo}</td>
+                                        <td>${dt.fecha.format('dd-MM-yyyy')}</td>
+                                        <td>${dt.observaciones}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-danger btnDeletePersona">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </g:each>
                             </tbody>
                         </table>
                     </div>
@@ -259,8 +272,11 @@
                                         <td>${dt.codigo}</td>
                                         <td>${dt.marca}</td>
                                         <td>${dt.observaciones}</td>
-                                        <td><a href="#" class="btn btn-sm btn-danger btnDeleteMaterial"><i class="fa fa-trash-o"></i>
-                                        </a></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-danger btnDeleteMaterial">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </g:each>
                             </tbody>
@@ -268,6 +284,14 @@
                     </div>
                 </div>
             </form>
+
+            <div class="row" style="margin-top: 20px">
+                <div class="col-md-1">
+                    <a href="#" class="btn btn-success" id="btnCompletar">
+                        <i class="fa fa-circle-o-notch"></i> Marcar como completado
+                    </a>
+                </div>
+            </div>
         </elm:container>
 
 
@@ -318,10 +342,86 @@
                 });
             }
 
+            function deletePersona(id, $tr) {
+                $.ajax({
+                    type    : "POST",
+                    url     : "${createLink(action:'deletePersona_ajax')}",
+                    data    : {
+                        id : id
+                    },
+                    success : function (msg) {
+                        var parts = msg.split("*");
+                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                        if (parts[0] == "SUCCESS") {
+                            $tr.remove();
+                        }
+                    },
+                    error   : function () {
+                        log("Ha ocurrido un error interno", "Error");
+                        closeLoader();
+                    }
+                });
+            }
+
             $(function () {
+
+                $("#btnCompletar").click(function () {
+                    bootbox.dialog({
+                        title   : "Alerta",
+                        message : "<i class='fa fa-circle-o-notch fa-3x pull-left text-success text-shadow'></i>" +
+                                  "<p>" +
+                                  "¿Está seguro que desea marcar este mantenimiento interno como completado?" +
+                                  "</p>" +
+                                  "<p>" +
+                                  "Ya no podrá modificar la información de mano de obra ni de materiales." +
+                                  "</p>",
+                        buttons : {
+                            cancelar : {
+                                label     : "Cancelar",
+                                className : "btn-primary",
+                                callback  : function () {
+                                }
+                            },
+                            eliminar : {
+                                label     : "<i class='fa fa-circle-o-notch'></i> Completar",
+                                className : "btn-success",
+                                callback  : function () {
+                                    openLoader();
+                                    $.ajax({
+                                        type    : "POST",
+                                        url     : '${createLink(controller:'solicitudMantenimientoInterno', action:'marcarCompleto_ajax')}',
+                                        data    : {
+                                            id : "${solicitud.id}"
+                                        },
+                                        success : function (msg) {
+                                            var parts = msg.split("*");
+                                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                            if (parts[0] == "SUCCESS") {
+                                                setTimeout(function () {
+                                                    location.href = "${createLink(controller: 'solicitudMantenimientoInterno', action: 'lista')}";
+                                                }, 1000);
+                                            } else {
+                                                closeLoader();
+                                            }
+                                        },
+                                        error   : function () {
+                                            log("Ha ocurrido un error interno", "error");
+                                            closeLoader();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    return false;
+                });
 
                 $(".btnDeleteMaterial").click(function () {
                     deleteMaterial($(this).parents("tr").data("id"), $(this).parents("tr"));
+                    return false;
+                });
+                $(".btnDeletePersona").click(function () {
+                    deletePersona($(this).parents("tr").data("id"), $(this).parents("tr"));
                     return false;
                 });
 
@@ -452,39 +552,58 @@
                     var persId = $pers.val();
 
                     if (validarPersona(persId, horas, fecha, obs)) {
-                        var data = $("#frmPersona").serialize();
+                        $.ajax({
+                            type    : "POST",
+                            url     : "${createLink(action:'saveManoObra_ajax')}",
+                            data    : {
+                                id            : "${solicitud.id}",
+                                persona       : persId,
+                                horas         : horas,
+                                fecha         : fecha,
+                                observaciones : obs
+                            },
+                            success : function (msg) {
+                                var parts = msg.split("*");
+                                log(parts[2], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                if (parts[0] == "SUCCESS") {
+                                    var data = $("#frmPersona").serialize();
 
-                        var $tr = $("<tr>");
-                        $tr.addClass("persona");
-                        $tr.data({
-                            data          : data,
-                            persona       : persId,
-                            horas         : horas,
-                            fecha         : fecha,
-                            observaciones : obs
+                                    var $tr = $("<tr>");
+                                    $tr.addClass("persona");
+                                    $tr.data({
+                                        data          : data,
+                                        id            : parts[1],
+                                        persona       : persId,
+                                        horas         : horas,
+                                        fecha         : fecha,
+                                        observaciones : obs
+                                    });
+
+                                    var $tdPers = $("<td>" + pers + "</td>");
+                                    var $tdHoras = $("<td>" + horas + "</td>");
+                                    var $tdFecha = $("<td>" + fecha + "</td>");
+                                    var $tdObs = $("<td>" + obs + "</td>");
+                                    var $tdButton = $("<td>");
+
+                                    var $btn = $("<a href='#' class='btn btn-danger btn-sm'><i class='fa fa-trash-o'></i></a>");
+                                    $btn.click(function () {
+                                        deletePersona(parts[1], $tr);
+                                        return false;
+                                    });
+
+                                    $tdButton.append($btn);
+
+                                    $tr.append($tdPers).append($tdHoras).append($tdFecha).append($tdObs).append($tdButton);
+
+                                    $("#tbPersona").prepend($tr);
+
+                                    $horas.val("");
+                                    $fecha.val("");
+                                    $obs.val("");
+                                }
+                            }
                         });
 
-                        var $tdPers = $("<td>" + pers + "</td>");
-                        var $tdHoras = $("<td>" + horas + "</td>");
-                        var $tdFecha = $("<td>" + fecha + "</td>");
-                        var $tdObs = $("<td>" + obs + "</td>");
-                        var $tdButton = $("<td>");
-
-                        var $btn = $("<a href='#' class='btn btn-danger btn-sm'><i class='fa fa-trash-o'></i></a>");
-                        $btn.click(function () {
-                            $(this).parents("tr").remove();
-                            return false;
-                        });
-
-                        $tdButton.append($btn);
-
-                        $tr.append($tdPers).append($tdHoras).append($tdFecha).append($tdObs).append($tdButton);
-
-                        $("#tbPersona").prepend($tr);
-
-                        $horas.val("");
-                        $fecha.val("");
-                        $obs.val("");
                     } else {
                         log("No puede ingresar la misma combinación de persona - fecha más de una vez.", "error");
                     }
