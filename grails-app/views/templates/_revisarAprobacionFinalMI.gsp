@@ -19,9 +19,6 @@
             <a href="#" class="btn btn-danger" id="btnNegar">
                 <i class="fa fa-times"></i> Negar
             </a>
-            <a href="#" class="btn btn-warning" id="btnCots">
-                <i class="fa fa-cart-plus"></i> Pedir cotizaciones
-            </a>
         </div>
     </div>
 

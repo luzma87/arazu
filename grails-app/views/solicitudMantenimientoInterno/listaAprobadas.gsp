@@ -17,6 +17,7 @@
         <elm:container tipo="horizontal" titulo="Solicitudes de mantenimiento interno aprobadas">
             <g:render template="/templates/tablaSolicitudMantInt"
                       model="[params      : params, strSearch: strSearch, solicitudes: solicitudes, solicitudesCount: solicitudesCount,
+                              completar   : session.perfil.codigo == 'JFMN',
                               linkBusqueda: 'listaAprobadas']"/>
         </elm:container>
     </body>

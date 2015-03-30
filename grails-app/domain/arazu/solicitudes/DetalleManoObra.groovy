@@ -40,7 +40,6 @@ class DetalleManoObra {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort nombre: "asc"
         columns {
             id column: 'dtrp__id'
             solicitud column: 'smin__id'

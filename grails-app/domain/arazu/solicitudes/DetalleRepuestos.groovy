@@ -31,6 +31,10 @@ class DetalleRepuestos {
      * Marca
      */
     String marca
+    /**
+     * Observaciones
+     */
+    String observaciones
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -45,7 +49,6 @@ class DetalleRepuestos {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort nombre: "asc"
         columns {
             id column: 'dtrp__id'
             solicitud column: 'smin__id'
@@ -54,6 +57,15 @@ class DetalleRepuestos {
             item column: 'item__id'
             codigo column: 'dtrpcdgo'
             marca column: 'dtrpmrca'
+            observaciones column: 'dtrpobsv'
+            observaciones type: "text"
         }
+    }
+
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
+    static constraints = {
+        observaciones blank: true, nullable: true
     }
 }

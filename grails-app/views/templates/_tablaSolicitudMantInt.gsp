@@ -108,6 +108,12 @@ table {
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </g:if>
+                            <g:if test="${completar}">
+                                <g:link controller="solicitudMantenimientoInterno" action="completarPedido" title="Completar formulario" id="${solicitud.id}"
+                                        class="btn btn-warning btn-sm">
+                                    <i class="fa fa-cubes"></i>
+                                </g:link>
+                            </g:if>
                             <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'solicitudMantenimientoInterno', id: solicitud.id), filename: 'solicitud_mantenimiento_externo_' + solicitud.numero + '_' + solicitud.fecha.format('dd-MM-yyyy') + ".pdf")}"
                                title="Imprimir" class="btn btn-info btn-sm " data-ref="Solicitud de mantenimiento externo #${solicitud.numero}"
                                data-pp=""

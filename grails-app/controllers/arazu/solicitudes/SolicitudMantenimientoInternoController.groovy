@@ -6,10 +6,12 @@ import arazu.parametros.EstadoSolicitud
 import arazu.parametros.Parametros
 import arazu.parametros.TipoTrabajo
 import arazu.parametros.TipoUsuario
+import arazu.parametros.Unidad
 import arazu.seguridad.Perfil
 import arazu.seguridad.Persona
 import arazu.seguridad.Sesion
 import arazu.seguridad.Shield
+import org.springframework.dao.DataIntegrityViolationException
 
 class SolicitudMantenimientoInternoController extends Shield {
     def firmaService
@@ -158,10 +160,88 @@ class SolicitudMantenimientoInternoController extends Shield {
         def itemStr = ""
         itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
 
-        def ls = [TipoUsuario.findByCodigo("JFCM"), TipoUsuario.findByCodigo("GRNT")]
+        def ls = [TipoUsuario.findByCodigo("JEFE"), TipoUsuario.findByCodigo("GRNT")]
         def jefes = Persona.findAllByTipoUsuarioInList(ls, [sort: 'apellido'])
 
         return [numero: numero, items: itemStr, jefes: jefes]
+    }
+
+    /**
+     * Acción que muestra la pantalla para completar el formulario de mantenimiento interno con materiales utilizados y mano de obra
+     */
+    def completarPedido() {
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
+        def detalleManoObra = DetalleManoObra.findAllBySolicitud(solicitud)
+        def detalleMaterial = DetalleRepuestos.findAllBySolicitud(solicitud)
+        return [solicitud: solicitud, detalleManoObra: detalleManoObra, detalleMaterial: detalleMaterial]
+    }
+
+    /**
+     * Acción llamada con ajax que guarda un detalle de material/repuesto
+     */
+    def saveMaterial_ajax() {
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
+        def detalle = new DetalleRepuestos()
+        detalle.solicitud = solicitud
+        detalle.cantidad = params.cantidad.toDouble()
+        detalle.unidad = Unidad.get(params.unidad.toLong())
+        detalle.item = Item.get(params.item.toLong())
+        detalle.codigo = params.codigo
+        detalle.marca = params.marca
+        detalle.observaciones = params.observaciones
+        if (detalle.save(flush: true)) {
+            render "SUCCESS*${detalle.id}*Detalle de repuesto utilizado guardado exitosamente"
+        } else {
+            "ERROR*" + renderErrors(bean: detalle)
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que guarda un detalle de mano de obra
+     */
+    def saveManoObra_ajax() {
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
+        def detalle = new DetalleManoObra()
+        detalle.solicitud = solicitud
+        detalle.persona = Persona.get(params.persona.toLong())
+        detalle.horasTrabajo = params.horas.toDouble()
+        detalle.fecha = new Date().parse("dd-MM-yyyy", params.fecha)
+        detalle.observaciones = params.observaciones
+        if (detalle.save(flush: true)) {
+            render "SUCCESS*${detalle.id}*Detalle de mano de obra utilizada guardado exitosamente"
+        } else {
+            "ERROR*" + renderErrors(bean: detalle)
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que elimina un detalle de material/repuesto
+     */
+    def deleteMaterial_ajax() {
+        def detalle = DetalleRepuestos.get(params.id)
+        try {
+            detalle.delete(flush: true)
+            render "SUCCESS*Eliminación de detalle de repuesto exitosa."
+            return
+        } catch (DataIntegrityViolationException e) {
+            render "ERROR*Ha ocurrido un error al eliminar el detalle de repuesto"
+            return
+        }
+    }
+
+    /**
+     * Acción llamada con ajax que elimina un detalle de mano de obra
+     */
+    def deleteManoObra_ajax() {
+        def detalle = DetalleManoObra.get(params.id)
+        try {
+            detalle.delete(flush: true)
+            render "SUCCESS*Eliminación de detalle de mano de obra exitosa."
+            return
+        } catch (DataIntegrityViolationException e) {
+            render "ERROR*Ha ocurrido un error al eliminar el detalle de mano de obra"
+            return
+        }
     }
 
     /**
@@ -216,8 +296,12 @@ class SolicitudMantenimientoInternoController extends Shield {
                     }
                 }
 
+//                def materiales = params.materiales.split("**")
+//                def manoObra = params.manoObra.split("**")
+
                 firma.concepto = "Solicitud de mantenimiento interno núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = solicitud.id
+
                 if (!firma.save(flush: true)) {
                     println "error al asociar firma con solicitud: " + firma.errors
                 }
@@ -229,11 +313,17 @@ class SolicitudMantenimientoInternoController extends Shield {
                     flash.message = firmaRes
                     redirect(action: "pedido")
                 } else {
+
+                    def lista = "listaJefe"
+                    if (Sesion.countByUsuarioAndPerfil(solicitud.paraAF, Perfil.findByCodigo("GRNT")) > 0) {
+                        lista = "listaGerente"
+                    }
+
                     def mens = usu.nombre + " " + usu.apellido + " ha realizado la solicitud de mantenimiento interno núm. ${solicitud.numero}"
                     def paramsAlerta = [
                             mensaje    : mens,
                             controlador: "solicitudMantenimientoInterno",
-                            accion     : "listaJefe"
+                            accion     : lista
                     ]
                     def paramsMail = [
                             subject : "Nueva solicitud de mantenimiento interno",
@@ -251,7 +341,7 @@ class SolicitudMantenimientoInternoController extends Shield {
                     def personas = Sesion.withCriteria {
                         eq("perfil", perf)
                         usuario {
-                            ne("id", solicitud.paraJC.id)
+                            ne("id", solicitud.paraAF.id)
                             eq("activo", 1)
                         }
                         projections {
@@ -359,7 +449,7 @@ class SolicitudMantenimientoInternoController extends Shield {
         if (!params.id) {
             response.sendError(404)
         }
-        def solicitud = SolicitudMantenimientoExterno.get(params.id)
+        def solicitud = SolicitudMantenimientoInterno.get(params.id)
         if (session.perfil.codigo != "GRNT") {
             response.sendError(403)
         }

@@ -262,9 +262,8 @@ class ElementosTagLib {
      *      id              id (opcional, si no existe usa el mismo name)
      *      value           value (groovy Date o String)
      *      format          format para el Date (groovy)
-     *      minDate         fecha mínima para el datepicker. cualquier cosa anterior se deshabilita
-     *                          ej: +5d para 5 días después de la fecha actual
-     *      maxDate         fecha máxima para el datepicker. cualquier cosa posterior se deshabilita
+     *      minDate         groovy Date o String. fecha mínima para el datepicker. cualquier cosa anterior se deshabilita
+     *      maxDate         groovy Date o String. fecha máxima para el datepicker. cualquier cosa posterior se deshabilita
      *      orientation     String. Default: “auto”
      *                               A space-separated string consisting of one or two of “left” or “right”, “top” or “bottom”, and “auto” (may be omitted);
      *                                      for example, “top left”, “bottom” (horizontal orientation will default to “auto”), “right” (vertical orientation will default to “auto”),
@@ -415,9 +414,15 @@ class ElementosTagLib {
         def js = "<script type=\"text/javascript\">" + br
         js += '$("#' + id + '").datetimepicker({' + br
         if (startDate) {
+            if (startDate instanceof Date) {
+                startDate = "moment(${startDate.format('dd/MM/yyyy')})"
+            }
             js += "minDate: '${startDate}'," + br
         }
         if (endDate) {
+            if (endDate instanceof Date) {
+                endDate = "moment(${endDate.format('dd/MM/yyyy')})"
+            }
             js += "maxDate: '${endDate}'," + br
         }
         js += 'pickDate: ' + showDate + ',' + br
@@ -502,11 +507,17 @@ class ElementosTagLib {
         def action = (attrs.action ? attrs.action : (params.action ? params.action : "list"))
 
         def linkParams = [:]
-        if (attrs.params) linkParams.putAll(attrs.params)
+        if (attrs.params) {
+            linkParams.putAll(attrs.params)
+        }
 //        linkParams.offset = offset - max
         linkParams.max = max
-        if (params.sort) linkParams.sort = params.sort
-        if (params.order) linkParams.order = params.order
+        if (params.sort) {
+            linkParams.sort = params.sort
+        }
+        if (params.order) {
+            linkParams.order = params.order
+        }
 
         def linkTagAttrs = [action: action]
         if (attrs.controller) {
@@ -716,16 +727,22 @@ class ElementosTagLib {
                         writer << "class='" << message.encodeAsHTML() << "'"
                     } else if (keyValue && keys) {
                         def s = el.toString()
-                        if (s) writer << "class='" << s.encodeAsHTML() << "'"
+                        if (s) {
+                            writer << "class='" << s.encodeAsHTML() << "'"
+                        }
                     } else if (keyValue) {
                         writer << "class='" << keyValue.encodeAsHTML() << "'"
                     } else {
                         def s = el.toString()
-                        if (s) writer << "class='" << s.encodeAsHTML() << "'"
+                        if (s) {
+                            writer << "class='" << s.encodeAsHTML() << "'"
+                        }
                     }
                 } else {
                     def s = el.toString()
-                    if (s) writer << "class='" << s.encodeAsHTML() << "'"
+                    if (s) {
+                        writer << "class='" << s.encodeAsHTML() << "'"
+                    }
                 }
                 /** **********************************************************************************************************************************************************/
 
@@ -744,16 +761,22 @@ class ElementosTagLib {
                         writer << message.encodeAsHTML()
                     } else if (keyValue && keys) {
                         def s = el.toString()
-                        if (s) writer << s.encodeAsHTML()
+                        if (s) {
+                            writer << s.encodeAsHTML()
+                        }
                     } else if (keyValue) {
                         writer << keyValue.encodeAsHTML()
                     } else {
                         def s = el.toString()
-                        if (s) writer << s.encodeAsHTML()
+                        if (s) {
+                            writer << s.encodeAsHTML()
+                        }
                     }
                 } else {
                     def s = el.toString()
-                    if (s) writer << s.encodeAsHTML()
+                    if (s) {
+                        writer << s.encodeAsHTML()
+                    }
                 }
                 writer << '</option>'
                 writer.println()
