@@ -93,7 +93,7 @@ class SolicitudMantenimientoExterno {
     /**
      * Define las relaciones uno a varios
      */
-    static hasMany = [cotizaciones: Cotizacion, trabajos: DetalleTrabajo]
+    static hasMany = [cotizaciones: Cotizacion]
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
