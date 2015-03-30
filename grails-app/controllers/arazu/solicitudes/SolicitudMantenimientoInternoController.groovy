@@ -18,10 +18,10 @@ class SolicitudMantenimientoInternoController extends Shield {
     def notificacionService
 
     /**
-     * Funci�n que saca la lista de elementos seg�n los par�metros recibidos
-     * @param params objeto que contiene los par�metros para la b�squeda:: max: el m�ximo de respuestas, offset: �ndice del primer elemento (para la paginaci�n), search: para efectuar b�squedas
-     * @param all boolean que indica si saca todos los resultados, ignorando el par�metro max (true) o no (false)
-     * @return lista: de los elementos encontrados, strSearch: String con la descripci�n de la b�squeda realizada
+     * Función que saca la lista de elementos según los parámetros recibidos
+     * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
+     * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
+     * @return lista: de los elementos encontrados, strSearch: String con la descripción de la búsqueda realizada
      */
     def getList_funcion(params, all) {
         params = params.clone()
@@ -41,7 +41,7 @@ class SolicitudMantenimientoInternoController extends Shield {
         def estado = null
         def numero = null
         if (params.search_numero) {
-            strSearch += "con n�mero <strong>${params.search_numero}</strong>"
+            strSearch += "con número <strong>${params.search_numero}</strong>"
             numero = params.search_numero.toInteger()
         }
         if (params.search_desde) {
@@ -99,12 +99,12 @@ class SolicitudMantenimientoInternoController extends Shield {
             if (strSearch != "") {
                 strSearch += ", "
             }
-            strSearch += "que est�n en estado <strong>" + estado + "</strong>"
+            strSearch += "que están en estado <strong>" + estado + "</strong>"
         } else {
             if (strSearch != "") {
                 strSearch += ", "
             }
-            strSearch += "que est�n en cualquier estado"
+            strSearch += "que están en cualquier estado"
         }
         if (!params.sort) {
             params.sort = "numero"
@@ -138,14 +138,14 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la pantalla de ingreso de una nueva nsolicitud de mantenimiento externo
+     * Acción que muestra la pantalla de ingreso de una nueva nsolicitud de mantenimiento externo
      */
     def pedido() {
         def usu = Persona.get(session.usuario.id)
         if (!usu.autorizacion) {
-            flash.message = "Tiene que establecer una clave de autorizaci�n para poder firmar los documentos. " +
-                    "<br/>Presione el bot�n 'Olvid� mi autorizaci�n' e ingrese su e-mail registrado para recibir una clave temporal que puede despu�s modificar." +
-                    "<br/>Si no tiene un e-mail registrado cont�ctese con un administrador del sistema."
+            flash.message = "Tiene que establecer una clave de autorización para poder firmar los documentos. " +
+                    "<br/>Presione el botón 'Olvidé mi autorización' e ingrese su e-mail registrado para recibir una clave temporal que puede después modificar." +
+                    "<br/>Si no tiene un e-mail registrado contáctese con un administrador del sistema."
             flash.tipo = "error"
             redirect(controller: "persona", action: "personal")
             return
@@ -167,7 +167,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la pantalla para completar el formulario de mantenimiento interno con materiales utilizados y mano de obra
+     * Acción que muestra la pantalla para completar el formulario de mantenimiento interno con materiales utilizados y mano de obra
      */
     def completarPedido() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
@@ -177,7 +177,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n llamada con ajax que guarda un detalle de material/repuesto
+     * Acción llamada con ajax que guarda un detalle de material/repuesto
      */
     def saveMaterial_ajax() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
@@ -197,7 +197,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n llamada con ajax que guarda un detalle de mano de obra
+     * Acción llamada con ajax que guarda un detalle de mano de obra
      */
     def saveManoObra_ajax() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
@@ -215,13 +215,13 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n llamada con ajax que elimina un detalle de material/repuesto
+     * Acciån llamada con ajax que elimina un detalle de material/repuesto
      */
     def deleteMaterial_ajax() {
         def detalle = DetalleRepuestos.get(params.id)
         try {
             detalle.delete(flush: true)
-            render "SUCCESS*Eliminaci�n de detalle de repuesto exitosa."
+            render "SUCCESS*Eliminación de detalle de repuesto exitosa."
             return
         } catch (DataIntegrityViolationException e) {
             render "ERROR*Ha ocurrido un error al eliminar el detalle de repuesto"
@@ -230,13 +230,13 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n llamada con ajax que elimina un detalle de mano de obra
+     * Acción llamada con ajax que elimina un detalle de mano de obra
      */
     def deleteManoObra_ajax() {
         def detalle = DetalleManoObra.get(params.id)
         try {
             detalle.delete(flush: true)
-            render "SUCCESS*Eliminaci�n de detalle de mano de obra exitosa."
+            render "SUCCESS*Eliminación de detalle de mano de obra exitosa."
             return
         } catch (DataIntegrityViolationException e) {
             render "ERROR*Ha ocurrido un error al eliminar el detalle de mano de obra"
@@ -245,7 +245,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que guarda una solicitud de mantenimiento externo y redirecciona a la lista
+     * Acción que guarda una solicitud de mantenimiento externo y redirecciona a la lista
      */
     def saveSolicitud_ignore() {
         def now = new Date()
@@ -364,7 +364,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la lista de todas las solicitudes de mantenimiento interno
+     * Acción que muestra la lista de todas las solicitudes de mantenimiento interno
      */
     def lista() {
         def r1 = getList_funcion(params, false)
@@ -375,7 +375,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la lista de solicitud de mantenimiento interno aprobadas
+     * Acción que muestra la lista de solicitud de mantenimiento interno aprobadas
      */
     def listaAprobadas() {
         def estadoAprobada = EstadoSolicitud.findByCodigo("A21")
@@ -391,7 +391,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la lista de solicitudes de mantenimiento interno para que un jefe haga la aprobaci�n final
+     * Acción que muestra la lista de solicitudes de mantenimiento interno para que un jefe haga la aprobación final
      */
     def listaJefe() {
         if (session.perfil.codigo != "JEFE") {
@@ -407,7 +407,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que muestra la lista de solicitudes de mantenimiento interno para que un gerente haga la aprobaci�n final
+     * Acción que muestra la lista de solicitudes de mantenimiento interno para que un gerente haga la aprobación final
      */
     def listaGerente() {
         if (session.perfil.codigo != "GRNT") {
@@ -423,7 +423,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que le permite a un jefe revisar una solicitud de mantenimiento interno
+     * Acción que le permite a un jefe revisar una solicitud de mantenimiento interno
      * y aprobar/negar FINAL
      */
     def revisarJefe() {
@@ -442,7 +442,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que le permite a un gerente revisar una solicitud de mantenimiento interno
+     * Acción que le permite a un gerente revisar una solicitud de mantenimiento interno
      * y aprobar/negar FINAL
      */
     def revisarGerente() {
@@ -461,7 +461,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que carga una pantalla emergente para completar la informaci�n necesaria para aprobar una solicitud de mantenimiento interno
+     * Acción que carga una pantalla emergente para completar la información necesaria para aprobar una solicitud de mantenimiento interno
      */
     def dlgAprobarFinal_ajax() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
@@ -469,7 +469,7 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que carga una pantalla emergente para completar la informaci�n necesaria para negar definitivamente una solicitud de mantenimiento interno
+     * Acción que carga una pantalla emergente para completar la información necesaria para negar definitivamente una solicitud de mantenimiento interno
      */
     def dlgNegarFinal_ajax() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
@@ -477,22 +477,22 @@ class SolicitudMantenimientoInternoController extends Shield {
     }
 
     /**
-     * Acci�n que guarda la aprobaci�n final de solicitud de mantenimiento interno y env�a una alerta y un email al que realiz� el pedido
+     * Acción que guarda la aprobación final de solicitud de mantenimiento interno y envía una alerta y un email al que realizó el pedido
      */
     def aprobarFinal_ajax() {
         render cambiarEstadoPedido_funcion(params, "AF")
     }
 
     /**
-     * Acci�n que guarda la negaci�n final de una solicitud de mantenimiento interno por parte de un asistente de compras, y env�a una alerta y un email al que realiz� el pedido
+     * Acción que guarda la negación final de una solicitud de mantenimiento interno por parte de un asistente de compras, y envía una alerta y un email al que realizó el pedido
      */
     def negarFinal_ajax() {
         render cambiarEstadoPedido_funcion(params, "NF")
     }
 
     /**
-     * Funci�n que cambia de estado una solicitud de mantenimiento interno y env�a las notificaciones necesarias
-     * @param params los par�metros que llegan del cliente
+     * Función que cambia de estado una solicitud de mantenimiento interno y envía las notificaciones necesarias
+     * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
      *              AF: el jefe/gerente aprueba definitivamente la solicitud
      *              NF: el jefe/gerente niega definitivamente la solicitud

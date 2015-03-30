@@ -16,7 +16,7 @@
         }
 
         body {
-            padding-bottom : 150px;
+            padding-bottom : 50px;
         }
         </style>
     </head>
@@ -151,9 +151,56 @@
             %{--<g:hiddenField name="manoObra"/>--}%
 
             </g:form>
+
+
             <div class="row">
                 <div class="col-md-12 text-info">
-                    <h3>Repuestos y materiales a utilizar</h3>
+                    <h3>Mano de obra</h3>
+                </div>
+            </div>
+
+            <form id="frmPersona">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 150px;">Persona</th>
+                                    <th style="width: 100px;">Horas de trabajo</th>
+                                    <th style="width: 150px;">Fecha</th>
+                                    <th style="width: 300px;">Observaciones</th>
+                                    <th style="width: 35px;"></th>
+                                </tr>
+                                <tr class="success">
+                                    <td>
+                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true" data-width="150px"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="horas" class="form-control input-sm number"/>
+                                    </td>
+                                    <td class="col-md-2">
+                                        <elm:datepicker name="fecha" class="datepicker form-control input-sm" minDate="${solicitud.fecha}"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="observacionesp" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-success" id="btnAddPersona">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbPersona">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="col-md-12 text-info">
+                    <h3>Repuestos y materiales utilizados</h3>
                 </div>
             </div>
 
@@ -201,7 +248,8 @@
                                 <g:each in="${detalleMaterial}" var="dt">
                                     <tr data-id="${dt.id}"
                                         data-cantidad="${dt.cantidad}"
-                                        data-item="${dt.item}"
+                                        data-item="${dt.itemId}"
+                                        data-unidad="${dt.unidadId}"
                                         data-codigo="${dt.codigo}"
                                         data-marca="${dt.marca}"
                                         data-observaciones="${dt.observaciones}">
@@ -215,51 +263,6 @@
                                         </a></td>
                                     </tr>
                                 </g:each>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </form>
-
-            <div class="row">
-                <div class="col-md-12 text-info">
-                    <h3>Mano de obra</h3>
-                </div>
-            </div>
-
-            <form id="frmPersona">
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width: 150px;">Persona</th>
-                                    <th style="width: 100px;">Horas de trabajo</th>
-                                    <th style="width: 150px;">Fecha</th>
-                                    <th style="width: 300px;">Observaciones</th>
-                                    <th style="width: 35px;"></th>
-                                </tr>
-                                <tr class="success">
-                                    <td>
-                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true" data-width="150px"/>
-                                    </td>
-                                    <td>
-                                        <g:textField name="horas" class="form-control input-sm number"/>
-                                    </td>
-                                    <td class="col-md-2">
-                                        <elm:datepicker name="fecha" class="datepicker form-control input-sm" minDate="${new Date()}"/>
-                                    </td>
-                                    <td>
-                                        <g:textField name="observacionesp" class="form-control input-sm"/>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-success" id="btnAddPersona">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody id="tbPersona">
                             </tbody>
                         </table>
                     </div>
@@ -303,8 +306,8 @@
                     },
                     success : function (msg) {
                         var parts = msg.split("*");
-                        log(parts[2], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                        if (parts[2] == "SUCCESS") {
+                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                        if (parts[0] == "SUCCESS") {
                             $tr.remove();
                         }
                     },
@@ -381,7 +384,7 @@
                             success : function (msg) {
                                 var parts = msg.split("*");
                                 log(parts[2], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                if (parts[2] == "SUCCESS") {
+                                if (parts[0] == "SUCCESS") {
                                     var data = $("#frmMaterial").serialize();
 
                                     var $tr = $("<tr>");
