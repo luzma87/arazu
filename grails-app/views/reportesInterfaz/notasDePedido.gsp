@@ -7,6 +7,21 @@
 
     <body>
         <elm:container tipo="horizontal" titulo="Reporte de notas de pedido">
+
+            <div class="btn-toolbar" role="toolbar" style="margin-top: 10px;">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-info" id="buscar">
+                        <i class="fa fa-search"></i> Mostrar en pantalla
+                    </a>
+                </div>
+
+                <div class="btn-group">
+                    <a href="#" class="btn btn-info" id="imprimir">
+                        <i class="fa fa-file-pdf-o"></i> Mostrar PDF
+                    </a>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-1">
                     <label>Requirente</label>
@@ -69,18 +84,6 @@
 
                 <div class="col-md-2">
                     <elm:datepicker class="form-control input-sm hasta" name="hasta"/>
-                </div>
-
-                <div class="col-md-1">
-                    <a href="#" class="btn btn-info btn-sm" id="buscar">
-                        <i class="fa fa-search"></i> Buscar
-                    </a>
-                </div>
-
-                <div class="col-md-1">
-                    <a href="#" class="btn btn-info btn-sm" id="imprimir">
-                        <i class="fa fa-print"></i> Imprimir
-                    </a>
                 </div>
             </div>
 

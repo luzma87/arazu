@@ -19,8 +19,8 @@
 
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <g:form class="frmSolicitud" action="saveSolicitud_ignore">
-            <elm:container tipo="horizontal" titulo="Nueva solicitud de mantenimiento externo">
+        <elm:container tipo="horizontal" titulo="Nueva solicitud de mantenimiento externo">
+            <g:form class="frmSolicitud" action="saveSolicitud_ignore">
                 <div class="alert alert-info" style="margin-top: 10px;">
                     <strong>Nota:</strong> el número mostrado en esta pantalla es un número tentativo que puede cambiar al momento de guardar.
                 Se le informará el número final de su solicitud después de guardar.
@@ -174,8 +174,8 @@
                         </a>
                     </div>
                 </div>
-            </elm:container>
-        </g:form>
+            </g:form>
+        </elm:container>
 
 
         <script type="text/javascript">

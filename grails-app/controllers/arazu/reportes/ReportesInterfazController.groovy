@@ -31,4 +31,12 @@ class ReportesInterfazController extends Shield {
         return [now: now]
     }
 
+    /**
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de bodegas
+     */
+    def bodegas() {
+        def now = new Date()
+        return [now: now]
+    }
+
 }
