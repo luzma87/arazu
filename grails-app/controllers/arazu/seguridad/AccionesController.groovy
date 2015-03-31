@@ -123,6 +123,7 @@ class AccionesController extends Shield {
             render "ERROR*" + renderErrors(bean: accion)
         }
     }
+
     /**
      * Acción llamada con ajax que cambia el icono de una acción
      */
@@ -163,14 +164,14 @@ class AccionesController extends Shield {
         def total = 0
         def ignoreAcciones = ["afterInterceptor", "beforeInterceptor"]
         def ignoreAccionesLike = ["ajax", "old", "funcion", "ignore"]
-        def ignoreControladores = ["Assets", "Dbdoc", "Shield", "Login", "Pdf"]
+        def ignoreControladores = ["Assets", "Dbdoc", "Shield", "Login", "Pdf", "ReportesInventario", "ReportesPedidos"]
         def errores = ""
 
         def controladoresDelete = Controlador.list().id
         def accionesDelete = Accion.list().id
 
         grailsApplication.controllerClasses.each { ct ->
-//            println "intenta con controller " + ct.getName()
+//            println "intenta con controller " + ct.getName() + "    contains??? " + (ignoreControladores.contains(ct.getName()))
             if (!ignoreControladores.contains(ct.getName())) {
                 def t = []
                 ct.getURIs().each {

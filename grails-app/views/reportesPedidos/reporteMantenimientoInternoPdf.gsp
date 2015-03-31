@@ -1,10 +1,10 @@
 <%@ page import="arazu.solicitudes.DetalleTrabajo" %>
 <html>
     <head>
-        <g:set var="titleCorto" value="Reporte-NP" scope="request"/>
-        <meta name="layout" content="reporte_vertical"/>
+        <g:set var="titleCorto" value="Reporte-MI" scope="request"/>
+        <meta name="layout" content="reporte_horizontal"/>
 
-        <title>Reporte de notas de pedido</title>
+        <title>Reporte de solicitudes de mantenimiento interno</title>
 
         <style type="text/css">
         .row {
@@ -63,7 +63,7 @@
     </head>
 
     <body>
-        <table class="table table-bordered table-hover table-condensed table-striped">
+        <table class="bordered">
             <thead>
                 <tr>
                     <th>#</th>
@@ -83,7 +83,7 @@
                         <td>${nota.de}</td>
                         <td>${nota.proyecto}</td>
                         <td>${nota.maquinaria}</td>
-                        <td>${DetalleTrabajo.findAllBySolicitudMantenimientoExterno(nota).join(", ")}</td>
+                        <td>${DetalleTrabajo.findAllBySolicitudMantenimientoInterno(nota).tipoTrabajo.join(", ")}</td>
                         <td>${nota.estadoSolicitud}</td>
                     </tr>
                 </g:each>

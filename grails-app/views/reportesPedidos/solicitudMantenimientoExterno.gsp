@@ -69,6 +69,9 @@
     </head>
 
     <body>
+
+        <h4>La solicitud está <span class="estado">${solicitud.estadoSolicitud}</span></h4>
+
         %{--Datos--}%
         <table>
             <tbody>

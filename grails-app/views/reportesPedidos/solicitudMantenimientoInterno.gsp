@@ -65,10 +65,19 @@
             padding : 0;
         }
 
+        h1 {
+            font-size   : 23px;
+            font-weight : bold;
+            color       : #a3c23f;
+            line-height : 1.1;
+        }
         </style>
     </head>
 
     <body>
+
+        <h4>La solicitud está <span class="estado">${solicitud.estadoSolicitud}</span></h4>
+
         %{--Datos--}%
         <table>
             <tbody>
@@ -110,33 +119,57 @@
             </tbody>
         </table>
 
-    %{--Mano Obra--}%
-        <g:each in="${detallesManoObra}" var="mo" status="i">
-            <table class="cotizacion" border="1">
+        %{--Mano Obra--}%
+        <h1>Mano de obra</h1>
+        <table class="bordered">
+            <thead>
                 <tr>
-                    <th colspan="2">
-                        Cotización #${i + 1}
-                    </th>
-                    <th style="text-align: right;">
-                        ${cot.fecha.format("dd-MM-yyyy HH:mm")}
-                    </th>
-                    <th style="text-align: right; width: 2cm;">
-                        <g:if test="${cot.estadoSolicitud.codigo == 'A01' || cot.estadoSolicitud.codigo == 'N01'}">
-                            ${cot.estadoSolicitud}
-                        </g:if>
-                    </th>
+                    <th>Persona</th>
+                    <th>Horas de trabajo</th>
+                    <th>Fecha</th>
+                    <th>Observaciones</th>
                 </tr>
+            </thead>
+            <tbody>
+                <g:each in="${detallesManoObra}" var="mo" status="i">
+                    <tr>
+                        <td>${mo.persona}</td>
+                        <td>${mo.horasTrabajo}</td>
+                        <td>${mo.fecha.format("dd-MM-yyyy")}</td>
+                        <td>${mo.observaciones}</td>
+                    </tr>
+                </g:each>
+            </tbody>
+        </table>
+
+        %{--Repuestos--}%
+        <h1>Repuestos y materiales utilizados</h1>
+        <table class="bordered">
+            <thead>
                 <tr>
-                    <td class="label">Taller</td>
-                    <td>${cot.proveedor}</td>
-
-                    <td class="label">Precio</td>
-                    <td><g:formatNumber number="${cot.valor}" type="currency"/></td>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                    <th>Item</th>
+                    <th>Código o N. parte</th>
+                    <th>Marca</th>
+                    <th>Observaciones</th>
                 </tr>
-            </table>
-        </g:each>
+            </thead>
+            <tbody>
+                <g:each in="${detallesRepuestos}" var="rs" status="i">
+                    <tr>
+                        <td>${rs.cantidad}</td>
+                        <td>${rs.unidad}</td>
+                        <td>${rs.item}</td>
+                        <td>${rs.codigo}</td>
+                        <td>${rs.marca}</td>
+                        <td>${rs.observaciones}</td>
+                    </tr>
+                </g:each>
+            </tbody>
+        </table>
 
-    %{--Firmas--}%
+        %{--Firmas--}%
         <div class="no-break">
             <h3>Firmas</h3>
             <g:set var="sigue" value="${true}"/>
@@ -145,24 +178,6 @@
                     <tr>
                         <td class="text-center">
                             <img src="${resource(dir: 'firmas', file: solicitud.firmaSolicita.path)}" height="100"/>
-                        </td>
-                        <td class="text-center">
-                            <g:if test="${solicitud.firmaJefeCompras}">
-                                <img src="${resource(dir: 'firmas', file: solicitud.firmaJefeCompras.path)}" height="100"/>
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                <img src="${resource(dir: 'firmas', file: solicitud.firmaNiega.path)}" height="100"/>
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
-                        </td>
-                        <td class="text-center">
-                            <g:if test="${solicitud.firmaAsistenteCompras}">
-                                <img src="${resource(dir: 'firmas', file: solicitud.firmaAsistenteCompras.path)}" height="100"/>
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                <img src="${resource(dir: 'firmas', file: solicitud.firmaNiega.path)}" height="100"/>
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
                         </td>
                         <td class="text-center">
                             <g:if test="${solicitud.firmaAprueba}">
@@ -180,24 +195,6 @@
                             ${solicitud.de}
                         </td>
                         <td class="text-center">
-                            <g:if test="${solicitud.firmaJefeCompras}">
-                                ${solicitud.firmaJefeCompras.persona}
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                ${solicitud.firmaNiega.persona}
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
-                        </td>
-                        <td class="text-center">
-                            <g:if test="${solicitud.firmaAsistenteCompras}">
-                                ${solicitud.firmaAsistenteCompras.persona}
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                ${solicitud.firmaNiega.persona}
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
-                        </td>
-                        <td class="text-center">
                             <g:if test="${solicitud.firmaAprueba}">
                                 ${solicitud.firmaAprueba.persona}
                             </g:if>
@@ -211,24 +208,6 @@
                         <g:set var="sigue" value="${true}"/>
                         <td class="text-center firma">
                             Solicita
-                        </td>
-                        <td class="text-center firma">
-                            <g:if test="${solicitud.firmaJefeCompras}">
-                                Aprueba (${solicitud.firmaJefeCompras.persona.tipoUsuario})
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                Niega (${solicitud.firmaNiega.persona.tipoUsuario}
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
-                        </td>
-                        <td class="text-center firma">
-                            <g:if test="${solicitud.firmaAsistenteCompras}">
-                                Aprueba (${solicitud.firmaAsistenteCompras.persona.tipoUsuario})
-                            </g:if>
-                            <g:elseif test="${sigue && solicitud.firmaNiega}">
-                                Niega (${solicitud.firmaNiega.persona.tipoUsuario})
-                                <g:set var="sigue" value="${false}"/>
-                            </g:elseif>
                         </td>
                         <td class="text-center firma">
                             <g:if test="${solicitud.firmaAprueba}">

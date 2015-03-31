@@ -1,9 +1,10 @@
+<%@ page import="arazu.solicitudes.DetalleTrabajo" %>
 <html>
     <head>
-        <g:set var="titleCorto" value="Reporte-NP" scope="request"/>
+        <g:set var="titleCorto" value="Reporte-MX" scope="request"/>
         <meta name="layout" content="reporte_horizontal"/>
 
-        <title>Reporte de notas de pedido</title>
+        <title>Reporte de solicitudes de mantenimiento externo</title>
 
         <style type="text/css">
         .row {
@@ -70,8 +71,7 @@
                     <th>Requirente</th>
                     <th>Proyecto</th>
                     <th>Maquinaria</th>
-                    <th>Item</th>
-                    <th>Motivo</th>
+                    <th>Trabajos<br/> realizados</th>
                     <th>Estado</th>
                 </tr>
             </thead>
@@ -83,9 +83,7 @@
                         <td>${nota.de}</td>
                         <td>${nota.proyecto}</td>
                         <td>${nota.maquinaria}</td>
-                        <td><g:formatNumber number="${nota.cantidad}" minFractionDigits="2" maxFractionDigits="2"/><b>${nota.unidad.codigo}</b> ${nota.item}
-                        </td>
-                        <td>${nota.motivoSolicitud}</td>
+                        <td>${DetalleTrabajo.findAllBySolicitudMantenimientoExterno(nota).tipoTrabajo.join(", ")}</td>
                         <td>${nota.estadoSolicitud}</td>
                     </tr>
                 </g:each>

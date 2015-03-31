@@ -8,7 +8,6 @@ import arazu.seguridad.Persona
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
-
 /**
  * Controlador que muestra las pantallas de manejo de Bodega
  */

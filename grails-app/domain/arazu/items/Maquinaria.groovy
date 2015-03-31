@@ -90,6 +90,6 @@ class Maquinaria {
      */
     String toString() {
         "${this.codigo ? this.codigo + ' - ' : ''}${this.marca} ${this.modelo}" +
-                "${this.descripcion ? (" - " + this.descripcion.size() > 40 ? this.descripcion[0..40] + '...' : this.descripcion) : ''}"
+                "${this.descripcion ? (" - " + ((this.descripcion.size() > 40) ? this.descripcion[0..39] + '...' : this.descripcion)) : ''}"
     }
 }
