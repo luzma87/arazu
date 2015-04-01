@@ -98,8 +98,8 @@ class ImportsTagLib {
         def bootstrapTheme = attrs.bootstrap ?: "theme"
 
         //Bootstrap
-        def text = imp.css(src: resource(dir: 'bootstrap-3.3.2/dist/css', file: 'bootstrap.css'))
-        text += imp.css(src: resource(dir: 'bootstrap-3.3.2/dist/css', file: 'bootstrap-' + bootstrapTheme + '.min.css'))
+        def text = imp.css(src: resource(dir: 'bootstrap-3.3.4/dist/css', file: 'bootstrap.css'))
+        text += imp.css(src: resource(dir: 'bootstrap-3.3.4/dist/css', file: 'bootstrap-' + bootstrapTheme + '.min.css'))
         // JQuery
         text += imp.css(src: resource(dir: 'js/jquery-ui-1.11.2', file: 'jquery-ui.min.css'))
         text += imp.css(src: resource(dir: 'js/jquery-ui-1.11.2', file: 'jquery-ui.structure.min.css'))
@@ -135,7 +135,7 @@ class ImportsTagLib {
         def text = imp.js(src: resource(dir: 'js/jquery-ui-1.11.2/external/jquery', file: 'jquery.js'))
         text += imp.js(src: resource(dir: 'js/jquery-ui-1.11.2/', file: 'jquery-ui.min.js'))
         // Include all compiled plugins (below), or include individual files as needed
-        text += imp.js(src: resource(dir: 'bootstrap-3.3.2/dist/js', file: 'bootstrap.min.js'))
+        text += imp.js(src: resource(dir: 'bootstrap-3.3.4/dist/js', file: 'bootstrap.min.js'))
 
         out << text
     }
