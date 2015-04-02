@@ -79,7 +79,7 @@ class Ingreso {
             fecha column: 'ingrfcha'
             cantidad column: 'ingrcant'
             valor column: 'ingrvlor'
-            pedido column: 'n__id'
+            pedido column: 'ntpd__id'
             saldo column: 'ingrsldo'
             factura column: 'ingrfact'
             ingresa column: 'frma__id'

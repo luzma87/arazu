@@ -82,6 +82,18 @@
                             </div>
                         </li>
                         <li>
+                            <i class="fa-li fa fa-trash-o text-info"></i>
+                            <g:link class="over" controller="tipoDesecho" action="list">
+                                Tipos de Desecho
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class=" fa fa-trash-o fa-2x"></i> Tipos de desecho</h4>
+
+                                <p>Permite registrar los tipos de desecho disponibles en los egresos de desecho</p>
+                            </div>
+                        </li>
+                        <li>
                             <i class="fa-li fa fa-server text-info"></i>
                             <g:link class="over" controller="unidad" action="list">
                                 Unidades

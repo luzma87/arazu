@@ -1,7 +1,11 @@
 package arazu.items
 
+import arazu.inventario.Bodega
+import arazu.inventario.Egreso
 import arazu.inventario.Ingreso
+import arazu.parametros.TipoDesecho
 import arazu.parametros.TipoItem
+import arazu.parametros.Unidad
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -231,6 +235,10 @@ class ItemController extends Shield {
      * Función que imprime los hijos del árbol
      */
     private String imprimeHijos_funcion(padre, params) {
+        if (!params.desecho) {
+            params.desecho = "0"
+        }
+//        println "imprime hijos: " + params
         def arbol = ""
         def hijos = []
         def tipo
@@ -323,14 +331,4 @@ class ItemController extends Shield {
             render ""
         }
     }
-
-    def desechar_ajax(){
-        println "desechar ajax "+params
-        def tipos = [:]
-        tipos.put("1","Venta")
-        tipos.put("2","Desecho")
-        tipos.put("3","Stock")
-        [tipos:tipos]
-    }
-
 }

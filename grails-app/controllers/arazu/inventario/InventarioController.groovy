@@ -2,6 +2,7 @@ package arazu.inventario
 
 import arazu.items.Item
 import arazu.parametros.EstadoSolicitud
+import arazu.parametros.TipoDesecho
 import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
 import arazu.seguridad.Persona
@@ -502,7 +503,7 @@ class InventarioController extends Shield {
             egreso.cantidad = cant
             egreso.firma = firma
             if (egreso.save(flush: true)) {
-                firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + new Date().format("dd-MM-yyyy HH:mm")
+                firma.concepto = "Egreso de bodega de ${egreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item} el " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = egreso.id
             } else {
                 println "error " + egreso.errors
@@ -673,4 +674,108 @@ class InventarioController extends Shield {
         def egresos = Egreso.findAllByIngresoDesechoIsNull()
         return [egresos: egresos]
     }
+
+    /**
+     * Acción llamada con ajax que muestra el formulario para realizar un egreso de desecho de bodega
+     */
+    def desechar_ajax() {
+        // ing.bodega.id + "-" + ing.item.id + "-" + ing.unidad.id + "-" + ing.desecho
+        def ids = params.id.split("-")
+        def bodega = Bodega.get(ids[0].toLong())
+        def item = Item.get(ids[1].toLong())
+        def unidad = Unidad.get(ids[2].toLong())
+
+        def ingresos = Ingreso.withCriteria {
+            eq("bodega", bodega)
+            eq("item", item)
+            eq("unidad", unidad)
+            eq("desecho", 1)
+            gt("saldo", 0.toDouble())
+        }
+
+        def total = ingresos.sum { it.saldo }
+
+        return [total: total, unidad: unidad, item: item, bodega: bodega]
+    }
+
+    /**
+     * Acción llamada con ajax que realiza un egreso de desecho de bodega
+     */
+    def hacerDesecho_ajax() {
+        println params
+        /*
+            precio:,
+            cantidad:2,
+            donde:qwer,
+            tipoDesecho:2
+         */
+
+        def usu = session.usuario
+        def now = new Date()
+
+        def cantidad = params.cantidad.toDouble()
+        def retirado = 0
+
+        def ingresos = Ingreso.withCriteria {
+            eq("bodega", bodega)
+            eq("item", item)
+            eq("unidad", unidad)
+            eq("desecho", 1)
+            gt("saldo", 0.toDouble())
+        }
+
+        def msg = ""
+
+        ingresos.each { ing ->
+            if (retirado < cantidad) {
+                def cantRetirar
+                def porRetirar = cantidad - retirado
+                if (porRetirar < ing.saldo) {
+                    cantRetirar = porRetirar
+                } else {
+                    cantRetirar = ing.saldo
+                }
+
+                def firma = new Firma()
+                firma.persona = usu
+                firma.fecha = now
+                firma.concepto = ""
+                firma.pdfControlador = "reportesInventario"
+                firma.pdfAccion = "egresoDeBodegaDesecho"
+                firma.pdfId = 0
+                if (firma.save(flush: true)) {
+                    def egreso = new Egreso()
+
+                    egreso.ingreso = ing
+                    egreso.fecha = now
+                    egreso.observaciones = "Egreso de desecho"
+                    egreso.responsable = params.responsable
+                    egreso.cantidad = cantRetirar
+                    egreso.firma = firma
+                    egreso.tipoDesecho = TipoDesecho.get(params.tipoDesecho)
+                    egreso.lugarDesecho = params.donde
+                    if (params.precio) {
+                        egreso.precioDesecho = params.precio.toDouble()
+                    }
+                    if (egreso.save(flush: true)) {
+                        firma.concepto = "Egreso de bodega de de desecho ${egreso.cantidad}${ing.unidad.codigo} ${ing.item} el " + now.format("dd-MM-yyyy HH:mm")
+                        firma.pdfId = egreso.id
+                        retirado += cantRetirar
+                    } else {
+                        println "error " + egreso.errors
+                        msg += renderErrors(bean: egreso)
+                    }
+                    ing.calcularSaldo()
+                } else {
+                    println "error2 " + firma.errors
+                    msg += renderErrors(bean: firma)
+                }
+            }
+        }
+        if (msg == "") {
+            render "SUCCESS*Desecho realizado exitosamente"
+        }
+        render "ERROR*" + msg
+    }
+
 }

@@ -1,5 +1,6 @@
 package arazu.inventario
 
+import arazu.parametros.TipoDesecho
 import arazu.seguridad.Persona
 import arazu.solicitudes.Firma
 import arazu.solicitudes.NotaPedido
@@ -50,6 +51,19 @@ class Egreso {
     Ingreso ingresoDesecho
 
     /**
+     * Tipo de desecho, en caso de que lo sea: VN: venta, DS: desecho, ST: stock
+     */
+    TipoDesecho tipoDesecho
+    /**
+     * Lugar de desecho, en caso de que lo sea
+     */
+    String lugarDesecho
+    /**
+     * Precio  de desecho, en caso de que sea venta
+     */
+    Double precioDesecho
+
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -74,6 +88,9 @@ class Egreso {
             pedido column: 'ntpd__id'
             firma column: 'frma__id'
             ingresoDesecho column: 'ingrdsch'
+            tipoDesecho column: 'tpds__id'
+            lugarDesecho column: 'egrslgds'
+            precioDesecho column: 'egrsprds'
         }
     }
 
@@ -90,5 +107,9 @@ class Egreso {
         pedido nullable: true
         firma nullable: true
         ingresoDesecho nullable: true
+
+        tipoDesecho nullable: true
+        lugarDesecho nullable: true
+        precioDesecho nullable: true
     }
 }
