@@ -102,7 +102,6 @@ class InventarioController extends Shield {
         parts.each {
             if (it != "") {
                 def data = it.split("!!")
-                println "data " + data
                 def ingreso = new Ingreso()
                 ingreso.bodega = Bodega.get(params.bodega)
 //                ingreso.item = Item.findByDescripcion(data[0].toString().trim())
@@ -702,13 +701,9 @@ class InventarioController extends Shield {
      * Acción llamada con ajax que realiza un egreso de desecho de bodega
      */
     def hacerDesecho_ajax() {
-        println params
-        /*
-            precio:,
-            cantidad:2,
-            donde:qwer,
-            tipoDesecho:2
-         */
+        def bodega = Bodega.get(params.bodega.toLong())
+        def item = Item.get(params.item.toLong())
+        def unidad = Unidad.get(params.unidad.toLong())
 
         def usu = session.usuario
         def now = new Date()

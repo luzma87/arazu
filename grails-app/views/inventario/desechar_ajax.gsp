@@ -10,6 +10,7 @@
 <g:form controller="inventario" action="hacerDesecho_ajax" name="frmDesecho">
     <g:hiddenField name="bodega" value="${bodega.id}"/>
     <g:hiddenField name="item" value="${item.id}"/>
+    <g:hiddenField name="unidad" value="${unidad.id}"/>
 
     <div class="modal-contenido">
         <div class="row grupo">
