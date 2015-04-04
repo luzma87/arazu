@@ -273,11 +273,11 @@
                     },
                     desechos : {
                         label            : "Inventario de desechos",
-                        icon             : " fa fa-shopping-cart",
+                        icon             : " fa fa-trash-o",
                         separator_bedore : true,
                         action           : function ($element) {
                             var id = $element.data("id");
-                            location.href = "${createLink(controller: 'inventario', action:'inventario')}/" + id;
+                            location.href = "${createLink(controller: 'inventario', action:'inventarioDesecho')}/" + id;
                         }
                     },
                     ingreso    : {

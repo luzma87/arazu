@@ -181,7 +181,43 @@ class InventarioController extends Shield {
     }
 
     /**
-     * Acción que muestra la pntalla de invetario resumido (una fila por item/unidad) de una bodega
+     * Acción que muestra la pantalla de inventario de desechos de una bodega
+     */
+    def inventarioDesecho() {
+//        println "INVENTARIO     " + params
+        def bodega = Bodega.get(params.id)
+//        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodega, 0)
+
+        def desde = null
+        def hasta = null
+        if (params.search_desde) {
+            desde = new Date().parse("dd-MM-yyyy", params.search_desde)
+        }
+        if (params.search_hasta) {
+            hasta = new Date().parse("dd-MM-yyyy", params.search_hasta)
+        }
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
+            eq("bodega", bodega)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 1)
+            if (desde) {
+                ge("fecha", desde)
+            }
+            if (hasta) {
+                le("fecha", hasta)
+            }
+            if (params.search_item) {
+                item {
+                    ilike("descripcion", "%" + params.search_item + "%")
+                }
+            }
+        }
+        return [ingresos: ingresos, bodega: bodega, params: params]
+    }
+
+    /**
+     * Acción que muestra la pantalla de inventario resumido (una fila por item/unidad) de una bodega
      */
     def inventarioResumen() {
 //        println "INVENTARIO     " + params
@@ -193,6 +229,41 @@ class InventarioController extends Shield {
             eq("bodega", bodega)
             gt("saldo", 0.toDouble())
             eq("desecho", 0)
+            if (params.search_item) {
+                item {
+                    ilike("descripcion", "%" + params.search_item + "%")
+                }
+            }
+        }
+
+        def res = [:]
+        ingresos.each { ing ->
+            if (!res[ing.item.id + "-" + ing.unidad.id]) {
+                res[ing.item.id + "-" + ing.unidad.id] = [:]
+                res[ing.item.id + "-" + ing.unidad.id].item = ing.item
+                res[ing.item.id + "-" + ing.unidad.id].unidad = ing.unidad
+                res[ing.item.id + "-" + ing.unidad.id].saldo = ing.saldo
+            } else {
+                res[ing.item.id + "-" + ing.unidad.id].saldo += ing.saldo
+            }
+        }
+
+        return [ingresos: res, bodega: bodega, params: params]
+    }
+
+    /**
+     * Acción que muestra la pantalla de inventario de desechos resumido (una fila por item/unidad) de una bodega
+     */
+    def inventarioDesechoResumen() {
+//        println "INVENTARIO     " + params
+        def bodega = Bodega.get(params.id)
+//        def ingresos = Ingreso.findAllByBodegaAndSaldoGreaterThan(bodega, 0)
+
+        def c = Ingreso.createCriteria()
+        def ingresos = c.list(params) {
+            eq("bodega", bodega)
+            gt("saldo", 0.toDouble())
+            eq("desecho", 1)
             if (params.search_item) {
                 item {
                     ilike("descripcion", "%" + params.search_item + "%")

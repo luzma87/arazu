@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Inventario de la bodega ${bodega.descripcion}</title>
+        <title>Inventario de desechos de la bodega ${bodega.descripcion}</title>
     </head>
 
     <body>
@@ -14,15 +14,15 @@
             </div>
 
             <div class="btn-group">
-                <g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">
-                    <i class="fa fa-file-o"></i> Nuevo ingreso a bodega
-                </g:link>
-            %{--<g:link controller="inventario" action="egresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
-            %{--<i class="fa fa-arrow-up"></i> Nuevo egreso de bodega--}%
-            %{--</g:link>--}%
+                %{--<g:link controller="inventario" action="ingresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
+                %{--<i class="fa fa-file-o"></i> Nuevo ingreso a bodega--}%
+                %{--</g:link>--}%
+                %{--<g:link controller="inventario" action="egresoDeBodega" params="[bodega: bodega.id]" class="btn btn-default btnCrear">--}%
+                %{--<i class="fa fa-arrow-up"></i> Nuevo egreso de bodega--}%
+                %{--</g:link>--}%
             </div>
         </div>
-        <elm:container tipo="horizontal" titulo="Inventario de la bodega ${bodega.descripcion}">
+        <elm:container tipo="horizontal" titulo="Inventario de desechos de la bodega ${bodega.descripcion}">
             <div class="row">
                 <div class="col-md-1">
                     <label class=" control-label">
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="btn-group btn-group-sm" role="group">
-                        <g:link action="inventarioResumen" id="${bodega.id}" class="btn btn-default">
+                        <g:link action="inventarioDesechoResumen" id="${bodega.id}" class="btn btn-default">
                             <i class="fa fa-th-list"></i> Mostrar resumen
                         </g:link>
                     </div>
@@ -141,11 +141,11 @@
                                         <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
                                     </td>
                                     <td class="text-center">
-                                        <a target="_blank" href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
+                                        <a target="_blank" href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeDesechoBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
                                             <i class="fa fa-print"></i>
                                         </a>
-                                        <a href="#" title="Egreso" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
-                                            <i class="fa fa-upload"></i>
+                                        <a href="#" title="Desechar" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
+                                            <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>
                                 </tr>

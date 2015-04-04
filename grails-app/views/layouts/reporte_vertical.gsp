@@ -81,12 +81,23 @@
             border-bottom  : solid 2px #a3c23f;
         }
 
+        h1 {
+            font-size   : 22px;
+            font-weight : bold;
+            color       : #303e7d;
+            margin-top  : 0.8cm;
+        }
+
         h3 {
             margin-top    : 1cm;
             font-size     : 18px;
             font-weight   : bold;
             color         : #3A5DAA;
             border-bottom : solid 1px #303e7d;
+        }
+
+        h3.title {
+            margin-top : 0.5cm;
         }
 
         h4 {

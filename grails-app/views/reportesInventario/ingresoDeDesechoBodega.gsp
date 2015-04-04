@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <g:set var="titleCorto" value="Ingreso a bodega #${ingreso.id}" scope="request"/>
+        <g:set var="titleCorto" value="Ingreso de desecho a bodega #${ingreso.id}" scope="request"/>
         <meta name="layout" content="reporte_vertical"/>
 
-        <title>Ingreso a bodega</title>
+        <title>Ingreso de desecho a bodega</title>
 
         <style type="text/css">
         .row {
@@ -55,32 +55,27 @@
                     <td class="label">Responsable:</td>
                     <td>${ingreso.bodega.responsable}, ${ingreso.bodega.suplente}</td>
                 </tr>
-                <tr>
-                    <td class="label">Nota de pedido:</td>
-                    <td>${(ingreso.pedido) ? ingreso.pedido : 'Ingreso de inventario inicial'}</td>
-                </tr>
+                %{--<tr>--}%
+                %{--<td class="label">Nota de pedido:</td>--}%
+                %{--<td>${(ingreso.pedido) ? ingreso.pedido : 'Ingreso de inventario inicial'}</td>--}%
+                %{--</tr>--}%
                 %{--<tr>--}%
                 %{--<td class="label">Orden de compra:</td>--}%
                 %{--<td></td>--}%
                 %{--</tr>--}%
-                <tr>
-                    <td class="label">N de factura:</td>
-                    <td>${ingreso.factura}</td>
-                </tr>
+                %{--<tr>--}%
+                %{--<td class="label">N de factura:</td>--}%
+                %{--<td>${ingreso.factura}</td>--}%
+                %{--</tr>--}%
             </tbody>
         </table>
 
-        <div class="row">
-            Solicito se digne almacenar las especies que constan a continuación
-        </div>
         <table style="margin-top: 10px;width: 100%;border-collapse: collapse;">
             <thead>
                 <tr>
                     <th>Cantidad</th>
                     <th>Unidad</th>
                     <th>Descripción</th>
-                    <th>V/unitario</th>
-                    <th>V/TOTAL</th>
                 </tr>
             </thead>
             <tbody>
@@ -93,12 +88,6 @@
                     </td>
                     <td>
                         ${ingreso.item.descripcion}
-                    </td>
-                    <td style="text-align: right">
-                        <g:formatNumber number="${ingreso.valor}" type="currency"/>
-                    </td>
-                    <td style="text-align: right">
-                        <g:formatNumber number="${ingreso.cantidad * ingreso.valor}" type="currency"/>
                     </td>
                 </tr>
             </tbody>

@@ -15,6 +15,14 @@
         .clickable {
             cursor : pointer;
         }
+
+        .data {
+            font-weight : bold;
+        }
+
+        #lista {
+            margin-top : 15px;
+        }
         </style>
     </head>
 
@@ -79,9 +87,14 @@
                     <i class="fa fa-square-o"></i> Egresos de desechos
                 </div>
             </div>
+
+            <div id="lista">
+
+            </div>
         </elm:container>
 
         <script type="text/javascript">
+            var bodegasIds = "", datosIds = "";
             function select($elm) {
                 $elm.addClass("text-info");
                 $elm.data("status", "on");
@@ -96,8 +109,10 @@
             }
 
             function revisarDatos() {
-                var bodegasIds = "", bodegas = "";
-                var datosIds = "", datos = "";
+                var bodegas = "";
+                var datos = "";
+                bodegasIds = "";
+                datosIds = "";
 
                 var str = "Generar reporte de";
                 var cantBodegas = 0;
@@ -133,6 +148,38 @@
             }
 
             $(function () {
+
+                $("#buscar").click(function () {
+                    openLoader();
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'reportesInventario', action:'bodegas_ajax')}",
+                        data    : {
+                            bodegas : bodegasIds,
+                            datos   : datosIds
+                        },
+                        success : function (msg) {
+                            $("#lista").html(msg);
+                            closeLoader()
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "error");
+                            closeLoader();
+                        }
+                    });
+                    return false;
+                });
+
+                $("#imprimir").click(function () {
+                    //openLoader()
+                    var url = "${g.createLink(controller: 'pdf',action: 'pdfLink')}?url=";
+                    var reporte = "${g.createLink(controller: 'reportesInventario',action: 'bodegasPdf')}?";
+                    reporte += "bodegas=" + bodegasIds +
+                               "Wdatos=" + datosIds;
+                    window.open(url + reporte);
+                    //console.log(url+reporte)
+                });
+
                 $(".clickable").click(function () {
                     var state = $(this).data("status");
                     if (state == "off") {
@@ -149,15 +196,15 @@
                     var state = $this.data("status");
                     if (state == "off") {
                         $this.data("status", "on");
-                        $this.removeClass("btn-danger").addClass("btn-success").text("Seleccionar todos");
-                        $(".clickable." + tipo).each(function () {
-                            deselect($(this));
-                        });
-                    } else {
-                        $this.data("status", "off");
                         $this.removeClass("btn-success").addClass("btn-danger").text("Quitar selección");
                         $(".clickable." + tipo).each(function () {
                             select($(this));
+                        });
+                    } else {
+                        $this.data("status", "off");
+                        $this.removeClass("btn-danger").addClass("btn-success").text("Seleccionar todos");
+                        $(".clickable." + tipo).each(function () {
+                            deselect($(this));
                         });
                     }
                     revisarDatos();
