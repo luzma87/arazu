@@ -750,20 +750,30 @@ class InventarioController extends Shield {
      */
     def desechar_ajax() {
         // ing.bodega.id + "-" + ing.item.id + "-" + ing.unidad.id + "-" + ing.desecho
-        def ids = params.id.split("-")
-        def bodega = Bodega.get(ids[0].toLong())
-        def item = Item.get(ids[1].toLong())
-        def unidad = Unidad.get(ids[2].toLong())
+        def bodega = null, item = null, unidad = null, ingresos = [], total = 0
+        if (params.id) {
+            def ids = params.id.split("-")
+            bodega = Bodega.get(ids[0].toLong())
+            item = Item.get(ids[1].toLong())
+            unidad = Unidad.get(ids[2].toLong())
 
-        def ingresos = Ingreso.withCriteria {
-            eq("bodega", bodega)
-            eq("item", item)
-            eq("unidad", unidad)
-            eq("desecho", 1)
-            gt("saldo", 0.toDouble())
+            ingresos = Ingreso.withCriteria {
+                eq("bodega", bodega)
+                eq("item", item)
+                eq("unidad", unidad)
+                eq("desecho", 1)
+                gt("saldo", 0.toDouble())
+            }
+        }
+        if (params.ingreso) {
+            def ing = Ingreso.get(params.ingreso.toDouble())
+            ingresos = [ing]
+            bodega = ing.bodega
+            item = ing.item
+            unidad = ing.unidad
         }
 
-        def total = ingresos.sum { it.saldo }
+        total = ingresos.sum { it.saldo }
 
         return [total: total, unidad: unidad, item: item, bodega: bodega]
     }

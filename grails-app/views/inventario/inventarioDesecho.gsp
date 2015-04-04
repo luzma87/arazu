@@ -258,33 +258,6 @@
                 location.href = url;
             }
 
-            function submitEgreso() {
-                if ($("#frmEgreso").valid()) {
-                    openLoader();
-                    $.ajax({
-                        type    : "POST",
-                        url     : "${createLink(controller:'inventario', action:'egresoBodega_ajax')}",
-                        data    : $("#frmEgreso").serialize(),
-                        success : function (msg) {
-                            var parts = msg.split("*");
-                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function () {
-                                if (parts[0] == "SUCCESS") {
-                                    location.reload(true);
-                                } else {
-                                    closeLoader();
-                                    return false;
-                                }
-                            }, 1000);
-                        },
-                        error   : function () {
-                            log("Ha ocurrido un error interno", "error");
-                            closeLoader();
-                        }
-                    });
-                }
-            }
-
             function validarFechaIni($elm, e) {
 //                console.log("validar fecha ini   ", e);
                 $('#search_hasta_input').data("DateTimePicker").setMinDate(e.date);
@@ -293,6 +266,40 @@
 //                console.log("validar fecha fin   ", e, e.date);
                 $('#search_desde_input').data("DateTimePicker").setMaxDate(e.date);
             }
+
+            function submitFormDesecho() {
+                var $form = $("#frmDesecho");
+                var $btn = $("#dlgDesecho").find(".btn-danger");
+                if ($form.valid()) {
+                    $btn.replaceWith(spinner);
+                    openLoader("Guardando Desecho");
+                    $.ajax({
+                        type    : "POST",
+                        url     : $form.attr("action"),
+                        data    : $form.serialize(),
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function () {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith($btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
+                } else {
+                    return false;
+                } //else
+            }
+
             $(function () {
                 $(".bsc").click(function () {
                     openLoader("Buscando...");
@@ -305,9 +312,9 @@
                     var id = $(this).data("id");
                     $.ajax({
                         type    : "POST",
-                        url     : "${createLink(controller:'inventario', action:'dlgEgresoDeBodega_ajax')}",
+                        url     : "${createLink(controller:'inventario', action:'desechar_ajax')}",
                         data    : {
-                            id : id
+                            ingreso : id
                         },
                         success : function (msg) {
                             bootbox.dialog({
@@ -318,7 +325,7 @@
                                         label     : "<i class='fa fa-save'></i> Guardar",
                                         className : "btn-success",
                                         callback  : function () {
-                                            submitEgreso();
+                                            submitFormDesecho();
                                             return false;
                                         }
                                     },
