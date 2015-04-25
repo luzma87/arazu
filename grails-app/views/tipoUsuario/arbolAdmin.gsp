@@ -209,7 +209,38 @@
                     label  : "Foto",
                     icon   : "fa fa-picture-o",
                     action : function () {
-
+                        $("#divFoto").html("");
+                        $.ajax({
+                            type    : "POST",
+                            url     : "${createLink(controller:'persona', action: 'loadFotoUsuario_ajax')}",
+                            data    : {
+                                id : nodeId
+                            },
+                            success : function (msg) {
+                                bootbox.dialog({
+                                    id      : "dlgCreateEditTipoUsuario",
+                                    title   : "Usuario",
+                                    message : "<div id='divFoto'></div>",
+                                    class   : 'modal-sm',
+                                    buttons : {
+                                        cancelar : {
+                                            label     : "Cerrar",
+                                            className : "btn-primary",
+                                            callback  : function () {
+                                            }
+                                        },
+                                        cargar   : {
+                                            label     : "<i class='fa fa-picture-o'></i> Cargar foto",
+                                            className : "btn-primary",
+                                            callback  : function () {
+                                                location.href = "${createLink(controller:'persona', action:'foto')}/" + nodeId;
+                                            }
+                                        }
+                                    } //buttons
+                                }); //dialog
+                                $("#divFoto").html(msg);
+                            }
+                        });
                     }
                 };
 
@@ -302,7 +333,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Tipo de Usuario seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Tipo de Usuario seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -346,7 +377,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-power-off fa-3x pull-left " + (activo == 1 ? "text-success" : "text-muted") + " text-shadow'></i><p>" +
-                            "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " el Tipo de Usuario seleccionado?</p>",
+                              "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " el Tipo de Usuario seleccionado?</p>",
                     buttons : {
                         cancelar   : {
                             label     : "Cancelar",
@@ -500,7 +531,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Persona seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Persona seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -544,7 +575,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-power-off fa-3x pull-left " + (activo == 1 ? "text-success" : "text-muted") + " text-shadow'></i><p>" +
-                            "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " la Persona seleccionada?</p>",
+                              "¿Está seguro que desea " + (activo == 1 ? "activar" : "desactivar") + " la Persona seleccionada?</p>",
                     buttons : {
                         cancelar   : {
                             label     : "Cancelar",

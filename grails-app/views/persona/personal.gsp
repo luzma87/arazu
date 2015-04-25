@@ -60,7 +60,7 @@
 
     <body>
 
-        <elm:container tipo="horizontal" titulo="Datos del usuario: ${usuario.nombre}${usuario.apellido} (${usuario.login})">
+        <elm:container tipo="horizontal" titulo="Datos del usuario: ${usuario.nombre} ${usuario.apellido} (${usuario.login})">
 
             <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
