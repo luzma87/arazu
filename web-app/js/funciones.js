@@ -68,6 +68,7 @@ function validarEspacios(ev) {
  * @param hide: si se oculta solo o no (opcional)
  */
 function log(msg, type, title, hide) {
+    type = type.toLowerCase();
     if (hide === undefined) {
         hide = type != "error";
     }
