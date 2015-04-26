@@ -132,7 +132,7 @@
                 scrollToNode($scrollTo);
             }
             function scrollToSearchRes() {
-                var $scrollTo = $(searchRes[posSearchShow]).parents("li").first();
+                var $scrollTo = $(searchRes[posSearchShow]).first();
                 $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + searchRes.length);
                 scrollToNode($scrollTo);
             }
@@ -194,6 +194,13 @@
                     $("#tree").removeClass("hidden");
                 }).on("select_node.jstree", function (node, selected, event) {
 //                    $('#tree').jstree('toggle_node', selected.selected[0]);
+                }).on("search.jstree", function (event, res) {
+                    searchRes = res.nodes;
+                    var cantRes = searchRes.length;
+                    posSearchShow = 0;
+                    $("#divSearchRes").removeClass("hidden");
+                    $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + cantRes);
+                    scrollToSearchRes();
                 }).jstree({
                     plugins     : ["types", "state", "contextmenu", "search"],
                     core        : {
@@ -213,26 +220,7 @@
                         key : "maquinaria"
                     },
                     search      : {
-                        fuzzy             : false,
-                        show_only_matches : false,
-                        ajax              : {
-                            url     : "${createLink(action:'arbolSearch_ajax')}",
-                            success : function (msg) {
-                                var json = $.parseJSON(msg);
-                                $.each(json, function (i, obj) {
-                                    $('#tree').jstree("open_node", obj);
-                                });
-                                setTimeout(function () {
-                                    searchRes = $(".jstree-search");
-                                    var cantRes = searchRes.length;
-                                    posSearchShow = 0;
-                                    $("#divSearchRes").removeClass("hidden");
-                                    $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + cantRes);
-                                    scrollToSearchRes();
-                                }, 300);
-
-                            }
-                        }
+                        fuzzy : false
                     },
                     types       : {
                         root           : {

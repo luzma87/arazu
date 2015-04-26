@@ -35,6 +35,48 @@
     </head>
 
     <body>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-md-2">
+                <div class="input-group input-group-sm">
+                    <g:textField name="searchArbol" class="form-control input-sm" placeholder="Buscador"/>
+                    <span class="input-group-btn">
+                        <a href="#" id="btnSearchArbol" class="btn btn-sm btn-info">
+                            <i class="fa fa-search"></i>
+                        </a>
+                    </span>
+                </div><!-- /input-group -->
+            </div>
+
+            <div class="col-md-3 hidden" id="divSearchRes">
+                <span id="spanSearchRes">
+                    5 resultados
+                </span>
+
+                <div class="btn-group">
+                    <a href="#" class="btn btn-xs btn-default" id="btnNextSearch" title="Siguiente">
+                        <i class="fa fa-chevron-down"></i>
+                    </a>
+                    <a href="#" class="btn btn-xs btn-default" id="btnPrevSearch" title="Anterior">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a href="#" class="btn btn-xs btn-default" id="btnClearSearch" title="Limpiar búsqueda">
+                        <i class="fa fa-close"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-xs btn-default" id="btnCollapseAll" title="Cerrar todos los nodos">
+                        <i class="fa fa-minus-square-o"></i>
+                    </a>
+                    <a href="#" class="btn btn-xs btn-default" id="btnExpandAll" title="Abrir todos los nodos">
+                        <i class="fa fa-plus-square"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div id="tree">
             ${html}
         </div>
@@ -79,8 +121,6 @@
                 var nodePath = $node.data("path");
                 var nodeName = $node.data("name");
 
-                var nodeText = $node.children("a").first().text();
-
                 var isDir = nodeType == "dir";
 
                 var items = {};
@@ -93,7 +133,6 @@
                         bootbox.alert("Su archivo está preparándose para la descarga. " +
                                       "Por favor cierre esta pantalla cuando termine la descarga");
                         location.href = "${createLink(controller:'archivos', action:'downloadArchivo')}?path=" + nodePath;
-                        ;
                     }
                 };
                 var downloadZip = {
@@ -291,8 +330,30 @@
                 return items;
             }
 
+            function scrollToNode($scrollTo) {
+                $treeContainer.jstree("deselect_all").jstree("select_node", $scrollTo).animate({
+                    scrollTop : $scrollTo.offset().top - $treeContainer.offset().top + $treeContainer.scrollTop() - 50
+                });
+            }
+            function scrollToRoot() {
+                var $scrollTo = $("#root");
+                scrollToNode($scrollTo);
+            }
+            function scrollToSearchRes() {
+                var $scrollTo = $(searchRes[posSearchShow]);
+                $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + searchRes.length);
+                scrollToNode($scrollTo);
+            }
+
             $(function () {
-                $treeContainer.jstree({
+                $treeContainer.on("search.jstree", function (event, res) {
+                    searchRes = res.nodes;
+                    var cantRes = searchRes.length;
+                    posSearchShow = 0;
+                    $("#divSearchRes").removeClass("hidden");
+                    $("#spanSearchRes").text("Resultado " + (posSearchShow + 1) + " de " + cantRes);
+                    scrollToSearchRes();
+                }).jstree({
                     plugins     : ["types", "state", "contextmenu", "search"],
                     core        : {
                         multiple       : false,
@@ -311,9 +372,7 @@
                         key : "archivos"
                     },
                     search      : {
-                        fuzzy             : false,
-                        show_only_matches : false,
-
+                        fuzzy : false
                     },
                     types       : {
                         dir   : {
@@ -350,6 +409,59 @@
                             icon : "fa fa-file-video-o"
                         }
                     }
+                });
+
+                $("#btnExpandAll").click(function () {
+                    $treeContainer.jstree("open_all");
+                    scrollToRoot();
+                    return false;
+                });
+
+                $("#btnCollapseAll").click(function () {
+                    $treeContainer.jstree("close_all");
+                    scrollToRoot();
+                    return false;
+                });
+
+                $('#btnSearchArbol').click(function () {
+                    $treeContainer.jstree(true).search($.trim($("#searchArbol").val()));
+                    return false;
+                });
+                $("#searchArbol").keypress(function (ev) {
+                    if (ev.keyCode == 13) {
+                        $treeContainer.jstree(true).search($.trim($("#searchArbol").val()));
+                        return false;
+                    }
+                });
+
+                $("#btnPrevSearch").click(function () {
+                    if (posSearchShow > 0) {
+                        posSearchShow--;
+                    } else {
+                        posSearchShow = searchRes.length - 1;
+                    }
+                    scrollToSearchRes();
+                    return false;
+                });
+
+                $("#btnNextSearch").click(function () {
+                    if (posSearchShow < searchRes.length - 1) {
+                        posSearchShow++;
+                    } else {
+                        posSearchShow = 0;
+                    }
+                    scrollToSearchRes();
+                    return false;
+                });
+
+                $("#btnClearSearch").click(function () {
+                    $treeContainer.jstree("clear_search");
+                    $("#searchArbol").val("");
+                    posSearchShow = 0;
+                    searchRes = [];
+                    scrollToRoot();
+                    $("#divSearchRes").addClass("hidden");
+                    $("#spanSearchRes").text("");
                 });
             });
         </script>
