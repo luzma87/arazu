@@ -117,6 +117,18 @@
                                 <p>Permite modificar los parámetros globales, como los valores máximos que pueden autorizar los jefes</p>
                             </div>
                         </li>
+                         <li>
+                            <i class="fa-li fa fa-calendar-o text-info"></i>
+                            <g:link class="over" controller="tipoAsistencia" action="list">
+                                Tipo de asistencia
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class=" fa fa-calendar-o fa-2x"></i> Tipo de asistencia</h4>
+
+                                <p>Permite registrar los tipos de asistencia</p>
+                            </div>
+                        </li>
                     </ul>
                 </div>
 
