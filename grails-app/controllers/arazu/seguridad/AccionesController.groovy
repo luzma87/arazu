@@ -249,42 +249,42 @@ class AccionesController extends Shield {
 
         def permisosEliminados = 0, accionesEliminadas = 0, controladoresEliminados = 0
 
-        accionesDelete.each { aId ->
-            def permisos = Permiso.findAllByAccion(Accion.get(aId))
-            if (permisos.size() > 0) {
-                permisos.id.each { pid ->
-                    def p = Permiso.get(pid)
-                    try {
-                        println "eliminando permiso " + pid + "   (" + p.accion + " - " + p.perfil + ")"
-                        p.delete(flush: true)
-                        permisosEliminados++
-                    } catch (e) {
-                        println "Error al eliminar permiso"
-                        e.printStackTrace()
-                    }
-                } //elimina permisos
-            }
-            def a = Accion.get(aId)
-            try {
-                println "eliminando accion " + aId + "      (" + a.control.nombre + "    " + a.nombre + ")"
-                a.delete(flush: true)
-                accionesEliminadas++
-            } catch (e) {
-                println "Error al eliminar accion"
-                e.printStackTrace()
-            }
-        }
-        controladoresDelete.each { cId ->
-            def c = Controlador.get(cId)
-            try {
-                println "eliminando controlador " + cId + "     (" + c.nombre + ")"
-                c.delete(flush: true)
-                controladoresEliminados++
-            } catch (e) {
-                println "Error al eliminar controlador"
-                e.printStackTrace()
-            }
-        }
+//        accionesDelete.each { aId ->
+//            def permisos = Permiso.findAllByAccion(Accion.get(aId))
+//            if (permisos.size() > 0) {
+//                permisos.id.each { pid ->
+//                    def p = Permiso.get(pid)
+//                    try {
+//                        println "eliminando permiso " + pid + "   (" + p.accion + " - " + p.perfil + ")"
+//                        p.delete(flush: true)
+//                        permisosEliminados++
+//                    } catch (e) {
+//                        println "Error al eliminar permiso"
+//                        e.printStackTrace()
+//                    }
+//                } //elimina permisos
+//            }
+//            def a = Accion.get(aId)
+//            try {
+//                println "eliminando accion " + aId + "      (" + a.control.nombre + "    " + a.nombre + ")"
+//                a.delete(flush: true)
+//                accionesEliminadas++
+//            } catch (e) {
+//                println "Error al eliminar accion"
+//                e.printStackTrace()
+//            }
+//        }
+//        controladoresDelete.each { cId ->
+//            def c = Controlador.get(cId)
+//            try {
+//                println "eliminando controlador " + cId + "     (" + c.nombre + ")"
+//                c.delete(flush: true)
+//                controladoresEliminados++
+//            } catch (e) {
+//                println "Error al eliminar controlador"
+//                e.printStackTrace()
+//            }
+//        }
 
         def msgExtra = ""
         if (permisosEliminados > 0) {
