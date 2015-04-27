@@ -167,6 +167,7 @@ class LoginController {
                 hp.put(it.accion.control.nombre.toLowerCase(), [it.accion.nombre.toLowerCase()])
             }
         }
+        session.sistemas = permisos.accion.sistema.unique().sort { it?.orden }
         session.permisos = hp
     }
 }

@@ -2,6 +2,7 @@ package arazu
 
 import arazu.alertas.Alerta
 import arazu.seguridad.Permiso
+import arazu.seguridad.TipoAccion
 
 class MenuTagLib {
 //    static defaultEncodeAs = 'html'
@@ -53,33 +54,70 @@ class MenuTagLib {
             attrs.title = "Arazu"
         }
         if (usuario) {
+            def sistema = null
+            if (session.sistema) {
+                sistema = session.sistema
+            }
+
+            def tipoMenu = TipoAccion.findByCodigo("M")
+
             def acciones = Permiso.withCriteria {
                 eq("perfil", perfil)
                 accion {
+                    eq("tipo", tipoMenu)
                     modulo {
                         order("orden", "asc")
+                        ne("nombre", "noAsignado")
+                    }
+                    if (sistema) {
+                        or {
+                            eq("sistema", sistema)
+                            isNull("sistema")
+                        }
+                    } else {
+                        isNull("sistema")
                     }
                     order("orden", "asc")
                 }
             }.accion
 
+//            println "Sistema: " + sistema
+//            println "acciones: " + acciones
+
+//            items.sis = [
+//                    label: "Sistemas",
+//                    icon : "fa-simplybuilt",
+//                    items: [:]
+//            ]
+//            (acciones.sistema.unique().sort { it?.orden }).eachWithIndex { sis, i ->
+//                if (sis) {
+//                    def acc = [
+//                            controller: "sistema",
+//                            action    : "",
+//                            label     : sis.nombre,
+//                            icon      : sis.icono
+//                    ]
+//                    items["sis"]["items"]["" + i] = acc
+//                }
+//            }
+
             acciones.each { ac ->
-                if (ac.tipo.codigo == 'M' && ac.modulo.nombre != 'noAsignado') {
-                    if (!items[ac.modulo.id]) {
-                        items[ac.modulo.id] = [
-                                label: ac.modulo.nombre,
-                                icon : ac.modulo.icono,
-                                items: [:]
-                        ]
-                    }
-                    def acc = [
-                            controller: ac.control.nombre,
-                            action    : ac.nombre,
-                            label     : ac.descripcion,
-                            icon      : ac.icono
+//                if (ac.sistema == sistema) {
+                if (!items[ac.modulo.id]) {
+                    items[ac.modulo.id] = [
+                            label: ac.modulo.nombre,
+                            icon : ac.modulo.icono,
+                            items: [:]
                     ]
-                    items[ac.modulo.id]["items"][ac.id] = acc
                 }
+                def acc = [
+                        controller: ac.control.nombre,
+                        action    : ac.nombre,
+                        label     : ac.descripcion,
+                        icon      : ac.icono
+                ]
+                items[ac.modulo.id]["items"][ac.id] = acc
+//                }
             }
 
             items.each { k, v ->

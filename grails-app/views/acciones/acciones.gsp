@@ -90,6 +90,15 @@
                 </a>
             </div>
 
+            <div class="btn-group">
+                <a href="#" id="btnCrearSistema" class="btn btn-sm btn-default">
+                    <i class="fa fa-file-o"></i> Crear sistema
+                </a>
+                <g:link controller="sistema" action="list" class="btn btn-sm btn-default">
+                    <i class="fa fa-list"></i> Sistemas
+                </g:link>
+            </div>
+
         </div>
 
         <script type="text/javascript">
@@ -327,6 +336,77 @@
             } //createEdit
             /* **************************************** MODULO ******************************************************** */
 
+            /* **************************************** SISTEMA ******************************************************* */
+            function submitFormSistema() {
+                var $form = $("#frmSistema");
+                var $btn = $("#dlgCreateEditSistema").find("#btnSave");
+                if ($form.valid()) {
+                    $btn.replaceWith(spinner);
+                    openLoader("Guardando Sistema");
+                    $.ajax({
+                        type    : "POST",
+                        url     : $form.attr("action"),
+                        data    : $form.serialize(),
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                            setTimeout(function() {
+                                if (parts[0] == "SUCCESS") {
+                                    location.reload(true);
+                                } else {
+                                    spinner.replaceWith($btn);
+                                    closeLoader();
+                                    return false;
+                                }
+                            }, 1000);
+                        },
+                        error: function() {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
+                } else {
+                    return false;
+                } //else
+            }
+            function createEditSistema(id) {
+                var title = id ? "Editar" : "Crear";
+                var data = id ? { id: id } : {};
+                $.ajax({
+                    type    : "POST",
+                    url     : "${createLink(controller:'sistema', action:'form_ajax')}",
+                    data    : data,
+                    success : function (msg) {
+                        var b = bootbox.dialog({
+                            id      : "dlgCreateEditSistema",
+                            title   : title + " Sistema",
+
+                            message : msg,
+                            buttons : {
+                                cancelar : {
+                                    label     : "Cancelar",
+                                    className : "btn-primary",
+                                    callback  : function () {
+                                    }
+                                },
+                                guardar  : {
+                                    id        : "btnSave",
+                                    label     : "<i class='fa fa-save'></i> Guardar",
+                                    className : "btn-success",
+                                    callback  : function () {
+                                        return submitFormSistema();
+                                    } //callback
+                                } //guardar
+                            } //buttons
+                        }); //dialog
+                        setTimeout(function () {
+                            b.find(".form-control").first().focus()
+                        }, 500);
+                    } //success
+                }); //ajax
+            } //createEdit
+            /* **************************************** SISTEMA ******************************************************* */
+
             $(function () {
                 $(".mdlo").click(function () {
                     $(".active").removeClass("active");
@@ -362,6 +442,11 @@
                 });
                 $("#btnBorrarModulo").click(function () {
                     deleteModulo($(".active").find(".mdlo").attr("id"));
+                    return false;
+                });
+
+                $("#btnCrearSistema").click(function () {
+                    createEditSistema();
                     return false;
                 });
 

@@ -112,6 +112,39 @@ class AccionesController extends Shield {
     }
 
     /**
+     * Acción llamada con ajax que cambia el sistema al que pertenecen varias acciones
+     */
+    def accionCambiarSistema_ajax() {
+        def errores = ""
+        def cont = 0
+
+        params.each { k, v ->
+            if (k.toString().startsWith("sis")) {
+                def parts = k.split("_")
+                if (parts.size() == 2) {
+                    def id = parts[1].toLong()
+                    def accion = Accion.get(id)
+                    if (v != "null") {
+                        accion.sistema = Sistema.get(v.toLong())
+                    } else {
+                        accion.sistema = null
+                    }
+                    if (!accion.save(flush: true)) {
+                        errores += renderErrors(bean: accion)
+                    } else {
+                        cont++
+                    }
+                }
+            }
+        }
+        if (errores == "") {
+            render "SUCCESS*Sistema de ${cont} acci${cont == 1 ? 'ón' : 'ones'} modificado${cont == 1 ? '' : 's'} exitosamente"
+        } else {
+            render "ERROR*" + errores
+        }
+    }
+
+    /**
      * Acción llamada con ajax que cambia el orden de una acción
      */
     def accionCambiarOrden_ajax() {
@@ -387,5 +420,8 @@ class AccionesController extends Shield {
         } else {
             render "ERROR*" + errores
         }
+
+        def lg = new LoginController()
+        lg.cargarPermisos()
     }
 }

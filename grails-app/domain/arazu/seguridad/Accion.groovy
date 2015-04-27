@@ -36,6 +36,10 @@ class Accion {
      * Clase para el ícono (fontawesome, glyohicons, mfizz, flaticons)
      */
     String icono = ""
+    /**
+     * Sistema al que pertenece la acción
+     */
+    Sistema sistema
 
     /**
      * Define las relaciones uno a varios
@@ -65,6 +69,7 @@ class Accion {
             tipo column: 'tpac__id'
             orden column: 'accnordn'
             icono column: 'accnicno'
+            sistema column: 'sstm__id'
         }
     }
 
@@ -72,8 +77,9 @@ class Accion {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        nombre(blank: false, size: 0..50)
-        esAuditable(blank: true, nullable: true)
+        nombre blank: false, size: 0..50
+        esAuditable nullable: true
+        sistema nullable: true
     }
 
     /**

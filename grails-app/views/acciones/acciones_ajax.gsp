@@ -1,4 +1,4 @@
-<%@ page import="arazu.seguridad.Permiso; arazu.seguridad.Modulo; arazu.seguridad.TipoAccion" %>
+<%@ page import="arazu.seguridad.Sistema; arazu.seguridad.Permiso; arazu.seguridad.Modulo; arazu.seguridad.TipoAccion" %>
 
 <script src="${resource(dir: 'js/plugins/fixed-header-table-1.3', file: 'jquery.fixedheadertable.js')}"></script>
 <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/plugins/fixed-header-table-1.3/css', file: 'defaultTheme.css')}"/>
@@ -13,21 +13,26 @@
                 </a>
             </th>
             <th width="15%">Acción</th>
-            <th width="25%">
+            <th width="15%">
                 Nombre
                 <a href="#" title="Guardar todos los nombre modificados" class="btn btn-save-desc btn-success btn-sm pull-right">
                     <i class="fa fa-save"></i>
                 </a>
             </th>
-            <th width="15%">Controlador</th>
-            <th width="25%">Módulo
+            <th width="10%">Controlador</th>
+            <th width="15%">Módulo
                 <a href="#" title="Guardar todos los módulos modificados" class="btn btn-save-mod btn-success btn-sm pull-right">
                     <i class="fa fa-save"></i>
                 </a>
             </th>
-            <th width="15%">Tipo</th>
-            <th width="10%">Orden</th>
-            <th width="10%">Icono</th>
+            <th width="15%">Sistema
+                <a href="#" title="Guardar todos los sistemas modificados" class="btn btn-save-sis btn-success btn-sm pull-right">
+                    <i class="fa fa-save"></i>
+                </a>
+            </th>
+            <th width="8%">Tipo</th>
+            <th width="7%">Orden</th>
+            <th width="5%">Icono</th>
         </tr>
     </thead>
     <tbody>
@@ -55,6 +60,11 @@
                     <g:select name="modulo" from="${Modulo.list([sort: 'orden'])}" optionKey="id" optionValue="nombre" data-id="${accion.id}"
                               value="${accion.modulo.id}" class="form-control input-sm input-sm select-mod" data-original="${accion.modulo.id}"
                               tabindex="${i + 1 + acciones.size()}"/>
+                </td>
+                <td>
+                    <g:select name="sistema" from="${Sistema.list([sort: 'orden'])}" optionKey="id" optionValue="nombre" data-id="${accion.id}"
+                              value="${accion.sistemaId}" class="form-control input-sm input-sm select-sis" data-original="${accion.sistemaId}"
+                              tabindex="${i + 2 + acciones.size()}" noSelection="[null: '- Todos -']"/>
                 </td>
                 <td>
                     <a href="#" class="btn btn-switch btn-xs ${esMenu ? 'btn-info' : 'btn-success'}" data-id="${accion.id}"
@@ -203,6 +213,19 @@
         }
     });
 
+    $(".select-sis").change(function () {
+        var $this = $(this);
+        var valOrig = $.trim($this.data("original"));
+        var val = $.trim($this.val());
+        if (valOrig != val) {
+            $this.parents("tr").addClass("warning");
+            $this.addClass("select-changed");
+        } else {
+            $this.parents("tr").removeClass("warning");
+            $this.removeClass("select-changed");
+        }
+    });
+
     $(".input-desc").blur(function () {
         var $this = $(this);
         var valOrig = $.trim($this.data("original"));
@@ -263,6 +286,29 @@
                         var $input = $(this);
                         $input.parents("tr").remove();
                     });
+                }
+            }
+        });
+        return false;
+    });
+
+    $(".btn-save-sis").click(function () {
+        var data = {};
+        $(".select-changed").each(function () {
+            var $input = $(this);
+            data["sis_" + $input.data("id")] = $input.val();
+        });
+        openLoader("Guardando");
+        $.ajax({
+            type    : "POST",
+            url     : "${createLink(controller:'acciones', action:'accionCambiarSistema_ajax')}",
+            data    : data,
+            success : function (msg) {
+                var parts = msg.split("*");
+                log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                closeLoader();
+                if (parts[0] == "SUCCESS") {
+                  reload();
                 }
             }
         });
