@@ -13,6 +13,7 @@
 
 .actual {
 	background: none;
+	cursor: pointer;
 }
 
 .NAST {
@@ -33,7 +34,7 @@ td{
 	<elm:container tipo="horizontal" titulo="Registro de asistencia">
 		<div class="row">
 			<div class="col-md-12">
-				<table class="table table-condensed table-bordered table-hover">
+				<table class="table table-condensed table-bordered table-hover table-striped">
 					<thead>
 						<tr>
 							<th colspan="${max-min+2 }">
@@ -60,10 +61,16 @@ td{
 									<g:set var="fecha"
 										value="${(i<dia)?now.minus(dia-i):now.plus(i-dia)}"></g:set>
 									<g:set var="asistencia"
-										value="${ Asistencia.findByEmpleadoAndFecha(empleado,now)}"></g:set>
-									<td class="${i==dia?'actual':'disabled'}"
+										value="${Asistencia.findByEmpleadoAndFecha(empleado,fecha.clearTime())}"></g:set>
+									<td class="${i==dia?'actual':'disabled'} ${asistencia?asistencia.tipo.codigo:''}"
 										iden="${asistencia?.id}" empleado="${empleado.id}"
-										fecha="${fecha.format('dd-MM-yyyy')}"></td>
+										fecha="${fecha.format('dd-MM-yyyy')}">
+										<g:if test="${asistencia}">
+											${asistencia.tipo.codigo=='ASTE'?"<i class='fa fa-check'></i>":"<i class='fa fa-times' style='color:red'></i>" }
+										    ${asistencia.tipo.nombre}
+										</g:if>
+									
+										</td>
 								</g:each>
 
 							</tr>
@@ -75,7 +82,7 @@ td{
 		</div>
 	<div class="row">
 	<div class="col-md-1">
-	<a href="#" id="guardar" class="btn btn-info btn-sm">
+	<a href="#" id="guardar" class="btn btn-success btn-sm">
 	<i class="fa fa-save"></i> Guardar
 	</a>
 	</div>
@@ -195,14 +202,15 @@ function createEditAsistencia(id) {
 							data+=$(this).attr("empleado")+";"+$(this).attr("fecha")+";0|"
 						}
 				    });
-				    console.log(data)
+				    
 				    if(data!=""){
 				    	$.ajax({
 				            type    : "POST",
-				            url     : "${g.createLink(controller:'asistencia',action:'guardarDatos')}",
+				            url     : "${g.createLink(controller:'asistencia',action:'guardarDatos_ajax')}",
 				            data    : "data="+data,
 				            success : function (msg) {
-				                bootbox.alert("Datos guardados")
+				            	closeLoader();
+				            	  log("Datos guardados","Success");
 				            },
 				            error: function() {
 				                log("Ha ocurrido un error interno", "Error");

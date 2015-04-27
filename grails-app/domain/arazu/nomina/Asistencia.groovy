@@ -10,8 +10,8 @@ class Asistencia {
 	TipoAsistencia tipo
 	Date entrada
 	Date salida
-	Double horas50 = 0
-	Double horas100 = 0
+	Integer horas50 = 0
+	Integer horas100 = 0
 	Persona empleado
 	Persona registra
 	String observaciones
@@ -46,5 +46,6 @@ class Asistencia {
 		salida(nullable:true,blank:true)
 		empleado(nullable:false,blank:false)
 		registra(nullable:false,blank:false)
+		observaciones (blank:true,nullable:true) 
     }
 }
