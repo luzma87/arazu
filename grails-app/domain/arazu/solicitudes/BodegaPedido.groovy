@@ -4,6 +4,7 @@ import arazu.inventario.Bodega
 
 /**
  * Clase para conectar con la tabla 'bdpd' de la base de datos
+ * Guarda la bodega en la cual existen los items de una nota de pedido y registra la cantidad ya entregada
  */
 class BodegaPedido {
 

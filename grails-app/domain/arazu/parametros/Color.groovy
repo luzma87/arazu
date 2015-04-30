@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'colr' de la base de datos
+ * Guarda los colores disponibles para las maquinarias
  */
 class Color {
     /**

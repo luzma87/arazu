@@ -5,6 +5,7 @@ import arazu.parametros.TipoMaquinaria
 
 /**
  *  Clase para conectar con la tabla 'maqn' de la base de datos
+ *  La clase maquinaria guarda todos los datos referentes a la maquinaria
  */
 class Maquinaria {
     /**
@@ -74,14 +75,12 @@ class Maquinaria {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true, blank: true, size: 1..255)
-        observaciones(nullable: true, blank: true, size: 1..1023)
-        tipo(nullable: false, blank: false)
-        placa(nullable: true, blank: true, size: 1..20)
-        marca(nullable: true, blank: true, size: 1..50)
-        modelo(nullable: true, blank: true, size: 1..50)
-        color(nullable: false, blank: false)
-        codigo(nullable: true, blank: true, size: 1..50)
+        descripcion nullable: true, blank: true, size: 1..255
+        observaciones nullable: true, blank: true, size: 1..1023
+        placa nullable: true, blank: true, size: 1..20
+        marca nullable: true, blank: true, size: 1..50
+        modelo nullable: true, blank: true, size: 1..50
+        codigo nullable: true, blank: true, size: 1..50
     }
 
     /**

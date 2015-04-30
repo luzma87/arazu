@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'undd' de la base de datos
+ * Guarda las diferentes unidades en las que se pueden medir las cantidades de items
  */
 class Unidad {
 

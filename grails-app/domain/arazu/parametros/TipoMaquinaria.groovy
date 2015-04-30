@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'tpmq' de la base de datos
+ * Guarda los posibles tipos de maquinaria ('familias' de maquinarias)
  */
 class TipoMaquinaria {
 

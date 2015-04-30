@@ -5,6 +5,8 @@ import arazu.inventario.Bodega
 import arazu.parametros.EstadoSolicitud
 import arazu.proyectos.Proyecto
 import arazu.solicitudes.NotaPedido
+import arazu.solicitudes.SolicitudMantenimientoExterno
+import arazu.solicitudes.SolicitudMantenimientoInterno
 import org.springframework.dao.DataIntegrityViolationException
 import arazu.seguridad.Shield
 
@@ -121,8 +123,28 @@ class SistemaController extends Shield {
                 ]
         ]
 
-        (np + mx + mi).each { k, v ->
+        np.each { k, v ->
             v.cant = NotaPedido.countByEstadoSolicitud(v.estado)
+            if (v.cant >= limitGreen) {
+                v.clase = classYellow
+            }
+            if (v.cant >= limitYellow) {
+                v.clase = classRed
+            }
+        }
+        mx.each { k, v ->
+            def c = SolicitudMantenimientoExterno.countByEstadoSolicitud(v.estado)
+            v.cant = c
+            if (v.cant >= limitGreen) {
+                v.clase = classYellow
+            }
+            if (v.cant >= limitYellow) {
+                v.clase = classRed
+            }
+        }
+        mi.each { k, v ->
+            def c = SolicitudMantenimientoInterno.countByEstadoSolicitud(v.estado)
+            v.cant = c
             if (v.cant >= limitGreen) {
                 v.clase = classYellow
             }
@@ -132,6 +154,21 @@ class SistemaController extends Shield {
         }
 
         return [np: np, mx: mx, mi: mi]
+    }
+
+    /**
+     * Acción que muestra el dashboard de inventario
+     */
+    def inicioInventario() {
+        def sistema = Sistema.findByCodigo("INVN")
+        session.sistema = sistema
+    }
+
+    /**
+     * Acción que muestra el dashboard de reportes
+     */
+    def inicioReportes() {
+
     }
 
     /**
@@ -180,7 +217,7 @@ class SistemaController extends Shield {
     def list() {
         def sistemaInstanceList = getList_funcion(params, false)
         def sistemaInstanceCount = getList_funcion(params, true).size()
-        return [sistemaInstanceList: sistemaInstanceList, sistemaInstanceCount: sistemaInstanceCount]
+        return [editable: false, sistemaInstanceList: sistemaInstanceList, sistemaInstanceCount: sistemaInstanceCount]
     }
 
     /**

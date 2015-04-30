@@ -7,6 +7,7 @@ import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'smin' de la base de datos
+ * Guarda los datos de una solicitud de mantenimiento interno
  */
 class SolicitudMantenimientoInterno {
     /**
@@ -14,7 +15,7 @@ class SolicitudMantenimientoInterno {
      */
     EstadoSolicitud estadoSolicitud
     /**
-     * C骴igo del pedido
+     * C贸digo del pedido
      */
     String codigo
     /**
@@ -22,11 +23,11 @@ class SolicitudMantenimientoInterno {
      */
     Date fecha
     /**
-     * Persona que hacce el pedido
+     * Persona que hace el pedido
      */
     Persona de
     /**
-     * Persona que recibe el pedido: jefe o gerente para aprobaci髇 final
+     * Persona que recibe el pedido: jefe o gerente para aprobaci贸n final
      */
     Persona paraAF
     /**
@@ -38,7 +39,7 @@ class SolicitudMantenimientoInterno {
      */
     Maquinaria maquinaria
     /**
-     * N鷐ero de solicitud
+     * N煤mero de solicitud
      */
     int numero = 0
     /**
@@ -58,11 +59,11 @@ class SolicitudMantenimientoInterno {
      */
     String observaciones
     /**
-     * Localizaci髇
+     * Localizaci贸n
      */
     String localizacion
     /**
-     * Hor髆etro
+     * Hor贸metro
      */
     Double horometro
     /**
@@ -133,7 +134,7 @@ class SolicitudMantenimientoInterno {
     }
 
     /**
-     * Funci髇 que retorna las observaciones con un formato amigable para el usuario
+     * Funci贸n que retorna las observaciones con un formato amigable para el usuario
      * @return String observaciones con formato HTML
      */
     def getObservacionesFormat() {
@@ -150,10 +151,10 @@ class SolicitudMantenimientoInterno {
     }
 
     /**
-     * Funci髇 que retorna el n鷐ero de la solicitud
+     * Funci贸n que retorna el n煤mero de la solicitud
      * @return
      */
     String toString() {
-        return "Solicitud de mantenimiento interno n鷐. ${this.numero}"
+        return "Solicitud de mantenimiento interno n煤m. ${this.numero}"
     }
 }

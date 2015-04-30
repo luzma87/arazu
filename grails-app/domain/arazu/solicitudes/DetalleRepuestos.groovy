@@ -5,6 +5,7 @@ import arazu.parametros.Unidad
 
 /**
  * Clase para conectar con la tabla 'dtrp' de la base de datos
+ * Guarda los detalles de repuestos utilizados de una solicitud de mantenimiento interno
  */
 class DetalleRepuestos {
     /**
@@ -24,7 +25,7 @@ class DetalleRepuestos {
      */
     Item item
     /**
-     * Código o número de parte
+     * Cï¿½digo o nï¿½mero de parte
      */
     String codigo
     /**

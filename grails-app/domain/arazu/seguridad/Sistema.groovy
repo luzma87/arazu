@@ -2,6 +2,8 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'sstm' de la base de datos
+ * Guarda los diferentes sistemas. Un sistema agrupa diferentes acciones del menú para mostrar diferentes elementos
+ * según el sistema seleccionado
  */
 class Sistema {
     /**

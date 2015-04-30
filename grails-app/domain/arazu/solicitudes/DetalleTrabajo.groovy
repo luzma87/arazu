@@ -4,6 +4,7 @@ import arazu.parametros.TipoTrabajo
 
 /**
  * Clase para conectar con la tabla 'dttr' de la base de datos
+ * Guarda los detalles de los trabajos a realizar en una solicitud de mantenimiento interna o externa
  */
 class DetalleTrabajo {
     /**

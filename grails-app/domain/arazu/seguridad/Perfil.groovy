@@ -2,6 +2,7 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'prfl' de la base de datos
+ * Guarda los posibles perfiles que puede tener un usuario. En base a los perfiles se aasignan los permisos
  */
 class Perfil {
     /**

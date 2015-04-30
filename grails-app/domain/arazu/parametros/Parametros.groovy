@@ -2,14 +2,15 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'prmt' de la base de datos
+ * Guarda los parámetros del sistema, como máximos para solicitar a jefe o gerente
  */
 class Parametros {
     /**
-     * Valor m�ximo que un jefe puede aprobar (nota de pedido)
+     * Valor máximo que un jefe puede aprobar (nota de pedido)
      */
     Double maxNP
     /**
-     * Valor m�ximo que un jefe puede aprobar (mantenimiento externo)
+     * Valor máximo que un jefe puede aprobar (mantenimiento externo)
      */
     Double maxMX
     /**

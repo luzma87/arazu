@@ -8,18 +8,8 @@
 <%@ page import="arazu.solicitudes.NotaPedido; arazu.proyectos.Funcion" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <meta name="layout" content="main">
+        <meta name="layout" content="dashboard">
         <title>Solicitudes</title>
-        <style type="text/css">
-        .inicio img {
-            height : 190px;
-        }
-
-        i {
-            margin-right : 5px;
-        }
-        </style>
-        <link href="${g.resource(dir: 'css/custom/', file: 'dashboard.css')}" rel="stylesheet" type="text/css">
     </head>
 
     <body>
@@ -35,7 +25,7 @@
             </div>
 
             <div class="card">
-                <div class="titulo-card"><i class="fa fa-folder-open"></i> Mantenimiento externo</div>
+                <div class="titulo-card"><i class="fa flaticon-forklift3"></i> Mantenimiento externo</div>
                 <g:each in="${mx}" var="n">
                     <div class="cardContent" title="${n.value.estado.descripcion}">
                         <div class="circle-card ${n.value.clase}">${n.value.cant}</div>
@@ -45,7 +35,7 @@
             </div>
 
             <div class="card">
-                <div class="titulo-card"><i class="fa fa-folder-open"></i> Mantenimiento interno</div>
+                <div class="titulo-card"><i class="fa fa-automobile"></i> Mantenimiento interno</div>
                 <g:each in="${mi}" var="n">
                     <div class="cardContent" title="${n.value.estado.descripcion}">
                         <div class="circle-card ${n.value.clase}">${n.value.cant}</div>
@@ -53,8 +43,17 @@
                     </div>
                 </g:each>
             </div>
-
         </div>
+
+        <script type="text/javascript">
+            $(function () {
+                $(".cardContent").hover(function () {
+                    $(this).addClass("bg-info");
+                }, function () {
+                    $(this).removeClass("bg-info");
+                });
+            });
+        </script>
 
     </body>
 </html>

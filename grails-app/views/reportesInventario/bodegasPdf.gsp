@@ -32,6 +32,10 @@
             border           : 1px solid #fff;
             padding          : 3px;
         }
+
+        .text-right {
+            text-align : right;
+        }
         </style>
     </head>
 
@@ -48,11 +52,11 @@
                         <table class="table bordered">
                             <thead>
                                 <tr>
-                                    <th>Fecha</th>
+                                    <th width="80px">Fecha</th>
                                     <th>Item</th>
                                     <th>Unidad</th>
-                                    <th>Cantidad</th>
-                                    <th>Saldo</th>
+                                    <th width="75px">Cantidad</th>
+                                    <th width="75px">Saldo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,10 +84,10 @@
                         <table class="table bordered">
                             <thead>
                                 <tr>
-                                    <th>Fecha</th>
+                                    <th width="80px">Fecha</th>
                                     <th>Item</th>
                                     <th>Unidad</th>
-                                    <th>Cantidad</th>
+                                    <th width="75px">Cantidad</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,11 +112,11 @@
                         <table class="table bordered">
                             <thead>
                                 <tr>
-                                    <th>Fecha</th>
+                                    <th width="80px">Fecha</th>
                                     <th>Item</th>
                                     <th>Unidad</th>
-                                    <th>Cantidad</th>
-                                    <th>Saldo</th>
+                                    <th width="75px">Cantidad</th>
+                                    <th width="75px">Saldo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,11 +144,12 @@
                         <table class="table bordered">
                             <thead>
                                 <tr>
-                                    <th>Fecha</th>
+                                    <th width="80px">Fecha</th>
                                     <th>Item</th>
                                     <th>Unidad</th>
-                                    <th>Cantidad</th>
+                                    <th width="75px">Cantidad</th>
                                     <th>Tipo de desecho</th>
+                                    <th width="75px">Valor</th>
                                     <th>Lugar de desecho</th>
                                 </tr>
                             </thead>
@@ -159,8 +164,10 @@
                                         </td>
                                         <td>
                                             ${eg.tipoDesecho}
+                                        </td>
+                                        <td class="text-right">
                                             <g:if test="${eg.tipoDesecho?.requierePrecio == 1}">
-                                                (<g:formatNumber number="${eg.precioDesecho}" type="currency"/>)
+                                                <g:formatNumber number="${eg.precioDesecho}" type="currency"/>
                                             </g:if>
                                         </td>
                                         <td>${eg.lugarDesecho}</td>

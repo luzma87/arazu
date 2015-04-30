@@ -5,6 +5,7 @@ import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'fncn' de la base de datos
+ * Guarda la persona y la función que cumple en un determinado proyecto
  */
 class Funcion {
     /**

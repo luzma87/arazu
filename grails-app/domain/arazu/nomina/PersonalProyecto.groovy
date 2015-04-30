@@ -1,28 +1,29 @@
-package arazu.solicitudes
+package arazu.nomina
 
+import arazu.proyectos.Proyecto
 import arazu.seguridad.Persona
 
 /**
- * Clase para conectar con la tabla 'dtrp' de la base de datos
- * Guarda los detalles de mano de obra de una solicitud de mantenimiento interno
+ *  Clase para conectar con la tabla 'prpr' de la base de datos
+ *  La tabla asistencia permite registrar los empleados asignados a un proyecto
  */
-class DetalleManoObra {
+class PersonalProyecto {
     /**
-     * Solicitud de mantenimiento que genera el detalle
+     * Fecha de inicio
      */
-    SolicitudMantenimientoInterno solicitud
+    Date fechaInicio
     /**
-     * Persona
+     * Fecha de fin
+     */
+    Date fechaFin
+    /**
+     * Empleado
      */
     Persona persona
     /**
-     * Horas de trabajo
+     * Proyecto
      */
-    Double horasTrabajo
-    /**
-     * Fecha
-     */
-    Date fecha
+    Proyecto proyecto
     /**
      * Observaciones
      */
@@ -32,23 +33,23 @@ class DetalleManoObra {
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
-
     /**
      * Define el mapeo entre los campos del dominio y las columnas de la base de datos
      */
     static mapping = {
-        table 'dtmo'
+        table 'prpr'
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
+        sort fecha: "asc"
         columns {
-            id column: 'dtrp__id'
-            solicitud column: 'smin__id'
+            id column: 'prpr__id'
+            fechaInicio column: 'prprfcin'
+            fechaFin column: 'prprfcfn'
             persona column: 'prsn__id'
-            horasTrabajo column: 'dtmohrtr'
-            fecha column: 'dtmofcha'
-            observaciones column: 'dtmoobsv'
-            observaciones type: 'text'
+            proyecto column: 'proy__id'
+            observaciones column: 'prprobrs'
+            observaciones type: "text"
         }
     }
 
@@ -56,6 +57,7 @@ class DetalleManoObra {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
+        fechaFin nullable: true
         observaciones blank: true, nullable: true
     }
 }

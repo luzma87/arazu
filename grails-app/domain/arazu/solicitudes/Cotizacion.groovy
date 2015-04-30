@@ -4,6 +4,7 @@ import arazu.parametros.EstadoSolicitud
 
 /**
  * Clase para conectar con la tabla 'ctzn' de la base de datos
+ * Guarda los datos de una cotización para una solicitud
  */
 class Cotizacion {
 
@@ -39,6 +40,10 @@ class Cotizacion {
      * Fecha de aprobación o negación de la solicitud
      */
     Date fechaFin
+    /**
+     * Forma de pago
+     */
+    String formaPago
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -63,6 +68,8 @@ class Cotizacion {
             diasEntrega column: 'ctzndsen'
             estadoSolicitud column: 'essl__id'
             fechaFin column: 'ctznfcfn'
+            formaPago column: 'ctznfrpg'
+            solicitudMantenimientoExterno column: 'smex__id'
         }
     }
 
@@ -72,7 +79,8 @@ class Cotizacion {
     static constraints = {
         pedido nullable: true
         solicitudMantenimientoExterno nullable: true
-        proveedor(nullable: false, blank: false, size: 1..255)
+        proveedor size: 1..255
         fechaFin nullable: true
+        formaPago nullable: true
     }
 }

@@ -7,6 +7,7 @@ import arazu.parametros.Unidad
 
 /**
  *  Clase para conectar con la tabla 'item' de la base de datos
+ *  La tabla item guarda los datos de los items
  */
 class Item {
 
@@ -47,9 +48,8 @@ class Item {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true, blank: true, size: 1..500)
-        tipo(nullable: false, blank: false)
-        unidad(nullable: true, blank: true)
+        descripcion nullable: true, blank: true, size: 1..500
+        unidad nullable: true
     }
     /**
      * Genera un string para mostrar

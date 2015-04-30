@@ -2,6 +2,7 @@ package arazu.proyectos
 
 /**
  * Clase para conectar con la tabla 'proy' de la base de datos
+ * Guarda todos los datos de un proyecto
  */
 class Proyecto {
 

@@ -17,10 +17,10 @@
         <div class="col-md-5">
             <g:select name="cot" from="${cots}" class="form-control input-sm required" optionKey="id"
                       optionValue="${{
-                          it.proveedor + ' (' +
+                          it.proveedor + ': ' +
                                   g.formatNumber(number: it.valor, type: 'currency') +
-                                  ', ' + it.diasEntrega + ' día' + (it.diasEntrega == 1 ? '' : 's') +
-                                  ')'
+                                  ', ' + it.formaPago +
+                                  ', ' + it.diasEntrega + ' día' + (it.diasEntrega == 1 ? '' : 's')
                       }}"/>
         </div>
     </div>

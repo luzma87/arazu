@@ -84,22 +84,22 @@ class MenuTagLib {
 //            println "Sistema: " + sistema
 //            println "acciones: " + acciones
 
-//            items.sis = [
-//                    label: "Sistemas",
-//                    icon : "fa-simplybuilt",
-//                    items: [:]
-//            ]
-//            (acciones.sistema.unique().sort { it?.orden }).eachWithIndex { sis, i ->
-//                if (sis) {
-//                    def acc = [
-//                            controller: "sistema",
-//                            action    : "",
-//                            label     : sis.nombre,
-//                            icon      : sis.icono
-//                    ]
-//                    items["sis"]["items"]["" + i] = acc
-//                }
-//            }
+            items.sis = [
+                    label: "Inicio",
+                    icon : "fa-dashboard",
+                    items: [:]
+            ]
+            session.sistemas.eachWithIndex { sis, i ->
+                if (sis) {
+                    def acc = [
+                            controller: sis.controlador,
+                            action    : sis.accion,
+                            label     : sis.nombre,
+                            icon      : sis.icono
+                    ]
+                    items["sis"]["items"]["" + i] = acc
+                }
+            }
 
             acciones.each { ac ->
 //                if (ac.sistema == sistema) {
@@ -234,6 +234,7 @@ class MenuTagLib {
         str += "<li class='" + clase + "'>"
         if (item.items) {
             str += "<a href='#' class='dropdown-toggle' data-toggle='dropdown'>"
+//            println "1\t" + item.label + "     " + item.icon
             if (item.icon) {
                 str += "<i class='fa ${item.icon}'></i>"
                 str += " "
@@ -247,6 +248,7 @@ class MenuTagLib {
             str += "</ul>"
         } else {
             str += "<a href='" + createLink(controller: item.controller, action: item.action, params: item.params) + "'>"
+//            println "2\t" + item.label + "     " + item.icon
             if (item.icon) {
                 str += "<i class='fa ${item.icon}'></i>"
                 str += " "

@@ -2,6 +2,7 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'sesn' de la base de datos
+ * Guarda los perfiles asignados a un usuario
  */
 class Sesion {
     /**

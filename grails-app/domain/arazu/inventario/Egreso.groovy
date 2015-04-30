@@ -7,6 +7,7 @@ import arazu.solicitudes.NotaPedido
 
 /**
  *  Clase para conectar con la tabla 'egrs' de la base de datos
+ *  La tabla egresos guarda todos los items retirados de una bodega, ya sean desechos o no
  */
 class Egreso {
     /**
@@ -98,11 +99,9 @@ class Egreso {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        observaciones(nullable: true, blank: true, size: 1..1023)
-        persona(nullable: true, blank: true)
-        ingreso(nullable: false, blank: false)
-        fecha(nullable: false, blank: false)
-        responsable(nullable: true, blank: true, size: 1..255)
+        observaciones nullable: true, blank: true, size: 1..1023 
+        persona nullable: true
+        responsable nullable: true, blank: true, size: 1..255
         transferencia nullable: true
         pedido nullable: true
         firma nullable: true

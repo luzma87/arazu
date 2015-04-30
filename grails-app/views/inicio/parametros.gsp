@@ -82,6 +82,18 @@
                             </div>
                         </li>
                         <li>
+                            <i class="fa-li fa fa-calendar-o text-info"></i>
+                            <g:link class="over" controller="tipoAsistencia" action="list">
+                                Tipo de asistencia
+                            </g:link>
+
+                            <div class="descripcion hidden">
+                                <h4><i class=" fa fa-calendar-o fa-2x"></i> Tipo de asistencia</h4>
+
+                                <p>Permite registrar los tipos de asistencia</p>
+                            </div>
+                        </li>
+                        <li>
                             <i class="fa-li fa fa-trash-o text-info"></i>
                             <g:link class="over" controller="tipoDesecho" action="list">
                                 Tipos de Desecho
@@ -117,16 +129,16 @@
                                 <p>Permite modificar los parámetros globales, como los valores máximos que pueden autorizar los jefes</p>
                             </div>
                         </li>
-                         <li>
-                            <i class="fa-li fa fa-calendar-o text-info"></i>
-                            <g:link class="over" controller="tipoAsistencia" action="list">
-                                Tipo de asistencia
+                        <li>
+                            <i class="fa-li fa fa-simplybuilt text-info"></i>
+                            <g:link class="over" controller="sistema" action="list">
+                                Sistemas
                             </g:link>
 
                             <div class="descripcion hidden">
-                                <h4><i class=" fa fa-calendar-o fa-2x"></i> Tipo de asistencia</h4>
+                                <h4><i class=" fa fa-simplybuilt fa-2x"></i> Sistemas</h4>
 
-                                <p>Permite registrar los tipos de asistencia</p>
+                                <p>Muestra los diferentes sistemas en los que se van a agrupar las acciones del menú</p>
                             </div>
                         </li>
                     </ul>

@@ -167,7 +167,18 @@ class LoginController {
                 hp.put(it.accion.control.nombre.toLowerCase(), [it.accion.nombre.toLowerCase()])
             }
         }
-        session.sistemas = permisos.accion.sistema.unique().sort { it?.orden }
+        def sistemas = permisos.accion.sistema.unique().sort { it?.orden }
+        session.sistemas = sistemas
+        def ss = []
+        sistemas.each { s ->
+            if (s) {
+                ss += s
+            }
+        }
+        if (ss.size() == 1) {
+            session.sistema = ss.first()
+        }
+//        println "sistema en login: " + ss
         session.permisos = hp
     }
 }

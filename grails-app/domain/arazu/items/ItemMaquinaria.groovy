@@ -2,6 +2,7 @@ package arazu.items
 
 /**
  *  Clase para conectar con la tabla 'itmq' de la base de datos
+ *  La tabla item maquinaria registra que items utiliza cada maquinaria
  */
 class ItemMaquinaria {
 
@@ -42,7 +43,7 @@ class ItemMaquinaria {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        observaciones(nullable: true, blank: true, size: 1..500)
+        observaciones nullable: true, blank: true, size: 1..500
     }
     /**
      * Genera un string para mostrar

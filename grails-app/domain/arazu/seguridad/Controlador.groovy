@@ -2,6 +2,8 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'ctrl' de la base de datos
+ * Guarda los controladores que tiene el sistema para poder asignar permisos y armar el menú. Esta tabla se carga de manera
+ * automática al presionar el botón 'Cargar acciones' en la pantalla de administración del sistema
  */
 class Controlador {
     /**
@@ -33,7 +35,7 @@ class Controlador {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        nombre(blank: false, size: 0..50)
+        nombre size: 0..50
     }
 
     /**

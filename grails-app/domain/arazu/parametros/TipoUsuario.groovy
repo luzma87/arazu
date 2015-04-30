@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'tpus' de la base de datos
+ * Guarda los diferentes tipos de usuario, como administrador, gerente, etc.
  */
 class TipoUsuario {
     /**

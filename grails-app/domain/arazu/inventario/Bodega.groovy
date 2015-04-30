@@ -5,6 +5,7 @@ import arazu.seguridad.Persona
 
 /**
  *  Clase para conectar con la tabla 'bdga' de la base de datos
+ *  Las bodegas permiten guardar el inventario de items y de desechos
  */
 class Bodega {
     /**
@@ -58,11 +59,10 @@ class Bodega {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(nullable: true, blank: true, size: 1..50)
-        observaciones(nullable: true, blank: true, size: 1..1023)
-        proyecto(nullable: true, blank: true)
-        responsable(nullable: false, blank: false)
-        suplente(nullable: true, blank: true)
+        descripcion nullable: true, blank: true, size: 1..50
+        observaciones nullable: true, blank: true, size: 1..1023
+        proyecto nullable: true
+        suplente nullable: true
     }
 
     /**

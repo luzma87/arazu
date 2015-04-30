@@ -4,6 +4,7 @@ import arazu.seguridad.Persona
 
 /**
  *  Clase para conectar con la tabla 'trsf' de la base de datos
+ *  La tabla transferencia guarda items pasados de una bodega a otra
  */
 class Transferencia {
 
@@ -55,6 +56,6 @@ class Transferencia {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        observaciones(nullable: true, blank: true, size: 1..1023)
+        observaciones nullable: true, blank: true, size: 1..1023
     }
 }

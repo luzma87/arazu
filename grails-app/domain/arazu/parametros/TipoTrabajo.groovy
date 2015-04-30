@@ -2,6 +2,8 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'tptr' de la base de datos
+ * Guarda los diferentes tipos de trabajo de mantenimiento que se pueden relizar a una maquinaria, ya sea en
+ * mantenimiento interno o externo
  */
 class TipoTrabajo {
     /**

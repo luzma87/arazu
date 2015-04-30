@@ -2,10 +2,9 @@ package arazu.seguridad
 
 import arazu.parametros.TipoUsuario
 
-/*Usuario del sistema*/
 /**
- * Clase para conectar con la tabla 'prsn' de la base de datos<br/>
- * Usuario del sistema
+ * Clase para conectar con la tabla 'prsn' de la base de datos
+ * Guarda los datos de los usuarios del sistema
  */
 class Persona {
     /**
@@ -24,7 +23,6 @@ class Persona {
      * Sexo de la persona
      */
     String sexo
-
     /**
      * Fecha de nacimiento de la persona
      */
@@ -45,7 +43,6 @@ class Persona {
      * Observaciones
      */
     String observaciones
-
     /**
      * Nombre de usuario para el ingreso al sistema
      */
@@ -109,21 +106,21 @@ class Persona {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        cedula(size: 1..10, blank: false)
-        nombre(size: 1..40, blank: false)
-        apellido(size: 1..40, blank: false)
-        sexo(inList: ["F", "M"], size: 1..1, blank: false)
-        fechaNacimiento(max: new Date(), blank: true, nullable: true)
-        direccion(size: 1..127, blank: true, nullable: true)
-        telefono(size: 1..10, blank: true, nullable: true)
-        mail(email: true, size: 1..40, blank: true, nullable: true)
-        observaciones(size: 1..127, blank: true, nullable: true)
-        login(size: 1..15, blank: true, nullable: true, unique: true)
-        password(size: 1..64, blank: true, nullable: true)
-        autorizacion(size: 1..255, blank: true, nullable: true)
-        activo(size: 1..1, blank: true, nullable: true)
-        tipoUsuario(blank: true, nullable: true)
-        foto(blank: true, nullable: true)
+        cedula size: 1..10
+        nombre size: 1..40
+        apellido size: 1..40
+        sexo inList: ["F", "M"]
+        fechaNacimiento max: new Date(), nullable: true
+        direccion size: 1..127, blank: true, nullable: true
+        telefono size: 1..10, blank: true, nullable: true
+        mail email: true, size: 1..40, blank: true, nullable: true
+        observaciones size: 1..127, blank: true, nullable: true
+        login size: 1..15, blank: true, nullable: true, unique: true
+        password size: 1..64, blank: true, nullable: true
+        autorizacion size: 1..255, blank: true, nullable: true
+        activo size: 1..1, blank: true, nullable: true
+        tipoUsuario blank: true, nullable: true
+        foto blank: true, nullable: true
     }
 
     /**

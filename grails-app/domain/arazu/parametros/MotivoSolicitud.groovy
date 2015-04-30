@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'mtsl' de la base de datos
+ * Guarda los posibles motivos de realización de una solicitud (mantenimiento, reparación...)
  */
 class MotivoSolicitud {
     /**

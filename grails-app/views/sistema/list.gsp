@@ -13,9 +13,14 @@
         <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
-                <a href="#" class="btn btn-default btnCrear">
-                    <i class="fa fa-file-o"></i> Crear
-                </a>
+                <g:link class="btn btn-default" controller="inicio" action="parametros">
+                    <i class="fa fa-cogs"></i> Parámetros
+                </g:link>
+                <g:if test="${editable}">
+                    <a href="#" class="btn btn-default btnCrear">
+                        <i class="fa fa-file-o"></i> Crear
+                    </a>
+                </g:if>
             </div>
 
             <div class="btn-group pull-right col-md-3">
@@ -97,190 +102,191 @@
 
         <elm:pagination total="${sistemaInstanceCount}" params="${params}"/>
 
-        <script type="text/javascript">
-            var id = null;
-            function submitFormSistema() {
-                var $form = $("#frmSistema");
-                var $btn = $("#dlgCreateEditSistema").find("#btnSave");
-                if ($form.valid()) {
-                    $btn.replaceWith(spinner);
-                    openLoader("Guardando Sistema");
-                    $.ajax({
-                        type    : "POST",
-                        url     : $form.attr("action"),
-                        data    : $form.serialize(),
-                        success : function (msg) {
-                            var parts = msg.split("*");
-                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function () {
-                                if (parts[0] == "SUCCESS") {
-                                    location.reload(true);
-                                } else {
-                                    spinner.replaceWith($btn);
-                                    closeLoader();
-                                    return false;
-                                }
-                            }, 1000);
-                        },
-                        error   : function () {
-                            log("Ha ocurrido un error interno", "Error");
-                            closeLoader();
-                        }
-                    });
-                } else {
-                    return false;
-                } //else
-            }
-            function deleteSistema(itemId) {
-                bootbox.dialog({
-                    title   : "Alerta",
-                    message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                              "¿Está seguro que desea eliminar el Sistema seleccionado? Esta acción no se puede deshacer.</p>",
-                    buttons : {
-                        cancelar : {
-                            label     : "Cancelar",
-                            className : "btn-primary",
-                            callback  : function () {
+        <g:if test="${editable}">
+            <script type="text/javascript">
+                var id = null;
+                function submitFormSistema() {
+                    var $form = $("#frmSistema");
+                    var $btn = $("#dlgCreateEditSistema").find("#btnSave");
+                    if ($form.valid()) {
+                        $btn.replaceWith(spinner);
+                        openLoader("Guardando Sistema");
+                        $.ajax({
+                            type    : "POST",
+                            url     : $form.attr("action"),
+                            data    : $form.serialize(),
+                            success : function (msg) {
+                                var parts = msg.split("*");
+                                log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                setTimeout(function () {
+                                    if (parts[0] == "SUCCESS") {
+                                        location.reload(true);
+                                    } else {
+                                        spinner.replaceWith($btn);
+                                        closeLoader();
+                                        return false;
+                                    }
+                                }, 1000);
+                            },
+                            error   : function () {
+                                log("Ha ocurrido un error interno", "Error");
+                                closeLoader();
                             }
-                        },
-                        eliminar : {
-                            label     : "<i class='fa fa-trash-o'></i> Eliminar",
-                            className : "btn-danger",
-                            callback  : function () {
-                                openLoader("Eliminando Sistema");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : '${createLink(controller:'sistema', action:'delete_ajax')}',
-                                    data    : {
-                                        id : itemId
-                                    },
-                                    success : function (msg) {
-                                        var parts = msg.split("*");
-                                        log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                        if (parts[0] == "SUCCESS") {
-                                            setTimeout(function () {
-                                                location.reload(true);
-                                            }, 1000);
-                                        } else {
+                        });
+                    } else {
+                        return false;
+                    } //else
+                }
+                function deleteSistema(itemId) {
+                    bootbox.dialog({
+                        title   : "Alerta",
+                        message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
+                                  "¿Está seguro que desea eliminar el Sistema seleccionado? Esta acción no se puede deshacer.</p>",
+                        buttons : {
+                            cancelar : {
+                                label     : "Cancelar",
+                                className : "btn-primary",
+                                callback  : function () {
+                                }
+                            },
+                            eliminar : {
+                                label     : "<i class='fa fa-trash-o'></i> Eliminar",
+                                className : "btn-danger",
+                                callback  : function () {
+                                    openLoader("Eliminando Sistema");
+                                    $.ajax({
+                                        type    : "POST",
+                                        url     : '${createLink(controller:'sistema', action:'delete_ajax')}',
+                                        data    : {
+                                            id : itemId
+                                        },
+                                        success : function (msg) {
+                                            var parts = msg.split("*");
+                                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                            if (parts[0] == "SUCCESS") {
+                                                setTimeout(function () {
+                                                    location.reload(true);
+                                                }, 1000);
+                                            } else {
+                                                closeLoader();
+                                            }
+                                        },
+                                        error   : function () {
+                                            log("Ha ocurrido un error interno", "Error");
                                             closeLoader();
                                         }
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
-                                        closeLoader();
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
-                    }
-                });
-            }
-            function createEditSistema(id) {
-                var title = id ? "Editar" : "Crear";
-                var data = id ? {id : id} : {};
-                $.ajax({
-                    type    : "POST",
-                    url     : "${createLink(controller:'sistema', action:'form_ajax')}",
-                    data    : data,
-                    success : function (msg) {
-                        var b = bootbox.dialog({
-                            id    : "dlgCreateEditSistema",
-                            title : title + " Sistema",
+                    });
+                }
+                function createEditSistema(id) {
+                    var title = id ? "Editar" : "Crear";
+                    var data = id ? {id : id} : {};
+                    $.ajax({
+                        type    : "POST",
+                        url     : "${createLink(controller:'sistema', action:'form_ajax')}",
+                        data    : data,
+                        success : function (msg) {
+                            var b = bootbox.dialog({
+                                id    : "dlgCreateEditSistema",
+                                title : title + " Sistema",
 
-                            message : msg,
-                            buttons : {
-                                cancelar : {
-                                    label     : "Cancelar",
-                                    className : "btn-primary",
-                                    callback  : function () {
-                                    }
-                                },
-                                guardar  : {
-                                    id        : "btnSave",
-                                    label     : "<i class='fa fa-save'></i> Guardar",
-                                    className : "btn-success",
-                                    callback  : function () {
-                                        return submitFormSistema();
-                                    } //callback
-                                } //guardar
-                            } //buttons
-                        }); //dialog
-                        setTimeout(function () {
-                            b.find(".form-control").first().focus()
-                        }, 500);
-                    } //success
-                }); //ajax
-            } //createEdit
-
-            $(function () {
-
-                $(".btnCrear").click(function () {
-                    createEditSistema();
-                    return false;
-                });
-
-                $("tbody>tr").contextMenu({
-                    items  : {
-                        header   : {
-                            label  : "Acciones",
-                            header : true
-                        },
-                        ver      : {
-                            label  : "Ver",
-                            icon   : "fa fa-search",
-                            action : function ($element) {
-                                var id = $element.data("id");
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : "${createLink(controller:'sistema', action:'show_ajax')}",
-                                    data    : {
-                                        id : id
+                                message : msg,
+                                buttons : {
+                                    cancelar : {
+                                        label     : "Cancelar",
+                                        className : "btn-primary",
+                                        callback  : function () {
+                                        }
                                     },
-                                    success : function (msg) {
-                                        bootbox.dialog({
-                                            title : "Ver Sistema",
+                                    guardar  : {
+                                        id        : "btnSave",
+                                        label     : "<i class='fa fa-save'></i> Guardar",
+                                        className : "btn-success",
+                                        callback  : function () {
+                                            return submitFormSistema();
+                                        } //callback
+                                    } //guardar
+                                } //buttons
+                            }); //dialog
+                            setTimeout(function () {
+                                b.find(".form-control").first().focus()
+                            }, 500);
+                        } //success
+                    }); //ajax
+                } //createEdit
 
-                                            message : msg,
-                                            buttons : {
-                                                ok : {
-                                                    label     : "Aceptar",
-                                                    className : "btn-primary",
-                                                    callback  : function () {
+                $(function () {
+
+                    $(".btnCrear").click(function () {
+                        createEditSistema();
+                        return false;
+                    });
+
+                    $("tbody>tr").contextMenu({
+                        items  : {
+                            header   : {
+                                label  : "Acciones",
+                                header : true
+                            },
+                            ver      : {
+                                label  : "Ver",
+                                icon   : "fa fa-search",
+                                action : function ($element) {
+                                    var id = $element.data("id");
+                                    $.ajax({
+                                        type    : "POST",
+                                        url     : "${createLink(controller:'sistema', action:'show_ajax')}",
+                                        data    : {
+                                            id : id
+                                        },
+                                        success : function (msg) {
+                                            bootbox.dialog({
+                                                title : "Ver Sistema",
+
+                                                message : msg,
+                                                buttons : {
+                                                    ok : {
+                                                        label     : "Aceptar",
+                                                        className : "btn-primary",
+                                                        callback  : function () {
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        });
-                                    }
-                                });
+                                            });
+                                        }
+                                    });
+                                }
+                            },
+                            editar   : {
+                                label  : "Editar",
+                                icon   : "fa fa-pencil",
+                                action : function ($element) {
+                                    var id = $element.data("id");
+                                    createEditSistema(id);
+                                }
+                            },
+                            eliminar : {
+                                label            : "Eliminar",
+                                icon             : "fa fa-trash-o",
+                                separator_before : true,
+                                action           : function ($element) {
+                                    var id = $element.data("id");
+                                    deleteSistema(id);
+                                }
                             }
                         },
-                        editar   : {
-                            label  : "Editar",
-                            icon   : "fa fa-pencil",
-                            action : function ($element) {
-                                var id = $element.data("id");
-                                createEditSistema(id);
-                            }
+                        onShow : function ($element) {
+                            $element.addClass("success");
                         },
-                        eliminar : {
-                            label            : "Eliminar",
-                            icon             : "fa fa-trash-o",
-                            separator_before : true,
-                            action           : function ($element) {
-                                var id = $element.data("id");
-                                deleteSistema(id);
-                            }
+                        onHide : function ($element) {
+                            $(".success").removeClass("success");
                         }
-                    },
-                    onShow : function ($element) {
-                        $element.addClass("success");
-                    },
-                    onHide : function ($element) {
-                        $(".success").removeClass("success");
-                    }
+                    });
                 });
-            });
-        </script>
-
+            </script>
+        </g:if>
     </body>
 </html>

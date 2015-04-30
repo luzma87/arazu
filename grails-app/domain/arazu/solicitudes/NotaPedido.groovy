@@ -10,6 +10,7 @@ import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'ntpd' de la base de datos
+ * Guarda los datos de una nota de pedido
  */
 class NotaPedido {
     /**
@@ -187,6 +188,10 @@ class NotaPedido {
         prioridad nullable: true
     }
 
+    /**
+     * Función que retorna las observaciones con un formato amigable para el usuario
+     * @return String observaciones con formato HTML
+     */
     def getObservacionesFormat() {
         def html = ""
         if (this.observaciones) {
@@ -200,6 +205,10 @@ class NotaPedido {
         return html
     }
 
+    /**
+     * Función que retorna el número de la solicitud
+     * @return
+     */
     String toString() {
         return "Nota de pedido núm. ${this.numero}"
     }

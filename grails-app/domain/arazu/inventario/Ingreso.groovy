@@ -7,6 +7,7 @@ import arazu.solicitudes.NotaPedido
 
 /**
  *  Clase para conectar con la tabla 'ingr' de la base de datos
+ *  La tabla ingresos guarda todos los items que entran a una bodega, ya sean desechos o no
  */
 class Ingreso {
     /**
@@ -92,12 +93,8 @@ class Ingreso {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        unidad(nullable: false, blank: false)
-        item(nullable: false, blank: false)
-        bodega(nullable: false, blank: false)
-        fecha(nullable: false, blank: false)
-        pedido(nullable: true, blank: true)
-        factura(nullable: true, blank: true, size: 1..50)
+        pedido nullable: true
+        factura nullable: true, blank: true, size: 1..50
         ingresa nullable: true
         egreso nullable: true
     }

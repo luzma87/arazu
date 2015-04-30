@@ -8,19 +8,8 @@
 <%@ page import="arazu.solicitudes.NotaPedido; arazu.proyectos.Funcion" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <meta name="layout" content="main">
+        <meta name="layout" content="dashboard">
         <title>Administración</title>
-
-        <style type="text/css">
-        .inicio img {
-            height : 190px;
-        }
-
-        i {
-            margin-right : 5px;
-        }
-        </style>
-        <link href="${g.resource(dir: 'css/custom/', file: 'dashboard.css')}" rel="stylesheet" type="text/css">
     </head>
 
     <body>

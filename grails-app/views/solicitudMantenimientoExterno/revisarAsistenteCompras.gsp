@@ -93,7 +93,16 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3" style="text-align: right">
+                                            <div class="col-md-1">
+                                                <label>Forma pago</label>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control input-sm required" name="formaPago"
+                                                       value="${c.formaPago}"/>
+                                            </div>
+
+                                            <div class="col-md-2" style="text-align: right">
                                                 <a href="#" class="btn btn-info guardar_nueva" number="${i}" iden="${c.id}">
                                                     <i class="fa fa-save"></i> Guadar
                                                 </a>
@@ -156,7 +165,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3" style="text-align: right">
+                                        <div class="col-md-1">
+                                            <label>Forma pago</label>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <input type="text" class="form-control input-sm required" name="formaPago"/>
+                                        </div>
+
+                                        <div class="col-md-2" style="text-align: right">
                                             <a href="#" class="btn btn-info guardar_nueva">
                                                 <i class="fa fa-save"></i> Guadar</a>
                                         </div>

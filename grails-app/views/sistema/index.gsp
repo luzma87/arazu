@@ -22,7 +22,7 @@
         <div class="row">
             <g:each in="${session.sistemas}" var="sistema">
                 <g:if test="${sistema}">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="panel panel-info sistema" data-url="${createLink(controller: sistema.controlador, action: sistema.accion)}">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
@@ -37,7 +37,8 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <g:if test="${sistema.pathImagen}">
-                                            <img class="img-responsive" src="${resource(dir: 'images/inicio', file: sistema.pathImagen)}"/>
+                                            <img style="height: 80px;"
+                                                 src="${resource(dir: 'images/inicio', file: sistema.pathImagen)}"/>
                                         </g:if>
                                     </div>
 

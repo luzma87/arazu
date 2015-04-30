@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'essl' de la base de datos
+ * Guarda los posibles estados de las solicitudes (notas de pedido, mantenimiento interno y externo)
  */
 class EstadoSolicitud {
 

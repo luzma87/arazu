@@ -7,6 +7,7 @@ import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'smex' de la base de datos
+ * Guarda los datos de una solicitud de mantenimiento externo
  */
 class SolicitudMantenimientoExterno {
     /**
@@ -14,7 +15,7 @@ class SolicitudMantenimientoExterno {
      */
     EstadoSolicitud estadoSolicitud
     /**
-     * C骴igo del pedido
+     * C贸digo del pedido
      */
     String codigo
     /**
@@ -22,7 +23,7 @@ class SolicitudMantenimientoExterno {
      */
     Date fecha
     /**
-     * Persona que hacce el pedido
+     * Persona que hace el pedido
      */
     Persona de
     /**
@@ -34,7 +35,7 @@ class SolicitudMantenimientoExterno {
      */
     Persona paraAC
     /**
-     * Persona que recibe el pedido: jefe o gerente para aprobaci髇 final
+     * Persona que recibe el pedido: jefe o gerente para aprobaci贸n final
      */
     Persona paraAF
     /**
@@ -46,7 +47,7 @@ class SolicitudMantenimientoExterno {
      */
     Maquinaria maquinaria
     /**
-     * N鷐ero de solicitud
+     * N煤mero de solicitud
      */
     int numero = 0
     /**
@@ -62,7 +63,7 @@ class SolicitudMantenimientoExterno {
      */
     Firma firmaAsistenteCompras
     /**
-     * Firma del que aprueba (jefe si <200, gerente si >=200)
+     * Firma del que aprueba (jefe si <200, gerente si >=200 -> valores en tabla par谩metros)
      */
     Firma firmaAprueba
     /**
@@ -74,11 +75,11 @@ class SolicitudMantenimientoExterno {
      */
     String observaciones
     /**
-     * Localizaci髇
+     * Localizaci贸n
      */
     String localizacion
     /**
-     * Hor髆etro
+     * Hor贸metro
      */
     Double horometro
     /**
@@ -157,7 +158,7 @@ class SolicitudMantenimientoExterno {
     }
 
     /**
-     * Funci髇 que retorna las observaciones con un formato amigable para el usuario
+     * Funci贸n que retorna las observaciones con un formato amigable para el usuario
      * @return String observaciones con formato HTML
      */
     def getObservacionesFormat() {
@@ -174,10 +175,10 @@ class SolicitudMantenimientoExterno {
     }
 
     /**
-     * Funci髇 que retorna el n鷐ero de la solicitud
+     * Funci贸n que retorna el n煤mero de la solicitud
      * @return
      */
     String toString() {
-        return "Solicitud de mantenimiento externo n鷐. ${this.numero}"
+        return "Solicitud de mantenimiento externo n煤m. ${this.numero}"
     }
 }

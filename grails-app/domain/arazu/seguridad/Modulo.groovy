@@ -2,6 +2,7 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'mdlo' de la base de datos
+ * Guarda los diferentes módulos creados. Un módulo corresponde a un item principal del menú
  */
 class Modulo {
     /**

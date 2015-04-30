@@ -3,20 +3,59 @@ package arazu.nomina
 import arazu.parametros.TipoAsistencia;
 import arazu.seguridad.Persona
 
+/**
+ *  Clase para conectar con la tabla 'asst' de la base de datos
+ *  La tabla asistencia permite registrar las ausencias, las horas extras y las vacaciones de los empleados
+ */
 class Asistencia {
-
+    /**
+     * Fecha del dato
+     */
     Date fecha
+    /**
+     * Fecha de registro
+     */
     Date fechaRegistro = new Date()
+    /**
+     * Tipo de asistencia (por ejemplo, asiste, no asiste, vacación de jornada, vacación anual)
+     */
     TipoAsistencia tipo
+    /**
+     * Fecha y hora de entrada
+     */
     Date entrada
+    /**
+     * Fecha y hora de salida
+     */
     Date salida
+    /**
+     * Cantidad de horas extra de 50%
+     */
     Integer horas50 = 0
+    /**
+     * Cantidad de horas extra de 100%
+     */
     Integer horas100 = 0
+    /**
+     * Empleado para el cual se registran los datos
+     */
     Persona empleado
+    /**
+     * Persona que realiza el registro
+     */
     Persona registra
+    /**
+     * Observaciones
+     */
     String observaciones
 
-
+    /**
+     * Define los campos que se van a ignorar al momento de hacer logs
+     */
+    static auditable = [ignore: []]
+    /**
+     * Define el mapeo entre los campos del dominio y las columnas de la base de datos
+     */
     static mapping = {
         table 'asst'
         cache usage: 'read-write', include: 'non-lazy'
@@ -39,13 +78,12 @@ class Asistencia {
         }
     }
 
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
     static constraints = {
-        fecha(nullable: false, blank: false)
-        tipo(nullable: false, blank: false)
-        entrada(nullable: true, blank: true)
-        salida(nullable: true, blank: true)
-        empleado(nullable: false, blank: false)
-        registra(nullable: false, blank: false)
-        observaciones(blank: true, nullable: true)
+        entrada nullable: true
+        salida nullable: true
+        observaciones blank: true, nullable: true
     }
 }

@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'tpit' de la base de datos
+ * Guarda los posibles tipos de items ('familias' de items)
  */
 class TipoItem {
 

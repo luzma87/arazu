@@ -73,14 +73,10 @@ class Alerta {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        envia(blank: false)
-        recibe(blank: false)
-        fechaEnvio(blank: false)
-        fechaRecibido(nullable: true, blank: true)
-        mensaje(size: 5..200, blank: false)
-        controlador(nullable: true, blank: true)
-        accion(nullable: true, blank: true)
-        id_remoto(nullable: true, blank: true)
+        fechaRecibido nullable: true
+        mensaje size: 5..200
+        controlador nullable: true, blank: true
+        accion nullable: true, blank: true
     }
 
     /**

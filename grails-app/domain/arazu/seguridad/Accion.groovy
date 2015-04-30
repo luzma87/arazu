@@ -2,6 +2,8 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'accn' de la base de datos
+ * Guarda las acciones que tiene el sistema para poder asignar permisos y armar el menú. Esta tabla se carga de manera
+ * automática al presionar el botón 'Cargar acciones' en la pantalla de administración del sistema
  */
 class Accion {
     /**

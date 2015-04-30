@@ -2,6 +2,7 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'tpac' de la base de datos
+ * Guarda los posibles tipos de una acción (Menú para las que se muestran en el menú, Proceso para las que no)
  */
 class TipoAccion {
     /**
@@ -36,8 +37,8 @@ class TipoAccion {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        tipo(blank: false, maxSize: 31)
-        codigo(maxSize: 1, blank: false)
+        tipo maxSize: 31
+        codigo maxSize: 1
     }
 
     /**

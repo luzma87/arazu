@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'crgo' de la base de datos
+ * Guarda los diferentes cargos que puede tener un empleado
  */
 class Cargo {
     /**
@@ -37,8 +38,8 @@ class Cargo {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        descripcion(matches: /^[a-zA-Z0-9ñÑ .,áéíóúÁÉÍÚÓüÜ#_-]+$/, size: 1..63, blank: false, attributes: ["mensaje": "Descripción del cargo del personal"])
-        codigo(blank: true, nullable: true, maxSize: 4)
+        descripcion size: 1..63
+        codigo maxSize: 4
     }
 
     /**

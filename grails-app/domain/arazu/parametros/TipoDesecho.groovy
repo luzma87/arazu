@@ -2,6 +2,7 @@ package arazu.parametros
 
 /**
  * Clase para conectar con la tabla 'tpds' de la base de datos
+ * Guarda las diferentes maneras en las que se puede desechar un item
  */
 class TipoDesecho {
     /**

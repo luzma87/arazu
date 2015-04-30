@@ -2,6 +2,7 @@ package arazu.items
 
 /**
  *  Clase para conectar con la tabla 'hsit' de la base de datos
+ *  La tabla historial item guarda un log con fechas de items o máquinas
  */
 class HistorialItem {
     /**
@@ -47,9 +48,7 @@ class HistorialItem {
      * Define las restricciones de cada uno de los campos
      */
     static constraints = {
-        item(nullable: true, blank: true)
-        maquinaria(nullable: true, blank: true)
-        fecha(nullable: false, blank: false)
-        texto(nullable: false, blank: false)
+        item nullable: true
+        maquinaria nullable: true
     }
 }

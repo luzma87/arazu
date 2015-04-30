@@ -4,6 +4,7 @@ import arazu.seguridad.Persona
 
 /**
  * Clase para conectar con la tabla 'frma' de la base de datos
+ * Guarda los datos de una firma electrónica
  */
 class Firma {
     /**

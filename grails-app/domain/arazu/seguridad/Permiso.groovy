@@ -2,6 +2,7 @@ package arazu.seguridad
 
 /**
  * Clase para conectar con la tabla 'prms' de la base de datos
+ * Guarda la autorización de un perfil de acceder a una cierta acción del sistema
  */
 class Permiso {
     /**

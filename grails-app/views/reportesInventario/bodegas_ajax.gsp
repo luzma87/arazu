@@ -107,6 +107,7 @@
                     <th>Unidad</th>
                     <th>Cantidad</th>
                     <th>Tipo de desecho</th>
+                    <th>Valor</th>
                     <th>Lugar de desecho</th>
                 </tr>
             </thead>
@@ -121,8 +122,10 @@
                         </td>
                         <td>
                             ${eg.tipoDesecho}
+                        </td>
+                        <td class="text-right">
                             <g:if test="${eg.tipoDesecho?.requierePrecio == 1}">
-                                (<g:formatNumber number="${eg.precioDesecho}" type="currency"/>)
+                                <g:formatNumber number="${eg.precioDesecho}" type="currency"/>
                             </g:if>
                         </td>
                         <td>${eg.lugarDesecho}</td>

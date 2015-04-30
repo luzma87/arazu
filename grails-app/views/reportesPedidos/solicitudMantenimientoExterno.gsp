@@ -124,7 +124,7 @@
                         ${cot.fecha.format("dd-MM-yyyy HH:mm")}
                     </th>
                     <th style="text-align: right; width: 2cm;">
-                        <g:if test="${cot.estadoSolicitud.codigo == 'A01' || cot.estadoSolicitud.codigo == 'N01'}">
+                        <g:if test="${cot.estadoSolicitud.codigo == 'A11' || cot.estadoSolicitud.codigo == 'N11'}">
                             ${cot.estadoSolicitud}
                         </g:if>
                     </th>
