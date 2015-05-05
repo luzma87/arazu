@@ -98,7 +98,7 @@ class ImportsTagLib {
         def bootstrapTheme = attrs.bootstrap ?: "theme"
 
         //Bootstrap
-        def text = imp.css(src: resource(dir: 'bootstrap-3.3.4/dist/css', file: 'bootstrap.css'))
+        def text = imp.css(src: resource(dir: 'bootstrap-3.3.4/dist/css', file: 'bootstrap.min.css'))
         text += imp.css(src: resource(dir: 'bootstrap-3.3.4/dist/css', file: 'bootstrap-' + bootstrapTheme + '.min.css'))
         // JQuery
         text += imp.css(src: resource(dir: 'js/jquery-ui-1.11.2', file: 'jquery-ui.min.css'))

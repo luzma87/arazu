@@ -116,11 +116,21 @@ log4j.main = {
             'net.sf.ehcache.hibernate'
 }
 grails {
+//    mail {
+//        host = "smtp.correo.yahoo.es"
+//        port = 465
+//        username = "luzma_87"
+//        password = "yahooMailW3mLesE7"
+//        props = ["mail.smtp.auth"                  : "true",
+//                 "mail.smtp.socketFactory.port"    : "465",
+//                 "mail.smtp.socketFactory.class"   : "javax.net.ssl.SSLSocketFactory",
+//                 "mail.smtp.socketFactory.fallback": "false"]
+//    }
     mail {
-        host = "smtp.correo.yahoo.es"
+        host = "servidor.imcomepro.com"
         port = 465
-        username = "luzma_87"
-        password = "yahooMailW3mLesE7"
+        username = "notificaciones@hinsaec.com"
+        password = "Nohinsa12"
         props = ["mail.smtp.auth"                  : "true",
                  "mail.smtp.socketFactory.port"    : "465",
                  "mail.smtp.socketFactory.class"   : "javax.net.ssl.SSLSocketFactory",
