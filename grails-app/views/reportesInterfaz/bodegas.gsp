@@ -48,6 +48,28 @@
             </div>
 
             <h3>
+                Fechas
+            </h3>
+
+            <div class="row">
+                <div class="col-md-1">
+                    <label>Desde</label>
+                </div>
+
+                <div class="col-md-2">
+                    <elm:datepicker class="form-control input-sm desde" name="desde"/>
+                </div>
+
+                <div class="col-md-1">
+                    <label>Hasta</label>
+                </div>
+
+                <div class="col-md-2">
+                    <elm:datepicker class="form-control input-sm hasta" name="hasta"/>
+                </div>
+            </div>
+
+            <h3>
                 Bodega
                 <a href="#" class="btn btn-xs btn-success selectNone" data-tipo="bodega" data-status="off">Seleccionar todos</a>
             </h3>
@@ -155,6 +177,8 @@
                         type    : "POST",
                         url     : "${createLink(controller:'reportesInventario', action:'bodegas_ajax')}",
                         data    : {
+                            desde   : $("#desde_input").val(),
+                            hasta   : $("#hasta_input").val(),
                             bodegas : bodegasIds,
                             datos   : datosIds
                         },
@@ -175,6 +199,8 @@
                     var url = "${g.createLink(controller: 'pdf',action: 'pdfLink')}?url=";
                     var reporte = "${g.createLink(controller: 'reportesInventario',action: 'bodegasPdf')}?";
                     reporte += "bodegas=" + bodegasIds +
+                               "Wdesde=" + $("#desde_input").val() +
+                               "Whasta=" + $("#hasta_input").val() +
                                "Wdatos=" + datosIds;
                     window.open(url + reporte);
                     //console.log(url+reporte)

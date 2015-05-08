@@ -38,6 +38,11 @@
     font-weight   : bold;
 }
 
+.circle-card-icon {
+    padding-left : 10px;
+    padding-top  : 5px;
+}
+
 .card-bg-green {
     background : #5cb85c;
 }

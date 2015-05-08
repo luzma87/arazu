@@ -798,7 +798,7 @@ class NotaPedidoController extends Shield {
         def notificacionBodegas = []
 
         params.each { k, v ->
-            if (k.toString().startsWith("ret")) {
+            if (k.toString().startsWith("ret") && v) {
                 def parts = k.split("_")
                 def bodega = Bodega.get(parts[1].toLong())
                 def cantidad = v.toDouble()

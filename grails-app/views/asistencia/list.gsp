@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.nomina.Asistencia" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,19 @@
         <meta name="layout" content="main">
         <title>Lista de Asistencia</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -32,45 +33,45 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    
-                    <g:sortableColumn property="fecha" title="Fecha" />
-                    
+
+                    <g:sortableColumn property="fecha" title="Fecha"/>
+
                     <th>Tipo</th>
-                    
-                    <g:sortableColumn property="entrada" title="Entrada" />
-                    
-                    <g:sortableColumn property="salida" title="Salida" />
-                    
+
+                    <g:sortableColumn property="entrada" title="Entrada"/>
+
+                    <g:sortableColumn property="salida" title="Salida"/>
+
                     <th>Empleado</th>
-                    
+
                     <th>Registra</th>
-                    
+
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${asistenciaInstanceCount > 0}">
                     <g:each in="${asistenciaInstanceList}" status="i" var="asistenciaInstance">
                         <tr data-id="${asistenciaInstance.id}">
-                            
+
                             <td>${asistenciaInstance.fecha}</td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${asistenciaInstance}" field="tipo"/></elm:textoBusqueda></td>
-                            
-                            <td><g:formatDate date="${asistenciaInstance.entrada}" format="dd-MM-yyyy" /></td>
-                            
-                            <td><g:formatDate date="${asistenciaInstance.salida}" format="dd-MM-yyyy" /></td>
-                            
+
+                            <td><g:formatDate date="${asistenciaInstance.entrada}" format="dd-MM-yyyy"/></td>
+
+                            <td><g:formatDate date="${asistenciaInstance.salida}" format="dd-MM-yyyy"/></td>
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${asistenciaInstance}" field="empleado"/></elm:textoBusqueda></td>
-                            
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${asistenciaInstance}" field="registra"/></elm:textoBusqueda></td>
-                            
+
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="10">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -99,7 +100,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -109,14 +110,14 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteAsistencia(itemId) {
                 bootbox.dialog({
@@ -145,14 +146,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -164,18 +165,18 @@
             }
             function createEditAsistencia(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'asistencia', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditAsistencia",
-                            title   : title + " Asistencia",
-                            
-                            class   : "modal-lg",
-                            
+                            id    : "dlgCreateEditAsistencia",
+                            title : title + " Asistencia",
+
+                            class : "modal-lg",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -203,7 +204,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditAsistencia();
                     return false;
                 });
@@ -227,10 +228,10 @@
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver Asistencia",
-                                            
-                                            class   : "modal-lg",
-                                            
+                                            title : "Ver Asistencia",
+
+                                            class : "modal-lg",
+
                                             message : msg,
                                             buttons : {
                                                 ok : {

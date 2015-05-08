@@ -131,13 +131,18 @@ grails {
         port = 465
         username = "notificaciones@hinsaec.com"
         password = "Nohinsa12"
-        props = ["mail.smtp.auth"                  : "true",
-                 "mail.smtp.socketFactory.port"    : "465",
-                 "mail.smtp.socketFactory.class"   : "javax.net.ssl.SSLSocketFactory",
-                 "mail.smtp.socketFactory.fallback": "false"]
+        props = ["mail.smtp.starttls.enable": "false",
+                 "mail.smtp.ssl.enable"     : "true",
+                 "mail.smtp.host"           : "servidor.imcomepro.com",
+                 "mail.smtp.ssl.trust"      : "servidor.imcomepro.com",
+                 "mail.from"                : "notificaciones@hinsaec.com",
+                 "mail.smtp.port"           : "465",
+                 "mail.smtp.user"           : "notificaciones@hinsaec.com",
+                 "mail.smtp.password"       : "Nohinsa12",
+                 "mail.smtp.auth"           : "true"]
     }
 }
-grails.mail.default.from = "luzma_87@yahoo.com"
+grails.mail.default.from = "notificaciones@hinsaec.com"
 //grails {
 //    mail {
 //        host = "10.1.0.123"

@@ -23,13 +23,27 @@ class ReportesInventarioController {
     }
 
     def bodegas_ajax() {
+        def desde = null, hasta = null
+        if (params.desde) {
+            desde = new Date().parse("dd-MM-yyyy", params.desde)
+        }
+        if (params.hasta) {
+            hasta = new Date().parse("dd-MM-yyyy", params.hasta)
+        }
         def bodegasIds = params.bodegas.split(",")*.toLong()
         def bodegas = Bodega.findAllByIdInList(bodegasIds)
         def tiposDatos = params.datos.split(",")
-        return [datos: reporteBodegas_funcion(bodegas, tiposDatos)]
+        return [datos: reporteBodegas_funcion(bodegas, tiposDatos, desde, hasta)]
     }
 
     def bodegasPdf() {
+        def desde = null, hasta = null
+        if (params.desde) {
+            desde = new Date().parse("dd-MM-yyyy", params.desde)
+        }
+        if (params.hasta) {
+            hasta = new Date().parse("dd-MM-yyyy", params.hasta)
+        }
         def bodegasIds = params.bodegas.split(",")*.toLong()
         def bodegas = Bodega.findAllByIdInList(bodegasIds)
         def tiposDatos = params.datos.split(",")
@@ -66,10 +80,16 @@ class ReportesInventarioController {
             b += bd.toString()
         }
         title += d + " de la${bodegas.size() == 1 ? '' : 's'} bodega${bodegas.size() == 1 ? '' : 's'} " + b
-        return [datos: reporteBodegas_funcion(bodegas, tiposDatos), title: title]
+        if (desde) {
+            title += " desde el " + desde.format("dd-MM-yyyy")
+        }
+        if (hasta) {
+            title += " hasta el " + hasta.format("dd-MM-yyyy")
+        }
+        return [datos: reporteBodegas_funcion(bodegas, tiposDatos, desde, hasta), title: title]
     }
 
-    def reporteBodegas_funcion(bodegas, tiposDatos) {
+    def reporteBodegas_funcion(bodegas, tiposDatos, desde, hasta) {
         def datos = [:]
 
         bodegas.each { bd ->
@@ -85,6 +105,12 @@ class ReportesInventarioController {
                     eq("bodega", bd)
                     gt("saldo", 0.toDouble())
                     eq("desecho", 0)
+                    if (desde) {
+                        ge("fecha", desde)
+                    }
+                    if (hasta) {
+                        le("fecha", hasta)
+                    }
                     order("fecha", "desc")
                 }
                 datos[bd.id].ingresos = arr
@@ -94,6 +120,12 @@ class ReportesInventarioController {
                     eq("bodega", bd)
                     gt("saldo", 0.toDouble())
                     eq("desecho", 1)
+                    if (desde) {
+                        ge("fecha", desde)
+                    }
+                    if (hasta) {
+                        le("fecha", hasta)
+                    }
                     order("fecha", "desc")
                 }
                 datos[bd.id].ingresosDesecho = arr
@@ -104,6 +136,12 @@ class ReportesInventarioController {
                         eq("bodega", bd)
                         eq("desecho", 0)
                     }
+                    if (desde) {
+                        ge("fecha", desde)
+                    }
+                    if (hasta) {
+                        le("fecha", hasta)
+                    }
                     order("fecha", "desc")
                 }
                 datos[bd.id].egresos = arr
@@ -113,6 +151,12 @@ class ReportesInventarioController {
                     ingreso {
                         eq("bodega", bd)
                         eq("desecho", 1)
+                    }
+                    if (desde) {
+                        ge("fecha", desde)
+                    }
+                    if (hasta) {
+                        le("fecha", hasta)
                     }
                     order("fecha", "desc")
                 }

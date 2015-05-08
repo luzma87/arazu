@@ -2,6 +2,8 @@ package arazu.seguridad
 
 import arazu.alertas.Alerta
 import arazu.inventario.Bodega
+import arazu.inventario.Ingreso
+import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
 import arazu.proyectos.Proyecto
 import arazu.solicitudes.NotaPedido
@@ -162,13 +164,57 @@ class SistemaController extends Shield {
     def inicioInventario() {
         def sistema = Sistema.findByCodigo("INVN")
         session.sistema = sistema
+
+        def bodegasActivas = Bodega.findAllByActivo(1)
+        def bodegasInactivas = Bodega.countByActivo(0)
+        def bodegasSinSuplente = Bodega.countBySuplenteIsNull()
+        def bodegasVacias = []
+
+        bodegasActivas.each { bd ->
+            def c = Ingreso.withCriteria {
+                eq("bodega", bd)
+                gt("saldo", 0.toDouble())
+                eq("desecho", 0)
+            }
+            if (c.size() == 0) {
+                bodegasVacias += bd
+            }
+        }
+
+//        def items = Ingreso.withCriteria {
+//            gt("saldo", 0.toDouble())
+//            eq("desecho", 0)
+//            projections {
+//                distinct("item")
+//            }
+//        }
+
+        def items = Ingreso.withCriteria {
+            gt("saldo", 0.toDouble())
+            eq("desecho", 0)
+            projections {
+                sum("saldo")
+            }
+        }
+
+        def itemsDesecho = Ingreso.withCriteria {
+            gt("saldo", 0.toDouble())
+            eq("desecho", 1)
+            projections {
+                sum("saldo")
+            }
+        }
+
+        return [bodegas: bodegasActivas.size(), bodegasInactivas: bodegasInactivas, bodegasVacias: bodegasVacias.size(), bodegasSinSuplente: bodegasSinSuplente,
+                items  : items.first(), desechos: itemsDesecho.first(), maquinas: Maquinaria.count()]
     }
 
     /**
      * Acción que muestra el dashboard de reportes
      */
     def inicioReportes() {
-
+        def sistema = Sistema.findByCodigo("RPRT")
+        session.sistema = sistema
     }
 
     /**
