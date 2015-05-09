@@ -19,6 +19,7 @@ class DetalleTrabajo {
      * Tipo de trabajo a realizar
      */
     TipoTrabajo tipoTrabajo
+
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */

@@ -3,7 +3,6 @@ package arazu.solicitudes
 import arazu.items.Item
 import arazu.items.Maquinaria
 import arazu.parametros.EstadoSolicitud
-import arazu.parametros.Parametros
 import arazu.parametros.TipoTrabajo
 import arazu.parametros.TipoUsuario
 import arazu.parametros.Unidad
@@ -163,7 +162,10 @@ class SolicitudMantenimientoInternoController extends Shield {
         def ls = [TipoUsuario.findByCodigo("JEFE"), TipoUsuario.findByCodigo("GRNT")]
         def jefes = Persona.findAllByTipoUsuarioInList(ls, [sort: 'apellido'])
 
-        return [numero: numero, items: itemStr, jefes: jefes]
+        def mecanico = [TipoUsuario.findByCodigo("MCNC")]
+        def mecanicos = Persona.findAllByTipoUsuarioInList(mecanico, [sort: 'apellido'])
+
+        return [numero: numero, items: itemStr, jefes: jefes, mecanicos: mecanicos]
     }
 
     /**
@@ -172,9 +174,13 @@ class SolicitudMantenimientoInternoController extends Shield {
     def completarPedido() {
         def solicitud = SolicitudMantenimientoInterno.get(params.id)
         if (solicitud.estadoSolicitud.codigo == 'A21') { //aprobada
-            def detalleManoObra = DetalleManoObra.findAllBySolicitud(solicitud)
-            def detalleMaterial = DetalleRepuestos.findAllBySolicitud(solicitud)
-            return [solicitud: solicitud, detalleManoObra: detalleManoObra, detalleMaterial: detalleMaterial]
+            def detalleManoObraPlan = DetalleManoObra.findAllBySolicitudAndTipo(solicitud, "P")
+            def detalleMaterialPlan = DetalleRepuestos.findAllBySolicitudAndTipo(solicitud, "P")
+            def detalleManoObra = DetalleManoObra.findAllBySolicitudAndTipo(solicitud, "R")
+            def detalleMaterial = DetalleRepuestos.findAllBySolicitudAndTipo(solicitud, "R")
+            return [solicitud          : solicitud,
+                    detalleManoObra    : detalleManoObra, detalleMaterial: detalleMaterial,
+                    detalleManoObraPlan: detalleManoObraPlan, detalleMaterialPlan: detalleMaterialPlan]
         } else {
             redirect(action: 'lista')
         }
@@ -329,8 +335,67 @@ class SolicitudMantenimientoInternoController extends Shield {
                     }
                 }
 
-//                def materiales = params.materiales.split("**")
-//                def manoObra = params.manoObra.split("**")
+                def materiales = params.materiales.split("\\*\\*")
+                def manoObra = params.manoObra.split("\\*\\*")
+
+                /*
+                  mat
+                       0 cantidad
+                       1 unidad
+                       2 item
+                       3 codigo
+                       4 marca
+                       5 observaciones
+                 */
+                materiales.each { m ->
+                    def parts = m.split("\\|\\|")
+
+                    def cant = parts.size() > 0 ? (parts[0] ? parts[0].toDouble() : 0) : 0
+                    def unidad = parts.size() > 1 ? (parts[1] ? Unidad.get(parts[1].toLong()) : null) : null
+                    def item = parts.size() > 2 ? (parts[2] ? Item.get(parts[2].toLong()) : null) : null
+                    def codigo = parts.size() > 3 ? parts[3] : ""
+                    def marca = parts.size() > 4 ? (parts[4] ? parts[4].trim() : '') : ""
+                    def observaciones = parts.size() > 5 ? (parts[5] ? parts[5].trim() : '') : ""
+
+                    def detalle = new DetalleRepuestos()
+                    detalle.solicitud = solicitud
+                    detalle.cantidad = cant
+                    detalle.unidad = unidad
+                    detalle.item = item
+                    detalle.codigo = codigo
+                    detalle.marca = marca
+                    detalle.observaciones = observaciones
+                    detalle.tipo = "P"
+                    if (!detalle.save(flush: true)) {
+                        println "Error al guardar detalle repuesto: " + detalle.errors
+                    }
+                }
+                /*
+                  pers
+                       0 persona
+                       1 horas
+                       2 fecha
+                       3 observaciones
+                 */
+                manoObra.each { m ->
+                    def parts = m.split("\\|\\|")
+
+                    def persona = parts.size() > 0 ? (parts[0] ? Persona.get(parts[0].toLong()) : null) : null
+                    def horas = parts.size() > 1 ? (parts[1] ? parts[1].toDouble() : 0) : 0
+                    def fecha = parts.size() > 2 ? (parts[2] ? new Date().parse("dd-MM-yyyy", parts[2]) : null) : null
+                    def observaciones = parts.size() > 3 ? (parts[3] ? parts[3].trim() : "") : ""
+
+                    def detalle = new DetalleManoObra()
+                    detalle.solicitud = solicitud
+                    detalle.persona = persona
+                    detalle.horasTrabajo = horas
+                    detalle.fecha = fecha
+                    detalle.observaciones = observaciones
+                    detalle.tipo = "P"
+                    if (!detalle.save(flush: true)) {
+                        println "Error al guardar detalle mano obra: " + detalle.errors
+                    }
+                }
 
                 firma.concepto = "Solicitud de mantenimiento interno núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = solicitud.id

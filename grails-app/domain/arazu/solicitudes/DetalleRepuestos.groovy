@@ -25,7 +25,7 @@ class DetalleRepuestos {
      */
     Item item
     /**
-     * C�digo o n�mero de parte
+     * Código o número de parte
      */
     String codigo
     /**
@@ -36,6 +36,10 @@ class DetalleRepuestos {
      * Observaciones
      */
     String observaciones
+    /**
+     * Indica si es planificado 'P' o real 'R'
+     */
+    String tipo = 'R'
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -60,6 +64,7 @@ class DetalleRepuestos {
             marca column: 'dtrpmrca'
             observaciones column: 'dtrpobsv'
             observaciones type: "text"
+            tipo column: 'dtrptipo'
         }
     }
 

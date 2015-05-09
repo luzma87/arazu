@@ -52,9 +52,14 @@ class ReportesPedidosController {
         if (!solicitud) {
             response.sendError(404)
         }
-        def detallesRepuestos = DetalleRepuestos.findAllBySolicitud(solicitud)
-        def detallesManoObra = DetalleManoObra.findAllBySolicitud(solicitud)
-        return [solicitud: solicitud, detallesRepuestos: detallesRepuestos, detallesManoObra: detallesManoObra]
+        def detallesRepuestosPlan = DetalleRepuestos.findAllBySolicitudAndTipo(solicitud, "P")
+        def detallesManoObraPlan = DetalleManoObra.findAllBySolicitudAndTipo(solicitud, "P")
+
+        def detallesRepuestos = DetalleRepuestos.findAllBySolicitudAndTipo(solicitud, "R")
+        def detallesManoObra = DetalleManoObra.findAllBySolicitudAndTipo(solicitud, "R")
+        return [solicitud            : solicitud,
+                detallesRepuestos    : detallesRepuestos, detallesManoObra: detallesManoObra,
+                detallesRepuestosPlan: detallesRepuestosPlan, detallesManoObraPlan: detallesManoObraPlan]
     }
 
     /**

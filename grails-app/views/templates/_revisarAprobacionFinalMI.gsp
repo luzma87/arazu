@@ -1,3 +1,4 @@
+<%@ page import="arazu.solicitudes.DetalleRepuestos; arazu.solicitudes.DetalleManoObra" %>
 <%--
   Created by IntelliJ IDEA.
   User: DELL
@@ -25,6 +26,53 @@
     <g:render template="/templates/revisarSolicitudMantInt"
               model="[solicitud: solicitud]"/>
 
+    <h3 class="text-info">Mano de obra planificada</h3>
+    <table class="table table-condensed table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Persona</th>
+                <th>Horas de trabajo</th>
+                <th>Fecha</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <g:each in="${DetalleManoObra.findAllBySolicitudAndTipo(solicitud, 'P')}" var="mo" status="i">
+                <tr>
+                    <td>${mo.persona}</td>
+                    <td>${mo.horasTrabajo}</td>
+                    <td>${mo.fecha.format("dd-MM-yyyy")}</td>
+                    <td>${mo.observaciones}</td>
+                </tr>
+            </g:each>
+        </tbody>
+    </table>
+
+    <h3 class="text-info">Repuestos planificados</h3>
+    <table class="table table-condensed table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Item</th>
+                <th>Código o N. parte</th>
+                <th>Marca</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <g:each in="${DetalleRepuestos.findAllBySolicitudAndTipo(solicitud, 'P')}" var="rs" status="i">
+                <tr>
+                    <td>${rs.cantidad}</td>
+                    <td>${rs.unidad}</td>
+                    <td>${rs.item}</td>
+                    <td>${rs.codigo}</td>
+                    <td>${rs.marca}</td>
+                    <td>${rs.observaciones}</td>
+                </tr>
+            </g:each>
+        </tbody>
+    </table>
 </elm:container>
 
 <script type="text/javascript">

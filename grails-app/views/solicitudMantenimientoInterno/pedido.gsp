@@ -132,6 +132,17 @@
                     <div class="col-md-2 grupo">
                         <g:textField name="kilometraje" class="form-control input-sm number required"/>
                     </div>
+
+                    <div class="col-md-1">
+                        <label class=" control-label">
+                            Encargado
+                        </label>
+                    </div>
+
+                    <div class="col-md-2">
+                        <g:select name="encargado.id" from="${mecanicos}" optionKey="id"
+                                  class="form-control input-sm required select" required=""/>
+                    </div>
                 </div>
 
                 <div class="grupo">
@@ -171,107 +182,147 @@
                     </div>
                 </div>
 
-            %{--<g:hiddenField name="materiales"/>--}%
-            %{--<g:hiddenField name="manoObra"/>--}%
+                <g:textField name="materiales"/>
+                <g:textField name="manoObra"/>
 
             </g:form>
-        %{--<div class="row">--}%
-        %{--<div class="col-md-12 text-info">--}%
-        %{--<h3>Repuestos y materiales a utilizar</h3>--}%
-        %{--</div>--}%
-        %{--</div>--}%
 
-        %{--<form id="frmMaterial">--}%
-        %{--<div class="row">--}%
-        %{--<div class="col-md-12">--}%
-        %{--<table class="table table-bordered">--}%
-        %{--<thead>--}%
-        %{--<tr>--}%
-        %{--<th style="width: 100px;">Cantidad</th>--}%
-        %{--<th style="width: 100px;">Unidad</th>--}%
-        %{--<th style="width: 300px;">Item</th>--}%
-        %{--<th style="width: 150px;">Código o N. parte</th>--}%
-        %{--<th style="width: 150px;">Marca</th>--}%
-        %{--<th style="width: 300px;">Observaciones</th>--}%
-        %{--<th style="width: 35px;"></th>--}%
-        %{--</tr>--}%
-        %{--<tr class="success">--}%
-        %{--<td>--}%
-        %{--<g:textField name="cantidad" class="form-control input-sm number"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:select name="unidad" from="${Unidad.list([sort: 'descripcion'])}" data-width="90px" optionKey="id"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:select name="item" from="${Item.list([sort: 'descripcion'])}" optionKey="id"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:textField name="codigo" class="form-control input-sm"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:textField name="marca" class="form-control input-sm"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:textField name="observaciones" class="form-control input-sm"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<a href="#" class="btn btn-sm btn-success" id="btnAddMaterial">--}%
-        %{--<i class="fa fa-plus"></i>--}%
-        %{--</a>--}%
-        %{--</td>--}%
-        %{--</tr>--}%
-        %{--</thead>--}%
-        %{--<tbody id="tbMaterial">--}%
-        %{--</tbody>--}%
-        %{--</table>--}%
-        %{--</div>--}%
-        %{--</div>--}%
-        %{--</form>--}%
+            <div class="row">
+                <div class="col-md-12 text-info">
+                    <h3>Planificación de mano de obra</h3>
+                </div>
+            </div>
 
-        %{--<div class="row">--}%
-        %{--<div class="col-md-12 text-info">--}%
-        %{--<h3>Mano de obra</h3>--}%
-        %{--</div>--}%
-        %{--</div>--}%
+            <form id="frmPersona">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 150px;">Persona</th>
+                                    <th style="width: 100px;">Horas de trabajo</th>
+                                    <th style="width: 150px;">Fecha</th>
+                                    <th style="width: 300px;">Observaciones</th>
+                                    <th style="width: 35px;"></th>
+                                </tr>
+                                <tr class="success">
+                                    <td>
+                                        <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true"
+                                                  data-width="150px" optionKey="id"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="horas" class="form-control input-sm number"/>
+                                    </td>
+                                    <td class="col-md-2">
+                                        <elm:datepicker name="fecha" class="datepicker form-control input-sm" minDate="${new Date()}"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="observacionesp" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-success" id="btnAddPersona">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbPersona">
+                                <g:each in="${detalleManoObra}" var="dt">
+                                    <tr data-id="${dt.id}"
+                                        data-persona="${dt.personaId}"
+                                        data-horas="${dt.horasTrabajo}"
+                                        data-fecha="${dt.fecha.format('dd-MM-yyyy')}"
+                                        data-observaciones="${dt.observaciones}">
+                                        <td>${dt.persona}</td>
+                                        <td>${dt.horasTrabajo}</td>
+                                        <td>${dt.fecha.format('dd-MM-yyyy')}</td>
+                                        <td>${dt.observaciones}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-danger btnDeletePersona">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </g:each>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
 
-        %{--<form id="frmPersona">--}%
-        %{--<div class="row">--}%
-        %{--<div class="col-md-12">--}%
-        %{--<table class="table table-bordered">--}%
-        %{--<thead>--}%
-        %{--<tr>--}%
-        %{--<th style="width: 150px;">Persona</th>--}%
-        %{--<th style="width: 100px;">Horas de trabajo</th>--}%
-        %{--<th style="width: 150px;">Fecha</th>--}%
-        %{--<th style="width: 300px;">Observaciones</th>--}%
-        %{--<th style="width: 35px;"></th>--}%
-        %{--</tr>--}%
-        %{--<tr class="success">--}%
-        %{--<td>--}%
-        %{--<g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true" data-width="150px"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:textField name="horas" class="form-control input-sm number"/>--}%
-        %{--</td>--}%
-        %{--<td class="col-md-2">--}%
-        %{--<elm:datepicker name="fecha" class="datepicker form-control input-sm" minDate="${new Date()}"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<g:textField name="observacionesp" class="form-control input-sm"/>--}%
-        %{--</td>--}%
-        %{--<td>--}%
-        %{--<a href="#" class="btn btn-sm btn-success" id="btnAddPersona">--}%
-        %{--<i class="fa fa-plus"></i>--}%
-        %{--</a>--}%
-        %{--</td>--}%
-        %{--</tr>--}%
-        %{--</thead>--}%
-        %{--<tbody id="tbPersona">--}%
-        %{--</tbody>--}%
-        %{--</table>--}%
-        %{--</div>--}%
-        %{--</div>--}%
-        %{--</form>--}%
+            <div class="row">
+                <div class="col-md-12 text-info">
+                    <h3>Planificación de repuestos y materiales</h3>
+                </div>
+            </div>
+
+            <form id="frmMaterial">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 100px;">Cantidad</th>
+                                    <th style="width: 100px;">Unidad</th>
+                                    <th style="width: 300px;">Item</th>
+                                    <th style="width: 150px;">Código o N. parte</th>
+                                    <th style="width: 150px;">Marca</th>
+                                    <th style="width: 300px;">Observaciones</th>
+                                    <th style="width: 35px;"></th>
+                                </tr>
+                                <tr class="success">
+                                    <td>
+                                        <g:textField name="cantidad" class="form-control input-sm number"/>
+                                    </td>
+                                    <td>
+                                        <g:select name="unidad" from="${Unidad.list([sort: 'descripcion'])}" data-width="90px" optionKey="id"/>
+                                    </td>
+                                    <td>
+                                        <g:select name="item" from="${Item.list([sort: 'descripcion'])}" optionKey="id" data-live-search="true"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="codigo" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="marca" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <g:textField name="observaciones" class="form-control input-sm"/>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-success" id="btnAddMaterial">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbMaterial">
+                                <g:each in="${detalleMaterial}" var="dt">
+                                    <tr data-id="${dt.id}"
+                                        data-cantidad="${dt.cantidad}"
+                                        data-item="${dt.itemId}"
+                                        data-unidad="${dt.unidadId}"
+                                        data-codigo="${dt.codigo}"
+                                        data-marca="${dt.marca}"
+                                        data-observaciones="${dt.observaciones}">
+                                        <td>${dt.cantidad}</td>
+                                        <td>${dt.unidad}</td>
+                                        <td>${dt.item}</td>
+                                        <td>${dt.codigo}</td>
+                                        <td>${dt.marca}</td>
+                                        <td>${dt.observaciones}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-danger btnDeleteMaterial">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </g:each>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
 
             <div class="row" style="margin-top: 20px">
                 <div class="col-md-1">
@@ -525,36 +576,33 @@
                     $("#trabajos").val(trabajos);
                     if ($frm.valid()) {
 
-//                        var mat = "", pers = "";
-//                        $("#tbMaterial").children().each(function () {
-//                            mat += $(this).data("cantidad") + "||" + $(this).data("unidad") + "||" + $(this).data("item") + "||" + $(this).data("codigo") +
-//                                   "||" + $(this).data("marca") + "||" + $(this).data("observaciones") + "**";
-//                        });
-//                        $("#tbPersona").children().each(function () {
-//                            pers += $(this).data("persona") + "||" + $(this).data("horas") + "||" +
-//                                    $(this).data("fecha") + "||" + $(this).data("observaciones") + "**";
-//                        });
+                        var mat = "", pers = "";
+                        $("#tbMaterial").children().each(function () {
+                            mat += $(this).data("cantidad") + "||" + $(this).data("unidad") + "||" + $(this).data("item") + "||" + $(this).data("codigo") +
+                                   "||" + $(this).data("marca") + "||" + $(this).data("observaciones") + "**";
+                        });
+                        $("#tbPersona").children().each(function () {
+                            pers += $(this).data("persona") + "||" + $(this).data("horas") + "||" +
+                                    $(this).data("fecha") + "||" + $(this).data("observaciones") + "**";
+                        });
 
-//                        if (mat != "" && pers != "") {
-//                            $("#materiales").val(mat);
-//                            $("#manoObra").val(pers);
-                        openLoader("Generando solicitud");
-                        $frm.submit();
-//                        } else {
-//                            if (mat == "") {
-//                                log("Por favor ingrese al menos un material", "error");
-//                            }
-//                            if (pers == "") {
-//                                log("Por favor ingrese al menos una persona", "error");
-//                            }
-//                        }
-
+                        if (mat != "" && pers != "") {
+                            $("#materiales").val(mat);
+                            $("#manoObra").val(pers);
+                            openLoader("Generando solicitud");
+                            $frm.submit();
+                        } else {
+                            if (mat == "") {
+                                log("Por favor ingrese al menos un material", "error");
+                            }
+                            if (pers == "") {
+                                log("Por favor ingrese al menos una persona", "error");
+                            }
+                        }
                     }
                     return false;
                 });
-
             });
         </script>
-
     </body>
 </html>

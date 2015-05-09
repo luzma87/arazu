@@ -15,7 +15,7 @@
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
-        <elm:container tipo="horizontal" titulo="Solicitudes de mantenimiento externo">
+        <elm:container tipo="horizontal" titulo="Solicitudes de mantenimiento interno">
             <g:render template="/templates/tablaSolicitudMantInt"
                       model="[params      : params, strSearch: strSearch, solicitudes: solicitudes, solicitudesCount: solicitudesCount,
                               buscarEstado: true,

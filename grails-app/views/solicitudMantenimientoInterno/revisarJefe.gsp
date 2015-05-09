@@ -8,7 +8,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Solicitud de mantenimientoExterno #${solicitud.numero}</title>
+        <title>Solicitud de mantenimiento interno #${solicitud.numero}</title>
     </head>
 
     <body>

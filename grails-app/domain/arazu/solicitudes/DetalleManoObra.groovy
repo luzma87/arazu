@@ -27,6 +27,10 @@ class DetalleManoObra {
      * Observaciones
      */
     String observaciones
+    /**
+     * Indica si es planificado 'P' o real 'R'
+     */
+    String tipo = 'R'
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -42,13 +46,14 @@ class DetalleManoObra {
         version false
         id generator: 'identity'
         columns {
-            id column: 'dtrp__id'
+            id column: 'dtmo__id'
             solicitud column: 'smin__id'
             persona column: 'prsn__id'
             horasTrabajo column: 'dtmohrtr'
             fecha column: 'dtmofcha'
             observaciones column: 'dtmoobsv'
             observaciones type: 'text'
+            tipo column: 'dtmotipo'
         }
     }
 

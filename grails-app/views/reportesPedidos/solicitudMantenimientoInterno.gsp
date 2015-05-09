@@ -119,57 +119,115 @@
             </tbody>
         </table>
 
+        <g:if test="${detallesManoObraPlan.size() > 0}">
+        %{--Mano Obra planificada--}%
+            <h1>Mano de obra planificada</h1>
+            <table class="bordered">
+                <thead>
+                    <tr>
+                        <th>Persona</th>
+                        <th>Horas de trabajo</th>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <g:each in="${detallesManoObraPlan}" var="mo" status="i">
+                        <tr>
+                            <td>${mo.persona}</td>
+                            <td>${mo.horasTrabajo}</td>
+                            <td>${mo.fecha.format("dd-MM-yyyy")}</td>
+                            <td>${mo.observaciones}</td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </g:if>
+
+        <g:if test="${detallesManoObra.size() > 0}">
         %{--Mano Obra--}%
-        <h1>Mano de obra</h1>
-        <table class="bordered">
-            <thead>
-                <tr>
-                    <th>Persona</th>
-                    <th>Horas de trabajo</th>
-                    <th>Fecha</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <g:each in="${detallesManoObra}" var="mo" status="i">
+            <h1>Mano de obra utilizada</h1>
+            <table class="bordered">
+                <thead>
                     <tr>
-                        <td>${mo.persona}</td>
-                        <td>${mo.horasTrabajo}</td>
-                        <td>${mo.fecha.format("dd-MM-yyyy")}</td>
-                        <td>${mo.observaciones}</td>
+                        <th>Persona</th>
+                        <th>Horas de trabajo</th>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
                     </tr>
-                </g:each>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <g:each in="${detallesManoObra}" var="mo" status="i">
+                        <tr>
+                            <td>${mo.persona}</td>
+                            <td>${mo.horasTrabajo}</td>
+                            <td>${mo.fecha.format("dd-MM-yyyy")}</td>
+                            <td>${mo.observaciones}</td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </g:if>
 
+        <g:if test="${detallesRepuestosPlan.size() > 0}">
+        %{--Repuestos planificadps--}%
+            <h1>Repuestos y materiales planificados</h1>
+            <table class="bordered">
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Item</th>
+                        <th>Código o N. parte</th>
+                        <th>Marca</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <g:each in="${detallesRepuestosPlan}" var="rs" status="i">
+                        <tr>
+                            <td>${rs.cantidad}</td>
+                            <td>${rs.unidad}</td>
+                            <td>${rs.item}</td>
+                            <td>${rs.codigo}</td>
+                            <td>${rs.marca}</td>
+                            <td>${rs.observaciones}</td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </g:if>
+
+        <g:if test="${detallesRepuestos.size() > 0}">
         %{--Repuestos--}%
-        <h1>Repuestos y materiales utilizados</h1>
-        <table class="bordered">
-            <thead>
-                <tr>
-                    <th>Cantidad</th>
-                    <th>Unidad</th>
-                    <th>Item</th>
-                    <th>Código o N. parte</th>
-                    <th>Marca</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <g:each in="${detallesRepuestos}" var="rs" status="i">
+            <h1>Repuestos y materiales utilizados</h1>
+            <table class="bordered">
+                <thead>
                     <tr>
-                        <td>${rs.cantidad}</td>
-                        <td>${rs.unidad}</td>
-                        <td>${rs.item}</td>
-                        <td>${rs.codigo}</td>
-                        <td>${rs.marca}</td>
-                        <td>${rs.observaciones}</td>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Item</th>
+                        <th>Código o N. parte</th>
+                        <th>Marca</th>
+                        <th>Observaciones</th>
                     </tr>
-                </g:each>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <g:each in="${detallesRepuestos}" var="rs" status="i">
+                        <tr>
+                            <td>${rs.cantidad}</td>
+                            <td>${rs.unidad}</td>
+                            <td>${rs.item}</td>
+                            <td>${rs.codigo}</td>
+                            <td>${rs.marca}</td>
+                            <td>${rs.observaciones}</td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </g:if>
 
-        %{--Firmas--}%
+    %{--Firmas--}%
         <div class="no-break">
             <h3>Firmas</h3>
             <g:set var="sigue" value="${true}"/>

@@ -8,7 +8,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Solicitudes de mantenimiento externo pendientes de aprobación final</title>
+        <title>Solicitudes de mantenimiento interno pendientes de aprobación final</title>
     </head>
 
     <body>

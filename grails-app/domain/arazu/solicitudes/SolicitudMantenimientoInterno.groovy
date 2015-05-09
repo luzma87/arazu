@@ -74,6 +74,10 @@ class SolicitudMantenimientoInterno {
      * Detalles del trabajo a realizar
      */
     String detalles
+    /**
+     * Mecánico encargado del mantenimiento interno
+     */
+    Persona encargado
 
     /**
      * Define las relaciones uno a varios
@@ -113,6 +117,7 @@ class SolicitudMantenimientoInterno {
             kilometraje column: 'sminklmt'
             detalles column: 'smindtll'
             detalles type: 'text'
+            encargado column: 'sminpren'
         }
     }
 
@@ -131,6 +136,8 @@ class SolicitudMantenimientoInterno {
         firmaAprueba nullable: true
         firmaNiega nullable: true
         observaciones blank: true, nullable: true
+
+        encargado nullable: true
     }
 
     /**

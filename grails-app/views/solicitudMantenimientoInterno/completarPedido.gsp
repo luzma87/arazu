@@ -115,6 +115,16 @@
                     <div class="col-md-2 grupo">
                         ${solicitud.kilometraje}
                     </div>
+
+                    <div class="col-md-1">
+                        <label class=" control-label">
+                            Encargado
+                        </label>
+                    </div>
+
+                    <div class="col-md-2 grupo">
+                        ${solicitud.encargado}
+                    </div>
                 </div>
 
                 <div class="grupo">
@@ -150,14 +160,45 @@
 
             <div class="row">
                 <div class="col-md-12 text-info">
-                    <h3>Mano de obra</h3>
+                    <h3>Mano de obra planificada</h3>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width: 150px;">Persona</th>
+                                <th style="width: 100px;">Horas de trabajo</th>
+                                <th style="width: 150px;">Fecha</th>
+                                <th style="width: 300px;">Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <g:each in="${detalleManoObraPlan}" var="dt">
+                                <tr>
+                                    <td>${dt.persona}</td>
+                                    <td>${dt.horasTrabajo}</td>
+                                    <td>${dt.fecha.format('dd-MM-yyyy')}</td>
+                                    <td>${dt.observaciones}</td>
+                                </tr>
+                            </g:each>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-info">
+                    <h3>Mano de obra utilizada</h3>
                 </div>
             </div>
 
             <form id="frmPersona">
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-striped table-condensed">
                             <thead>
                                 <tr>
                                     <th style="width: 150px;">Persona</th>
@@ -166,7 +207,9 @@
                                     <th style="width: 300px;">Observaciones</th>
                                     <th style="width: 35px;"></th>
                                 </tr>
-                                <tr class="success">
+                            </thead>
+                            <tbody id="tbPersona">
+                                <tr class="success" id="trFrmPersona">
                                     <td>
                                         <g:select name="persona" from="${Persona.list([sort: 'apellido'])}" data-live-search="true"
                                                   data-width="150px" optionKey="id"/>
@@ -186,8 +229,6 @@
                                         </a>
                                     </td>
                                 </tr>
-                            </thead>
-                            <tbody id="tbPersona">
                                 <g:each in="${detalleManoObra}" var="dt">
                                     <tr data-id="${dt.id}"
                                         data-persona="${dt.personaId}"
@@ -213,6 +254,41 @@
 
             <div class="row">
                 <div class="col-md-12 text-info">
+                    <h3>Repuestos y materiales planificados</h3>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Cantidad</th>
+                                <th style="width: 100px;">Unidad</th>
+                                <th style="width: 300px;">Item</th>
+                                <th style="width: 150px;">Código o N. parte</th>
+                                <th style="width: 150px;">Marca</th>
+                                <th style="width: 300px;">Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <g:each in="${detalleMaterialPlan}" var="dt">
+                                <tr>
+                                    <td>${dt.cantidad}</td>
+                                    <td>${dt.unidad}</td>
+                                    <td>${dt.item}</td>
+                                    <td>${dt.codigo}</td>
+                                    <td>${dt.marca}</td>
+                                    <td>${dt.observaciones}</td>
+                                </tr>
+                            </g:each>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-info">
                     <h3>Repuestos y materiales utilizados</h3>
                 </div>
             </div>
@@ -220,7 +296,7 @@
             <form id="frmMaterial">
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-striped table-condensed">
                             <thead>
                                 <tr>
                                     <th style="width: 100px;">Cantidad</th>
@@ -231,7 +307,9 @@
                                     <th style="width: 300px;">Observaciones</th>
                                     <th style="width: 35px;"></th>
                                 </tr>
-                                <tr class="success">
+                            </thead>
+                            <tbody id="tbMaterial">
+                                <tr class="success" id="trFrmMaterial">
                                     <td>
                                         <g:textField name="cantidad" class="form-control input-sm number"/>
                                     </td>
@@ -256,8 +334,6 @@
                                         </a>
                                     </td>
                                 </tr>
-                            </thead>
-                            <tbody id="tbMaterial">
                                 <g:each in="${detalleMaterial}" var="dt">
                                     <tr data-id="${dt.id}"
                                         data-cantidad="${dt.cantidad}"
@@ -518,14 +594,13 @@
 
                                     $tr.append($tdCant).append($tdUnidad).append($tdItem).append($tdCod).append($tdMarca).append($tdObs).append($tdButton);
 
-                                    $("#tbMaterial").prepend($tr);
+                                    $("#trFrmMaterial").after($tr);
 
                                     $cant.val("");
                                     $cod.val("");
                                     $marca.val("");
                                     $obs.val("");
                                 }
-
                             },
                             error   : function () {
                                 log("Ha ocurrido un error interno", "Error");
@@ -595,7 +670,7 @@
 
                                     $tr.append($tdPers).append($tdHoras).append($tdFecha).append($tdObs).append($tdButton);
 
-                                    $("#tbPersona").prepend($tr);
+                                    $("#trFrmPersona").after($tr);
 
                                     $horas.val("");
                                     $fecha.val("");
