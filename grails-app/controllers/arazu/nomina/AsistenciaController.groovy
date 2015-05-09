@@ -75,7 +75,7 @@ class AsistenciaController extends Shield {
     }
 
     def guardarDatos_ajax() {
-        //println "params guardar datos "+params
+        println "params guardar datos "+params
         def datos = params.data.split("\\|")
         //println "datos "+datos
         datos.each { d ->
@@ -91,11 +91,9 @@ class AsistenciaController extends Shield {
                     asistencia.empleado = persona
                     asistencia.fecha = fecha
                 }
-                if (celda[2] == "1") {
-                    asistencia.tipo = TipoAsistencia.findByCodigo("ASTE")
-                } else {
-                    asistencia.tipo = TipoAsistencia.findByCodigo("NAST")
-                }
+                asistencia.tipo = TipoAsistencia.findByCodigo(celda[2])
+
+
                 asistencia.registra = session.usuario
                 if (!asistencia.save(flush: true)) {
                     println "error save asistencia " + asistencia.errors

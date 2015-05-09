@@ -25,6 +25,14 @@
             background : #82A640 !important;
             color      : white;
         }
+        .VCAN {
+            background : #2b96a6 !important;
+            color      : white;
+        }
+        .VCJN {
+            background : #a583a6 !important;
+            color      : white;
+        }
 
         td {
             width : 80px !important;
@@ -68,11 +76,22 @@
                                                value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
                                         <g:set var="asistencia"
                                                value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
-                                        <td class="${i == dia ? 'actual' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
-                                            iden="${asistencia?.id}" empleado="${empleado.id}"
+                                        <td class="${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}"
+                                            iden="${asistencia?.id}" empleado="${empleado.id}" tipo="${asistencia?.tipo?.codigo}"
                                             fecha="${fecha.format('dd-MM-yyyy')}">
                                             <g:if test="${asistencia}">
-                                                ${asistencia.tipo.codigo == 'ASTE' ? "<i class='fa fa-check'></i>" : "<i class='fa fa-times' style='color:red'></i>"}
+                                                <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
+                                                    <i class='fa fa-check'></i>
+                                                </g:if>
+                                                <g:if test="${asistencia.tipo.codigo == 'NAST'}">
+                                                    <i style="color: red"  class='fa fa-times'></i>
+                                                </g:if>
+                                                <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
+                                                    <i class='fa fa-plane'></i>
+                                                </g:if>
+                                                <g:if test="${asistencia.tipo.codigo == 'VCJN'}">
+                                                    <i class='fa fa-car'></i>
+                                                </g:if>
                                                 ${asistencia.tipo.nombre}
                                             </g:if>
 
@@ -184,16 +203,45 @@
             })(jQuery);
             $(".actual").disableSelection().click(function () {
                 var celda = $(this);
-                if (!celda.hasClass("ASTE")) {
+                if (celda.hasClass("VCAN") || celda.hasClass("vacio")) {
                     celda.addClass("ASTE");
+                    celda.attr("tipo","ASTE")
                     celda.html("<i class='fa fa-check'></i> Asiste");
                     celda.removeClass("NAST");
-
-                } else {
-                    celda.addClass("NAST");
-                    celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
-                    celda.removeClass("ASTE");
+                    celda.removeClass("VCAN");
+                    celda.removeClass("VCJN");
+                    celda.removeClass("vacio");
+                }else{
+                    if (celda.hasClass("ASTE")) {
+                        celda.addClass("NAST");
+                        celda.attr("tipo","NAST")
+                        celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
+                        celda.removeClass("ASTE");
+                        celda.removeClass("VCAN");
+                        celda.removeClass("VCJN");
+                    }else{
+                        if (celda.hasClass("NAST")) {
+                            celda.addClass("VCJN");
+                            celda.attr("tipo","VCJN")
+                            celda.html("<i  style='color:white' class='fa fa-car'></i> Vacaciones de jornada");
+                            celda.removeClass("ASTE");
+                            celda.removeClass("VCAN");
+                            celda.removeClass("NAST");
+                        }else{
+                            if (celda.hasClass("VCJN")) {
+                                celda.addClass("VCAN");
+                                celda.attr("tipo","VCAN")
+                                celda.html("<i  style='color:white' class='fa fa-plane'></i> Vacaciones Anuales");
+                                celda.removeClass("ASTE");
+                                celda.removeClass("NAST");
+                                celda.removeClass("VCJN");
+                            }
+                        }
+                    }
                 }
+
+
+
             });
             $("#guardar").click(function () {
                 bootbox.confirm("Está seguro?", function (result) {
@@ -202,12 +250,7 @@
                         openLoader();
                         var data = "";
                         $(".actual").each(function () {
-                            if ($(this).hasClass("ASTE")) {
-                                data += $(this).attr("empleado") + ";" + $(this).attr("fecha") + ";1|"
-                            }
-                            if ($(this).hasClass("NAST")) {
-                                data += $(this).attr("empleado") + ";" + $(this).attr("fecha") + ";0|"
-                            }
+                            data += $(this).attr("empleado") + ";" + $(this).attr("fecha") + ";"+$(this).attr("tipo")+"|"
                         });
 
                         if (data != "") {

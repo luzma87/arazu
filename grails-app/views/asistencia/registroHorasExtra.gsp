@@ -25,6 +25,14 @@
             background : #82A640 !important;
             color      : white;
         }
+        .VCAN {
+            background : #2b96a6 !important;
+            color      : white;
+        }
+        .VCJN {
+            background : #a583a6 !important;
+            color      : white;
+        }
 
         td {
             width : 50px !important;
@@ -82,7 +90,7 @@
                                         <g:set var="asistencia"
                                                value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
                                         <g:if test="${asistencia}">
-                                            <g:if test="${i == dia}">
+                                            <g:if test="${i <= dia}">
                                                 <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
                                                     <td
                                                             class="${i == dia ? 'actual iterador' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
@@ -103,7 +111,16 @@
                                                 <g:else>
                                                     <td colspan="2"
                                                         class="${i == dia ? 'actual' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}">
-                                                        ${asistencia.tipo.codigo == 'ASTE' ? "<i class='fa fa-check'></i>" : "<i class='fa fa-times' style='color:red'></i>"}
+
+                                                        <g:if test="${asistencia.tipo.codigo == 'NAST'}">
+                                                            <i style="color: red"  class='fa fa-times'></i>
+                                                        </g:if>
+                                                        <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
+                                                            <i class='fa fa-plane'></i>
+                                                        </g:if>
+                                                        <g:if test="${asistencia.tipo.codigo == 'VCJN'}">
+                                                            <i class='fa fa-car'></i>
+                                                        </g:if>
                                                         ${asistencia.tipo.nombre}
                                                     </td>
                                                 </g:else>
