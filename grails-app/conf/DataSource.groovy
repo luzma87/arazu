@@ -17,7 +17,8 @@ environments {
     development {
         dataSource {
             dbCreate = "update" // one of 'create', 'create-drop','update'
-            url = "jdbc:mysql://192.168.1.137/arazu?useUnicode=yes&characterEncoding=UTF-8"
+//            url = "jdbc:mysql://192.168.1.137/arazu?useUnicode=yes&characterEncoding=UTF-8"
+            url = "jdbc:mysql://localhost/arazu?useUnicode=yes&characterEncoding=UTF-8"
             username = "root"
             password = "mysql"
         }
@@ -29,6 +30,7 @@ environments {
             url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
         }
     }
+
     production {
         dataSource {
             dbCreate = "update" // one of 'create', 'create-drop','update'
@@ -37,6 +39,16 @@ environments {
             password = "arazuHinsa1987"
         }
     }
+/*
+    production {
+        dataSource {
+            dbCreate = "update" // one of 'create', 'create-drop','update'
+            url = "jdbc:mysql://localhost/arazu?useUnicode=yes&characterEncoding=UTF-8"
+            username = "root"
+            password = "mysql"
+        }
+    }
+*/
 }
 
 ////////////////////////////////////// POSTGRES ////////////////////////////////////////////

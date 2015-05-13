@@ -13,6 +13,20 @@ import arazu.seguridad.TipoAccion
 class BootStrap {
 
     def init = { servletContext ->
+
+        def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
+        def dataSource = ctx.dataSourceUnproxied
+//        println "datasource "+dataSource
+
+        dataSource.setMinEvictableIdleTimeMillis(1000 * 60 * 5)
+        dataSource.setTimeBetweenEvictionRunsMillis(1000 * 60 * 5)
+        dataSource.setNumTestsPerEvictionRun(3)
+
+        dataSource.setTestOnBorrow(true)
+        dataSource.setTestWhileIdle(false)
+        dataSource.setTestOnReturn(true)
+        dataSource.setValidationQuery("SELECT 1")
+
 //        if (Modulo.count() == 0) {
 //            def noAsignado = new Modulo()
 //            noAsignado.nombre = "noAsignado"
