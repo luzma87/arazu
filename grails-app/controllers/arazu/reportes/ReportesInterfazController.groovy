@@ -39,4 +39,36 @@ class ReportesInterfazController extends Shield {
         return [now: now]
     }
 
+    /**
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de personal de proyecto
+     */
+    def personalProyecto() {
+        def now = new Date()
+        return [now: now]
+    }
+
+    /**
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de asistencias
+     */
+    def asistencias() {
+        def now = new Date()
+        return [now: now]
+    }
+
+    /**
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de horas extra
+     */
+    def horasExtra() {
+        def now = new Date()
+        return [now: now]
+    }
+
+    /**
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de vacaciones
+     */
+    def vacaciones() {
+        def now = new Date()
+        return [now: now]
+    }
+
 }

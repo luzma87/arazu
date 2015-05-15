@@ -53,6 +53,7 @@
                     <g:each in="${proyectoInstanceList}" status="i" var="proyectoInstance">
                         <g:set var="bodegas" value="${Bodega.countByProyecto(proyectoInstance)}"/>
                         <g:set var="funciones" value="${Funcion.countByProyecto(proyectoInstance)}"/>
+                        <g:set var="personal" value="${proyectoInstance.personal.size()}"/>
 
                         <g:set var="bodegasActivas" value="${Bodega.countByProyectoAndActivo(proyectoInstance, 1)}"/>
                         <g:set var="tieneBodegasActivas" value="${proyectoInstance.fechaFin && proyectoInstance.fechaFin < new Date().clearTime() && bodegasActivas > 0}"/>
@@ -62,7 +63,7 @@
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${proyectoInstance}" field="entidad"/></elm:textoBusqueda></td>
                             <td><g:formatDate date="${proyectoInstance.fechaInicio}" format="dd-MM-yyyy"/></td>
                             <td><g:formatDate date="${proyectoInstance.fechaFin}" format="dd-MM-yyyy"/></td>
-                            <td class="${bodegas == 0 || funciones == 0 ? 'alert alert-danger' : ''} ${tieneBodegasActivas ? 'alert alert-warning' : ''} ">
+                            <td class="${bodegas == 0 || funciones == 0 || personal == 0 ? 'alert alert-danger' : ''} ${tieneBodegasActivas ? 'alert alert-warning' : ''} ">
                                 <g:if test="${!tieneBodegasActivas}">
                                     <g:if test="${bodegas == 0}">
                                         <p>
@@ -75,6 +76,13 @@
                                         <p>
                                             <g:link action="config" id="${proyectoInstance.id}" class="alert-link ">
                                                 <i class="fa fa-users"></i> No tiene responsables asignados
+                                            </g:link>
+                                        </p>
+                                    </g:if>
+                                    <g:if test="${personal == 0}">
+                                        <p>
+                                            <g:link controller="personalProyecto" action="asignarPersonal" id="${proyectoInstance.id}" class="alert-link ">
+                                                <i class="fa flaticon-construction4"></i> No tiene personal asignado
                                             </g:link>
                                         </p>
                                     </g:if>
@@ -112,7 +120,7 @@
                 bootbox.dialog({
                     title   : "Alerta",
                     message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i><p>" +
-                            "¿Está seguro que desea eliminar el Proyecto seleccionado? Esta acción no se puede deshacer.</p>",
+                              "¿Está seguro que desea eliminar el Proyecto seleccionado? Esta acción no se puede deshacer.</p>",
                     buttons : {
                         cancelar : {
                             label     : "Cancelar",
@@ -184,6 +192,14 @@
                                 var id = $element.data("id");
                                 location.href = "${createLink(controller: 'proyecto', action:'config')}/" + id;
                             }
+                        },
+                        personal   : {
+                            label  : "Personal proyecto",
+                            icon   : "fa flaticon-construction4",
+                            action : function ($element) {
+                                var id = $element.data("id");
+                                location.href = "${createLink(controller: 'personalProyecto', action:'asignarPersonal')}/" + id;
+                            }
                         }/*,
                          eliminar : {
                          label            : "Eliminar",
@@ -241,7 +257,7 @@
                                                 success : function (msg) {
                                                     var parts = msg.split("*");
                                                     log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                                                    setTimeout(function() {
+                                                    setTimeout(function () {
                                                         if (parts[0] == "SUCCESS") {
                                                             location.reload(true);
                                                         } else {

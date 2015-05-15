@@ -5,7 +5,7 @@ import arazu.seguridad.Persona
 
 /**
  *  Clase para conectar con la tabla 'prpr' de la base de datos
- *  La tabla asistencia permite registrar los empleados asignados a un proyecto
+ *  La tabla personalProyecto permite registrar los empleados asignados a un proyecto
  */
 class PersonalProyecto {
     /**
@@ -41,7 +41,7 @@ class PersonalProyecto {
         cache usage: 'read-write', include: 'non-lazy'
         version false
         id generator: 'identity'
-        sort fecha: "asc"
+        sort fechaInicio: "asc"
         columns {
             id column: 'prpr__id'
             fechaInicio column: 'prprfcin'

@@ -1,5 +1,7 @@
 package arazu.proyectos
 
+import arazu.nomina.PersonalProyecto
+
 /**
  * Clase para conectar con la tabla 'proy' de la base de datos
  * Guarda todos los datos de un proyecto
@@ -75,5 +77,20 @@ class Proyecto {
      */
     String toString() {
         "${this.nombre}"
+    }
+
+    /**
+     * Busca el personal activo de un proyecto
+     */
+    List<PersonalProyecto> getPersonal() {
+        def personal = PersonalProyecto.withCriteria {
+            eq("proyecto", this)
+            le("fechaInicio", new Date())
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", new Date())
+            }
+        }
+        return personal
     }
 }

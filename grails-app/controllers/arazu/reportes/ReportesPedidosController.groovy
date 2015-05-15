@@ -71,7 +71,7 @@ class ReportesPedidosController {
     }
 
     /**
-     * Accidn que muestra el reporte de notas de pedido en formato PDF
+     * Acción que muestra el reporte de notas de pedido en formato PDF
      */
     def reporteNotasDePedidoPdf() {
 //        println "reporte pdf" + params
