@@ -350,6 +350,11 @@ class ElementosTagLib {
         def style = attrs.style ?: ""
         def placeholder = attrs.placeholder ?: ""
 
+        def clear = attrs.clear && (attrs.clear == "true" || attrs.clear == true ||
+                attrs.clear == "1" || attrs.clear == 1 ||
+                attrs.clear == "Y" || attrs.clear == "S" ||
+                attrs.clear == "y" || attrs.clear == "s")
+
         if (value instanceof Date) {
             value = value.format(format)
         }
@@ -398,6 +403,14 @@ class ElementosTagLib {
         def hidden = "<input type='hidden' name='${name}' id='${name}' value='date.struct'/>"
 
         def div = ""
+        div += "<div class='input-group ${claseGrupo}'>" + br
+        if (clear) {
+            div += "<span class=\"input-group-btn\">"
+            div += "<a href='#' class='btn btn-default btn-clear'><i class='fa fa-times'></i></a>"
+            div += "</span>"
+        }
+        div += textfield + br
+
         div += hiddenDay + br
         div += hiddenMonth + br
         div += hiddenYear + br
@@ -406,12 +419,14 @@ class ElementosTagLib {
             div += hiddenMin + br
         }
         div += hidden + br
-        div += "<div class='input-group ${claseGrupo}'>" + br
-        div += textfield + br
+
         div += "<span class=\"input-group-addon\"><i class=\"${img}\"></i></span>" + br
         div += "</div>" + br
 
         def js = "<script type=\"text/javascript\">" + br
+        js += '$(".btn-clear").click(function() {' + br +
+                '$(this).parent().parent().children("input").val("");' + br +
+                '});' + br
         js += '$("#' + id + '").datetimepicker({' + br
         if (startDate) {
             if (startDate instanceof Date) {

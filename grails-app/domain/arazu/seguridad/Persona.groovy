@@ -1,6 +1,8 @@
 package arazu.seguridad
 
+import arazu.nomina.PersonalProyecto
 import arazu.parametros.TipoUsuario
+import arazu.proyectos.Proyecto
 
 /**
  * Clase para conectar con la tabla 'prsn' de la base de datos
@@ -129,5 +131,46 @@ class Persona {
      */
     String toString() {
         return "${this.nombre} ${this.apellido}"
+    }
+
+    /**
+     * Devuelve el proyecto al que está asignada actualmente la persona
+     */
+    Proyecto getProyecto() {
+        def now = new Date()
+        def personal = PersonalProyecto.withCriteria {
+            eq("persona", this)
+            le("fechaInicio", now)
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", now)
+            }
+        }
+        if (personal.size() == 1) {
+            return personal.first().proyecto
+        } else {
+            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+            return null
+        }
+    }
+
+    /**
+     * Devuelve el proyecto al que está asignada en una fecha la persona
+     */
+    Proyecto getProyectoPorFecha(Date fecha) {
+        def personal = PersonalProyecto.withCriteria {
+            eq("persona", this)
+            le("fechaInicio", fecha)
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", fecha)
+            }
+        }
+        if (personal.size() == 1) {
+            return personal.first().proyecto
+        } else {
+            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+            return null
+        }
     }
 }

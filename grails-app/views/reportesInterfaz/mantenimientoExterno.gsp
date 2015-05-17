@@ -65,16 +65,16 @@
                     <label>Desde</label>
                 </div>
 
-                <div class="col-md-3">
-                    <elm:datepicker class="form-control input-sm desde" name="desde"/>
+                <div class="col-md-2">
+                    <elm:datepicker class="form-control input-sm desde" name="desde" clear="true"/>
                 </div>
 
                 <div class="col-md-1">
                     <label>Hasta</label>
                 </div>
 
-                <div class="col-md-3">
-                    <elm:datepicker class="form-control input-sm hasta" name="hasta"/>
+                <div class="col-md-2">
+                    <elm:datepicker class="form-control input-sm hasta" name="hasta" clear="true"/>
                 </div>
             </div>
 

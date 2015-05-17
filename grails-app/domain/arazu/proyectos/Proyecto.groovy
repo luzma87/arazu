@@ -93,4 +93,19 @@ class Proyecto {
         }
         return personal
     }
+
+    /**
+     * Busca el personal activo de un proyecto
+     */
+    List<PersonalProyecto> getPersonalFechas() {
+        def personal = PersonalProyecto.withCriteria {
+            eq("proyecto", this)
+            le("fechaInicio", new Date())
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", new Date())
+            }
+        }
+        return personal
+    }
 }

@@ -62,13 +62,4 @@ class ReportesInterfazController extends Shield {
         def now = new Date()
         return [now: now]
     }
-
-    /**
-     * Acción que muestra la pantalla para filtrar e imprimir el reporte de vacaciones
-     */
-    def vacaciones() {
-        def now = new Date()
-        return [now: now]
-    }
-
 }

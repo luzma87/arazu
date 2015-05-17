@@ -4,3 +4,4 @@ mysql -u username -p --default-character-set=latin1 database < backup.sql
 
 hice con
 mysqldump -u username -p --default-character-set=utf8 -N database > backup.sql
+mysql -u username -p --default-character-set=utf8 database < backup.sql

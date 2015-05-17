@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <g:select name="proyecto" from="${Proyecto.list([sort: 'nombre'])}" noSelection="['-1': 'Seleccione...']"
+                    <g:select name="proyecto" from="${Proyecto.list([sort: 'nombre'])}" noSelection="['-1': 'Cualquiera...']"
                               class="form-control input-sm" optionKey="id" data-live-search="true"/>
                 </div>
 
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <elm:datepicker class="form-control input-sm desde" name="desde"/>
+                    <elm:datepicker class="form-control input-sm desde" name="desde" clear="true"/>
                 </div>
 
                 <div class="col-md-1">
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <elm:datepicker class="form-control input-sm hasta" name="hasta"/>
+                    <elm:datepicker class="form-control input-sm hasta" name="hasta" clear="true"/>
                 </div>
             </div>
 
@@ -67,15 +67,11 @@
                 openLoader();
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'reportesPedidos', action:'reporteNotasDePedido_ajax')}",
+                    url     : "${createLink(controller:'reportesPersonal', action:'reportePersonalProyecto_ajax')}",
                     data    : {
-                        persona    : $("#persona").val(),
-                        proyecto   : $("#proyecto").val(),
-                        maquinaria : $("#maquinaria").val(),
-                        desde      : $(".desde").val(),
-                        hasta      : $(".hasta").val(),
-                        item       : $("#item").val(),
-                        estado     : $("#estado").val()
+                        proyecto : $("#proyecto").val(),
+                        desde    : $(".desde").val(),
+                        hasta    : $(".hasta").val()
                     },
                     success : function (msg) {
                         $("#lista").html(msg);
@@ -90,12 +86,8 @@
             $("#imprimir").click(function () {
                 //openLoader()
                 var url = "${g.createLink(controller: 'pdf',action: 'pdfLink')}?url=";
-                var reporte = "${g.createLink(controller: 'reportesPedidos',action: 'reporteNotasDePedidoPdf')}?";
-                reporte += "persona=" + $("#persona").val() +
-                           "Wproyecto=" + $("#proyecto").val() +
-                           "Wmaquinaria=" + $("#maquinaria").val() +
-                           "Witem=" + $("#item").val() +
-                           "Westado=" + $("#estado").val();
+                var reporte = "${g.createLink(controller: 'reportesPersonal',action: 'reportePersonalProyectoPdf')}?";
+                reporte += "proyecto=" + $("#proyecto").val();
                 reporte += "Wdesde=" + $(".desde").val() + "Whasta=" + $(".hasta").val();
                 window.open(url + reporte);
                 //console.log(url+reporte)

@@ -227,14 +227,6 @@ class SistemaController extends Shield {
     }
 
     /**
-     * Acción que muestra el dashboard de reportes
-     */
-    def inicioReportes() {
-        def sistema = Sistema.findByCodigo("RPRT")
-        session.sistema = sistema
-    }
-
-    /**
      * Función que saca la lista de elementos según los parámetros recibidos
      * @param params objeto que contiene los parámetros para la búsqueda:: max: el máximo de respuestas, offset: índice del primer elemento (para la paginación), search: para efectuar búsquedas
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)

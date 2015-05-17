@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <elm:datepicker class="form-control input-sm desde" name="desde"/>
+                    <elm:datepicker class="form-control input-sm desde" name="desde" clear="true"/>
                 </div>
 
                 <div class="col-md-1">
@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <elm:datepicker class="form-control input-sm hasta" name="hasta"/>
+                    <elm:datepicker class="form-control input-sm hasta" name="hasta" clear="true"/>
                 </div>
             </div>
 
