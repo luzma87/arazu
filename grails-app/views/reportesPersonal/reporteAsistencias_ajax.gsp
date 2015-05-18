@@ -1,26 +1,25 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: LUZ
-  Date: 16-May-15
-  Time: 18:07
---%>
-
 <table class="table table-condensed table-striped table-bordered table-hover">
     <thead>
         <tr>
-            <th>Proyecto</th>
-            <th>Persona</th>
-            <th>Fecha</th>
-            <th>Asistencia</th>
+            <th>Proyecto(s)</th>
+            <th>Empleado</th>
+            <g:each in="${tipos}" var="t">
+                <th>${t.nombre}</th>
+            </g:each>
+            <th>Horas extra 50%</th>
+            <th>Horas extra 100%</th>
         </tr>
     </thead>
     <tbody>
-        <g:each in="${asistencia}" var="a">
+        <g:each in="${datos}" var="d">
             <tr>
-                <td>${a.empleado.getProyectoPorFecha(a.fecha)}</td>
-                <td>${a.empleado}</td>
-                <td>${a.fecha.format("dd-MM-yyyy")}</td>
-                <td>${a.tipo}</td>
+                <td>${d.value["proyecto"].join(",")}</td>
+                <td>${d.key.apellido+" "+d.key.nombre}</td>
+                <g:each in="${tipos}" var="t">
+                    <td style="text-align: right">${d.value[t.nombre]}</td>
+                </g:each>
+                <td style="text-align: right">${d.value["Horas extra 50%"]}</td>
+                <td style="text-align: right">${d.value["Horas extra 100%"]}</td>
             </tr>
         </g:each>
     </tbody>
