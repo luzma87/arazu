@@ -6,6 +6,35 @@ import arazu.seguridad.Shield
 
 class AsistenciaController extends Shield {
 
+    def verAsistencia(){
+        def now = new Date();
+        def dia = now.format("dd").toInteger()
+        def min, max
+        def mycal = new GregorianCalendar(now.format("yyyy").toInteger(), now.format("MM").toInteger() - 1, dia);
+        def daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        min = 1
+        max = daysInMonth
+
+        def empleados = Persona.list()
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+    }
+
+
+    def verHorasExtra(){
+        def now = new Date();
+        def dia = now.format("dd").toInteger()
+        def min, max
+        def mycal = new GregorianCalendar(now.format("yyyy").toInteger(), now.format("MM").toInteger() - 1, dia);
+        def daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+        min = 1
+        max = daysInMonth
+
+        def empleados = Persona.list()
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+    }
 
     def registroAsistencia() {
 

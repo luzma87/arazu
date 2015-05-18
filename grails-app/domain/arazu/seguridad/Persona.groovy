@@ -169,7 +169,7 @@ class Persona {
         if (personal.size() == 1) {
             return personal.first().proyecto
         } else {
-            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+           // println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
             return null
         }
     }

@@ -55,14 +55,7 @@
                     <elm:datepicker class="form-control input-sm hasta" name="hasta" clear="true"/>
                 </div>
 
-                <div class="col-md-1">
-                    <label>Tipo</label>
-                </div>
-
-                <div class="col-md-2">
-                    <g:select name="tipo" from="${TipoAsistencia.list([sort: 'nombre'])}"
-                              optionKey="id" class="form-control" noSelection="['': 'Cualquiera...']"/>
-                </div>
+               
             </div>
 
             <div class="row">
