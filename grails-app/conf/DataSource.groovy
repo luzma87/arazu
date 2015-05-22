@@ -34,9 +34,9 @@ environments {
     production {
         dataSource {
             dbCreate = "update" // one of 'create', 'create-drop','update'
-            url = "jdbc:mysql://localhost/hinsaeco_arazu?useUnicode=yes&characterEncoding=UTF-8"
-            username = "hinsaeco_arazudb"
-            password = "arazuHinsa1987"
+            url = "jdbc:mysql://localhost/arazu2?useUnicode=yes&characterEncoding=UTF-8"
+            username = "root"
+            password = "eldia2k"
         }
     }
 /*
