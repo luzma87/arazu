@@ -111,13 +111,6 @@ class SolicitudMantenimientoInternoController extends Shield {
         if (!params.order) {
             params.order = "asc"
         }
-        println "numero: " + numero
-        println "desde: " + desde
-        println "hasta: " + hasta
-        println "de: " + de
-        println "maquina: " + maquina
-        println "estado: " + estado
-        println "params: " + params
         def c = SolicitudMantenimientoInterno.createCriteria()
         list = c.list(params) {
             if (numero) {
