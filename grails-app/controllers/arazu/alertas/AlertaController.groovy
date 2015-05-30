@@ -79,4 +79,15 @@ class AlertaController extends Shield {
         params.id = alerta.id_remoto
         redirect(controller: alerta.controlador, action: alerta.accion, params: params)
     }
+
+    /**
+     * Acción llamada con ajax que marca una alerta como leída para que no se muestre en la lista
+     */
+    def marcarLeida_ajax() {
+        def alerta = Alerta.get(params.id)
+        alerta.fechaRecibido = new Date()
+        alerta.save(flush: true)
+        def alertaInstanceCount = getList_funcion(params, true).size()
+        render alertaInstanceCount
+    }
 }

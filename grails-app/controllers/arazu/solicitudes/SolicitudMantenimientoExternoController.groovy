@@ -200,7 +200,7 @@ class SolicitudMantenimientoExternoController extends Shield {
             solicitud.numero = numero
             solicitud.codigo = "MX-" + numero
             solicitud.firmaSolicita = firma
-            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la solicitud de mantenimiento externo #${solicitud.numero} el " + now.format("dd-MM-yyyy HH:mm")
+            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la solicitud de mantenimiento externo ${solicitud.codigo} el " + now.format("dd-MM-yyyy HH:mm")
             if (!solicitud.save(flush: true)) {
                 println "error  " + solicitud.errors
                 flash.tipo = "error"
@@ -217,7 +217,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                     }
                 }
 
-                firma.concepto = "Solicitud de mantenimiento externo núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                firma.concepto = "Solicitud de mantenimiento externo ${solicitud.codigo} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = solicitud.id
                 if (!firma.save(flush: true)) {
                     println "error al asociar firma con solicitud: " + firma.errors
@@ -230,7 +230,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                     flash.message = firmaRes
                     redirect(action: "pedido")
                 } else {
-                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la solicitud de mantenimiento externo núm. ${solicitud.numero}"
+                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la solicitud de mantenimiento externo ${solicitud.codigo}"
                     def paramsAlerta = [
                             mensaje    : mens,
                             controlador: "solicitudMantenimientoExterno",
@@ -581,17 +581,15 @@ class SolicitudMantenimientoExternoController extends Shield {
      * Función que cambia de estado una solicitud de mantenimiento externo y envía las notificaciones necesarias
      * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
-     *              AJC: el jefe de compras aprueba la solicitud
-     *              NJC: el jefe de compras niega la solicitud
-     *              BJC: el jefe de compras indica de q bodega(s) sacar
+     *              AJC: el jefe de compras aprueba la solicitud            E11 -> E12
+     *              NJC: el jefe de compras niega la solicitud              E11 -> N11
      *
-     *              AJC: el asistente de compras aprueba la solicitud y envía las cotizaciones
-     *              NJC: el asistente de compras niega la solicitud
-     *              BJC: el asistente de compras indica de q bodega(s) sacar
+     *              AAC: el asistente de compras aprueba la solicitud y envía las cotizaciones  E12 -> E13
+     *              NAC: el asistente de compras niega la solicitud                             E12 -> N11
      *
-     *              AF: el jefe/gerente aprueba definitivamente la solicitud
-     *              NF: el jefe/gerente niega definitivamente la solicitud
-     *              BF: el jefe/gerente indica de q bodega(s) sacar
+     *              AF: el jefe/gerente aprueba definitivamente la solicitud                                    E13 -> A11
+     *              NF: el jefe/gerente niega definitivamente la solicitud                                      E13 -> N11
+     *              CF: el jefe/gerente devuelve al asistente de compras para que cargue nuevas cotizaciones    E13 -> E12
      * @return String con los mensajes de error si ocurrieron
      */
     private String cambiarEstadoPedido_funcion(params, String tipo) {
@@ -770,7 +768,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                         def firma = new Firma()
                         firma.persona = usu
                         firma.fecha = now
-                        firma.concepto = "${concepto} de Solicitud de mantenimiento externo núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                        firma.concepto = "${concepto} de Solicitud de mantenimiento externo ${pedido.codigo} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                         firma.pdfControlador = "reportesPedidos"
                         firma.pdfAccion = "solicitudMantenimientoExterno"
                         firma.pdfId = pedido.id
@@ -806,7 +804,7 @@ class SolicitudMantenimientoExternoController extends Shield {
                                 return "ERROR*" + firmaRes
                             } else {
                                 def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la " +
-                                        "solicitud de mantenimiento externo núm. ${pedido.numero}" + mensajeAprobacionFinal
+                                        "solicitud de mantenimiento externo ${pedido.codigo}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
                                         controlador: "solicitudMantenimientoExterno",
@@ -847,9 +845,9 @@ class SolicitudMantenimientoExternoController extends Shield {
                                     msg += notificacionService.notificacionCompleta(usu, notificacion2Recibe, paramsAlerta, paramsMail)
                                 }
                                 if (msg != "") {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>${pedido.codigo}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
                                 } else {
-                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
+                                    msg = "SUCCESS*La solicitud de mantenimiento externo <strong>${pedido.codigo}</strong> ${retTipo} exitosamente"
                                 }
                                 return msg
                             }

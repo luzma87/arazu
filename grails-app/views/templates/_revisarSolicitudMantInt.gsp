@@ -2,12 +2,12 @@
 <div class="row">
     <div class="col-md-1">
         <label class=" control-label">
-            Número
+            Código
         </label>
     </div>
 
     <div class="col-md-2">
-        ${solicitud.numero}
+        ${solicitud.codigo}
     </div>
 
     <div class="col-md-1">

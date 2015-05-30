@@ -168,11 +168,11 @@ class MenuTagLib {
             strItems += renderItem(item)
         }
 
-        def alertas = "("
-        def count = Alerta.cantAlertasPersona(usuario)
-//        def count = 0
-        alertas += count
-        alertas += ")"
+//        def alertas = "("
+//        def count = Alerta.cantAlertasPersona(usuario)
+////        def count = 0
+//        alertas += count
+//        alertas += ")"
 
         def html = "<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">"
 

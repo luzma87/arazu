@@ -78,7 +78,7 @@
             <tbody>
                 <g:each in="${notas}" var="nota">
                     <tr>
-                        <td>${nota.numero}</td>
+                        <td>${nota.codigo}</td>
                         <td>${nota.fecha.format("dd-MM-yyyy")}</td>
                         <td>${nota.de}</td>
                         <td>${nota.proyecto}</td>

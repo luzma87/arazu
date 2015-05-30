@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Nota de pedido #${nota.numero}</title>
+        <title>Nota de pedido ${nota.codigo}</title>
     </head>
 
     <body>

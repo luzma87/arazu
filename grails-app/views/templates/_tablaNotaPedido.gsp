@@ -86,7 +86,7 @@ table {
                 <g:sortableColumn property="prioridad" title="Prioridad" style="width: 50px;"/>
                 <g:set var="colspan" value="${colspan + 1}"/>
             </g:if>
-            <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
+            <g:sortableColumn property="numero" title="Código" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
             <g:sortableColumn property="de" title="Solicita" style="width: 150px;"/>
             <g:sortableColumn property="motivoSolicitud" title="Motivo" style="width: 80px;"/>
@@ -117,7 +117,7 @@ table {
                             </g:elseif>
                         </td>
                     </g:if>
-                    <td>${nota.numero}</td>
+                    <td>${nota.codigo}</td>
                     <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${nota.de}</td>
                     <td>${nota.motivoSolicitud}</td>
@@ -145,8 +145,8 @@ table {
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </g:if>
-                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Nota de pedido #${nota.numero}"
+                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.codigo + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Nota de pedido ${nota.codigo}"
                                data-pp=""
                                target="_blank"
                                iden="${nota.id}">

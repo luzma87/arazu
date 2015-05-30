@@ -223,14 +223,14 @@ class NotaPedidoController extends Shield {
             solicitud.numero = numero
             solicitud.codigo = "NP-" + numero
             solicitud.firmaSolicita = firma
-            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la nota de pedido #${solicitud.numero} el " + now.format("dd-MM-yyyy HH:mm")
+            solicitud.observaciones = "<strong>" + usu.nombre + " " + usu.apellido + "</strong> ha <strong>realizado</strong> la nota de pedido ${solicitud.codigo} el " + now.format("dd-MM-yyyy HH:mm")
             if (!solicitud.save(flush: true)) {
                 println "error  " + solicitud.errors
                 flash.tipo = "error"
                 flash.message = "Ha ocurrido un error al guardar la solicitud:" + renderErrors(bean: solicitud)
                 redirect(action: "pedido")
             } else {
-                firma.concepto = "Nota de pedido núm. ${solicitud.numero} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                firma.concepto = "Nota de pedido ${solicitud.codigo} de " + usu.nombre + " " + usu.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                 firma.pdfId = solicitud.id
                 if (!firma.save(flush: true)) {
                     println "error al asociar firma con solicitud: " + firma.errors
@@ -243,7 +243,7 @@ class NotaPedidoController extends Shield {
                     flash.message = firmaRes
                     redirect(action: "pedido")
                 } else {
-                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la nota de pedido núm. ${solicitud.numero}"
+                    def mens = usu.nombre + " " + usu.apellido + " ha realizado la nota de pedido ${solicitud.codigo}"
                     def paramsAlerta = [
                             mensaje    : mens,
                             controlador: "notaPedido",
@@ -850,21 +850,22 @@ class NotaPedidoController extends Shield {
      * Función que cambia de estado un pedido y envía las notificaciones necesarias
      * @param params los parámetros que llegan del cliente
      * @param tipo tipo de cambio de estado a efectuarse:
-     *              AJF: el jefe aprueba la solicitud
-     *              NJF: el jefe niega la solicitud
-     *              BJF: el jefe indica de q bodega(s) sacar
+     *              AJF: el jefe aprueba la solicitud           E01 -> E02
+     *              NJF: el jefe niega la solicitud             E01 -> N01
+     *              BJF: el jefe indica de q bodega(s) sacar    E01 -> E02/B01
      *
-     *              AJC: el jefe de compras aprueba la solicitud
-     *              NJC: el jefe de compras niega la solicitud
-     *              BJC: el jefe de compras indica de q bodega(s) sacar
+     *              AJC: el jefe de compras aprueba la solicitud            E02 -> E03
+     *              NJC: el jefe de compras niega la solicitud              E02 -> N01
+     *              BJC: el jefe de compras indica de q bodega(s) sacar     E02 -> E03/B01
      *
-     *              AJC: el asistente de compras aprueba la solicitud y envía las cotizaciones
-     *              NJC: el asistente de compras niega la solicitud
-     *              BJC: el asistente de compras indica de q bodega(s) sacar
+     *              AAC: el asistente de compras aprueba la solicitud y envía las cotizaciones  E03 -> E04
+     *              NAC: el asistente de compras niega la solicitud                             E03 -> N01
+     *              BAC: el asistente de compras indica de q bodega(s) sacar                    E03 -> E04/B01
      *
-     *              AF: el jefe/gerente aprueba definitivamente la solicitud
-     *              NF: el jefe/gerente niega definitivamente la solicitud
-     *              BF: el jefe/gerente indica de q bodega(s) sacar
+     *              AF: el jefe/gerente aprueba definitivamente la solicitud                                    E04 -> A01
+     *              NF: el jefe/gerente niega definitivamente la solicitud                                      E04 -> N01
+     *              BF: el jefe/gerente indica de q bodega(s) sacar                                             E04 -> A01/B01
+     *              CF: el jefe/gerente devuelve al asistente de compras para que cargue nuevas cotizaciones    E04 -> E03
      * @return String con los mensajes de error si ocurrieron
      */
     private String cambiarEstadoPedido_funcion(params, String tipo) {
@@ -1234,7 +1235,7 @@ class NotaPedidoController extends Shield {
                         def firma = new Firma()
                         firma.persona = usu
                         firma.fecha = now
-                        firma.concepto = "${concepto} de Nota de pedido núm. ${pedido.numero} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
+                        firma.concepto = "${concepto} de Nota de pedido ${pedido.codigo} de " + pedido.de.nombre + " " + pedido.de.apellido + " " + now.format("dd-MM-yyyy HH:mm")
                         firma.pdfControlador = "reportesInventario"
                         firma.pdfAccion = "notaPedido"
                         firma.pdfId = pedido.id
@@ -1268,7 +1269,7 @@ class NotaPedidoController extends Shield {
                             if (firmaRes instanceof String) {
                                 return "ERROR*" + firmaRes
                             } else {
-                                def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido núm. ${pedido.numero}" + mensajeAprobacionFinal
+                                def mens = usu.nombre + " " + usu.apellido + " ha ${mensTipo} la nota de pedido ${pedido.codigo}" + mensajeAprobacionFinal
                                 def paramsAlerta = [
                                         mensaje    : mens,
                                         controlador: "notaPedido",
@@ -1317,9 +1318,9 @@ class NotaPedidoController extends Shield {
                                     }
                                 }
                                 if (msg != "") {
-                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
+                                    msg = "SUCCESS*La solicitud <strong>${pedido.codigo}</strong> ${retTipo} exitosamente <ul>" + msg + "</ul>"
                                 } else {
-                                    msg = "SUCCESS*La solicitud <strong>número ${pedido.numero}</strong> ${retTipo} exitosamente"
+                                    msg = "SUCCESS*La solicitud <strong>${pedido.codigo}</strong> ${retTipo} exitosamente"
                                 }
                                 return msg
                             }

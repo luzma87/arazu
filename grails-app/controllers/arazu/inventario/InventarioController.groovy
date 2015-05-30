@@ -359,7 +359,7 @@ class InventarioController extends Shield {
                 } else {
                     ingreso.calcularSaldo()
 
-                    firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+                    firma.concepto = "Ingreso a bodega de ${ingreso.cantidad}${ingreso.unidad.codigo} ${ingreso.item}, nota de pedido ${pedido.codigo} el " + new Date().format("dd-MM-yyyy HH:mm")
                     firma.pdfId = ingreso.id
                     if (!firma.save(flush: true)) {
                         println "Error al vincular firma con ingreso: " + firma.errors
@@ -433,7 +433,7 @@ class InventarioController extends Shield {
             def firma = new Firma()
             firma.persona = session.usuario
             firma.fecha = now
-            firma.concepto = "Egreso de bodega de ${eg.cantidad}${pedido.unidad.codigo} ${pedido.item}, nota de pedido ${pedido.numero} el " + new Date().format("dd-MM-yyyy HH:mm")
+            firma.concepto = "Egreso de bodega de ${eg.cantidad}${pedido.unidad.codigo} ${pedido.item}, nota de pedido ${pedido.codigo} el " + new Date().format("dd-MM-yyyy HH:mm")
             firma.pdfControlador = "reportesInventario"
             firma.pdfAccion = "egresoDeBodega"
             firma.pdfId = eg.id

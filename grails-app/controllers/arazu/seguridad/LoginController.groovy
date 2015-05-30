@@ -23,7 +23,7 @@ class LoginController {
      */
     def login() {
         def usu = session.usuario
-        def cn = "inicio"
+        def cn = "sistema"
         def an = "index"
         if (usu) {
             if (session.cn && session.an) {
@@ -103,7 +103,7 @@ class LoginController {
         if (session.an && session.cn) {
             redirect(controller: session.cn, action: session.an, params: session.pr)
         } else {
-            redirect(controller: "inicio", action: "index")
+            redirect(controller: "sistema", action: "index")
         }
         return
     }

@@ -46,7 +46,7 @@ table {
         </div>
         <g:if test="${buscarEstado}">
             <div class="form-group">
-                <g:select name="search_estado" from="${EstadoSolicitud.findAllByTipo('MX', [sort: 'nombre'])}" optionKey="id" optionValue="nombre"
+                <g:select name="search_estado" from="${EstadoSolicitud.findAllByTipo('MI', [sort: 'nombre'])}" optionKey="id" optionValue="nombre"
                           class="form-control input-sm buscar" data-style="btn-sm"
                           noSelection="['': '- Cualquier estado -']" value="${params.search_estado}"/>
             </div>
@@ -71,7 +71,7 @@ table {
 <table class="table table-striped  table-bordered table-hover table-condensed" style="margin-top: 0;">
     <thead>
         <tr>
-            <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
+            <g:sortableColumn property="numero" title="Código" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
             <g:sortableColumn property="de" title="Solicita" style="width: 150px;"/>
             <g:sortableColumn property="maquinaria" title="Maquinaria" style="width: 150px;"/>
@@ -86,7 +86,7 @@ table {
         <g:if test="${solicitudesCount > 0}">
             <g:each in="${solicitudes}" var="solicitud">
                 <tr>
-                    <td>${solicitud.numero}</td>
+                    <td>${solicitud.codigo}</td>
                     <td>${solicitud.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${solicitud.de}</td>
                     <td>${solicitud.maquinaria}</td>
@@ -102,6 +102,12 @@ table {
                     <td style="font-weight: bold" title="${solicitud.estadoSolicitud?.descripcion}">${solicitud.estadoSolicitud}</td>
                     <td style="text-align: center">
                         <div class="btn-group" role="group">
+                            <g:if test="${editar}">
+                                <g:link controller="solicitudMantenimientoInterno" action="${editar}" title="Editar" id="${solicitud.id}"
+                                        class="btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil"></i>
+                                </g:link>
+                            </g:if>
                             <g:if test="${revisar}">
                                 <g:link controller="solicitudMantenimientoInterno" action="${revisar}" title="Revisar" id="${solicitud.id}"
                                         class="btn btn-primary btn-sm">
@@ -114,8 +120,8 @@ table {
                                     <i class="fa fa-cubes"></i>
                                 </g:link>
                             </g:if>
-                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'solicitudMantenimientoInterno', id: solicitud.id), filename: 'solicitud_mantenimiento_externo_' + solicitud.numero + '_' + solicitud.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Solicitud de mantenimiento externo #${solicitud.numero}"
+                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'solicitudMantenimientoInterno', id: solicitud.id), filename: 'solicitud_mantenimiento_externo_' + solicitud.codigo + '_' + solicitud.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Solicitud de mantenimiento interno ${solicitud.codigo}"
                                data-pp=""
                                target="_blank"
                                iden="${solicitud.id}">

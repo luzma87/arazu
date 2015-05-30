@@ -210,6 +210,6 @@ class NotaPedido {
      * @return
      */
     String toString() {
-        return "Nota de pedido núm. ${this.numero}"
+        return "Nota de pedido ${this.codigo}"
     }
 }

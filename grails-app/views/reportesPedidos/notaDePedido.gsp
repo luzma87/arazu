@@ -10,7 +10,7 @@
         <g:set var="titleCorto" value="${nota.codigo}" scope="request"/>
         <meta name="layout" content="reporte_vertical"/>
 
-        <title>Nota de pedido #${nota.numero}</title>
+        <title>Nota de pedido ${nota.codigo}</title>
 
         <style type="text/css">
         .row {

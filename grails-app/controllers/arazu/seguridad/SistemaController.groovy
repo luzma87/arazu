@@ -135,6 +135,11 @@ class SistemaController extends Shield {
                         cant  : 0,
                         clase : classGreen
                 ],
+                D21: [
+                        estado: EstadoSolicitud.findByCodigo("D21"), // MI devuelto
+                        cant  : 0,
+                        clase : classGreen
+                ],
                 A21: [
                         estado: EstadoSolicitud.findByCodigo("A21"), // MI aprobadas
                         cant  : 0,

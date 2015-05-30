@@ -234,7 +234,7 @@
             <div class="circle showing">
                 <div class="circle-base circle-bg svt-bg-default svt-border-${clase}"></div>
 
-                <div class="circle-base circle-fg svt-bg-${clase} svt-border-${clase}">
+                <div class="circle-base circle-fg svt-bg-${clase} svt-border-${clase}" id="divTotalAlertas">
                     ${alertas.total}
                 </div>
             </div>

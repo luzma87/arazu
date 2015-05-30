@@ -24,12 +24,19 @@
     <body>
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
         <elm:container tipo="horizontal" titulo="Nueva solicitud de mantenimiento interno">
-            <div class="alert alert-info" style="margin-top: 10px;">
-                <strong>Nota:</strong> el número mostrado en esta pantalla es un número tentativo que puede cambiar al momento de guardar.
-            Se le informará el número final de su solicitud después de guardar.
-            </div>
+            <g:if test="${pedido}">
+                <div class="alert alert-warning" style="margin-top: 10px;">
+                    ${pedido.ultimaObservacion}
+                </div>
+            </g:if>
+            <g:else>
+                <div class="alert alert-info" style="margin-top: 10px;">
+                    <strong>Nota:</strong> el número mostrado en esta pantalla es un número tentativo que puede cambiar al momento de guardar.
+                Se le informará el número final de su solicitud después de guardar.
+                </div>
+            </g:else>
 
-            <g:form class="frmSolicitud" action="saveSolicitud_ignore">
+            <g:form class="frmSolicitud" action="saveSolicitud_ignore" id="${pedido?.id}">
                 <div class="row">
                     <div class="col-md-1">
                         <label class=" control-label">
@@ -39,11 +46,11 @@
 
                     <div class="col-md-5 grupo">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="maquina_input" readonly/>
+                            <input type="text" class="form-control" id="maquina_input" readonly value="${pedido?.maquinaria?.descripcion}"/>
                             <span class="input-group-addon svt-bg-warning">
                                 <i class="fa fa-keyboard-o"></i>
                             </span>
-                            <g:hiddenField name="maquinaria.id" id="maquina" class="required"/>
+                            <g:hiddenField name="maquinaria.id" id="maquina" class="required" value="${pedido?.maquinariaId}"/>
                         </div><!-- /input-group -->
                     </div>
 
@@ -64,7 +71,12 @@
                     </div>
 
                     <div class="col-md-2">
-                        ${new Date().format("dd-MM-yyyy hh:mm:ss")}
+                        <g:if test="${pedido}">
+                            ${pedido.fecha.format("dd-MM-yyyy hh:mm:ss")}
+                        </g:if>
+                        <g:else>
+                            ${new Date().format("dd-MM-yyyy hh:mm:ss")}
+                        </g:else>
                     </div>
                 </div>
 
@@ -87,7 +99,7 @@
 
                     <div class="col-md-2">
                         <g:select name="paraAF.id" from="${jefes}" optionKey="id"
-                                  class="form-control input-sm required select" required=""/>
+                                  class="form-control input-sm required select" required="" value="${pedido?.paraAF}"/>
                     </div>
 
                     <div class="col-md-1">
@@ -98,7 +110,7 @@
 
                     <div class="col-md-2">
                         <g:select name="proyecto.id" from="${Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())}" optionKey="id" optionValue="nombre"
-                                  class="form-control input-sm select" noSelection="['': '-- Seleccione --']"/>
+                                  class="form-control input-sm select" noSelection="['': '-- Seleccione --']" value="${pedido?.proyectoId}"/>
                     </div>
 
                     <div class="col-md-1">
@@ -108,7 +120,7 @@
                     </div>
 
                     <div class="col-md-2 grupo">
-                        <g:textField name="localizacion" class="form-control input-sm required"/>
+                        <g:textField name="localizacion" class="form-control input-sm required" value="${pedido?.localizacion}"/>
                     </div>
                 </div>
 
@@ -120,7 +132,7 @@
                     </div>
 
                     <div class="col-md-2 grupo">
-                        <g:textField name="horometro" class="form-control input-sm number required"/>
+                        <g:textField name="horometro" class="form-control input-sm number required" value="${pedido?.horometro}"/>
                     </div>
 
                     <div class="col-md-1">
@@ -130,7 +142,7 @@
                     </div>
 
                     <div class="col-md-2 grupo">
-                        <g:textField name="kilometraje" class="form-control input-sm number required"/>
+                        <g:textField name="kilometraje" class="form-control input-sm number required" value="${pedido?.kilometraje}"/>
                     </div>
 
                     <div class="col-md-1">
@@ -141,7 +153,7 @@
 
                     <div class="col-md-2">
                         <g:select name="encargado.id" from="${mecanicos}" optionKey="id"
-                                  class="form-control input-sm required select" required=""/>
+                                  class="form-control input-sm required select" required="" value="${pedido?.encargadoId}"/>
                     </div>
                 </div>
 
@@ -154,6 +166,7 @@
                     </div>
 
                 <g:each in="${TipoTrabajo.list([sort: 'nombre'])}" var="tipo" status="i">
+                    <g:set var="contains" value="${trabajos.tipoTrabajo.id.contains(tipo.id)}"/>
                     <g:if test="${i % 4 == 0}">
                         <g:if test="${i > 0}">
                             </div>
@@ -161,8 +174,9 @@
                         <div class='row'>
                     </g:if>
                     <div class="col-md-3">
-                        <span class="clickable" data-state="off" data-id="${tipo.id}">
-                            <i class="fa fa-square-o"></i> ${tipo}
+                        <span class="clickable ${contains ? 'text-info' : ''}" style="font-weight: ${contains ? 'bold' : 'normal'};"
+                              data-state="${contains ? 'on' : 'off'}" data-id="${tipo.id}">
+                            <i class="fa fa-${contains ? 'check-square-o' : 'square-o'}"></i> ${tipo}
                         </span>
                     </div>
                 </g:each>
@@ -178,12 +192,12 @@
 
                 <div class="row">
                     <div class="col-md-12 grupo ">
-                        <g:textArea name="detalles" class="form-control required" style="height: 200px;"/>
+                        <g:textArea name="detalles" class="form-control required" style="height: 200px;" value="${pedido?.detalles}"/>
                     </div>
                 </div>
 
-                <g:textField name="materiales"/>
-                <g:textField name="manoObra"/>
+                <g:hiddenField name="materiales"/>
+                <g:hiddenField name="manoObra"/>
 
             </g:form>
 
@@ -238,7 +252,7 @@
                                         <td>${dt.fecha.format('dd-MM-yyyy')}</td>
                                         <td>${dt.observaciones}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-danger btnDeletePersona">
+                                            <a href="#" class="btn btn-sm btn-danger btnDeletePersona" data-id="${dt.id}">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </td>
@@ -312,7 +326,7 @@
                                         <td>${dt.marca}</td>
                                         <td>${dt.observaciones}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-danger btnDeleteMaterial">
+                                            <a href="#" class="btn btn-sm btn-danger btnDeleteMaterial" data-id="${dt.id}">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </td>
@@ -374,12 +388,11 @@
             }
 
             $(function () {
-                $("#maquina").val("");
-                $("#trabajos").val("");
-                $("#materiales").val("");
-                $("#manoObra").val("");
+                <g:if test="${!pedido}">
+                $("#maquina, #trabajos, #materiales, #manoObra, #maquina_input").val("");
+                </g:if>
 
-                $("#maquina_input").val("").click(function () {
+                $("#maquina_input").click(function () {
                     openLoader();
                     $.ajax({
                         type    : "POST",
@@ -562,6 +575,71 @@
                     } else {
                         log("No puede ingresar la misma combinación de persona - fecha más de una vez.", "error");
                     }
+                    return false;
+                });
+
+                $(".btnDeletePersona").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.confirm("¿Está seguro de querer eliminar esta persona?", function (res) {
+                        if (res) {
+                            openLoader();
+                            $.ajax({
+                                type    : "POST",
+                                url     : '${createLink(controller:'solicitudMantenimientoInterno', action:'eliminarPersona_ajax')}',
+                                data    : {
+                                    id : id
+                                },
+                                success : function (msg) {
+                                    var parts = msg.split("*");
+                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                    if (parts[0] == "SUCCESS") {
+                                        setTimeout(function () {
+                                            location.reload(true);
+                                        }, 1000);
+                                    } else {
+                                        closeLoader();
+                                    }
+                                },
+                                error   : function () {
+                                    log("Ha ocurrido un error interno", "error");
+                                    closeLoader();
+                                }
+                            });
+                        }
+                    });
+                    return false;
+                });
+
+                $(".btnDeleteMaterial").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.confirm("¿Está seguro de querer eliminar este material?", function (res) {
+                        if (res) {
+                            openLoader();
+                            $.ajax({
+                                type    : "POST",
+                                url     : '${createLink(controller:'solicitudMantenimientoInterno', action:'eliminarRepuesto_ajax')}',
+                                data    : {
+                                    id : id
+                                },
+                                success : function (msg) {
+                                    var parts = msg.split("*");
+                                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                    if (parts[0] == "SUCCESS") {
+                                        setTimeout(function () {
+                                            location.reload(true);
+                                        }, 1000);
+                                    } else {
+                                        closeLoader();
+                                    }
+                                },
+                                error   : function () {
+                                    log("Ha ocurrido un error interno", "error");
+                                    closeLoader();
+                                }
+                            });
+                        }
+                    });
+
                     return false;
                 });
 

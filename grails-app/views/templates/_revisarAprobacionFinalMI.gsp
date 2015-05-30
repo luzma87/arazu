@@ -17,6 +17,9 @@
             <a href="#" class="btn btn-info" id="btnAprobar">
                 <i class="fa fa-check"></i> Aprobar
             </a>
+            <a href="#" class="btn btn-warning" id="btnDevolver">
+                <i class="fa fa-arrow-left"></i> Devolver
+            </a>
             <a href="#" class="btn btn-danger" id="btnNegar">
                 <i class="fa fa-times"></i> Negar
             </a>
@@ -130,6 +133,31 @@
             });
         }
     }
+    function submitDevolver() {
+        if ($("#frmDevolver").valid()) {
+            openLoader();
+            $.ajax({
+                type    : "POST",
+                url     : "${createLink(controller:'solicitudMantenimientoInterno', action:'devolverFinal_ajax')}",
+                data    : {
+                    id    : "${solicitud.id}",
+                    auth  : $("#auth").val(),
+                    razon : $("#razon").val()
+                },
+                success : function (msg) {
+                    var parts = msg.split("*");
+                    log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                    if (parts[0] == "SUCCESS") {
+                        setTimeout(function () {
+                            location.href = "${createLink(conroller:'solicitudMantenimientoInterno', action:'lista'+tipo)}";
+                        }, 1000);
+                    } else {
+                        closeLoader();
+                    }
+                }
+            });
+        }
+    }
 
     $(function () {
         $("#btnAprobar").click(function () {
@@ -186,6 +214,42 @@
                                 className : "btn-danger",
                                 callback  : function () {
                                     submitNegar();
+                                    return false;
+                                } //callback
+                            },
+                            cancelar : {
+                                label     : "Cancelar",
+                                className : "btn-default",
+                                callback  : function () {
+                                }
+                            }
+                        } //buttons
+                    }); //dialog
+                    setTimeout(function () {
+                        b.find(".form-control").first().focus()
+                    }, 500);
+                } //success
+            }); //ajax
+            return false;
+        });
+        $("#btnDevolver").click(function () {
+            $.ajax({
+                type    : "POST",
+                url     : "${createLink(controller:'solicitudMantenimientoInterno', action:'dlgDevolverFinal_ajax')}",
+                data    : {
+                    id : "${solicitud.id}"
+                },
+                success : function (msg) {
+                    var b = bootbox.dialog({
+                        id      : "dlgDevolverSolicitudMantInt",
+                        title   : "Devolver Solicitud de Mantenimiento Interno",
+                        message : msg,
+                        buttons : {
+                            negar    : {
+                                label     : "<i class='fa fa-arrow-left'></i> Devolver",
+                                className : "btn-warning",
+                                callback  : function () {
+                                    submitDevolver();
                                     return false;
                                 } //callback
                             },

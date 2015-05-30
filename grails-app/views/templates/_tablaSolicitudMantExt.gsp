@@ -71,7 +71,7 @@ table {
 <table class="table table-striped  table-bordered table-hover table-condensed" style="margin-top: 0;">
     <thead>
         <tr>
-            <g:sortableColumn property="numero" title="Número" style="width: 50px;"/>
+            <g:sortableColumn property="numero" title="Código" style="width: 50px;"/>
             <g:sortableColumn property="fecha" title="Fecha" style="width: 130px;"/>
             <g:sortableColumn property="de" title="Solicita" style="width: 150px;"/>
             <g:sortableColumn property="maquinaria" title="Maquinaria" style="width: 150px;"/>
@@ -90,7 +90,7 @@ table {
         <g:if test="${solicitudesCount > 0}">
             <g:each in="${solicitudes}" var="solicitud">
                 <tr>
-                    <td>${solicitud.numero}</td>
+                    <td>${solicitud.codigo}</td>
                     <td>${solicitud.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                     <td>${solicitud.de}</td>
                     <td>${solicitud.maquinaria}</td>
@@ -115,8 +115,8 @@ table {
                                     <i class="fa fa-pencil-square-o"></i>
                                 </g:link>
                             </g:if>
-                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'solicitudMantenimientoExterno', id: solicitud.id), filename: 'solicitud_mantenimiento_externo_' + solicitud.numero + '_' + solicitud.fecha.format('dd-MM-yyyy') + ".pdf")}"
-                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Solicitud de mantenimiento externo #${solicitud.numero}"
+                            <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'solicitudMantenimientoExterno', id: solicitud.id), filename: 'solicitud_mantenimiento_externo_' + solicitud.codigo + '_' + solicitud.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                               title="Imprimir" class="btn btn-info btn-sm " data-ref="Solicitud de mantenimiento externo ${solicitud.codigo}"
                                data-pp=""
                                target="_blank"
                                iden="${solicitud.id}">

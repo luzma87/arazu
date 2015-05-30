@@ -179,6 +179,6 @@ class SolicitudMantenimientoExterno {
      * @return
      */
     String toString() {
-        return "Solicitud de mantenimiento externo núm. ${this.numero}"
+        return "Solicitud de mantenimiento externo ${this.codigo}"
     }
 }

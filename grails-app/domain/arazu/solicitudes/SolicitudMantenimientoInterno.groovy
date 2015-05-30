@@ -55,6 +55,10 @@ class SolicitudMantenimientoInterno {
      */
     Firma firmaNiega
     /**
+     * Firma del que devuelve
+     */
+    Firma firmaDevuelve
+    /**
      * Observaciones para guardar al momento de cambiar de estado el pedido
      */
     String observaciones
@@ -110,6 +114,7 @@ class SolicitudMantenimientoInterno {
             firmaSolicita column: 'sminfrsl'
             firmaAprueba column: 'sminfrap'
             firmaNiega column: 'sminfrng'
+            firmaDevuelve column: 'sminfrdv'
             observaciones column: 'sminobsv'
             observaciones type: "text"
             localizacion column: 'sminlclz'
@@ -135,6 +140,7 @@ class SolicitudMantenimientoInterno {
         firmaSolicita nullable: true
         firmaAprueba nullable: true
         firmaNiega nullable: true
+        firmaDevuelve nullable: true
         observaciones blank: true, nullable: true
 
         encargado nullable: true
@@ -158,10 +164,28 @@ class SolicitudMantenimientoInterno {
     }
 
     /**
+     * Función que retorna las observaciones con un formato amigable para el usuario
+     * @return String observaciones con formato HTML
+     */
+    def getUltimaObservacion() {
+        def html = ""
+        if (this.observaciones) {
+            def parts = this.observaciones.split("\\|\\|")
+            html = parts.first()
+//            html = "<ul>"
+//            parts.each { p ->
+//                html += "<li>" + p + "</li>"
+//            }
+//            html += "</ul>"
+        }
+        return html
+    }
+
+    /**
      * Función que retorna el número de la solicitud
      * @return
      */
     String toString() {
-        return "Solicitud de mantenimiento interno núm. ${this.numero}"
+        return "Solicitud de mantenimiento interno ${this.codigo}"
     }
 }

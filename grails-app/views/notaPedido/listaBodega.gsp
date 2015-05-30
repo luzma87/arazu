@@ -18,7 +18,7 @@
             <table class="table table-striped  table-bordered table-hover table-condensed">
                 <thead>
                     <tr>
-                        <th style="width: 50px">Número</th>
+                        <th style="width: 50px">Código</th>
                         <th style="width: 130px">Fecha</th>
                         <th style="width: 80px">Tipo</th>
                         <th style="">Item</th>
@@ -33,7 +33,7 @@
                         <g:set var="entregado" value="${Egreso.findAllByPedidoAndFirmaIsNotNull(nota).cantidad.sum() ?: 0}"/>
                         <g:if test="${entregado < nota.cantidad}">
                             <tr>
-                                <td>${nota.numero}</td>
+                                <td>${nota.codigo}</td>
                                 <td>${nota.fecha.format("dd-MM-yyyy hh:mm:ss")}</td>
                                 <td>${nota.motivoSolicitud}</td>
                                 <td>
@@ -66,7 +66,7 @@
                                         <a href="#" title="Egreso" data-id="${nota.id}" class="btn btn-warning btn-sm btnEg">
                                             <i class="fa fa-upload"></i>
                                         </a>
-                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.numero + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
+                                        <a href="${elm.pdfLink(href: createLink(controller: 'reportesPedidos', action: 'notaDePedido', id: nota.id), filename: 'nota_pedido_' + nota.codigo + '_' + nota.fecha.format('dd-MM-yyyy') + ".pdf")}"
                                            title="Imprimir" class="btn btn-info btn-sm imprimir" iden="${nota.id}">
                                             <i class="fa fa-print"></i>
                                         </a>

@@ -10,7 +10,7 @@
         <g:set var="titleCorto" value="${solicitud.codigo}" scope="request"/>
         <meta name="layout" content="reporte_vertical"/>
 
-        <title>Solicitud de mantenimiento interno #${solicitud.numero}</title>
+        <title>Solicitud de mantenimiento interno ${solicitud.codigo}</title>
 
         <style type="text/css">
         .row {

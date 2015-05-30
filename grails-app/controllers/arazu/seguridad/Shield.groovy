@@ -20,15 +20,15 @@ class Shield {
             session.finalize()
             return false
         } else {
-            if (!session.sistema) {
-                if (session.cn != "sistema") {
-//                    if (session.cn != "acciones" && session.an != "acciones") {
-                    println "intenta acceder a " + controllerName + "/" + actionName + "  params: " + params + " pero no tiene sistema"
-                    redirect(controller: 'sistema', action: 'index')
-                    return false
-//                    }
-                }
-            }
+//            if (!session.sistema) {
+//                if (session.cn != "sistema") {
+////                    if (session.cn != "acciones" && session.an != "acciones") {
+//                    println "intenta acceder a " + controllerName + "/" + actionName + "  params: " + params + " pero no tiene sistema"
+//                    redirect(controller: 'sistema', action: 'index')
+//                    return false
+////                    }
+//                }
+//            }
 //            return true
             if (isAllowed()) {
                 return true
