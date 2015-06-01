@@ -149,7 +149,28 @@ class Persona {
         if (personal.size() == 1) {
             return personal.first().proyecto
         } else {
-            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+//            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+            return null
+        }
+    }
+
+    /**
+     * Devuelve las fechas de inicio y de fin de asignación al proyecto actual de una persona
+     */
+    def getFechasProyectoActual() {
+        def now = new Date()
+        def personal = PersonalProyecto.withCriteria {
+            eq("persona", this)
+            le("fechaInicio", now)
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", now)
+            }
+        }
+        if (personal.size() == 1) {
+            return [inicio: personal.first().fechaInicio, final: personal.first().fechaFin]
+        } else {
+//            println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
             return null
         }
     }
@@ -169,7 +190,7 @@ class Persona {
         if (personal.size() == 1) {
             return personal.first().proyecto
         } else {
-           // println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
+            // println "Hay ${personal.size()} registros de personal proyecto: ${personal}"
             return null
         }
     }

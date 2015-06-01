@@ -1,62 +1,45 @@
 <!DOCTYPE html>
-<%@ page import="arazu.nomina.Asistencia" %>
+<%@ page import="arazu.proyectos.Proyecto; arazu.nomina.Asistencia" %>
 <html>
     <head>
         <meta name="layout" content="main">
-        <title>Registro de asistencia</title>
-        <style type="text/css">
-        .empleado {
-            background  : #3A5DAA;
-            color       : white;
-            font-weight : bold;
-        }
+        <title>Registro de asistencia${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
-        .actual {
-            background : none;
-            cursor     : pointer;
-        }
-
-        .NAST {
-            background : #FFA324 !important;
-            color      : white;
-        }
-
-        .ASTE {
-            background : #82A640 !important;
-            color      : white;
-        }
-        .VCAN {
-            background : #2b96a6 !important;
-            color      : white;
-        }
-        .VCJN {
-            background : #a583a6 !important;
-            color      : white;
-        }
-
-        td {
-            width : 80px !important;
-        }
-
-        .table-striped > tbody > tr:nth-of-type(odd) > td.disabled {
-            background : #c9c9c9;
-        }
-        </style>
+        <imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>
     </head>
 
     <body>
-        <elm:container tipo="horizontal" titulo="Registro de asistencia">
+        <elm:container tipo="horizontal" titulo="Registro de asistencia${proy ? ' del proyecto ' + proy.nombre : ''}">
+            <div class="row">
+                <div class="col-sm-1">
+                    <label for="proyecto">Proyecto</label>
+                </div>
+
+                <div class="col-sm-3">
+                    <g:select name="proyecto" from="${proyectos}" class="form-control"
+                              optionKey="id" noSelection="['': '- Todos -']" data-live-search="true"/>
+                </div>
+
+                <div class="col-sm-1">
+                    <a href="#" class="btn btn-info" id="btnChangeProy">
+                        <i class="fa fa-refresh"></i>
+                        Cambiar
+                    </a>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <table class="table table-condensed table-bordered table-hover table-striped">
                         <thead>
                             <tr>
                                 <th colspan="${max - min + 2}">
-                                    ${now.format("MMMM-yyyy").toUpperCase()}
+                                    %{--${now.format("MMMM-yyyy").toUpperCase()}--}%
+                                    ${g.formatDate(date: now, format: 'MMMM yyyy', locale: 'es').toString().toUpperCase()}
                                 </th>
                             </tr>
                             <tr>
-                                <th>Empleado</th>
+                                <th style="width: 87px;">Empleado</th>
                                 <g:each in="${min..max}" var="i" status="j">
                                     <th>
                                         ${i}
@@ -66,10 +49,23 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <g:set var="lastProyId" value="${''}"/>
                             <g:each in="${empleados}" var="empleado">
+                                <g:if test="${lastProyId != empleado.proyecto?.id}">
+                                    <g:set var="lastProyId" value="${empleado.proyecto?.id}"/>
+                                    <tr>
+                                        <th class="success" colspan="${max - min + 2}">
+                                            ${empleado.proyecto ?: 'Sin proyecto'}
+                                        </th>
+                                    </tr>
+                                </g:if>
                                 <tr>
                                     <td class="empleado">
                                         ${empleado.nombre} ${empleado.apellido}
+                                        <g:if test="${empleado.proyecto}">
+                                            <g:set var="fechas" value="${empleado.fechasProyectoActual}"/>
+                                            <br/><small>(desde ${fechas.inicio.format("dd-MM-yyyy")}${fechas.final ? ' a ' + fechas.final.format("dd-MM-yyyy") : ''})</small>
+                                        </g:if>
                                     </td>
                                     <g:each in="${min..max}" var="i" status="j">
                                         <g:set var="fecha"
@@ -84,7 +80,7 @@
                                                     <i class='fa fa-check'></i>
                                                 </g:if>
                                                 <g:if test="${asistencia.tipo.codigo == 'NAST'}">
-                                                    <i style="color: red"  class='fa fa-times'></i>
+                                                    <i style="color: red" class='fa fa-times'></i>
                                                 </g:if>
                                                 <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
                                                     <i class='fa fa-plane'></i>
@@ -94,12 +90,9 @@
                                                 </g:if>
                                                 ${asistencia.tipo.nombre}
                                             </g:if>
-
                                         </td>
                                     </g:each>
-
                                 </tr>
-
                             </g:each>
                         </tbody>
                     </table>
@@ -205,32 +198,32 @@
                 var celda = $(this);
                 if (celda.hasClass("VCAN") || celda.hasClass("vacio")) {
                     celda.addClass("ASTE");
-                    celda.attr("tipo","ASTE")
+                    celda.attr("tipo", "ASTE")
                     celda.html("<i class='fa fa-check'></i> Asiste");
                     celda.removeClass("NAST");
                     celda.removeClass("VCAN");
                     celda.removeClass("VCJN");
                     celda.removeClass("vacio");
-                }else{
+                } else {
                     if (celda.hasClass("ASTE")) {
                         celda.addClass("NAST");
-                        celda.attr("tipo","NAST")
+                        celda.attr("tipo", "NAST")
                         celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
                         celda.removeClass("ASTE");
                         celda.removeClass("VCAN");
                         celda.removeClass("VCJN");
-                    }else{
+                    } else {
                         if (celda.hasClass("NAST")) {
                             celda.addClass("VCJN");
-                            celda.attr("tipo","VCJN")
+                            celda.attr("tipo", "VCJN")
                             celda.html("<i  style='color:white' class='fa fa-car'></i> Vacaciones de jornada");
                             celda.removeClass("ASTE");
                             celda.removeClass("VCAN");
                             celda.removeClass("NAST");
-                        }else{
+                        } else {
                             if (celda.hasClass("VCJN")) {
                                 celda.addClass("VCAN");
-                                celda.attr("tipo","VCAN")
+                                celda.attr("tipo", "VCAN")
                                 celda.html("<i  style='color:white' class='fa fa-plane'></i> Vacaciones Anuales");
                                 celda.removeClass("ASTE");
                                 celda.removeClass("NAST");
@@ -240,39 +233,50 @@
                     }
                 }
 
-
-
             });
-            $("#guardar").click(function () {
-                bootbox.confirm("Está seguro?", function (result) {
-                    if (result) {
+            $(function () {
+                <g:if test="${proy}">
+                $("#proyecto").val('${proy.id}');
+                </g:if>
+                <g:else>
+                $("#proyecto").val('');
+                </g:else>
+                $('#proyecto').selectpicker('render');
 
-                        openLoader();
-                        var data = "";
-                        $(".actual").each(function () {
-                            data += $(this).attr("empleado") + ";" + $(this).attr("fecha") + ";"+$(this).attr("tipo")+"|"
-                        });
-
-                        if (data != "") {
-                            $.ajax({
-                                type    : "POST",
-                                url     : "${g.createLink(controller:'asistencia',action:'guardarDatos_ajax')}",
-                                data    : "data=" + data,
-                                success : function (msg) {
-                                    closeLoader();
-                                    log("Datos guardados", "Success");
-                                },
-                                error   : function () {
-                                    log("Ha ocurrido un error interno", "Error");
-                                    closeLoader();
-                                }
-                            });
-                        } else {
-                            closeLoader();
-                        }
-                    }
+                $("#btnChangeProy").click(function () {
+                    location.href = "${createLink(action:'registroAsistencia')}/" + $("#proyecto").val();
                 });
+                $("#guardar").click(function () {
+                    bootbox.confirm("¿Está seguro de querer registrar las asistencias?", function (result) {
+                        if (result) {
 
+                            openLoader();
+                            var data = "";
+                            $(".actual").each(function () {
+                                data += $(this).attr("empleado") + ";" + $(this).attr("fecha") + ";" + $(this).attr("tipo") + "|"
+                            });
+
+                            if (data != "") {
+                                $.ajax({
+                                    type    : "POST",
+                                    url     : "${g.createLink(controller:'asistencia',action:'guardarDatos_ajax')}",
+                                    data    : "data=" + data,
+                                    success : function (msg) {
+                                        closeLoader();
+                                        log("Datos guardados", "Success");
+                                    },
+                                    error   : function () {
+                                        log("Ha ocurrido un error interno", "Error");
+                                        closeLoader();
+                                    }
+                                });
+                            } else {
+                                closeLoader();
+                            }
+                        }
+                    });
+
+                });
             });
         </script>
     </body>

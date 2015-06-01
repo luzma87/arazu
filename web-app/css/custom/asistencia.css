@@ -1,0 +1,50 @@
+.empleado {
+    background  : #3A5DAA;
+    color       : white;
+    font-weight : bold;
+}
+
+.actual {
+    background : none;
+    cursor     : pointer;
+}
+
+.NAST {
+    background : #FFA324 !important;
+    color      : white;
+}
+
+.ASTE {
+    background : #82A640 !important;
+    color      : white;
+}
+
+.VCAN {
+    background : #2b96a6 !important;
+    color      : white;
+}
+
+.VCJN {
+    background : #a583a6 !important;
+    color      : white;
+}
+
+td {
+    width : 80px !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td.disabled {
+    background : #c9c9c9;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd):hover td:not(.empleado) {
+    background : #b0b0b0;
+}
+
+.number {
+    text-align : right !important;
+}
+
+small {
+    font-weight : normal;
+}

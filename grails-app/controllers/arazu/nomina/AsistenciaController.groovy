@@ -1,12 +1,13 @@
 package arazu.nomina
 
-import arazu.parametros.TipoAsistencia;
+import arazu.parametros.TipoAsistencia
+import arazu.proyectos.Proyecto;
 import arazu.seguridad.Persona
 import arazu.seguridad.Shield
 
 class AsistenciaController extends Shield {
 
-    def verAsistencia(){
+    def verAsistencia() {
         def now = new Date();
         def dia = now.format("dd").toInteger()
         def min, max
@@ -15,13 +16,23 @@ class AsistenciaController extends Shield {
         min = 1
         max = daysInMonth
 
-        def empleados = Persona.list()
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
 
-        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+        def empleados = Persona.list()
+        if (proy) {
+            empleados = empleados.findAll { it.proyecto == proy }
+        }
+        empleados = empleados.sort { it.proyecto }
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
 
-    def verHorasExtra(){
+    def verHorasExtra() {
         def now = new Date();
         def dia = now.format("dd").toInteger()
         def min, max
@@ -31,16 +42,26 @@ class AsistenciaController extends Shield {
         min = 1
         max = daysInMonth
 
-        def empleados = Persona.list()
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
 
-        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+        def empleados = Persona.list()
+        if (proy) {
+            empleados = empleados.findAll { it.proyecto == proy }
+        }
+        empleados = empleados.sort { it.proyecto }
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
     def registroAsistencia() {
 
         def now = new Date();
         def dia = now.format("dd").toInteger()
-        def min, max
+        def min = 1, max = 10
         def mycal = new GregorianCalendar(now.format("yyyy").toInteger(), now.format("MM").toInteger() - 1, dia);
         def daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH)
 
@@ -59,15 +80,25 @@ class AsistenciaController extends Shield {
             }
         }
 
-        def empleados = Persona.list()
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
 
-        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+        def empleados = Persona.list()
+        if (proy) {
+            empleados = empleados.findAll { it.proyecto == proy }
+        }
+        empleados = empleados.sort { it.proyecto }
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
     def registroHorasExtra() {
         def now = new Date();
         def dia = now.format("dd").toInteger()
-        def min, max
+        def min = 1, max = 10
         def mycal = new GregorianCalendar(now.format("yyyy").toInteger(), now.format("MM").toInteger() - 1, dia);
         def daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH)
 
@@ -86,9 +117,19 @@ class AsistenciaController extends Shield {
             }
         }
 
-        def empleados = Persona.list()
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
 
-        [min: min, max: max, now: now, empleados: empleados, dia: dia]
+        def empleados = Persona.list()
+        if (proy) {
+            empleados = empleados.findAll { it.proyecto == proy }
+        }
+        empleados = empleados.sort { it.proyecto }
+
+        [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
     def form_ajax() {
@@ -104,7 +145,7 @@ class AsistenciaController extends Shield {
     }
 
     def guardarDatos_ajax() {
-        println "params guardar datos "+params
+        println "params guardar datos " + params
         def datos = params.data.split("\\|")
         //println "datos "+datos
         datos.each { d ->
