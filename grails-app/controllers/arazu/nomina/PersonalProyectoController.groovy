@@ -123,6 +123,13 @@ class PersonalProyectoController extends Shield {
             order("proyecto", "asc")
             order("persona", "asc")
         }
-        return [personal: personal]
+
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
+
+        return [personal: personal, proy: proy, proyectos: proyectos]
     }
 }

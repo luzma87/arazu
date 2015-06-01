@@ -323,7 +323,7 @@ class ElementosTagLib {
 
         def defaultFormat = "dd-MM-YYYY"
         if (showTime) {
-            defaultFormat += " hh:mm"
+            defaultFormat += " HH:mm"
         }
 
         def format = attrs.format ?: defaultFormat
@@ -342,6 +342,7 @@ class ElementosTagLib {
 
         def beforeShowDay = attrs.beforeShowDay ?: false
         def onChangeDate = attrs.onChangeDate ?: false
+        def onHide = attrs.onHide ?: false
 
         def daysOfWeekDisabled = attrs.daysOfWeekDisabled ?: false
 
@@ -478,6 +479,12 @@ class ElementosTagLib {
         js += "}" + br
         if (onChangeDate) {
             js += onChangeDate + "(\$(this), e);" + br
+        }
+        js += "})" + br
+        js += ".on('dp.hide', function(e) {" + br
+//        js += 'console.log(e.date.date(),e.date.month(),e.date.year(), e.date.hour(), e.date.minute());'
+        if (onHide) {
+            js += onHide + "(\$(this), e);" + br
         }
         js += "});" + br
         js += "</script>" + br
