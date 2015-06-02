@@ -113,6 +113,62 @@ class PersonalProyectoController extends Shield {
         return [proyecto: proyecto, personalProyecto: personalProyecto, personalDisponible: personalDisponible]
     }
 
+    /**
+     * Acción llamada con ajax que guarda las modificaciones de fechas de inicio y fin de asignación de una persona a un proyecto
+     */
+    def saveFechas_ajax() {
+        println params
+        def errores = ""
+        params.each { k, v ->
+            def parts = k.toString().split("_")
+            if (parts.size() == 3) {
+                def tipo = parts[0]
+                def id = parts[1].toLong()
+                def personal = PersonalProyecto.get(id)
+                if (tipo == "desde") {
+                    personal.fechaInicio = new Date().parse("dd-MM-yyyy HH:mm", v.toString())
+                } else if (tipo == "hasta") {
+                    personal.fechaFin = new Date().parse("dd-MM-yyyy HH:mm", v.toString())
+                }
+                if (!personal.save(flush: true)) {
+                    println "Error al guardar fechas de personal proyecto: " + personal.errors
+                    errores += renderErrors(bean: personal)
+                }
+            }
+        }
+        if (errores == "") {
+            render "SUCCESS*Fechas modificadas exitosamente"
+        } else {
+            render "ERROR*" + errores
+        }
+    }
+
+    /**
+     * Acción que muestra y permite modificar las fechas de inicio y fin de asignación de una persona a un proyecto
+     */
+    def personalProyectosAdmin() {
+        def personal = PersonalProyecto.withCriteria {
+            le("fechaInicio", new Date())
+            or {
+                isNull("fechaFin")
+                ge("fechaFin", new Date())
+            }
+            order("proyecto", "asc")
+            order("persona", "asc")
+        }
+
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
+
+        return [personal: personal, proy: proy, proyectos: proyectos]
+    }
+
+    /**
+     * Acción que muestra las fechas de inicio y fin de asignación de una persona a un proyecto
+     */
     def personalProyectos() {
         def personal = PersonalProyecto.withCriteria {
             le("fechaInicio", new Date())

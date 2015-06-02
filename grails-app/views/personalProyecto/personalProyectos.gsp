@@ -1,5 +1,12 @@
 <%--
   Created by IntelliJ IDEA.
+  User: luz
+  Date: 02/06/15
+  Time: 10:43 AM
+--%>
+
+<%--
+  Created by IntelliJ IDEA.
   User: LUZ
   Date: 13-May-15
   Time: 22:03
@@ -24,7 +31,7 @@
                               optionKey="id" noSelection="['': '- Todos -']" data-live-search="true"/>
                 </div>
 
-                <div class="col-sm-1">
+                <div class="col-sm-3">
                     <a href="#" class="btn btn-info" id="btnChangeProy">
                         <i class="fa fa-refresh"></i>
                         Cambiar
@@ -37,8 +44,12 @@
                     <tr>
                         <th>Proyecto</th>
                         <th>Persona</th>
-                        <th style="width: 200px;">Fecha de inicio</th>
-                        <th style="width: 200px;">Fecha de fin</th>
+                        <th style="width: 200px;">
+                            Fecha de inicio
+                        </th>
+                        <th style="width: 200px;">
+                            Fecha de fin
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,22 +60,10 @@
                             <td>${p.proyecto}</td>
                             <td>${p.persona}</td>
                             <td class="tdDate" data-val="${desde}">
-                                <div class="col-md-12 divDate hidden">
-                                    <elm:datepicker class="form-control input-sm txtDate" name="desde_${p.id}" showTime="true"
-                                                    value="${p.fechaInicio}" placeholder="Inicio" onHide="cambioFecha"/>
-                                </div>
-                                <span class="spanDate">
-                                    ${desde}
-                                </span>
+                                ${desde}
                             </td>
                             <td class="tdDate" data-val="${hasta}">
-                                <div class="col-md-12 divDate hidden">
-                                    <elm:datepicker class="form-control input-sm txtDate" name="hasta_${p.id}" showTime="true"
-                                                    value="${p.fechaFin}" placeholder="Fin" onHide="cambioFecha"/>
-                                </div>
-                                <span class="spanDate">
-                                    ${hasta}
-                                </span>
+                                ${hasta}
                             </td>
                         </tr>
                     </g:each>
@@ -73,16 +72,6 @@
         </elm:container>
 
         <script type="text/javascript">
-            function cambioFecha($elm) {
-                var fecha = $elm.val();
-                var $td = $elm.parents("td");
-                var $dv = $td.find(".divDate");
-                var $sp = $td.find(".spanDate");
-
-                $sp.text(fecha);
-                $dv.addClass("hidden");
-            }
-
             $(function () {
                 <g:if test="${proy}">
                 $("#proyecto").val('${proy.id}');
@@ -90,23 +79,9 @@
                 <g:else>
                 $("#proyecto").val('');
                 </g:else>
-                $('#proyecto').selectpicker('render');
 
                 $("#btnChangeProy").click(function () {
-                    location.href = "${createLink(action:'personalProyectos')}/" + $("#proyecto").val();
-                });
-
-                $('.txtDate').datetimepicker();
-                $(".tdDate").click(function () {
-                    var $td = $(this);
-                    var $dp = $td.find(".txtDate");
-                    var $dv = $td.find(".divDate");
-                    var $sp = $td.find(".spanDate");
-                    var fechaOriginal = $td.data("val");
-                    $sp.text("");
-                    $dp.val(fechaOriginal);
-                    $dv.removeClass("hidden");
-//                    $dp.click();
+                    location.href = "${createLink(action:'personalProyectosAdmin')}/" + $("#proyecto").val();
                 });
             });
         </script>
