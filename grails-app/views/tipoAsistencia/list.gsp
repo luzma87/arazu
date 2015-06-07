@@ -1,4 +1,3 @@
-
 <%@ page import="arazu.parametros.TipoAsistencia" %>
 <!DOCTYPE html>
 <html>
@@ -6,17 +5,19 @@
         <meta name="layout" content="main">
         <title>Lista de TipoAsistencia</title>
     </head>
+
     <body>
 
         <elm:message tipo="${flash.tipo}" clase="${flash.clase}">${flash.message}</elm:message>
 
-    <!-- botones -->
+        <!-- botones -->
         <div class="btn-toolbar toolbar">
             <div class="btn-group">
                 <a href="#" class="btn btn-default btnCrear">
                     <i class="fa fa-file-o"></i> Crear
                 </a>
             </div>
+
             <div class="btn-group pull-right col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control input-search" placeholder="Buscar" value="${params.search}">
@@ -32,29 +33,36 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    
-                    <g:sortableColumn property="nombre" title="Nombre" />
-                    
-                    <g:sortableColumn property="codigo" title="Codigo" />
-                    
+                    <g:sortableColumn property="orden" title="Orden"/>
+
+                    <g:sortableColumn property="codigo" title="Código"/>
+
+                    <g:sortableColumn property="nombre" title="Nombre"/>
+
+                    <g:sortableColumn property="color" title="Icono"/>
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${tipoAsistenciaInstanceCount > 0}">
                     <g:each in="${tipoAsistenciaInstanceList}" status="i" var="tipoAsistenciaInstance">
                         <tr data-id="${tipoAsistenciaInstance.id}">
-                            
-                            <td>${tipoAsistenciaInstance.nombre}</td>
-                            
+
+                            <td>${tipoAsistenciaInstance.orden}</td>
+
                             <td><elm:textoBusqueda busca="${params.search}"><g:fieldValue bean="${tipoAsistenciaInstance}" field="codigo"/></elm:textoBusqueda></td>
-                            
+
+                            <td><elm:textoBusqueda busca="${params.search}">${tipoAsistenciaInstance.nombre}</elm:textoBusqueda></td>
+
+                            <td class="text-center" style="background: ${tipoAsistenciaInstance.color}">
+                                <i class="${tipoAsistenciaInstance.icono}"></i>
+                            </td>
                         </tr>
                     </g:each>
                 </g:if>
                 <g:else>
                     <tr class="danger">
                         <td class="text-center" colspan="2">
-                            <g:if test="${params.search && params.search!= ''}">
+                            <g:if test="${params.search && params.search != ''}">
                                 No se encontraron resultados para su búsqueda
                             </g:if>
                             <g:else>
@@ -83,7 +91,7 @@
                         success : function (msg) {
                             var parts = msg.split("*");
                             log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (parts[0] == "SUCCESS") {
                                     location.reload(true);
                                 } else {
@@ -93,14 +101,14 @@
                                 }
                             }, 1000);
                         },
-                        error: function() {
+                        error   : function () {
                             log("Ha ocurrido un error interno", "Error");
                             closeLoader();
                         }
                     });
-            } else {
-                return false;
-            } //else
+                } else {
+                    return false;
+                } //else
             }
             function deleteTipoAsistencia(itemId) {
                 bootbox.dialog({
@@ -129,14 +137,14 @@
                                         var parts = msg.split("*");
                                         log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
                                         if (parts[0] == "SUCCESS") {
-                                            setTimeout(function() {
+                                            setTimeout(function () {
                                                 location.reload(true);
                                             }, 1000);
                                         } else {
                                             closeLoader();
                                         }
                                     },
-                                    error: function() {
+                                    error   : function () {
                                         log("Ha ocurrido un error interno", "Error");
                                         closeLoader();
                                     }
@@ -148,16 +156,16 @@
             }
             function createEditTipoAsistencia(id) {
                 var title = id ? "Editar" : "Crear";
-                var data = id ? { id: id } : {};
+                var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
                     url     : "${createLink(controller:'tipoAsistencia', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id      : "dlgCreateEditTipoAsistencia",
-                            title   : title + " TipoAsistencia",
-                            
+                            id    : "dlgCreateEditTipoAsistencia",
+                            title : title + " TipoAsistencia",
+
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -185,7 +193,7 @@
 
             $(function () {
 
-                $(".btnCrear").click(function() {
+                $(".btnCrear").click(function () {
                     createEditTipoAsistencia();
                     return false;
                 });
@@ -209,8 +217,8 @@
                                     },
                                     success : function (msg) {
                                         bootbox.dialog({
-                                            title   : "Ver TipoAsistencia",
-                                            
+                                            title : "Ver TipoAsistencia",
+
                                             message : msg,
                                             buttons : {
                                                 ok : {

@@ -8,10 +8,10 @@
 <%@ page import="arazu.solicitudes.DetalleTrabajo" %>
 <html>
     <head>
-        <g:set var="titleCorto" value="Reporte-MX" scope="request"/>
+        <g:set var="titleCorto" value="Reporte-Personal-proyecto" scope="request"/>
         <meta name="layout" content="reporte_horizontal"/>
 
-        <title>Reporte de solicitudes de mantenimiento externo</title>
+        <title>Reporte de personal de proyecto</title>
 
         <style type="text/css">
         .row {

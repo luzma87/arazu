@@ -34,20 +34,9 @@
                         Leyenda:
                     </label>
                 </div>
-                <g:each in="${TipoAsistencia.list([sort: 'id'])}" var="ta">
+                <g:each in="${TipoAsistencia.list([sort: 'orden'])}" var="ta">
                     <div class="col-md-2 ${ta.codigo}">
-                        <g:if test="${ta.codigo == 'ASTE'}">
-                            <i class='fa fa-check'></i>
-                        </g:if>
-                        <g:if test="${ta.codigo == 'NAST'}">
-                            <i style="color: red" class='fa fa-times'></i>
-                        </g:if>
-                        <g:if test="${ta.codigo == 'VCAN'}">
-                            <i class='fa fa-plane'></i>
-                        </g:if>
-                        <g:if test="${ta.codigo == 'VCJN'}">
-                            <i class='fa fa-car'></i>
-                        </g:if>
+                        <i class='${ta.icono}'></i>
                         ${ta.nombre}
                     </div>
                 </g:each>
@@ -94,18 +83,7 @@
                                                value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
                                         <td class="${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}">
                                             <g:if test="${asistencia}">
-                                                <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
-                                                    <i class='fa fa-check'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'NAST'}">
-                                                    <i style="color: red" class='fa fa-times'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
-                                                    <i class='fa fa-plane'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'VCJN'}">
-                                                    <i class='fa fa-car'></i>
-                                                </g:if>
+                                                <i class='${asistencia.tipo.icono}'></i>
                                             </g:if>
 
                                         </td>

@@ -17,23 +17,26 @@ class TipoAsistenciaController extends Shield {
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList_funcion(params, all) {
+    List<TipoAsistencia> getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
-        if(all) {
+        if (!params.sort) {
+            params.sort = "orden"
+        }
+        if (all) {
             params.remove("max")
             params.remove("offset")
         }
         def list
-        if(params.search) {
+        if (params.search) {
             def c = TipoAsistencia.createCriteria()
             list = c.list(params) {
                 or {
                     /* TODO: cambiar aqui segun sea necesario */
-                    
-                    ilike("codigo", "%" + params.search + "%")  
-                    ilike("nombre", "%" + params.search + "%")  
+
+                    ilike("codigo", "%" + params.search + "%")
+                    ilike("nombre", "%" + params.search + "%")
                 }
             }
         } else {
@@ -59,9 +62,9 @@ class TipoAsistenciaController extends Shield {
      * Acción llamada con ajax que muestra la información de un elemento particular
      */
     def show_ajax() {
-        if(params.id) {
+        if (params.id) {
             def tipoAsistenciaInstance = TipoAsistencia.get(params.id)
-            if(!tipoAsistenciaInstance) {
+            if (!tipoAsistenciaInstance) {
                 render "ERROR*No se encontró TipoAsistencia."
                 return
             }
@@ -76,9 +79,9 @@ class TipoAsistenciaController extends Shield {
      */
     def form_ajax() {
         def tipoAsistenciaInstance = new TipoAsistencia()
-        if(params.id) {
+        if (params.id) {
             tipoAsistenciaInstance = TipoAsistencia.get(params.id)
-            if(!tipoAsistenciaInstance) {
+            if (!tipoAsistenciaInstance) {
                 render "ERROR*No se encontró TipoAsistencia."
                 return
             }
@@ -92,15 +95,16 @@ class TipoAsistenciaController extends Shield {
      */
     def save_ajax() {
         def tipoAsistenciaInstance = new TipoAsistencia()
-        if(params.id) {
+        if (params.id) {
             tipoAsistenciaInstance = TipoAsistencia.get(params.id)
-            if(!tipoAsistenciaInstance) {
+            if (!tipoAsistenciaInstance) {
                 render "ERROR*No se encontró TipoAsistencia."
                 return
             }
         }
+        println "PARAMS :   " + params
         tipoAsistenciaInstance.properties = params
-        if(!tipoAsistenciaInstance.save(flush: true)) {
+        if (!tipoAsistenciaInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar TipoAsistencia: " + renderErrors(bean: tipoAsistenciaInstance)
             return
         }
@@ -112,7 +116,7 @@ class TipoAsistenciaController extends Shield {
      * Acción llamada con ajax que permite eliminar un elemento
      */
     def delete_ajax() {
-        if(params.id) {
+        if (params.id) {
             def tipoAsistenciaInstance = TipoAsistencia.get(params.id)
             if (!tipoAsistenciaInstance) {
                 render "ERROR*No se encontró TipoAsistencia."
@@ -131,7 +135,7 @@ class TipoAsistenciaController extends Shield {
             return
         }
     } //delete para eliminar via ajax
-    
+
     /**
      * Acción llamada con ajax que valida que no se duplique la propiedad codigo
      * @render boolean que indica si se puede o no utilizar el valor recibido
@@ -152,5 +156,5 @@ class TipoAsistenciaController extends Shield {
             return
         }
     }
-        
+
 }

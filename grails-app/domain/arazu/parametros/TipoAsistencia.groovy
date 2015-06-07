@@ -14,6 +14,19 @@ class TipoAsistencia {
      */
     String codigo
     /**
+     * Color del tipo de asistencia (para las tablas)
+     */
+    String color
+    /**
+     * Icono del tipo de asistencia (para las tablas)
+     */
+    String icono
+    /**
+     * Orden para mostrar en las tablas
+     */
+    Integer orden
+
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -28,9 +41,11 @@ class TipoAsistencia {
         sort nombre: "asc"
         columns {
             id column: 'tpas__id'
-            nombre column: 'ptasnmbr'
-            codigo column: 'ptascdgo'
-
+            nombre column: 'tpasnmbr'
+            codigo column: 'tpascdgo'
+            color column: 'tpasclor'
+            icono column: 'tpasicno'
+            orden column: 'tpasordn'
         }
     }
 
@@ -40,6 +55,7 @@ class TipoAsistencia {
     static constraints = {
         nombre size: 1..100
         codigo size: 1..4
+        color maxSize: 9
     }
     /**
      * Genera un string para mostrar

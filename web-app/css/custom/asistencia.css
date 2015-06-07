@@ -20,7 +20,7 @@
 }
 
 .VCAN {
-    background : #2b96a6 !important;
+    background : #ed6898 !important;
     color      : white;
 }
 
@@ -29,8 +29,15 @@
     color      : white;
 }
 
+.PRMD {
+    background : #2b96a6 !important;
+    color      : white;
+}
+
 td {
-    width : 80px !important;
+    width          : 80px !important;
+    text-align     : center;
+    vertical-align : middle;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > td.disabled {

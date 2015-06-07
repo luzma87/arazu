@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page import="arazu.proyectos.Proyecto; arazu.nomina.Asistencia" %>
+<%@ page import="arazu.parametros.TipoAsistencia; arazu.proyectos.Proyecto; arazu.nomina.Asistencia" %>
 <html>
     <head>
         <meta name="layout" content="main">
@@ -64,7 +64,7 @@
                                         ${empleado.nombre} ${empleado.apellido}
                                         <g:if test="${empleado.proyecto}">
                                             <g:set var="fechas" value="${empleado.fechasProyectoActual}"/>
-                                            <br/><small>(desde ${fechas.inicio.format("dd-MM-yyyy")}${fechas.final ? ' a ' + fechas.final.format("dd-MM-yyyy") : ''})</small>
+                                            <br/><small>(desde ${fechas?.inicio?.format("dd-MM-yyyy")}${fechas?.final ? ' a ' + fechas.final.format("dd-MM-yyyy") : ''})</small>
                                         </g:if>
                                     </td>
                                     <g:each in="${min..max}" var="i" status="j">
@@ -76,18 +76,7 @@
                                             iden="${asistencia?.id}" empleado="${empleado.id}" tipo="${asistencia?.tipo?.codigo}"
                                             fecha="${fecha.format('dd-MM-yyyy')}">
                                             <g:if test="${asistencia}">
-                                                <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
-                                                    <i class='fa fa-check'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'NAST'}">
-                                                    <i style="color: red" class='fa fa-times'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
-                                                    <i class='fa fa-plane'></i>
-                                                </g:if>
-                                                <g:if test="${asistencia.tipo.codigo == 'VCJN'}">
-                                                    <i class='fa fa-car'></i>
-                                                </g:if>
+                                                <i class='${asistencia.tipo.icono}'></i>
                                                 ${asistencia.tipo.nombre}
                                             </g:if>
                                         </td>
@@ -112,6 +101,7 @@
             var id = null;
             var empleado = null;
             var fecha = null;
+
             function submitFormAsistencia() {
                 var $form = $("#frmAsistencia");
                 var $btn = $("#dlgCreateEditAsistencia").find("#btnSave");
@@ -196,41 +186,47 @@
             })(jQuery);
             $(".actual").disableSelection().click(function () {
                 var celda = $(this);
-                if (celda.hasClass("VCAN") || celda.hasClass("vacio")) {
+                if (celda.hasClass("PRMD") || celda.hasClass("vacio")) {
                     celda.addClass("ASTE");
-                    celda.attr("tipo", "ASTE")
+                    celda.attr("tipo", "ASTE");
                     celda.html("<i class='fa fa-check'></i> Asiste");
                     celda.removeClass("NAST");
                     celda.removeClass("VCAN");
                     celda.removeClass("VCJN");
+                    celda.removeClass("PRMD");
                     celda.removeClass("vacio");
-                } else {
-                    if (celda.hasClass("ASTE")) {
-                        celda.addClass("NAST");
-                        celda.attr("tipo", "NAST")
-                        celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
-                        celda.removeClass("ASTE");
-                        celda.removeClass("VCAN");
-                        celda.removeClass("VCJN");
-                    } else {
-                        if (celda.hasClass("NAST")) {
-                            celda.addClass("VCJN");
-                            celda.attr("tipo", "VCJN")
-                            celda.html("<i  style='color:white' class='fa fa-car'></i> Vacaciones de jornada");
-                            celda.removeClass("ASTE");
-                            celda.removeClass("VCAN");
-                            celda.removeClass("NAST");
-                        } else {
-                            if (celda.hasClass("VCJN")) {
-                                celda.addClass("VCAN");
-                                celda.attr("tipo", "VCAN")
-                                celda.html("<i  style='color:white' class='fa fa-plane'></i> Vacaciones Anuales");
-                                celda.removeClass("ASTE");
-                                celda.removeClass("NAST");
-                                celda.removeClass("VCJN");
-                            }
-                        }
-                    }
+                } else if (celda.hasClass("ASTE")) {
+                    celda.addClass("NAST");
+                    celda.attr("tipo", "NAST");
+                    celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
+                    celda.removeClass("ASTE");
+                    celda.removeClass("VCAN");
+                    celda.removeClass("VCJN");
+                    celda.removeClass("PRMD");
+                } else if (celda.hasClass("NAST")) {
+                    celda.addClass("VCJN");
+                    celda.attr("tipo", "VCJN");
+                    celda.html("<i  style='color:white' class='fa fa-car'></i> Vacaciones de jornada");
+                    celda.removeClass("ASTE");
+                    celda.removeClass("VCAN");
+                    celda.removeClass("NAST");
+                    celda.removeClass("PRMD");
+                } else if (celda.hasClass("VCJN")) {
+                    celda.addClass("VCAN");
+                    celda.attr("tipo", "VCAN");
+                    celda.html("<i  style='color:white' class='fa fa-plane'></i> Vacaciones Anuales");
+                    celda.removeClass("ASTE");
+                    celda.removeClass("NAST");
+                    celda.removeClass("VCJN");
+                    celda.removeClass("PRMD");
+                } else if (celda.hasClass("VCAN")) {
+                    celda.addClass("PRMD");
+                    celda.attr("tipo", "PRMD");
+                    celda.html("<i  style='color:white' class='fa fa-stethoscope'></i> Permiso médico");
+                    celda.removeClass("ASTE");
+                    celda.removeClass("NAST");
+                    celda.removeClass("VCJN");
+                    celda.removeClass("VCAN");
                 }
 
             });

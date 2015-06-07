@@ -91,7 +91,8 @@ class AsistenciaController extends Shield {
             empleados = empleados.findAll { it.proyecto == proy }
         }
         empleados = empleados.sort { it.proyecto }
-
+        println "EMPLEADOS"
+        println empleados
         [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 

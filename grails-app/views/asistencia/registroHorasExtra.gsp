@@ -82,18 +82,16 @@
                                         <g:if test="${asistencia}">
                                             <g:if test="${i <= dia}">
                                                 <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
-                                                    <td
-                                                            class="${i == dia ? 'actual iterador' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
-                                                            empleado="${empleado.id}"
-                                                            fecha="${fecha.format('dd-MM-yyyy')}">
+                                                    <td class="${i == dia ? 'actual iterador' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
+                                                        empleado="${empleado.id}"
+                                                        fecha="${fecha.format('dd-MM-yyyy')}">
                                                         <input
                                                                 type="number" max="16" min="0"
                                                                 class="digits form-control input-sm 50"
                                                                 value="${asistencia.horas50}"></td>
-                                                    <td
-                                                            class="${i == dia ? 'actual complemento' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
-                                                            empleado="${empleado.id}"
-                                                            fecha="${fecha.format('dd-MM-yyyy')}"><input
+                                                    <td class="${i == dia ? 'actual complemento' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
+                                                        empleado="${empleado.id}"
+                                                        fecha="${fecha.format('dd-MM-yyyy')}"><input
                                                             type="number" max="16" min="0"
                                                             class="digits form-control input-sm 100"
                                                             value="${asistencia.horas100}"></td>
@@ -101,16 +99,7 @@
                                                 <g:else>
                                                     <td colspan="2"
                                                         class="${i == dia ? 'actual' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}">
-
-                                                        <g:if test="${asistencia.tipo.codigo == 'NAST'}">
-                                                            <i style="color: red" class='fa fa-times'></i>
-                                                        </g:if>
-                                                        <g:if test="${asistencia.tipo.codigo == 'VCAN'}">
-                                                            <i class='fa fa-plane'></i>
-                                                        </g:if>
-                                                        <g:if test="${asistencia.tipo.codigo == 'VCJN'}">
-                                                            <i class='fa fa-car'></i>
-                                                        </g:if>
+                                                        <i class='${asistencia.tipo.icono}'></i>
                                                         ${asistencia.tipo.nombre}
                                                     </td>
                                                 </g:else>
