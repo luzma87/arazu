@@ -48,6 +48,18 @@ class Asistencia {
      * Observaciones
      */
     String observaciones
+    /**
+     * Marca con una S si el empleado comió el desayuno
+     */
+    String desayuno
+    /**
+     * Marca con una S si el empleado comió el almuerzo
+     */
+    String almuerzo
+    /**
+     * Marca con una S si el empleado comió el merienda
+     */
+    String merienda
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -75,6 +87,9 @@ class Asistencia {
             registra column: 'prsnrgst'
             observaciones column: 'asstobrs'
             observaciones type: "text"
+            desayuno column: 'asstdsyn'
+            almuerzo column: 'asstalmr'
+            merienda column: 'asstmrnd'
         }
     }
 
@@ -84,6 +99,10 @@ class Asistencia {
     static constraints = {
         entrada nullable: true
         salida nullable: true
+        empleado nullable: true
         observaciones blank: true, nullable: true
+        desayuno nullable: true
+        almuerzo nullable: true
+        merienda nullable: true
     }
 }

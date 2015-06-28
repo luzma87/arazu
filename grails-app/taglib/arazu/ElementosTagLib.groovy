@@ -375,9 +375,11 @@ class ElementosTagLib {
                     hora = new Date().format("HH:mm")
                 }
                 parts = fecha.split("-")
-                valueDay = parts[0]
-                valueMonth = parts[1]
-                valueYear = parts[2]
+                if (parts.size() > 1) {
+                    valueDay = parts[0]
+                    valueMonth = parts[1]
+                    valueYear = parts[2]
+                }
                 parts = hora.split(":")
                 valueHour = parts[0]
                 valueMin = parts[1]

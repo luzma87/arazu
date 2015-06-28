@@ -5,7 +5,8 @@
         <meta name="layout" content="main">
         <title>Registro de asistencia${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
-        <imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>
+        %{--<imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>--}%
+
     </head>
 
     <body>
@@ -39,9 +40,9 @@
                                 </th>
                             </tr>
                             <tr>
-                                <th style="width: 87px;">Empleado</th>
+                                <th style="width: 9%;">Empleado</th>
                                 <g:each in="${min..max}" var="i" status="j">
-                                    <th>
+                                    <th style="width: 9%;">
                                         ${i}
                                     </th>
                                 </g:each>
@@ -72,9 +73,10 @@
                                                value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
                                         <g:set var="asistencia"
                                                value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
-                                        <td class="${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}"
+                                        <td class="text-center ${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}"
                                             iden="${asistencia?.id}" empleado="${empleado.id}" tipo="${asistencia?.tipo?.codigo}"
-                                            fecha="${fecha.format('dd-MM-yyyy')}">
+                                            fecha="${fecha.format('dd-MM-yyyy')}"
+                                            style="background: ${asistencia ? asistencia.tipo.color : ''}; color:white;">
                                             <g:if test="${asistencia}">
                                                 <i class='${asistencia.tipo.icono}'></i>
                                                 ${asistencia.tipo.nombre}
@@ -184,53 +186,45 @@
                             .on('selectstart', false);
                 };
             })(jQuery);
-            $(".actual").disableSelection().click(function () {
-                var celda = $(this);
-                if (celda.hasClass("PRMD") || celda.hasClass("vacio")) {
-                    celda.addClass("ASTE");
-                    celda.attr("tipo", "ASTE");
-                    celda.html("<i class='fa fa-check'></i> Asiste");
-                    celda.removeClass("NAST");
-                    celda.removeClass("VCAN");
-                    celda.removeClass("VCJN");
-                    celda.removeClass("PRMD");
-                    celda.removeClass("vacio");
-                } else if (celda.hasClass("ASTE")) {
-                    celda.addClass("NAST");
-                    celda.attr("tipo", "NAST");
-                    celda.html("<i  style='color:red' class='fa fa-times'></i> No asiste");
-                    celda.removeClass("ASTE");
-                    celda.removeClass("VCAN");
-                    celda.removeClass("VCJN");
-                    celda.removeClass("PRMD");
-                } else if (celda.hasClass("NAST")) {
-                    celda.addClass("VCJN");
-                    celda.attr("tipo", "VCJN");
-                    celda.html("<i  style='color:white' class='fa fa-car'></i> Vacaciones de jornada");
-                    celda.removeClass("ASTE");
-                    celda.removeClass("VCAN");
-                    celda.removeClass("NAST");
-                    celda.removeClass("PRMD");
-                } else if (celda.hasClass("VCJN")) {
-                    celda.addClass("VCAN");
-                    celda.attr("tipo", "VCAN");
-                    celda.html("<i  style='color:white' class='fa fa-plane'></i> Vacaciones Anuales");
-                    celda.removeClass("ASTE");
-                    celda.removeClass("NAST");
-                    celda.removeClass("VCJN");
-                    celda.removeClass("PRMD");
-                } else if (celda.hasClass("VCAN")) {
-                    celda.addClass("PRMD");
-                    celda.attr("tipo", "PRMD");
-                    celda.html("<i  style='color:white' class='fa fa-stethoscope'></i> Permiso médico");
-                    celda.removeClass("ASTE");
-                    celda.removeClass("NAST");
-                    celda.removeClass("VCJN");
-                    celda.removeClass("VCAN");
-                }
 
-            });
             $(function () {
+                var tipos = ${tipos};
+
+                $(".actual").disableSelection().click(function () {
+                    var celda = $(this);
+                    var found = false;
+                    var changed = false;
+                    for (var i = 0; i < tipos.length; i++) {
+                        var tipo = tipos[i];
+                        if (!changed && celda.hasClass(tipo.cod)) {
+                            changed = true;
+                            var next = i + 1;
+                            if (next == tipos.length) {
+                                next = 0;
+                            }
+                            found = true;
+                            celda.addClass(tipos[next].cod)
+                                    .attr("tipo", tipos[next].cod)
+                                    .html("<i class='" + tipos[next].icono + "'></i> " + tipos[next].label).css({
+                                        background : tipos[next].color,
+                                        color      : "#fff"
+                                    });
+                            for (var j = 0; j < tipos[next].otros.length; j++) {
+                                var o = tipos[next].otros[j];
+                                celda.removeClass(o);
+                            }
+                            celda.removeClass("vacio");
+                        }
+                    }
+                    if (!found) {
+                        celda.addClass(tipos[0].cod)
+                                .attr("tipo", tipos[0].cod)
+                                .html("<i class='" + tipos[0].icono + "'></i> " + tipos[0].label).css({
+                                    background : tipos[0].color
+                                });
+                    }
+                });
+
                 <g:if test="${proy}">
                 $("#proyecto").val('${proy.id}');
                 </g:if>

@@ -17,7 +17,7 @@ class ParametrosController extends Shield {
      * @param all boolean que indica si saca todos los resultados, ignorando el parámetro max (true) o no (false)
      * @return lista de los elementos encontrados
      */
-    def getList_funcion(params, all) {
+    List<Parametros> getList_funcion(params, all) {
         params = params.clone()
         params.max = params.max ? Math.min(params.max.toInteger(), 100) : 10
         params.offset = params.offset ?: 0
@@ -98,6 +98,14 @@ class ParametrosController extends Shield {
             }
         }
         parametrosInstance.properties = params
+
+        parametrosInstance.horaInicioDesayuno = params.horaInicioDesayuno_input
+        parametrosInstance.horaFinDesayuno = params.horaFinDesayuno_input
+        parametrosInstance.horaInicioAlmuerzo = params.horaInicioAlmuerzo_input
+        parametrosInstance.horaFinAlmuerzo = params.horaFinAlmuerzo_input
+        parametrosInstance.horaInicioMerienda = params.horaInicioMerienda_input
+        parametrosInstance.horaFinMerienda = params.horaFinMerienda_input
+
         if (!parametrosInstance.save(flush: true)) {
             render "ERROR*Ha ocurrido un error al guardar Parametros: " + renderErrors(bean: parametrosInstance)
             return

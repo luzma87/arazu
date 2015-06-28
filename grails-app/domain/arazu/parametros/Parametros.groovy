@@ -14,6 +14,31 @@ class Parametros {
      */
     Double maxMX
     /**
+     * Hora de inicio de registro permitido para el desayuno
+     */
+    String horaInicioDesayuno
+    /**
+     * Hora de fin de registro permitido para el desayuno
+     */
+    String horaFinDesayuno
+    /**
+     * Hora de inicio de registro permitido para el almuerzo
+     */
+    String horaInicioAlmuerzo
+    /**
+     * Hora de fin de registro permitido para el almuerzo
+     */
+    String horaFinAlmuerzo
+    /**
+     * Hora de inicio de registro permitido para el merienda
+     */
+    String horaInicioMerienda
+    /**
+     * Hora de fin de registro permitido para el merienda
+     */
+    String horaFinMerienda
+
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -30,10 +55,28 @@ class Parametros {
             id column: 'prmt__id'
             maxNP column: 'prmtmxnp'
             maxMX column: 'prmtmxmx'
+            horaInicioDesayuno column: 'prmthids'
+            horaFinDesayuno column: 'prmthfds'
+            horaInicioAlmuerzo column: 'prmthial'
+            horaFinAlmuerzo column: 'prmthfal'
+            horaInicioMerienda column: 'prmthimr'
+            horaFinMerienda column: 'prmthfmr'
         }
     }
 
-    static getMaxNotaPedido() {
+    /**
+     * Define las restricciones de cada uno de los campos
+     */
+    static constraints = {
+        horaInicioDesayuno maxSize: 5
+        horaFinDesayuno maxSize: 5
+        horaInicioAlmuerzo maxSize: 5
+        horaFinAlmuerzo maxSize: 5
+        horaInicioMerienda maxSize: 5
+        horaFinMerienda maxSize: 5
+    }
+
+    public static getMaxNotaPedido() {
         def p = list()
         if (p.size() == 0) {
             return 100
@@ -42,12 +85,66 @@ class Parametros {
         }
     }
 
-    static getMaxSolicitudMantExt() {
+    public static getMaxSolicitudMantExt() {
         def p = list()
         if (p.size() == 0) {
             return 200
         } else {
             return p.first().maxMX
+        }
+    }
+
+    public static getInicioDesayuno() {
+        def p = list()
+        if (p.size() == 0) {
+            return "06:00"
+        } else {
+            return p.first().horaInicioDesayuno
+        }
+    }
+
+    public static getFinDesayuno() {
+        def p = list()
+        if (p.size() == 0) {
+            return "10:59"
+        } else {
+            return p.first().horaFinDesayuno
+        }
+    }
+
+    public static getInicioAlmuerzo() {
+        def p = list()
+        if (p.size() == 0) {
+            return "11:00"
+        } else {
+            return p.first().horaInicioAlmuerzo
+        }
+    }
+
+    public static getFinAlmuerzo() {
+        def p = list()
+        if (p.size() == 0) {
+            return "15:59"
+        } else {
+            return p.first().horaFinAlmuerzo
+        }
+    }
+
+    public static getInicioMerienda() {
+        def p = list()
+        if (p.size() == 0) {
+            return "16:00"
+        } else {
+            return p.first().horaInicioMerienda
+        }
+    }
+
+    public static getFinMerienda() {
+        def p = list()
+        if (p.size() == 0) {
+            return "21:59"
+        } else {
+            return p.first().horaFinMerienda
         }
     }
 }

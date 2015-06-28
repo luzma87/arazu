@@ -53,7 +53,7 @@
 
                             <td><elm:textoBusqueda busca="${params.search}">${tipoAsistenciaInstance.nombre}</elm:textoBusqueda></td>
 
-                            <td class="text-center" style="background: ${tipoAsistenciaInstance.color}">
+                            <td class="text-center" style="background: ${tipoAsistenciaInstance.color}; color: white;">
                                 <i class="${tipoAsistenciaInstance.icono}"></i>
                             </td>
                         </tr>

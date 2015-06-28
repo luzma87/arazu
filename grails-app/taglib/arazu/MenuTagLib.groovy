@@ -15,7 +15,7 @@ class MenuTagLib {
         html += "<footer class='footer'>"
         html += "<div class='container text-center'>"
         html += "<strong>HIDALGO NARANJO INGENIEROS & ARQUITECTOS S.A.</strong>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                "2015 Todos los derechos reservados - VERSION 1.5.0"
+                "2015 Todos los derechos reservados - versión 1.6.1"
         html += "</div>"
         html += "</footer>"
         out << html

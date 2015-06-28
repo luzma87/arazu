@@ -249,6 +249,17 @@
             </div>
         </g:if>
 
+        <div class="btn-group-vertical" role="group"
+             style="position: absolute; top:155px; left: 5px; width: 100px; height: 300px; z-index: 2;">
+            <g:each in="${session.sistemas}" var="sistema">
+                <g:if test="${sistema}">
+                    <g:link controller="${sistema.controlador}" action="${sistema.accion}" class="btn btn-default">
+                        ${sistema.nombre}
+                    </g:link>
+                </g:if>
+            </g:each>
+        </div>
+
         <mn:menu title="${g.layoutTitle(default: 'Arazu')}"/>
 
         <div class="container" id="mass-container" style="position: relative">

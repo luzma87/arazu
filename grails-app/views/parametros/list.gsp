@@ -29,22 +29,22 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-
-                    <th style="width:50%;">Máximo Notas de Pedido</th>
-
-                    <th style="width:50%;">Máximo Solicitudes de Mantenimiento Externo</th>
-
+                    <th style="width:20%;">Máximo Notas de Pedido</th>
+                    <th style="width:20%;">Máximo Solicitudes de Mantenimiento Externo</th>
+                    <th style="width:20%;">Horas de desayuno</th>
+                    <th style="width:20%;">Horas de almuerzo</th>
+                    <th style="width:20%;">Hora de merienda</th>
                 </tr>
             </thead>
             <tbody>
                 <g:if test="${parametrosInstanceCount > 0}">
                     <g:each in="${parametrosInstanceList}" status="i" var="parametrosInstance">
                         <tr data-id="${parametrosInstance.id}">
-
-                            <td><g:fieldValue bean="${parametrosInstance}" field="maxNP"/></td>
-
-                            <td>${parametrosInstance.maxMX}</td>
-
+                            <td><g:formatNumber number="${parametrosInstance.maxNP}" type="currency"/></td>
+                            <td><g:formatNumber number="${parametrosInstance.maxMX}" type="currency"/></td>
+                            <td>${parametrosInstance.horaInicioDesayuno} a ${parametrosInstance.horaFinDesayuno}</td>
+                            <td>${parametrosInstance.horaInicioAlmuerzo} a ${parametrosInstance.horaFinAlmuerzo}</td>
+                            <td>${parametrosInstance.horaInicioMerienda} a ${parametrosInstance.horaFinMerienda}</td>
                         </tr>
                     </g:each>
                 </g:if>

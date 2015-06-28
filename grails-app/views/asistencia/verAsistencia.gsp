@@ -5,7 +5,7 @@
         <meta name="layout" content="main">
         <title>Asistencia${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
-        <imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>
+        %{--<imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>--}%
     </head>
 
     <body>
@@ -35,7 +35,7 @@
                     </label>
                 </div>
                 <g:each in="${TipoAsistencia.list([sort: 'orden'])}" var="ta">
-                    <div class="col-md-2 ${ta.codigo}">
+                    <div class="col-md-2 ${ta.codigo}" style="background: ${ta.color}">
                         <i class='${ta.icono}'></i>
                         ${ta.nombre}
                     </div>
@@ -74,20 +74,21 @@
                                 </g:if>
                                 <tr>
                                     <td class="empleado">
-                                        ${empleado.nombre} ${empleado.apellido}
-                                    </td>
-                                    <g:each in="${min..max}" var="i" status="j">
-                                        <g:set var="fecha"
-                                               value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
-                                        <g:set var="asistencia"
-                                               value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
-                                        <td class="${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}">
-                                            <g:if test="${asistencia}">
-                                                <i class='${asistencia.tipo.icono}'></i>
-                                            </g:if>
+                                ${empleado.nombre} ${empleado.apellido}
+                                </td>
+                                <g:each in="${min..max}" var="i" status="j">
+                                    <g:set var="fecha"
+                                           value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
+                                    <g:set var="asistencia"
+                                           value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
+                                    <td class=text-center "${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}"
+                                            style="background: ${asistencia ? asistencia.tipo.color : ''}; color: white;">
+                                    <g:if test="${asistencia}">
+                                        <i class='${asistencia.tipo.icono}'></i>
+                                    </g:if>
 
-                                        </td>
-                                    </g:each>
+                                    </td>
+                                </g:each>
                                 </tr>
                             </g:each>
                         </tbody>

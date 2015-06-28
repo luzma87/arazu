@@ -1,10 +1,10 @@
 <%@ page import="arazu.solicitudes.DetalleTrabajo" %>
 <html>
     <head>
-        <g:set var="titleCorto" value="Reporte-MX" scope="request"/>
+        <g:set var="titleCorto" value="Reporte asistencia" scope="request"/>
         <meta name="layout" content="reporte_horizontal"/>
 
-        <title>Reporte de asistencia</title>
+        <title>Reporte de asistencias y horas extra</title>
 
         <style type="text/css">
         .row {

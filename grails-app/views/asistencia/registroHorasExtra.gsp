@@ -5,7 +5,7 @@
         <meta name="layout" content="main">
         <title>Registro de horas extra${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
-        <imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>
+        %{--<imp:css src="${resource(dir: 'css/custom', file: 'asistencia.css')}"/>--}%
     </head>
 
     <body>
@@ -39,9 +39,9 @@
                                 </th>
                             </tr>
                             <tr>
-                                <th style="width: 87px;">Empleado</th>
+                                <th style="width: 9%;">Empleado</th>
                                 <g:each in="${min..max}" var="i" status="j">
-                                    <th colspan="2">
+                                    <th style="width: 9%;" colspan="2">
                                         ${i}
                                     </th>
                                 </g:each>
@@ -84,21 +84,25 @@
                                                 <g:if test="${asistencia.tipo.codigo == 'ASTE'}">
                                                     <td class="${i == dia ? 'actual iterador' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
                                                         empleado="${empleado.id}"
-                                                        fecha="${fecha.format('dd-MM-yyyy')}">
-                                                        <input
-                                                                type="number" max="16" min="0"
-                                                                class="digits form-control input-sm 50"
-                                                                value="${asistencia.horas50}"></td>
+                                                        fecha="${fecha.format('dd-MM-yyyy')}"
+                                                        style="background: ${asistencia ? asistencia.tipo.color : ''}">
+                                                        <input type="number" max="16" min="0" style="width: 50px;"
+                                                               class="digits form-control input-sm 50"
+                                                               value="${asistencia.horas50}">
+                                                    </td>
                                                     <td class="${i == dia ? 'actual complemento' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
                                                         empleado="${empleado.id}"
-                                                        fecha="${fecha.format('dd-MM-yyyy')}"><input
-                                                            type="number" max="16" min="0"
-                                                            class="digits form-control input-sm 100"
-                                                            value="${asistencia.horas100}"></td>
+                                                        fecha="${fecha.format('dd-MM-yyyy')}"
+                                                        style="background: ${asistencia ? asistencia.tipo.color : ''}">
+                                                        <input type="number" max="16" min="0" style="width: 50px;"
+                                                               class="digits form-control input-sm 100"
+                                                               value="${asistencia.horas100}">
+                                                    </td>
                                                 </g:if>
                                                 <g:else>
                                                     <td colspan="2"
-                                                        class="${i == dia ? 'actual' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}">
+                                                        class="${i == dia ? 'actual' : 'disabled'} ${asistencia ? asistencia.tipo.codigo : ''}"
+                                                        style="background: ${asistencia ? asistencia.tipo.color : ''}; color: white;">
                                                         <i class='${asistencia.tipo.icono}'></i>
                                                         ${asistencia.tipo.nombre}
                                                     </td>
