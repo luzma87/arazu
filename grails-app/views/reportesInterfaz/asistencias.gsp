@@ -13,7 +13,7 @@
     </head>
 
     <body>
-        <elm:container tipo="horizontal" titulo="Reporte de asistencias">
+        <elm:container tipo="horizontal" titulo="Reporte de asistencias y horas extra">
 
             <div class="btn-toolbar" role="toolbar" style="margin-top: 10px;">
                 <div class="btn-group">

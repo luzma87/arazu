@@ -1,6 +1,7 @@
 package arazu.nomina
 
-import arazu.parametros.TipoAsistencia;
+import arazu.parametros.TipoAsistencia
+import arazu.proyectos.Proyecto;
 import arazu.seguridad.Persona
 
 /**
@@ -60,6 +61,22 @@ class Asistencia {
      * Marca con una S si el empleado comió el merienda
      */
     String merienda
+    /**
+     * Proyecto (para las comidas de invitados)
+     */
+    Proyecto proyecto
+    /**
+     * Cantidad de desayunos de invitado
+     */
+    Integer desayunosInvitado = 0
+    /**
+     * Cantidad de almuerzos de invitado
+     */
+    Integer almuerzosInvitado = 0
+    /**
+     * Cantidad de meriendas de invitado
+     */
+    Integer meriendasInvitado = 0
 
     /**
      * Define los campos que se van a ignorar al momento de hacer logs
@@ -90,6 +107,10 @@ class Asistencia {
             desayuno column: 'asstdsyn'
             almuerzo column: 'asstalmr'
             merienda column: 'asstmrnd'
+            proyecto column: 'proy__id'
+            desayunosInvitado column: 'asstdsin'
+            almuerzosInvitado column: 'asstalin'
+            meriendasInvitado column: 'asstmrin'
         }
     }
 
@@ -104,5 +125,6 @@ class Asistencia {
         desayuno nullable: true
         almuerzo nullable: true
         merienda nullable: true
+        proyecto nullable: true
     }
 }

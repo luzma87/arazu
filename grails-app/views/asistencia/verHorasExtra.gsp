@@ -9,7 +9,7 @@
     </head>
 
     <body>
-        <elm:container tipo="horizontal" titulo="Registro de horas extra${proy ? ' del proyecto ' + proy.nombre : ''}">
+        <elm:container tipo="horizontal" titulo="Horas extra${proy ? ' del proyecto ' + proy.nombre : ''}">
             <div class="row">
                 <div class="col-sm-1">
                     <label for="proyecto">Proyecto</label>

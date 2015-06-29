@@ -77,8 +77,7 @@
                                 ${empleado.nombre} ${empleado.apellido}
                                 </td>
                                 <g:each in="${min..max}" var="i" status="j">
-                                    <g:set var="fecha"
-                                           value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
+                                    <g:set var="fecha" value="${(i < dia) ? now.minus(dia - i) : now.plus(i - dia)}"/>
                                     <g:set var="asistencia"
                                            value="${Asistencia.findByEmpleadoAndFecha(empleado, fecha.clearTime())}"/>
                                     <td class=text-center "${i == dia ? 'actual' : 'disabled'}  ${asistencia ? asistencia.tipo.codigo : 'vacio'}"
@@ -86,7 +85,6 @@
                                     <g:if test="${asistencia}">
                                         <i class='${asistencia.tipo.icono}'></i>
                                     </g:if>
-
                                     </td>
                                 </g:each>
                                 </tr>

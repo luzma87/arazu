@@ -48,17 +48,9 @@ class ReportesInterfazController extends Shield {
     }
 
     /**
-     * Acción que muestra la pantalla para filtrar e imprimir el reporte de asistencias
+     * Acción que muestra la pantalla para filtrar e imprimir el reporte de asistencias y horas extra
      */
     def asistencias() {
-        def now = new Date()
-        return [now: now]
-    }
-
-    /**
-     * Acción que muestra la pantalla para filtrar e imprimir el reporte de horas extra
-     */
-    def horasExtra() {
         def now = new Date()
         return [now: now]
     }

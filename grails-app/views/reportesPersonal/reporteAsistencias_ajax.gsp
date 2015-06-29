@@ -1,13 +1,16 @@
 <table class="table table-condensed table-striped table-bordered table-hover">
     <thead>
         <tr>
-            <th>Proyecto(s)</th>
+            <th>Proyecto</th>
             <th>Empleado</th>
             <g:each in="${tipos}" var="t">
                 <th>${t.nombre}</th>
             </g:each>
             <th>Horas extra 50%</th>
             <th>Horas extra 100%</th>
+            <th>Desayunos</th>
+            <th>Almuerzos</th>
+            <th>Meriendas</th>
         </tr>
     </thead>
     <tbody>
@@ -20,6 +23,9 @@
                 </g:each>
                 <td style="text-align: right">${d.value["Horas extra 50%"]}</td>
                 <td style="text-align: right">${d.value["Horas extra 100%"]}</td>
+                <td style="text-align: right">${d.value["desayunos"]}</td>
+                <td style="text-align: right">${d.value["almuerzos"]}</td>
+                <td style="text-align: right">${d.value["meriendas"]}</td>
             </tr>
         </g:each>
     </tbody>

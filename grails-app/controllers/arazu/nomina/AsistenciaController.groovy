@@ -60,6 +60,12 @@ class AsistenciaController extends Shield {
 
     def verComidas() {
         def now = new Date();
+        def dia = now.format("dd").toInteger()
+        def min, max
+        def mycal = new GregorianCalendar(now.format("yyyy").toInteger(), now.format("MM").toInteger() - 1, dia);
+        def daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        min = 1
+        max = daysInMonth
 
         def proy = null
         if (params.id) {
@@ -73,7 +79,7 @@ class AsistenciaController extends Shield {
         }
         empleados = empleados.sort { it.proyecto }
 
-        return [now: now, empleados: empleados, proy: proy, proyectos: proyectos]
+        return [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
     def registroAsistencia() {
@@ -262,8 +268,51 @@ class AsistenciaController extends Shield {
         [asistenciaInstance: asistenciaInstance, empleado: empleado, fecha: params.fecha]
     }
 
+    def cambiarEstadoComidaInvitado_ajax() {
+        println "COMIDA INV: " + params
+        def proyecto = Proyecto.get(params.proy.toLong())
+        def usu = Persona.get(session.usuario.id)
+        def comida = params.comida
+        def cant = params.cant.toInteger()
+
+        def asistencia = Asistencia.findAllByFechaAndProyecto(new Date().clearTime(), proyecto)
+
+        if (asistencia.size() == 1) {
+            println "1"
+            asistencia = asistencia.first()
+            asistencia[comida + "sInvitado"] = cant
+            if (asistencia.save(flush: true)) {
+                println "2"
+                render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
+            } else {
+                println "3"
+                render "ERROR*" + renderErrors(bean: asistencia)
+            }
+        } else if (asistencia.size() == 0) {
+            println "4"
+            asistencia = new Asistencia()
+            asistencia.fecha = new Date().clearTime()
+            asistencia.fechaRegistro = new Date()
+            asistencia.tipo = TipoAsistencia.findByCodigo("ASTE")
+            asistencia.proyecto = proyecto
+            asistencia.registra = usu
+            asistencia[comida + "sInvitado"] = cant
+            if (asistencia.save(flush: true)) {
+                println "5"
+                render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
+            } else {
+                println "6"
+                render "ERROR*" + renderErrors(bean: asistencia)
+            }
+        } else {
+            println "7"
+            render "ERROR*Ha ocurrido un error grave"
+        }
+    }
+
     def cambiarEstadoComida_ajax() {
-        def persona = Persona.get(params.persona.toInteger())
+        println "COMIDA: " + params
+        def persona = Persona.get(params.persona.toLong())
         def usu = Persona.get(session.usuario.id)
         def comida = params.comida
         def comio = params.comio
@@ -271,27 +320,34 @@ class AsistenciaController extends Shield {
         def asistencia = Asistencia.findAllByFechaAndEmpleado(new Date().clearTime(), persona)
 
         if (asistencia.size() == 1) {
+            println "1"
             asistencia = asistencia.first()
             asistencia[comida] = comio
             if (asistencia.save(flush: true)) {
+                println "2"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
+                println "3"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else if (asistencia.size() == 0) {
+            println "4"
             asistencia = new Asistencia()
-            asistencia.fecha = new Date()
+            asistencia.fecha = new Date().clearTime()
             asistencia.fechaRegistro = new Date()
             asistencia.tipo = TipoAsistencia.findByCodigo("ASTE")
             asistencia.empleado = persona
             asistencia.registra = usu
             asistencia[comida] = comio
             if (asistencia.save(flush: true)) {
+                println "5"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
+                println "6"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else {
+            println "7"
             render "ERROR*Ha ocurrido un error grave"
         }
     }
