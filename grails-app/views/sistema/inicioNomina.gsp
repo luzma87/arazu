@@ -14,51 +14,79 @@
 
     <body>
         <div class="row">
-            <div class="card">
-                <div class="titulo-card"><i class="fa fa-tachometer"></i> Proyectos</div>
-
-                <div class="cardContent">
-                    <div class="circle-card card-bg-green">${proyectos}</div>
-                    Proyectos activos
-                </div>
-
-                <div class="cardContent">
-                    <div class="circle-card ${proyectosSinPersonal > 0 ? 'svt-bg-warning' : 'card-bg-green'}">${proyectosSinPersonal}</div>
-                    Proyectos activos sin personal
-                </div>
-
-                <div class="cardContent">
-                    <div class="circle-card ${proyectos > bodegas ? 'svt-bg-warning' : 'card-bg-green'}">
-                        ${bodegas}
+            <g:each in="${data}" var="d">
+                <div class="table-report">
+                    <div class="titulo-report">
+                        <i class="fa flaticon-construction4"></i> Personal del proyecto: ${d.proyecto}
                     </div>
-                    Bodegas activas
+
+                    <div class="report-content">
+                        <table class="table table-striped table-hover table-bordered" style="border-top: none">
+                            <thead>
+                                <tr>
+                                    <th class="header-table-report">Persona</th>
+                                    <th class="header-table-report">Desde</th>
+                                    <th class="header-table-report">Hasta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <g:each in="${d.personal}" var="p">
+                                    <tr>
+                                        <td>${p.persona}</td>
+                                        <td>${p.fechaInicio.format("dd-MM-yyyy")}</td>
+                                        <td>${p.fechaFin?.format("dd-MM-yyyy")}</td>
+                                    </tr>
+                                </g:each>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </g:each>
+        %{--<div class="card">--}%
+        %{--<div class="titulo-card"><i class="fa fa-tachometer"></i> Proyectos</div>--}%
 
-            %{--<div class="table-report">--}%
-            %{--<div class="titulo-report"><i class="fa fa-sort-amount-asc"></i>Reporte de actividad</div>--}%
+        %{--<div class="cardContent">--}%
+        %{--<div class="circle-card card-bg-green">${proyectos}</div>--}%
+        %{--Proyectos activos--}%
+        %{--</div>--}%
 
-            %{--<div class="report-content">--}%
-            %{--<table class="table table-striped table-hover table-bordered" style="border-top: none">--}%
-            %{--<thead>--}%
-            %{--<tr>--}%
-            %{--<th class="header-table-report" style="width: 70%;text-align: left">Proyecto</th>--}%
-            %{--<th class="header-table-report">Personal</th>--}%
-            %{--<th class="header-table-report">Pedidos</th>--}%
-            %{--</tr>--}%
-            %{--</thead>--}%
-            %{--<tbody>--}%
-            %{--<g:each in="${proyectos}" var="p">--}%
-            %{--<tr>--}%
-            %{--<td>${p.nombre}</td>--}%
-            %{--<td style="text-align: center">${Funcion.findAllByProyecto(p).size()}</td>--}%
-            %{--<td style="text-align: center">${NotaPedido.findAllByProyecto(p).size()}</td>--}%
-            %{--</tr>--}%
-            %{--</g:each>--}%
-            %{--</tbody>--}%
-            %{--</table>--}%
-            %{--</div>--}%
-            %{--</div>--}%
+        %{--<div class="cardContent">--}%
+        %{--<div class="circle-card ${proyectosSinPersonal > 0 ? 'svt-bg-warning' : 'card-bg-green'}">${proyectosSinPersonal}</div>--}%
+        %{--Proyectos activos sin personal--}%
+        %{--</div>--}%
+
+        %{--<div class="cardContent">--}%
+        %{--<div class="circle-card ${proyectos > bodegas ? 'svt-bg-warning' : 'card-bg-green'}">--}%
+        %{--${bodegas}--}%
+        %{--</div>--}%
+        %{--Bodegas activas--}%
+        %{--</div>--}%
+        %{--</div>--}%
+
+        %{--<div class="table-report">--}%
+        %{--<div class="titulo-report"><i class="fa fa-sort-amount-asc"></i>Reporte de actividad</div>--}%
+
+        %{--<div class="report-content">--}%
+        %{--<table class="table table-striped table-hover table-bordered" style="border-top: none">--}%
+        %{--<thead>--}%
+        %{--<tr>--}%
+        %{--<th class="header-table-report" style="width: 70%;text-align: left">Proyecto</th>--}%
+        %{--<th class="header-table-report">Personal</th>--}%
+        %{--<th class="header-table-report">Pedidos</th>--}%
+        %{--</tr>--}%
+        %{--</thead>--}%
+        %{--<tbody>--}%
+        %{--<g:each in="${proyectos}" var="p">--}%
+        %{--<tr>--}%
+        %{--<td>${p.nombre}</td>--}%
+        %{--<td style="text-align: center">${Funcion.findAllByProyecto(p).size()}</td>--}%
+        %{--<td style="text-align: center">${NotaPedido.findAllByProyecto(p).size()}</td>--}%
+        %{--</tr>--}%
+        %{--</g:each>--}%
+        %{--</tbody>--}%
+        %{--</table>--}%
+        %{--</div>--}%
+        %{--</div>--}%
         </div>
 
         %{--<div class="row">--}%

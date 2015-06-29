@@ -50,10 +50,8 @@ class SistemaController extends Shield {
         def sistema = Sistema.findByCodigo("NMNA")
         session.sistema = sistema
 
-        def bodegas = Bodega.countByActivo(1)
-        def proyectos = Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())
-
-        def proyectosSinPersonal = 0
+        def data = []
+        def proyectos = Proyecto.list()
         proyectos.each { p ->
             def personalProyecto = PersonalProyecto.withCriteria {
                 eq("proyecto", p)
@@ -63,12 +61,30 @@ class SistemaController extends Shield {
                     isNull("fechaFin")
                 }
             }
-            if (personalProyecto.size() == 0) {
-                proyectosSinPersonal++
-            }
+            def m = [proyecto: p, personal: personalProyecto]
+            data += m
         }
+        return [data: data]
 
-        return [bodegas: bodegas, proyectos: proyectos.size(), proyectosSinPersonal: proyectosSinPersonal]
+//        def bodegas = Bodega.countByActivo(1)
+//        def proyectos = Proyecto.findAllByFechaFinIsNullOrFechaFinGreaterThan(new Date())
+//
+//        def proyectosSinPersonal = 0
+//        proyectos.each { p ->
+//            def personalProyecto = PersonalProyecto.withCriteria {
+//                eq("proyecto", p)
+//                le("fechaInicio", new Date())
+//                or {
+//                    ge("fechaFin", new Date())
+//                    isNull("fechaFin")
+//                }
+//            }
+//            if (personalProyecto.size() == 0) {
+//                proyectosSinPersonal++
+//            }
+//        }
+//
+//        return [bodegas: bodegas, proyectos: proyectos.size(), proyectosSinPersonal: proyectosSinPersonal]
     }
 
     /**

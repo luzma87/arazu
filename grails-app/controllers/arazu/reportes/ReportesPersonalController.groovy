@@ -70,6 +70,7 @@ class ReportesPersonalController {
     def buscaAsistencias_funcion(params) {
         def personas = []
         def proyecto = null
+
         if (params.proyecto == "-1") {
             personas = Persona.list([sort: "apellido"])
         } else {
@@ -91,8 +92,30 @@ class ReportesPersonalController {
         }
         def asistencias = Asistencia.findAllByEmpleadoInListAndFechaBetween(personas, desde, hasta)
         asistencias = asistencias.sort { it.empleado.apellido }
+
+        def asistencias2
+        if (proyecto) {
+            asistencias2 = Asistencia.findAllByProyectoAndFechaBetween(proyecto, desde, hasta)
+        } else {
+            asistencias2 = Asistencia.findAllByProyectoIsNotNullAndFechaBetween(desde, hasta)
+        }
+
         def tipos = TipoAsistencia.list([sort: "id"])
         def datos = [:]
+        asistencias2.each { a ->
+            if (!datos["invitado_" + a.proyecto.id]) {
+                def tmp = [:]
+                tmp["proyecto"] = [a.proyecto]
+                tmp["desayunos"] = a.desayunosInvitado
+                tmp["almuerzos"] = a.almuerzosInvitado
+                tmp["meriendas"] = a.meriendasInvitado
+                datos["invitado_" + a.proyecto.id] = tmp
+            } else {
+                datos["invitado_" + a.proyecto.id]["desayunos"] += a.desayunosInvitado
+                datos["invitado_" + a.proyecto.id]["almuerzos"] += a.almuerzosInvitado
+                datos["invitado_" + a.proyecto.id]["meriendas"] += a.meriendasInvitado
+            }
+        }
         asistencias.each { a ->
             def p = a.empleado.getProyectoPorFecha(a.fecha)
             if (!proyecto || p == proyecto) {
@@ -147,8 +170,10 @@ class ReportesPersonalController {
                     }
                     //println "plus "+datos[a.empleado][a.tipo.nombre]
                 }
+                datos[a.empleado]["proyecto"] = datos[a.empleado]["proyecto"].sort { it.nombre }
             }
         }
+        datos = datos.sort { it.value.proyecto }
         return [datos: datos, tipos: tipos]
     }
 }
