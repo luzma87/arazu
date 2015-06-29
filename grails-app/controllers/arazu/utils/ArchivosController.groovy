@@ -29,6 +29,7 @@ class ArchivosController extends Shield {
             pps: "application/mspowerpoint", ppsx: "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
             png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", bmp: "image/bmp",
             zip: "application/zip",
+            zip: "application/x-zip-compressed",
             mp3: "audio/x-mpeg", wav: "audio/x-wav",
             mp4: "video/mp4", wmv: "video/x-ms-wmv",
             odt: "application/vnd.oasis.opendocument.text",
@@ -37,15 +38,16 @@ class ArchivosController extends Shield {
     ]
 
     def okContents = [
-            "application/pdf"         : "pdf",
-            "text/plain"              : "txt",
-            "application/msword"      : "doc", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
-            "application/msexcel"     : "xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
-            "application/mspowerpoint": "ppt", "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
-            "image/png"               : "png", "image/jpeg": "jpg", "image/jpeg": "jpeg", "image/bmp": "bmp",
-            "application/zip"         : "zip",
-            "audio/x-mpeg"            : "mp3", "audio/x-wav": "wav",
-            "video/mp4"               : "mp4", "video/x-ms-wmv": "wmv"
+            "application/pdf"             : "pdf",
+            "text/plain"                  : "txt",
+            "application/msword"          : "doc", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+            "application/msexcel"         : "xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+            "application/mspowerpoint"    : "ppt", "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+            "image/png"                   : "png", "image/jpeg": "jpg", "image/jpeg": "jpeg", "image/bmp": "bmp",
+            "application/zip"             : "zip",
+            "application/x-zip-compressed": "zip",
+            "audio/x-mpeg"                : "mp3", "audio/x-wav": "wav",
+            "video/mp4"                   : "mp4", "video/x-ms-wmv": "wmv"
     ]
     def space = "&nbsp;&nbsp;&nbsp;&nbsp;"
 
@@ -242,24 +244,41 @@ class ArchivosController extends Shield {
                 fileName = fileName.tr(/áéíóúñÑÜüÁÉÍÓÚàèìòùÀÈÌÒÙÇç .!¡¿?&#°"'/, "aeiounNUuAEIOUaeiouAEIOUCc_")
 
                 def nombre = fileName + "." + ext
+                def nombreSinExt = fileName
                 def pathFile = path + File.separator + nombre
                 def fn = fileName
                 def src = new File(pathFile)
                 def i = 1
+                println "Antes del while: nombre=" + nombre + "   sin ext=" + nombreSinExt
                 while (src.exists()) {
                     nombre = fn + "_" + i + "." + ext
+                    nombreSinExt = fn + "_" + i
+                    println "\tEn del while: nombre=" + nombre + "   sin ext=" + nombreSinExt
                     pathFile = path + nombre
                     src = new File(pathFile)
                     i++
                 }
+                println "DESPUES del while: nombre=" + nombre + "   sin ext=" + nombreSinExt
                 println pathFile
                 try {
                     f.transferTo(new File(pathFile)) // guarda el archivo subido al nuevo path
                 } catch (e) {
                     println "????????\n" + e + "\n???????????"
                 }
+
+                if (ext == "zip") {
+                    def newFolder = path + File.separator + nombreSinExt
+                    new File(newFolder).mkdirs()
+                    new Unzipper(new File(pathFile)).eachEntry { entry ->
+                        def newPath = newFolder + File.separator + entry.getFilePath()
+                        new File(newPath).mkdirs()
+                        entry.extractTo(new File(newPath, entry.getFileName()))
+                    }
+                }
+
                 render "SUCCESS*Archivo subido"
             } else {
+                println "Content type: " + f.getContentType()
                 render "ERROR*No se permite cargar el tipo de archivo seleccionado"
             }
         } else {
