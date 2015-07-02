@@ -3,6 +3,13 @@ package arazu.seguridad
 class LoginController {
 
     /**
+     * Acción para verificar si existe conexión
+     */
+    def ping() {
+        render "OK"
+    }
+
+    /**
      * Acción que valida que la sesión esté activa
      */
     def validarSesion() {

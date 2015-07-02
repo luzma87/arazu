@@ -120,3 +120,18 @@ function closeLoader() {
     $("#dlgLoader").modal('hide');
     $(".modal-backdrop").css({zIndex : 1040});
 }
+
+function isOnline(url) {
+    var online;
+    $.ajax({
+        url     : url,
+        async   : false,
+        error   : function (jqXHR, exception) {
+            online = false;
+        },
+        success : function () {
+            online = true;
+        }
+    });
+    return online;
+}

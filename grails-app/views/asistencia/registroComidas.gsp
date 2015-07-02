@@ -11,6 +11,8 @@
         <meta name="layout" content="main">
         <title>Registro de comidas${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
+        <imp:js href="${resource(dir: 'js', file: 'jdb.js')}"/>
+
         <style type="text/css">
         .clickable {
             cursor      : pointer;
@@ -98,7 +100,21 @@
 
                                             <td data-tipo="desayuno" class="text-center ${okDesayuno ? 'clickableNum' : 'disabled'}">
                                                 <g:if test="${okDesayuno}">
+                                                    <div class="col-md-4">
+                                                        <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
+                                                            <i class="fa fa-minus"></i>
+                                                        </a>
+                                                    </div>
 
+                                                    <div class="col-md-4 div-num">
+                                                        ${cantDes}
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <a href="#" class="btn btn-success btn-xs btn-plus" style="width: 100%;">
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+                                                    </div>
                                                 </g:if>
                                                 <g:else>
                                                     <g:if test="${asistenciaInvitado}">
@@ -112,7 +128,21 @@
 
                                             <td data-tipo="almuerzo" class="text-center ${okAlmuerzo ? 'clickableNum' : 'disabled'}">
                                                 <g:if test="${okAlmuerzo}">
+                                                    <div class="col-md-4">
+                                                        <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
+                                                            <i class="fa fa-minus"></i>
+                                                        </a>
+                                                    </div>
 
+                                                    <div class="col-md-4 div-num">
+                                                        ${cantAlm}
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <a href="#" class="btn btn-success btn-xs btn-plus" style="width: 100%;">
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+                                                    </div>
                                                 </g:if>
                                                 <g:else>
                                                     <g:if test="${asistenciaInvitado}">
@@ -335,28 +365,33 @@
                     var comida = celda.data("tipo");
                     var persona = celda.data("id");
 
-                    $.ajax({
-                        type    : "POST",
-                        url     : '${createLink( action:'cambiarEstadoComida_ajax')}',
-                        data    : {
-                            persona : persona,
-                            comida  : comida,
-                            comio   : comio
-                        },
-                        success : function (msg) {
-                            var parts = msg.split("*");
-                            log(parts[1], parts[0]); // log(msg, type, title, hide)
-                            if (parts[0] == "SUCCESS") {
-                                celda.removeClass(claseRemove).addClass(claseAdd).html(texto);
+                    if (isOnline("${createLink(controller: 'login', action:'ping')}")) {
+                        $.ajax({
+                            type    : "POST",
+                            url     : '${createLink( action:'cambiarEstadoComida_ajax')}',
+                            data    : {
+                                persona : persona,
+                                comida  : comida,
+                                comio   : comio
+                            },
+                            success : function (msg) {
+                                var parts = msg.split("*");
+                                log(parts[1], parts[0]); // log(msg, type, title, hide)
+                                if (parts[0] == "SUCCESS") {
+                                    celda.removeClass(claseRemove).addClass(claseAdd).html(texto);
+                                }
+                            },
+                            error   : function (jqXHR, textStatus, errorThrown) {
+                                log("Ha ocurrido un error interno", "Error");
+                                closeLoader();
                             }
-                        },
-                        error   : function () {
-                            log("Ha ocurrido un error interno", "Error");
-                            closeLoader();
-                        }
-                    });
+                        });
+                    } else {
+                        console.log("OFFLINE: guardar localmente");
+                        jdb.init();
+                        jdb.addComidaPersona(persona, new Date(), comida, comio, "${session.usuario.id}");
+                    }
                 });
-
             });
         </script>
 
