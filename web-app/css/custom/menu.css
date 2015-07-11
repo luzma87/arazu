@@ -1,3 +1,26 @@
 .navbar-nav, .navbar-nav .dropdown-menu {
     font-size : 15px;
 }
+
+.menu-vertical{
+    position: fixed;top: 200;
+    left: 5px;
+    padding: 5px;
+    background: #DDDDDD;
+    border-radius: 5px;
+    z-index: 99999;
+    color: #fff !important;
+}
+.menu-vertical ul{
+    list-style: none;
+    padding: 0px;
+    color: #fff !important;
+}
+.menu-vertical li{
+    color: #fff !important;
+    padding: 5px;
+}
+.menu-vertical a{
+    color: #333F5F;
+    text-decoration: none;
+}

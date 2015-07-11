@@ -249,16 +249,22 @@
             </div>
         </g:if>
 
-        <div class="btn-group-vertical" role="group"
-             style="position: absolute; top:155px; left: 5px; width: 100px; height: 300px; z-index: 2;">
+
+    <div class="menu-vertical" role="group">
+        <ul>
             <g:each in="${session.sistemas}" var="sistema">
                 <g:if test="${sistema}">
-                    <g:link controller="${sistema.controlador}" action="${sistema.accion}" class="btn btn-default">
-                        ${sistema.nombre}
-                    </g:link>
+                    <li>
+                        <g:link controller="${sistema.controlador}" action="${sistema.accion}" class="item-menu-vertical">
+                            <img width="30px" src="${resource(dir: 'images/inicio', file: sistema.pathImagen)}"/>
+                            <span class="titulo-menu" style="display: none">${sistema.nombre}</span>
+                        </g:link>
+                    </li>
                 </g:if>
             </g:each>
-        </div>
+        </ul>
+
+    </div>
 
         <mn:menu title="${g.layoutTitle(default: 'Arazu')}"/>
 
@@ -267,5 +273,12 @@
         </div>
 
         <mn:stickyFooter/>
+    <script type="text/javascript">
+        $(".menu-vertical").hover(function(){
+            $(this).find(".titulo-menu").show()
+        },function(){
+            $(this).find(".titulo-menu").hide()
+        })
+    </script>
     </body>
 </html>
