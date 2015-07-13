@@ -41,8 +41,12 @@ class NotaPedidoController extends Shield {
         def estado = null
         def numero = null
         if (params.search_numero) {
-            strSearch += "con número <strong>${params.search_numero}</strong>"
-            numero = params.search_numero.toInteger()
+            try {
+                numero = params.search_numero.toInteger()
+                strSearch += "con número <strong>${params.search_numero}</strong>"
+            } catch (e) {
+                strSearch += "<span class='text-danger'><strong>no se pudo convertir '<em>${params.search_numero}</em>' a número, por lo que ha sido ignorado el filtro de número</strong></span>"
+            }
         }
         if (params.search_desde) {
             if (strSearch != "") {
