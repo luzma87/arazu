@@ -41,6 +41,28 @@ class SistemaController extends Shield {
     def inicioAdmin() {
         def sistema = Sistema.findByCodigo("ADMN")
         session.sistema = sistema
+        def tipoMenu = TipoAccion.findByCodigo("M")
+        def acciones = Permiso.withCriteria {
+            eq("perfil", session.perfil)
+            accion {
+                eq("tipo", tipoMenu)
+                modulo {
+                    order("orden", "asc")
+                    ne("nombre", "noAsignado")
+                }
+                if (sistema) {
+                    or {
+                        eq("sistema", sistema)
+                        isNull("sistema")
+                    }
+                } else {
+                    isNull("sistema")
+                }
+                order("orden", "asc")
+            }
+        }.accion
+        println acciones
+        return [acciones: acciones]
     }
 
     /**

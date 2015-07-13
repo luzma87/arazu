@@ -7,7 +7,7 @@ package arazu.seguridad
  */
 class Accion {
     /**
-     * Nombre de la acción
+     * Nombre de la acción: el action del controlador
      */
     String nombre
     /**

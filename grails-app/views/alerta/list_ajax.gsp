@@ -11,10 +11,10 @@
 <table class="table table-condensed table-bordered table-striped table-hover" style="font-size: 11px">
     <thead>
         <tr>
-            <th></th>
+            <th style="width: 25px;"></th>
             <th style="width: 63px;">Fecha</th>
             <th>Mensaje</th>
-            <th>Link</th>
+            <th style="width: 35px;">Link</th>
         </tr>
     </thead>
     <tbody>
