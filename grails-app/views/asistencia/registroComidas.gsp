@@ -11,7 +11,7 @@
         <meta name="layout" content="main">
         <title>Registro de comidas${proy ? ' del proyecto ' + proy.nombre : ''}</title>
 
-        <imp:js href="${resource(dir: 'js', file: 'jdb.js')}"/>
+        %{--<imp:js href="${resource(dir: 'js', file: 'jdb.js')}"/>--}%
 
         <style type="text/css">
         .clickable {
@@ -98,7 +98,8 @@
                                         <tr>
                                             <td class="empleado">INVITADOS ${empleado.proyecto}</td>
 
-                                            <td data-tipo="desayuno" class="text-center ${okDesayuno ? 'clickableNum' : 'disabled'}">
+                                            <td data-tipo="desayuno" class="text-center ${okDesayuno ? 'clickableNum' : 'disabled'}"
+                                                data-cant="${cantDes}" data-comida="desayuno" data-proyecto="${empleado.proyecto.id}">
                                                 <g:if test="${okDesayuno}">
                                                     <div class="col-md-4">
                                                         <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
@@ -126,7 +127,8 @@
                                                 </g:else>
                                             </td>
 
-                                            <td data-tipo="almuerzo" class="text-center ${okAlmuerzo ? 'clickableNum' : 'disabled'}">
+                                            <td data-tipo="almuerzo" class="text-center ${okAlmuerzo ? 'clickableNum' : 'disabled'}"
+                                                data-cant="${cantAlm}" data-comida="almuerzo" data-proyecto="${empleado.proyecto.id}">
                                                 <g:if test="${okAlmuerzo}">
                                                     <div class="col-md-4">
                                                         <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
@@ -365,32 +367,32 @@
                     var comida = celda.data("tipo");
                     var persona = celda.data("id");
 
-                    if (isOnline("${createLink(controller: 'login', action:'ping')}")) {
-                        $.ajax({
-                            type    : "POST",
-                            url     : '${createLink( action:'cambiarEstadoComida_ajax')}',
-                            data    : {
-                                persona : persona,
-                                comida  : comida,
-                                comio   : comio
-                            },
-                            success : function (msg) {
-                                var parts = msg.split("*");
-                                log(parts[1], parts[0]); // log(msg, type, title, hide)
-                                if (parts[0] == "SUCCESS") {
-                                    celda.removeClass(claseRemove).addClass(claseAdd).html(texto);
-                                }
-                            },
-                            error   : function (jqXHR, textStatus, errorThrown) {
-                                log("Ha ocurrido un error interno", "Error");
-                                closeLoader();
+                    %{--if (isOnline("${createLink(controller: 'login', action:'ping')}")) {--}%
+                    $.ajax({
+                        type    : "POST",
+                        url     : '${createLink( action:'cambiarEstadoComida_ajax')}',
+                        data    : {
+                            persona : persona,
+                            comida  : comida,
+                            comio   : comio
+                        },
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0]); // log(msg, type, title, hide)
+                            if (parts[0] == "SUCCESS") {
+                                celda.removeClass(claseRemove).addClass(claseAdd).html(texto);
                             }
-                        });
-                    } else {
-                        console.log("OFFLINE: guardar localmente");
-                        jdb.init();
-                        jdb.addComidaPersona(persona, new Date(), comida, comio, "${session.usuario.id}");
-                    }
+                        },
+                        error   : function (jqXHR, textStatus, errorThrown) {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
+                    %{--} else {--}%
+                    %{--console.log("OFFLINE: guardar localmente");--}%
+                    %{--jdb.init();--}%
+                    %{--jdb.addComidaPersona(persona, new Date(), comida, comio, "${session.usuario.id}");--}%
+                    %{--}--}%
                 });
             });
         </script>
