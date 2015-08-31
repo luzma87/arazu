@@ -24,7 +24,7 @@
         }
 
         td {
-            vertical-align : middle !important;
+            vertical-align : middle;
         }
         </style>
     </head>
@@ -99,7 +99,7 @@
                                             <td class="empleado">INVITADOS ${empleado.proyecto}</td>
 
                                             <td data-tipo="desayuno" class="text-center ${okDesayuno ? 'clickableNum' : 'disabled'}"
-                                                data-cant="${cantDes}" data-original="${cantDes}" data-comida="desayuno" data-proyecto="${empleado.proyecto.id}">
+                                                data-cant="${cantDes}" data-comida="desayuno" data-proyecto="${empleado.proyecto.id}">
                                                 <g:if test="${okDesayuno}">
                                                     <div class="col-md-4">
                                                         <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
@@ -128,7 +128,7 @@
                                             </td>
 
                                             <td data-tipo="almuerzo" class="text-center ${okAlmuerzo ? 'clickableNum' : 'disabled'}"
-                                                data-cant="${cantAlm}" data-original="${cantAlm}" data-comida="almuerzo" data-proyecto="${empleado.proyecto.id}">
+                                                data-cant="${cantAlm}" data-comida="almuerzo" data-proyecto="${empleado.proyecto.id}">
                                                 <g:if test="${okAlmuerzo}">
                                                     <div class="col-md-4">
                                                         <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
@@ -157,7 +157,7 @@
                                             </td>
 
                                             <td data-tipo="merienda" class="text-center ${okMerienda ? 'clickableNum' : 'disabled'}"
-                                                data-cant="${cantMer}" data-original="${cantMer}" data-comida="merienda" data-proyecto="${empleado.proyecto.id}">
+                                                data-cant="${cantMer}" data-comida="merienda" data-proyecto="${empleado.proyecto.id}">
                                                 <g:if test="${okMerienda}">
                                                     <div class="col-md-4">
                                                         <a href="#" class="btn btn-danger btn-xs btn-minus" style="width: 100%;">
@@ -202,7 +202,7 @@
                                             </g:if>
                                         </td>
 
-                                        <td data-tipo="desayuno" data-id="${empleado.id}" data-comio="${asistencia && asistencia.desayuno == 'S' ? 'S' : 'N'}" data-original="${asistencia && asistencia.desayuno == 'S' ? 'S' : 'N'}"
+                                        <td data-tipo="desayuno" data-id="${empleado.id}"
                                             class="text-center ${okDesayuno ? 'clickable vacio' : 'disabled'} ${asistencia ? (asistencia.desayuno == 'S' ? 'success text-success' : asistencia.desayuno == 'N' ? 'danger text-danger' : '') : ''}">
                                             <g:if test="${asistencia && asistencia.desayuno == 'S'}">
                                                 <i class="fa fa-check-circle"></i> SI
@@ -217,7 +217,7 @@
                                             </g:else>
                                         </td>
 
-                                        <td data-tipo="almuerzo" data-id="${empleado.id}" data-comio="${asistencia && asistencia.almuerzo == 'S' ? 'S' : 'N'}" data-original="${asistencia && asistencia.almuerzo == 'S' ? 'S' : 'N'}"
+                                        <td data-tipo="almuerzo" data-id="${empleado.id}"
                                             class="text-center ${okAlmuerzo ? 'clickable vacio' : 'disabled'} ${asistencia ? (asistencia.almuerzo == 'S' ? 'success text-success' : asistencia.almuerzo ? 'danger text-danger' : '') : ''}">
                                             <g:if test="${asistencia && asistencia.almuerzo == 'S'}">
                                                 <i class="fa fa-check-circle"></i> SI
@@ -230,7 +230,7 @@
                                             </g:if>
                                         </td>
 
-                                        <td data-tipo="merienda" data-id="${empleado.id}" data-comio="${asistencia && asistencia.merienda == 'S' ? 'S' : 'N'}" data-original="${asistencia && asistencia.merienda == 'S' ? 'S' : 'N'}"
+                                        <td data-tipo="merienda" data-id="${empleado.id}"
                                             class="text-center ${okMerienda ? 'clickable vacio' : 'disabled'} ${asistencia ? (asistencia.merienda == 'S' ? 'success text-success' : asistencia.merienda ? 'danger text-danger' : '') : ''}">
                                             <g:if test="${asistencia && asistencia.merienda == 'S'}">
                                                 <i class="fa fa-check-circle"></i> SI
@@ -249,38 +249,18 @@
                     </table>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-1">
-                    <a href="#" id="guardar" class="btn btn-success">
-                        <i class="fa fa-save"></i> Guardar
-                    </a>
-                </div>
-            </div>
         </elm:container>
 
         <script type="text/javascript">
             var id = null;
             var empleado = null;
             var fecha = null;
-            var $proyecto = $("#proyecto");
-
-            (function ($) {
-                $.fn.disableSelection = function () {
-                    return this
-                            .attr('unselectable', 'on')
-                            .css('user-select', 'none')
-                            .on('selectstart', false);
-                };
-            })(jQuery);
 
             $(function () {
 
                 setInterval(function () {
                     myTimer()
                 }, 1000);
-
-                $("td").disableSelection();
 
                 function myTimer() {
                     var d = new Date();
@@ -295,42 +275,57 @@
 
                     $("#hora").text(t);
 
-                    %{--if ((h == ${horaInicioDesayuno} && m == ${minInicioDesayuno} && s == 0) ||--}%
-                    %{--(h == ${horaInicioAlmuerzo} && m == ${minInicioAlmuerzo} && s == 0) ||--}%
-                    %{--(h == ${horaInicioMerienda} && m == ${minInicioMerienda} && s == 0)) {--}%
-                    %{--location.reload(true);--}%
-                    %{--}--}%
+                    if ((h == ${horaInicioDesayuno} && m == ${minInicioDesayuno} && s == 0) ||
+                        (h == ${horaInicioAlmuerzo} && m == ${minInicioAlmuerzo} && s == 0) ||
+                        (h == ${horaInicioMerienda} && m == ${minInicioMerienda} && s == 0)) {
+                        location.reload(true);
+                    }
                 }
 
                 <g:if test="${proy}">
-                $proyecto.val('${proy.id}');
+                $("#proyecto").val('${proy.id}');
                 </g:if>
                 <g:else>
-                $proyecto.val('');
+                $("#proyecto").val('');
                 </g:else>
-                $proyecto.selectpicker('render');
+                $('#proyecto').selectpicker('render');
 
                 $("#btnChangeProy").click(function () {
                     location.href = "${createLink(action:'registroComidas')}/" + $("#proyecto").val();
                 });
 
                 function cambiarComidaInv($celda, cant) {
+                    var proy = $celda.data("proyecto");
                     var comida = $celda.data("comida");
                     var cantActual = parseInt($celda.data("cant"));
-                    var cantOriginal = parseInt($celda.data("original"));
                     var cantNueva = cantActual + cant;
-                    $celda.find(".div-num").text(cantNueva);
-                    $celda.data("cant", cantNueva);
-                    if (cantNueva == 0) {
-                        $celda.find(".btn-minus").addClass("disabled");
-                    } else {
-                        $celda.find(".btn-minus").removeClass("disabled");
-                    }
-                    if (cantOriginal != cantNueva) {
-                        $celda.addClass("changed");
-                    } else {
-                        $celda.removeClass("changed");
-                    }
+
+                    $.ajax({
+                        type    : "POST",
+                        url     : '${createLink( action:'cambiarEstadoComidaInvitado_ajax')}',
+                        data    : {
+                            proy   : proy,
+                            comida : comida,
+                            cant   : cantNueva
+                        },
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0]); // log(msg, type, title, hide)
+                            if (parts[0] == "SUCCESS") {
+                                $celda.find(".div-num").text(cantNueva);
+                                $celda.data("cant", cantNueva);
+                                if (cantNueva == 0) {
+                                    $celda.find(".btn-minus").addClass("disabled");
+                                } else {
+                                    $celda.find(".btn-minus").removeClass("disabled");
+                                }
+                            }
+                        },
+                        error   : function () {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
+                        }
+                    });
                 }
 
                 $(".clickableNum").each(function () {
@@ -355,11 +350,10 @@
                 });
 
                 $(".clickable").click(function () {
-                    var $celda = $(this);
+                    var celda = $(this);
                     var claseAdd, claseRemove, texto;
                     var comio = false;
-                    var comioOriginal = $celda.data("original");
-                    if ($celda.hasClass("vacio") || $celda.hasClass("danger")) {
+                    if (celda.hasClass("vacio") || celda.hasClass("danger")) {
                         claseAdd = "success text-success";
                         claseRemove = "vacio danger text-danger";
                         texto = "<i class='fa fa-check-circle'></i> SI";
@@ -370,47 +364,35 @@
                         texto = "<i class='fa fa-times-circle'></i> NO";
                         comio = "N";
                     }
-                    $celda.removeClass(claseRemove).addClass(claseAdd).html(texto).data("comio", comio);
-                    if (comio != comioOriginal) {
-                        $celda.addClass("changed");
-                    } else {
-                        $celda.removeClass("changed");
-                    }
-                });
+                    var comida = celda.data("tipo");
+                    var persona = celda.data("id");
 
-                $("#guardar").click(function () {
-                    bootbox.confirm("¿Está seguro de querer registrar el registro de comidas?", function (result) {
-                        if (result) {
-
-                            openLoader();
-                            var data = "";
-                            $(".changed").each(function () {
-                                if ($(this).data("id")) {
-                                    data += $(this).data("id") + ";" + $(this).data("comio") + "|"
-                                } else {
-                                    data += $(this).data("proyecto") + ";" + $(this).data("cant") + "|"
-                                }
-                            });
-
-                            if (data != "") {
-                                $.ajax({
-                                    type    : "POST",
-                                    url     : "${g.createLink(controller:'asistencia', action:'guardarComidas_ajax')}",
-                                    data    : "data=" + data,
-                                    success : function (msg) {
-                                        closeLoader();
-                                        log("Datos guardados", "Success");
-                                    },
-                                    error   : function () {
-                                        log("Ha ocurrido un error interno", "Error");
-                                        closeLoader();
-                                    }
-                                });
-                            } else {
-                                closeLoader();
+                    %{--if (isOnline("${createLink(controller: 'login', action:'ping')}")) {--}%
+                    $.ajax({
+                        type    : "POST",
+                        url     : '${createLink( action:'cambiarEstadoComida_ajax')}',
+                        data    : {
+                            persona : persona,
+                            comida  : comida,
+                            comio   : comio
+                        },
+                        success : function (msg) {
+                            var parts = msg.split("*");
+                            log(parts[1], parts[0]); // log(msg, type, title, hide)
+                            if (parts[0] == "SUCCESS") {
+                                celda.removeClass(claseRemove).addClass(claseAdd).html(texto);
                             }
+                        },
+                        error   : function (jqXHR, textStatus, errorThrown) {
+                            log("Ha ocurrido un error interno", "Error");
+                            closeLoader();
                         }
                     });
+                    %{--} else {--}%
+                    %{--console.log("OFFLINE: guardar localmente");--}%
+                    %{--jdb.init();--}%
+                    %{--jdb.addComidaPersona(persona, new Date(), comida, comio, "${session.usuario.id}");--}%
+                    %{--}--}%
                 });
             });
         </script>

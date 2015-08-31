@@ -7,6 +7,9 @@ import arazu.seguridad.Persona
 import arazu.seguridad.Shield
 import groovy.json.JsonBuilder
 
+/**
+ * Controlador que muestra las pantallas de manejo de asistencias
+ */
 class AsistenciaController extends Shield {
 
     def verAsistencia() {
@@ -173,6 +176,89 @@ class AsistenciaController extends Shield {
         return [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos]
     }
 
+    def registroComidas_old() {
+        def now = new Date();
+
+        def proy = null
+        if (params.id) {
+            proy = Proyecto.get(params.id)
+        }
+        def proyectos = Proyecto.list([sort: 'nombre'])
+
+        def empleados = Persona.list()
+        if (proy) {
+            empleados = empleados.findAll { it.proyecto == proy }
+        }
+        empleados = empleados.sort { it.proyecto }
+
+        def inicioDesayuno = Parametros.inicioDesayuno
+        def finDesayuno = Parametros.finDesayuno
+        def inicioAlmuerzo = Parametros.inicioAlmuerzo
+        def finAlmuerzo = Parametros.finAlmuerzo
+        def inicioMerienda = Parametros.inicioMerienda
+        def finMerienda = Parametros.finMerienda
+
+        def horaInicioDesayuno = inicioDesayuno.split(':')[0].toInteger()
+        def minInicioDesayuno = inicioDesayuno.split(':')[1].toInteger()
+        def horaFinDesayuno = finDesayuno.split(':')[0].toInteger()
+        def minFinDesayuno = finDesayuno.split(':')[1].toInteger()
+        def horaInicioAlmuerzo = inicioAlmuerzo.split(':')[0].toInteger()
+        def minInicioAlmuerzo = inicioAlmuerzo.split(':')[1].toInteger()
+        def horaFinAlmuerzo = finAlmuerzo.split(':')[0].toInteger()
+        def minFinAlmuerzo = finAlmuerzo.split(':')[1].toInteger()
+        def horaInicioMerienda = inicioMerienda.split(':')[0].toInteger()
+        def minInicioMerienda = inicioMerienda.split(':')[1].toInteger()
+        def horaFinMerienda = finMerienda.split(':')[0].toInteger()
+        def minFinMerienda = finMerienda.split(':')[1].toInteger()
+
+        def ahora = new Date().format('HH:mm')
+        def horaAhora = ahora.split(':')[0].toInteger()
+        def minAhora = ahora.split(':')[1].toInteger()
+
+        def okDesayuno = false
+        def okAlmuerzo = false
+        def okMerienda = false
+
+        if (horaAhora >= horaInicioDesayuno) {
+            if (horaAhora <= horaFinDesayuno) {
+                if (minAhora >= minInicioDesayuno) {
+                    if (minAhora <= minFinDesayuno) {
+                        okDesayuno = true
+                    }
+                }
+            }
+        }
+
+        if (horaAhora >= horaInicioAlmuerzo) {
+            if (horaAhora <= horaFinAlmuerzo) {
+                if (minAhora >= minInicioAlmuerzo) {
+                    if (minAhora <= minFinAlmuerzo) {
+                        okAlmuerzo = true
+                    }
+                }
+            }
+        }
+
+        if (horaAhora >= horaInicioMerienda) {
+            if (horaAhora <= horaFinMerienda) {
+                if (minAhora >= minInicioMerienda) {
+                    if (minAhora <= minFinMerienda) {
+                        okMerienda = true
+                    }
+                }
+            }
+        }
+
+        return [now               : now, empleados: empleados, proy: proy, proyectos: proyectos,
+                inicioDesayuno    : inicioDesayuno, finDesayuno: finDesayuno,
+                inicioAlmuerzo    : inicioAlmuerzo, finAlmuerzo: finAlmuerzo,
+                inicioMerienda    : inicioMerienda, finMerienda: finMerienda,
+                horaInicioDesayuno: horaInicioDesayuno, minInicioDesayuno: minInicioDesayuno,
+                horaInicioAlmuerzo: horaInicioAlmuerzo, minInicioAlmuerzo: minInicioAlmuerzo,
+                horaInicioMerienda: horaInicioMerienda, minInicioMerienda: minInicioMerienda,
+                okDesayuno        : okDesayuno, okAlmuerzo: okAlmuerzo, okMerienda: okMerienda]
+    }
+
     def registroComidas() {
         def now = new Date();
 
@@ -254,6 +340,10 @@ class AsistenciaController extends Shield {
                 horaInicioAlmuerzo: horaInicioAlmuerzo, minInicioAlmuerzo: minInicioAlmuerzo,
                 horaInicioMerienda: horaInicioMerienda, minInicioMerienda: minInicioMerienda,
                 okDesayuno        : okDesayuno, okAlmuerzo: okAlmuerzo, okMerienda: okMerienda]
+    }
+
+    def guardarComidas_ajax() {
+
     }
 
     def form_ajax() {

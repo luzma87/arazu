@@ -103,6 +103,7 @@
             var id = null;
             var empleado = null;
             var fecha = null;
+            var $proyecto = $("#proyecto");
 
             function submitFormAsistencia() {
                 var $form = $("#frmAsistencia");
@@ -190,7 +191,9 @@
             $(function () {
                 var tipos = ${tipos};
 
-                $(".actual").disableSelection().click(function () {
+                $("td").disableSelection();
+
+                $(".actual").click(function () {
                     var celda = $(this);
                     var found = false;
                     var changed = false;
@@ -226,12 +229,12 @@
                 });
 
                 <g:if test="${proy}">
-                $("#proyecto").val('${proy.id}');
+                $proyecto.val('${proy.id}');
                 </g:if>
                 <g:else>
-                $("#proyecto").val('');
+                $proyecto.val('');
                 </g:else>
-                $('#proyecto').selectpicker('render');
+                $proyecto.selectpicker('render');
 
                 $("#btnChangeProy").click(function () {
                     location.href = "${createLink(action:'registroAsistencia')}/" + $("#proyecto").val();
@@ -265,7 +268,6 @@
                             }
                         }
                     });
-
                 });
             });
         </script>
