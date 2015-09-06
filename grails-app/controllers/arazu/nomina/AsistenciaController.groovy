@@ -2,7 +2,7 @@ package arazu.nomina
 
 import arazu.parametros.Parametros
 import arazu.parametros.TipoAsistencia
-import arazu.proyectos.Proyecto;
+import arazu.proyectos.Proyecto
 import arazu.seguridad.Persona
 import arazu.seguridad.Shield
 import groovy.json.JsonBuilder
@@ -119,8 +119,8 @@ class AsistenciaController extends Shield {
             empleados = empleados.findAll { it.proyecto == proy }
         }
         empleados = empleados.sort { it.proyecto }
-//        println "EMPLEADOS"
-//        println empleados
+//        //println "EMPLEADOS"
+//        //println empleados
 
         def tiposAsistencia = []
         def tipos = TipoAsistencia.list([sort: "orden"])
@@ -135,7 +135,7 @@ class AsistenciaController extends Shield {
         }
 
         def json = new JsonBuilder(tiposAsistencia)
-        println json.toPrettyString()
+        //println json.toPrettyString()
         return [min: min, max: max, now: now, empleados: empleados, dia: dia, proy: proy, proyectos: proyectos, tipos: json]
     }
 
@@ -343,12 +343,93 @@ class AsistenciaController extends Shield {
     }
 
     def guardarComidas_ajax() {
+        //println params
 
+        def errores = ""
+
+//      data:p_1;desayuno;3|5;desayuno;S|3;desayuno;S|7;desayuno;S|
+
+        def data = params.data.split("\\|")
+        data.each { d ->
+            def parts = d.split(";")
+
+            println "PARTS: " + parts
+
+            def id = parts[0].toString()
+            def tipo = parts[1].toString()
+            def cant = parts[2]
+
+            if (id.startsWith("p")) {
+
+                tipo += "sInvitado"
+
+                //println "1"
+                //println "proy"
+                id = id.split("_")[1]
+                def proy = Proyecto.get(id.toLong())
+
+                def asistenciaInvitado = Asistencia.findAllByFechaAndProyecto(new Date().clearTime(), proy)
+                if (asistenciaInvitado.size() == 0) {
+                    //println "2"
+                    asistenciaInvitado = new Asistencia()
+                    asistenciaInvitado.fecha = new Date().clearTime()
+                    asistenciaInvitado.proyecto = proy
+                    asistenciaInvitado.registra = session.usuario
+                    asistenciaInvitado.tipo = TipoAsistencia.findByCodigo("ASTE")
+                } else if (asistenciaInvitado.size() >= 1) {
+                    //println "3"
+                    println "Hay ${asistenciaInvitado.size()} asistencia invitado date: ${new Date()} $proy"
+                    asistenciaInvitado = asistenciaInvitado.first()
+                }
+//                println "TIPO: " + tipo
+//                println "CANT: " + cant
+//                params[tipo] = cant.toInteger()
+//
+//                println params
+//
+//                asistenciaInvitado.properties = params
+
+                asistenciaInvitado[tipo] = cant.toInteger()
+
+                if (!asistenciaInvitado.save(flush: true)) {
+                    //println "4"
+                    errores += renderErrors(bean: asistenciaInvitado)
+                }
+            } else {
+                //println "5"
+                def pers = Persona.get(id.toLong())
+                def asistencia = Asistencia.findAllByFechaAndEmpleado(new Date().clearTime(), pers)
+                if (asistencia.size() == 0) {
+                    //println "6"
+                    asistencia = new Asistencia()
+                    asistencia.fecha = new Date().clearTime()
+                    asistencia.empleado = pers
+                    asistencia.tipo = TipoAsistencia.findByCodigo("ASTE")
+                    asistencia.registra = session.usuario
+                } else if (asistencia.size() >= 1) {
+                    //println "7"
+                    println "Hay ${asistencia.size()} asistencia  date: ${new Date()} $pers"
+                    asistencia = asistencia.first()
+                }
+                asistencia[tipo] = cant
+                if (!asistencia.save(flush: true)) {
+                    //println "8"
+                    errores += renderErrors(bean: asistencia)
+                }
+            }
+        }
+        if (errores == "") {
+            //println "9"
+            render "SUCCESS*Comidas guardadas exitosamente"
+        } else {
+            //println "10"
+            render "ERROR*" + errores
+        }
     }
 
     def form_ajax() {
         def asistenciaInstance
-        println "params " + params
+        //println "params " + params
         def empleado = Persona.get(params.empleado)
         if (params.id && params.id != "" && params.id != "undefined") {
             asistenciaInstance = Asistencia.get(params.id)
@@ -359,7 +440,7 @@ class AsistenciaController extends Shield {
     }
 
     def cambiarEstadoComidaInvitado_ajax() {
-        println "COMIDA INV: " + params
+        //println "COMIDA INV: " + params
         def proyecto = Proyecto.get(params.proy.toLong())
         def usu = Persona.get(session.usuario.id)
         def comida = params.comida
@@ -368,18 +449,18 @@ class AsistenciaController extends Shield {
         def asistencia = Asistencia.findAllByFechaAndProyecto(new Date().clearTime(), proyecto)
 
         if (asistencia.size() == 1) {
-            println "1"
+            //println "1"
             asistencia = asistencia.first()
             asistencia[comida + "sInvitado"] = cant
             if (asistencia.save(flush: true)) {
-                println "2"
+                //println "2"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
-                println "3"
+                //println "3"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else if (asistencia.size() == 0) {
-            println "4"
+            //println "4"
             asistencia = new Asistencia()
             asistencia.fecha = new Date().clearTime()
             asistencia.fechaRegistro = new Date()
@@ -388,20 +469,20 @@ class AsistenciaController extends Shield {
             asistencia.registra = usu
             asistencia[comida + "sInvitado"] = cant
             if (asistencia.save(flush: true)) {
-                println "5"
+                //println "5"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
-                println "6"
+                //println "6"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else {
-            println "7"
+            //println "7"
             render "ERROR*Ha ocurrido un error grave"
         }
     }
 
     def cambiarEstadoComida_ajax() {
-        println "COMIDA: " + params
+        //println "COMIDA: " + params
         def persona = Persona.get(params.persona.toLong())
         def usu = Persona.get(session.usuario.id)
         def comida = params.comida
@@ -410,18 +491,18 @@ class AsistenciaController extends Shield {
         def asistencia = Asistencia.findAllByFechaAndEmpleado(new Date().clearTime(), persona)
 
         if (asistencia.size() == 1) {
-            println "1"
+            //println "1"
             asistencia = asistencia.first()
             asistencia[comida] = comio
             if (asistencia.save(flush: true)) {
-                println "2"
+                //println "2"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
-                println "3"
+                //println "3"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else if (asistencia.size() == 0) {
-            println "4"
+            //println "4"
             asistencia = new Asistencia()
             asistencia.fecha = new Date().clearTime()
             asistencia.fechaRegistro = new Date()
@@ -430,27 +511,27 @@ class AsistenciaController extends Shield {
             asistencia.registra = usu
             asistencia[comida] = comio
             if (asistencia.save(flush: true)) {
-                println "5"
+                //println "5"
                 render "SUCCESS*" + comida.capitalize() + " registrad" + (comida == "merienda" ? "a" : "o")
             } else {
-                println "6"
+                //println "6"
                 render "ERROR*" + renderErrors(bean: asistencia)
             }
         } else {
-            println "7"
+            //println "7"
             render "ERROR*Ha ocurrido un error grave"
         }
     }
 
     def guardarDatos_ajax() {
-        println "params guardar datos " + params
+        //println "params guardar datos " + params
         def datos = params.data.split("\\|")
-        //println "datos "+datos
+        ////println "datos "+datos
         datos.each { d ->
             if (d != "") {
-                //println "d "+d
+                ////println "d "+d
                 def celda = d.split(";")
-                //println "celda "+celda
+                ////println "celda "+celda
                 def persona = Persona.get(celda[0])
                 def fecha = new Date().parse("dd-MM-yyyy", celda[1])
                 def asistencia = Asistencia.findByEmpleadoAndFecha(persona, fecha)
@@ -464,7 +545,7 @@ class AsistenciaController extends Shield {
 
                 asistencia.registra = session.usuario
                 if (!asistencia.save(flush: true)) {
-                    println "error save asistencia " + asistencia.errors
+                    //println "error save asistencia " + asistencia.errors
                 }
 
             }
@@ -477,26 +558,26 @@ class AsistenciaController extends Shield {
     /* todo esta para que solo pueda editar en la fecha actual, eso hay que cambiar*/
 
     def guardarDatosHoras_ajax() {
-        println "params guardar datos " + params
+        //println "params guardar datos " + params
         def datos = params.data.split("\\|")
-        //println "datos "+datos
+        ////println "datos "+datos
         datos.each { d ->
             if (d != "") {
-                //println "d "+d
+                ////println "d "+d
                 def celda = d.split(";")
-                //println "celda "+celda
+                ////println "celda "+celda
                 def persona = Persona.get(celda[0])
                 def fecha = new Date().parse("dd-MM-yyyy", celda[1])
                 def asistencia = Asistencia.findByEmpleadoAndFecha(persona, fecha)
                 if (!asistencia) {
-                    println "wtf no hay asistencia "
+                    //println "wtf no hay asistencia "
                     render "error"
                     return
                 }
                 asistencia.horas50 = celda[2].toInteger()
                 asistencia.horas100 = celda[3].toInteger()
                 if (!asistencia.save(flush: true)) {
-                    println "error save asistencia " + asistencia.errors
+                    //println "error save asistencia " + asistencia.errors
                 }
 
             }

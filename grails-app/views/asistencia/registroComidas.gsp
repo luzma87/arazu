@@ -385,10 +385,11 @@
                             openLoader();
                             var data = "";
                             $(".changed").each(function () {
-                                if ($(this).data("id")) {
-                                    data += $(this).data("id") + ";" + $(this).data("comio") + "|"
+                                var $this = $(this);
+                                if ($this.data("id")) {
+                                    data += $this.data("id") + ";" + $this.data("tipo") + ";" + $this.data("comio") + "|"
                                 } else {
-                                    data += $(this).data("proyecto") + ";" + $(this).data("cant") + "|"
+                                    data += "p_" + $this.data("proyecto") + ";" + $this.data("tipo") + ";" + $this.data("cant") + "|"
                                 }
                             });
 
@@ -399,6 +400,8 @@
                                     data    : "data=" + data,
                                     success : function (msg) {
                                         closeLoader();
+                                        var parts = msg.split("*");
+                                        console.log(msg);
                                         log("Datos guardados", "Success");
                                     },
                                     error   : function () {
