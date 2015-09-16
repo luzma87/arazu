@@ -353,7 +353,7 @@ class AsistenciaController extends Shield {
         data.each { d ->
             def parts = d.split(";")
 
-            println "PARTS: " + parts
+//            println "PARTS: " + parts
 
             def id = parts[0].toString()
             def tipo = parts[1].toString()
@@ -529,30 +529,28 @@ class AsistenciaController extends Shield {
         ////println "datos "+datos
         datos.each { d ->
             if (d != "") {
-                ////println "d "+d
+//                println "d "+d
                 def celda = d.split(";")
-                ////println "celda "+celda
-                def persona = Persona.get(celda[0])
-                def fecha = new Date().parse("dd-MM-yyyy", celda[1])
-                def asistencia = Asistencia.findByEmpleadoAndFecha(persona, fecha)
-                if (!asistencia) {
-                    asistencia = new Asistencia();
-                    asistencia.empleado = persona
-                    asistencia.fecha = fecha
+//                println "celda "+celda
+                if(celda.size() == 3) {
+                    def persona = Persona.get(celda[0])
+                    def fecha = new Date().parse("dd-MM-yyyy", celda[1])
+                    def asistencia = Asistencia.findByEmpleadoAndFecha(persona, fecha)
+                    if (!asistencia) {
+                        asistencia = new Asistencia();
+                        asistencia.empleado = persona
+                        asistencia.fecha = fecha
+                    }
+                    asistencia.tipo = TipoAsistencia.findByCodigo(celda[2])
+
+                    asistencia.registra = session.usuario
+                    if (!asistencia.save(flush: true)) {
+                        //println "error save asistencia " + asistencia.errors
+                    }
                 }
-                asistencia.tipo = TipoAsistencia.findByCodigo(celda[2])
-
-
-                asistencia.registra = session.usuario
-                if (!asistencia.save(flush: true)) {
-                    //println "error save asistencia " + asistencia.errors
-                }
-
             }
-
         }
         render "ok"
-
     }
 
     /* todo esta para que solo pueda editar en la fecha actual, eso hay que cambiar*/
