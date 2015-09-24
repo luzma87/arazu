@@ -197,7 +197,7 @@ class AccionesController extends Shield {
         def total = 0
         def ignoreAcciones = ["afterInterceptor", "beforeInterceptor"]
         def ignoreAccionesLike = ["ajax", "old", "funcion", "ignore"]
-        def ignoreControladores = ["Assets", "Dbdoc", "Shield", "Login", "Pdf",
+        def ignoreControladores = ["Assets", "Dbdoc", "Shield", "Login", "Pdf", "Firma",
                                    "ReportesInventario", "ReportesPedidos", "ReportesPersonal"]
         def errores = ""
 
