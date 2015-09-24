@@ -6,7 +6,7 @@ class FirmaController {
      * Acción verificar un documento firmado a través de la llave
      * @param ky es la llave de la firma
      */
-    def verDocumento_ignore() {
+    def verDocumento() {
         def firma = Firma.findByKey(params.ky)
         return [firma: firma]
 
