@@ -92,8 +92,9 @@ class ItemController extends Shield {
                 }
             }
         }
-        if (params.msg)
+        if (params.msg) {
             flash.message = params.msg
+        }
         itemInstance.properties = params
         if (params.padre) {
             itemInstance.tipo = TipoItem.get(params.padre.toLong())
@@ -165,7 +166,7 @@ class ItemController extends Shield {
                 }
             }
         }
-        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Item exitosa."
+        render "SUCCESS*${params.id ? 'Actualización' : 'Creación'} de Item exitosa.*" + itemInstance.id
         return
     } //save para grabar desde ajax
 
@@ -330,5 +331,13 @@ class ItemController extends Shield {
         } else {
             render ""
         }
+    }
+
+    /**
+     * Acción llamada con ajax que carga la lista de items disponibles
+     */
+    def reloadItemList_ajax() {
+        def items = Item.list([sort: 'descripcion'])
+        return [items: items, id: params.id]
     }
 }

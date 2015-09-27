@@ -99,9 +99,13 @@
                     %{--<input type="text" class="form-control input-sm allCaps" id="item_txt" placeholder="Item" --}%
                     %{--style="width: 100%!important;">--}%
                     <g:select name="item_txt" from="${Item.list([sort: 'descripcion'])}" optionKey="id"
-                              optionValue="${{ it.descripcion.decodeHTML() }}"
+                              optionValue="${{ it.descripcion.decodeHTML() }}" data-width="219px"
                               class="form-control input-sm required select" noSelection="['': '-- Seleccione --']"
                               data-live-search="true"/>
+
+                    <a href="#" id="btnAddItem" class="btn btn-success" title="Crear nuevo ítem" style="margin-top: 3px;">
+                        <i class="fa fa-plus"></i>
+                    </a>
                 </div>
 
                 <div class="col-md-1">
@@ -247,9 +251,7 @@
                                 if (parts[0] == "SUCCESS") {
                                     closeLoader();
                                     $("#dlgCreateEditItem").modal("hide");
-                                    insertRow();
-                                    items.add(item);
-
+                                    reloadItemList(parts[2]);
                                 } else {
                                     spinner.replaceWith($btn);
                                     closeLoader();
@@ -266,18 +268,30 @@
                     return false;
                 } //else
             }
-            function createEditItem(id, msn, item) {
+            function reloadItemList(newItemId) {
+                $.ajax({
+                    type    : "POST",
+                    url     : "${createLink(controller:'item', action:'reloadItemList_ajax')}",
+                    data    : {
+                        id : newItemId
+                    },
+                    success : function (msg) {
+                        $("#item_txt").next().remove();
+                        $("#item_txt").replaceWith(msg);
+                    } //success
+                }); //ajax
+            }
+            function createEditItem(id) {
                 var title = id ? "Editar" : "Crear";
                 var data = id ? {id : id} : {};
                 $.ajax({
                     type    : "POST",
-                    url     : "${createLink(controller:'item', action:'form_ajax')}?msg=" + msn,
+                    url     : "${createLink(controller:'item', action:'form_ajax')}",
                     data    : data,
                     success : function (msg) {
                         var b = bootbox.dialog({
-                            id    : "dlgCreateEditItem",
-                            title : title + " Item",
-
+                            id      : "dlgCreateEditItem",
+                            title   : title + " Item",
                             message : msg,
                             buttons : {
                                 cancelar : {
@@ -297,7 +311,6 @@
                             } //buttons
                         }); //dialog
                         closeLoader();
-                        $("#descripcion").val(item);
                         setTimeout(function () {
                             b.find(".form-control").first().focus()
                         }, 500);
@@ -328,7 +341,13 @@
                 };
             };
             %{--var items = ${items};--}%
+
             $(function () {
+                $("#btnAddItem").click(function () {
+                    createEditItem(null, "");
+                    return false;
+                });
+
                 $("#agregar").click(function () {
                     if ($(".item-row").size() > max) {
                         bootbox.alert({
@@ -383,20 +402,6 @@
                     }
 
                 });
-//                        $('#item_txt').typeahead({
-//                                    hint      : true,
-//                                    highlight : true,
-//                                    minLength : 1
-//                                },
-//                                {
-//                                    name       : 'states',
-//                                    displayKey : 'value',
-//                                    source     : substringMatcher(items)
-//                                });
-
-//                        $(".twitter-typeahead").css({
-//                            width : "100%"
-//                        });
 
                 $("#guardar").click(function () {
                     if ($(".item-row").size() < 1) {

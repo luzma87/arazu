@@ -34,21 +34,22 @@
                     <p class="form-control-static">${itemInstance.tipo.nombre}</p>
                 </g:if>
                 <g:else>
-                    <g:select id="tipo" name="tipo.id" from="${TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>
+                    <g:select id="tipo" name="tipo.id" from="${TipoItem.list()}" optionKey="id" required=""
+                              value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>
                 </g:else>
             </elm:fieldRapido>
 
-            %{--<elm:fieldRapidoDoble claseLabel1="col-sm-2" label1="Tipo" claseField1="col-sm-10"--}%
-                                  %{--claseLabel2="col-sm-2" label2="Unidad" claseField2="col-sm-10">--}%
-                %{--<g:if test="${!itemInstance.id && itemInstance.tipo}">--}%
-                    %{--<p class="form-control-static">${itemInstance.tipo.nombre}</p>--}%
-                %{--</g:if>--}%
-                %{--<g:else>--}%
-                    %{--<g:select id="tipo" name="tipo.id" from="${TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>--}%
-                %{--</g:else>--}%
-                %{--<hr/>--}%
-                %{--<g:select name="unidad.id" id="unidad" from="${Unidad.findAllByPadreIsNull()}" optionKey="id" class="form-control"/>--}%
-            %{--</elm:fieldRapidoDoble>--}%
+        %{--<elm:fieldRapidoDoble claseLabel1="col-sm-2" label1="Tipo" claseField1="col-sm-10"--}%
+        %{--claseLabel2="col-sm-2" label2="Unidad" claseField2="col-sm-10">--}%
+        %{--<g:if test="${!itemInstance.id && itemInstance.tipo}">--}%
+        %{--<p class="form-control-static">${itemInstance.tipo.nombre}</p>--}%
+        %{--</g:if>--}%
+        %{--<g:else>--}%
+        %{--<g:select id="tipo" name="tipo.id" from="${TipoItem.list()}" optionKey="id" required="" value="${itemInstance?.tipo?.id}" class="many-to-one form-control required"/>--}%
+        %{--</g:else>--}%
+        %{--<hr/>--}%
+        %{--<g:select name="unidad.id" id="unidad" from="${Unidad.findAllByPadreIsNull()}" optionKey="id" class="form-control"/>--}%
+        %{--</elm:fieldRapidoDoble>--}%
 
             <elm:fieldRapido claseLabel="col-sm-2" label="Descripción" claseField="col-sm-10">
                 <g:textField name="descripcion" maxlength="500" class="form-control allCaps"
@@ -59,7 +60,7 @@
                 <div class="row no-margin-top noMargin bg-success">
                     <div class="col-sm-5">
                         <g:select name="maquina" from="${Maquinaria.list([sort: 'descripcion'])}" class="form-control input-sm"
-                                  optionKey="id" optionValue="descripcion"/>
+                                  optionKey="id" optionValue="${{ it.descripcion + ' ' + it.marca + ' ' + it.placa }}"/>
                     </div>
 
                     <div class="col-sm-2">
