@@ -1,5 +1,7 @@
 package arazu.solicitudes
 
+import arazu.parametros.Parametros
+
 class FirmaController {
 
     /**
@@ -8,7 +10,7 @@ class FirmaController {
      */
     def verDocumento() {
         def firma = Firma.findByKey(params.ky)
-        return [firma: firma]
+        return [firma: firma, fileName: Parametros.getLogoLogin()]
 
 //        println "ver doc " + params
 //        def firma = Firma.findByKey(params.ky)

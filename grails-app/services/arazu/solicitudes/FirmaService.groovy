@@ -1,5 +1,6 @@
 package arazu.solicitudes
 
+import arazu.parametros.Parametros
 import arazu.seguridad.Persona
 
 /**
@@ -27,8 +28,9 @@ class FirmaService {
      */
     def firmarDocumento(Long usuario, String password, Firma firma, String baseUri) {
         def user = Persona.get(usuario)
-        if (firma.persona != user)
+        if (firma.persona != user) {
             return "El usuario no concuerda con la firma"
+        }
         if (user.autorizacion == password) {
             try {
                 def now = new Date()
@@ -41,7 +43,7 @@ class FirmaService {
 
                 def nombre = user.login + "_" + now.format("yyyyMMdd_HHmm") + ".png"
 
-                def logo = servletContext.getRealPath("/") + "images/logoQr.png"
+                def logo = servletContext.getRealPath("/") + "images/" + Parametros.getLogoQr()
                 Map information = [chl: texto]
                 information.chs = "250x250"
                 QRCodeService.createQRCode(information, logo, pathQr, nombre)

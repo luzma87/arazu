@@ -5,7 +5,7 @@
   Time: 12:15 PM
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.parametros.Parametros" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="no-menu">
@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="lzm-tab-body" style="background: white">
-                        <img class="img-login" src="${resource(dir: 'images', file: 'logo-login.png')}"/>
+                        <img class="img-login" src="${resource(dir: 'images', file: arazu.parametros.Parametros.getLogoLogin())}"/>
 
                         <g:form name="frmLogin" action="savePerfil">
                             <div class="input-login">

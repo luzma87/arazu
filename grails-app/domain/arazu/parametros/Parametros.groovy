@@ -39,6 +39,11 @@ class Parametros {
     String horaFinMerienda
 
     /**
+     * Define si es el sistema HINSA (string vacio) o TAHINSA ('2', que va a hcer append a las imagenes para mostrar el logo correspondiente)
+     */
+    String hinsa = ''
+
+    /**
      * Define los campos que se van a ignorar al momento de hacer logs
      */
     static auditable = [ignore: []]
@@ -61,6 +66,8 @@ class Parametros {
             horaFinAlmuerzo column: 'prmthfal'
             horaInicioMerienda column: 'prmthimr'
             horaFinMerienda column: 'prmthfmr'
+
+            hinsa column: 'prmthnsa'
         }
     }
 
@@ -145,6 +152,51 @@ class Parametros {
             return "21:59"
         } else {
             return p.first().horaFinMerienda
+        }
+    }
+
+    public static getHinsaCod() {
+        def p = list()
+        if (p.size() == 0) {
+            return ''
+        } else {
+            return p.first().hinsa
+        }
+    }
+
+    public static getLogoLogin() {
+        def p = list()
+        if (p.size() == 0) {
+            return 'logo-login.png'
+        } else {
+            return 'logo-login' + p.first().hinsa + '.png'
+        }
+    }
+
+    public static getLogoPdf() {
+        def p = list()
+        if (p.size() == 0) {
+            return 'logo-pdf-header.png'
+        } else {
+            return 'logo-pdf-header' + p.first().hinsa + '.png'
+        }
+    }
+
+    public static getLogoSquare() {
+        def p = list()
+        if (p.size() == 0) {
+            return 'logo-square.png'
+        } else {
+            return 'logo-square' + p.first().hinsa + '.png'
+        }
+    }
+
+    public static getLogoQr() {
+        def p = list()
+        if (p.size() == 0) {
+            return 'logoQr.png'
+        } else {
+            return 'logoQr' + p.first().hinsa + '.png'
         }
     }
 }

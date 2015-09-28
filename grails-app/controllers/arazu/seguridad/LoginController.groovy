@@ -1,5 +1,7 @@
 package arazu.seguridad
 
+import arazu.parametros.Parametros
+
 class LoginController {
 
     /**

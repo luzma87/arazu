@@ -28,7 +28,7 @@
     <body>
         <div class="row">
             <div class="col-xs-12 text-center">
-                <img src="${resource(dir: 'images', file: 'logo-login.png')}" alt="HINSA">
+                <img src="${resource(dir: 'images', file: fileName)}" alt="HINSA">
             </div>
         </div>
 

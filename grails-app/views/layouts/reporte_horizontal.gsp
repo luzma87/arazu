@@ -1,4 +1,4 @@
-<%@ page import="arazu.alertas.Alerta" %>
+<%@ page import="arazu.parametros.Parametros; arazu.alertas.Alerta" %>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -110,17 +110,27 @@
     </head>
 
     <body>
+        <g:set var="hinsa" value="${Parametros.getHinsaCod()}"/>
         <div id="header">
-            <img src='${resource(dir: "images", file: "logo-pdf-header.png")}' style='height:55px;'/>
+            <img src='${resource(dir: "images", file: Parametros.getLogoPdf())}' style='height:55px;'/>
         </div>
 
         <div id="headerRight">
-            HIDALGO NARANJO INGENIEROS Y ARQUITECTOS S.A. <br/>
-            R.U.C. 1792289564001 <br/>
-            Matriz: Av. 6 de Diciembre N 33-55 y Eloy Alfaro Edificio Torre Blanca 7mo piso <br/>
-            Telf.: 2564181, 2552952, 2552948 Fax: 2547079 <br/>
-            Email: hinsahidalgo@gmail.com <br/>
-            Quito - Ecuador
+            <g:if test="${hinsa == ''}">
+                HIDALGO NARANJO INGENIEROS Y ARQUITECTOS S.A. <br/>
+                R.U.C. 1792289564001 <br/>
+                Matriz: Av. 6 de Diciembre N 33-55 y Eloy Alfaro Edificio Torre Blanca 7mo piso <br/>
+                Telf.: 2564181, 2552952, 2552948 Fax: 2547079 <br/>
+                Email: hinsahidalgo@gmail.com <br/>
+                Quito - Ecuador
+            </g:if>
+            <g:else>
+                HYT Y TAHINSA <br/>
+                Matriz: Av. 6 de Diciembre N 33-55 y Eloy Alfaro Edificio Torre Blanca 7mo piso <br/>
+                Telf.: 2564181, 2552952, 2552948 Fax: 2547079 <br/>
+                Email: hinsahidalgo@gmail.com <br/>
+                Quito - Ecuador
+            </g:else>
         </div>
 
         <div class='tituloReporte'>
