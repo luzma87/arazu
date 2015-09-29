@@ -267,13 +267,13 @@
                 } else if (esUsuario) {
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
-                    items.foto = addPicUsuario;
+//                    items.foto = addPicUsuario;
                     items.desactivarUsuario = desactivarUsuario;
                     items.resetPass = resetPassUsuario;
                 } else if (esUsuarioInactivo) {
                     items.verUsuario = verUsuario;
                     items.editarUsuario = editarUsuario;
-                    items.foto = addPicUsuario;
+//                    items.foto = addPicUsuario;
                     items.activarUsuario = activarUsuario;
                 }
 

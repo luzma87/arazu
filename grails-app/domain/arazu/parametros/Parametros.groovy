@@ -199,4 +199,13 @@ class Parametros {
             return 'logoQr' + p.first().hinsa + '.png'
         }
     }
+
+    public static getLogoMenu() {
+        def p = list()
+        if (p.size() == 0) {
+            return 'logo-menu.png'
+        } else {
+            return 'logo-menu' + p.first().hinsa + '.png'
+        }
+    }
 }

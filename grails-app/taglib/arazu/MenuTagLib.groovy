@@ -1,6 +1,7 @@
 package arazu
 
 import arazu.alertas.Alerta
+import arazu.parametros.Parametros
 import arazu.seguridad.Permiso
 import arazu.seguridad.TipoAccion
 
@@ -187,7 +188,7 @@ class MenuTagLib {
         html += '<span class="icon-bar"></span>'
         html += '</button>'
         html += '<a class="navbar-brand navbar-logo" href="#">'
-        html += '<img src="' + resource(dir: 'images/barras', file: 'logo-menu.png') + '" />'
+        html += '<img src="' + resource(dir: 'images/barras', file: Parametros.getLogoMenu()) + '" />'
         html += '</a>'
         html += '</div>'
 
@@ -203,6 +204,8 @@ class MenuTagLib {
         html += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">' + session.usuario.login + ' (' + session.perfil + ')' + ' <b class="caret"></b></a>'
         html += '<ul class="dropdown-menu">'
         html += '<li><a href="' + g.createLink(controller: 'persona', action: 'personal') + '"><i class="fa fa-cogs"></i> Configuración</a></li>'
+        html += '<li class="divider"></li>'
+        html += '<li><a target="_blank" href="' + resource(dir: 'manuales', file: 'Manual de usuario.pdf') + '"><i class="fa fa-book"></i> Manual de usuario</a></li>'
         html += '<li class="divider"></li>'
         html += '<li><a href="' + g.createLink(controller: 'login', action: 'logout') + '"><i class="fa fa-power-off"></i> Salir</a></li>'
         html += '</ul>'

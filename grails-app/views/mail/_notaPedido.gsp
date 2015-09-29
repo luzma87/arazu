@@ -8,7 +8,7 @@
 
     <body>
         <p>
-            <img src="cid:springsourceInlineImage" alt="HINSA"/>
+            <img src="cid:logo" alt="HINSA"/>
         </p>
 
         <h3>Hola ${recibe.nombre} ${recibe.apellido}!</h3>

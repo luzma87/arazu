@@ -1,5 +1,6 @@
 package arazu.seguridad
 
+import arazu.parametros.Parametros
 import arazu.parametros.TipoUsuario
 import groovy.json.JsonBuilder
 import org.springframework.dao.DataIntegrityViolationException
@@ -395,13 +396,16 @@ class PersonaController extends Shield {
             def mensaje = "Se le ha generado una nueva clave de autorización para que pueda cambiarla.<br/><br/>" +
                     "<strong>${password}</strong>"
 
+            def logo = Parametros.getLogoLogin()
+            def logoFile = grailsApplication.mainContext.getResource('/images/' + logo).getFile().readBytes()
+
             try {
                 mailService.sendMail {
                     multipart true
                     to usu.mail
                     subject title
                     html g.render(template: '/mail/resetPass', model: [recibe: usu, title: title, mensaje: mensaje, now: new Date()])
-                    inline 'springsourceInlineImage', 'image/jpg', new File('./web-app/images/logo-login.png')
+                    inline 'logo', 'image/png', logoFile
                 }
             } catch (e) {
                 println "Ha ocurrido un error al enviar el mail"
