@@ -140,7 +140,7 @@ grails {
                  "mail.smtp.user"           : "notificaciones@hinsaec.com",
                  "mail.smtp.password"       : "Nohinsa12",
                  "mail.smtp.auth"           : "true",
-                 "mail.debug"                : "true"]
+                 "mail.debug"                : "false"]
     }
 }
 grails.mail.default.from = "notificaciones@hinsaec.com"
