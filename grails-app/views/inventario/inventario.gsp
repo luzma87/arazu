@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="arazu.inventario.Egreso" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <meta name="layout" content="main">
@@ -101,7 +101,7 @@
                             <g:sortableColumn property="saldo" title="Saldo"/>
                             <g:sortableColumn property="valor" title="V. Unitario"/>
                             <th>V. Total</th>
-                            <th></th>
+                            <th style="width: 90px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,13 +140,20 @@
                                     <td class="text-right">
                                         <g:formatNumber number="${ig.valor * ig.cantidad}" type="currency"/>
                                     </td>
-                                    <td class="text-center">
-                                        <a target="_blank" href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
-                                            <i class="fa fa-print"></i>
-                                        </a>
-                                        <a href="#" title="Egreso" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
-                                            <i class="fa fa-upload"></i>
-                                        </a>
+                                    <td class="text-left">
+                                        <div class="btn-group">
+                                            <a target="_blank" href="${elm.pdfLink(filename: "ingreso_" + ig.id + ".pdf", href: createLink(controller: 'reportesInventario', action: 'ingresoDeBodega', id: ig.id))}" title="Imprimir" class="btn btn-primary btn-sm" data-id="${ig.id}">
+                                                <i class="fa fa-print"></i>
+                                            </a>
+                                            <a href="#" title="Egreso" class="btn btn-warning btn-sm btn-eg" data-id="${ig.id}">
+                                                <i class="fa fa-upload"></i>
+                                            </a>
+                                        </div>
+                                        <g:if test="${session.perfil.codigo == 'SPAD' && Egreso.countByIngreso(ig) == 0}">
+                                            <a href="#" title="Eliminar" class="btn btn-danger btn-sm btn-spad-delete" data-id="${ig.id}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </g:if>
                                     </td>
                                 </tr>
                             </g:each>
@@ -339,6 +346,57 @@
                         openLoader("Buscando...");
                         buscar();
                     }
+                });
+
+                $(".btn-spad-delete").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.dialog({
+                        title   : "Alerta",
+                        message : "<i class='fa fa-trash-o fa-3x pull-left text-danger text-shadow'></i>" +
+                                  "<h2 class='text-danger text-shadow '>Alerta</h2>" +
+                                  "<p class='lead text-danger'>Está seguro que desea eliminar el ingreso seleccionado?</p>" +
+                                  "<p>Utilice esta funcionalidad únicamente para eliminar ingresos duplicados</p>" +
+                                  "<p>Se eliminará toda la información del ingreso a bodega y " +
+                                  "<span class='text-danger'>esta acción no se puede deshacer</span>. </p>",
+                        buttons : {
+                            cancelar : {
+                                label     : "Cancelar",
+                                className : "btn-primary",
+                                callback  : function () {
+                                }
+                            },
+                            eliminar : {
+                                label     : "<i class='fa fa-trash-o'></i> Eliminar",
+                                className : "btn-danger",
+                                callback  : function () {
+                                    openLoader("Eliminando Ingreso");
+                                    $.ajax({
+                                        type    : "POST",
+                                        url     : '${createLink(controller:'inventario', action:'delete_ajax')}',
+                                        data    : {
+                                            id : id
+                                        },
+                                        success : function (msg) {
+                                            var parts = msg.split("*");
+                                            log(parts[1], parts[0] == "SUCCESS" ? "success" : "error"); // log(msg, type, title, hide)
+                                            if (parts[0] == "SUCCESS") {
+                                                setTimeout(function () {
+                                                    location.reload(true);
+                                                }, 1000);
+                                            } else {
+                                                closeLoader();
+                                            }
+                                        },
+                                        error   : function () {
+                                            log("Ha ocurrido un error interno", "Error");
+                                            closeLoader();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    return false;
                 });
 
                 var $divSearch = $("#div-search");

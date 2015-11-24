@@ -11,6 +11,7 @@ import arazu.solicitudes.BodegaPedido
 import arazu.solicitudes.Cotizacion
 import arazu.solicitudes.Firma
 import arazu.solicitudes.NotaPedido
+import org.springframework.dao.DataIntegrityViolationException
 
 class InventarioController extends Shield {
 
@@ -853,5 +854,42 @@ class InventarioController extends Shield {
         }
         render "ERROR*" + msg
     }
+
+    /**
+     * Acción llamada con ajax que permite eliminar un elemento
+     */
+    def delete_ajax() {
+        if (session.perfil.codigo == 'SPAD') {
+            if (params.id) {
+                def ingresoInstance = Ingreso.get(params.id)
+                def egresos = Egreso.countByIngreso(ingresoInstance)
+                if (egresos == 0) {
+                    if (!ingresoInstance) {
+                        render "ERROR*No se encontró Ingreso."
+                        return
+                    }
+                    try {
+                        ingresoInstance.delete(flush: true)
+                        render "SUCCESS*Eliminación de Ingreso exitosa."
+                        return
+                    } catch (DataIntegrityViolationException e) {
+                        render "ERROR*Ha ocurrido un error al eliminar Ingreso"
+                        return
+                    }
+                } else {
+                    def s = egresos == 1 ? '' : 's'
+                    def n = egresos == 1 ? '' : 'n'
+                    render "ERROR*Se ha${n} realizado ${egresos} egreso${s} del ingreso seleccionado, " +
+                            "por lo que no puede ser eliminado."
+                }
+            } else {
+                render "ERROR*No se encontró Ingreso."
+                return
+            }
+        } else {
+            render "ERROR*No tiene autorización de realizar esta operación."
+            return
+        }
+    } //delete para eliminar via ajax
 
 }
