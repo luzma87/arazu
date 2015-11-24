@@ -177,7 +177,10 @@ class NotaPedidoController extends Shield {
         }
         def items = Item.list([sort: "descripcion"])
         def itemStr = ""
-        itemStr += items.collect { '"' + it.descripcion.trim() + '"' }
+	
+	if(items.size() > 0) {
+            itemStr += items.collect { '"' + it.descripcion?.trim() + '"' }
+	}
 
         def jefes = Persona.findAllByTipoUsuario(TipoUsuario.findByCodigo("JEFE"), [sort: 'apellido'])
 
