@@ -94,21 +94,23 @@ class PersonalProyectoController extends Shield {
         }
 
         def personalProyecto = proyecto.personal
-        List<PersonalProyecto> personalDisponible = []
+//        List<PersonalProyecto> personalDisponible = []
 
-        Persona.list().each { p ->
-            def personal = PersonalProyecto.withCriteria {
-                eq("persona", p)
-                le("fechaInicio", new Date())
-                or {
-                    isNull("fechaFin")
-                    ge("fechaFin", new Date())
-                }
-            }
-            if (personal.size() == 0) {
-                personalDisponible += p
-            }
-        }
+//        Persona.list().each { p ->
+//            def personal = PersonalProyecto.withCriteria {
+//                eq("persona", p)
+//                le("fechaInicio", new Date())
+//                or {
+//                    isNull("fechaFin")
+//                    ge("fechaFin", new Date())
+//                }
+//            }
+//            if (personal.size() == 0) {
+//                personalDisponible += p
+//            }
+//        }
+
+        def personalDisponible=Persona.list()
 
         return [proyecto: proyecto, personalProyecto: personalProyecto, personalDisponible: personalDisponible]
     }
