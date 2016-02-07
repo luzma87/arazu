@@ -17,7 +17,7 @@ environments {
     development {
         dataSource {
             dbCreate = "update" // one of 'create', 'create-drop','update'
-            url = "jdbc:mysql://192.168.1.143/tahinsa?useUnicode=yes&characterEncoding=UTF-8"
+            url = "jdbc:mysql://localhost/tahinsa?useUnicode=yes&characterEncoding=UTF-8"
 //            url = "jdbc:mysql://localhost/arazu?useUnicode=yes&characterEncoding=UTF-8"
             username = "root"
             password = "mysql"
